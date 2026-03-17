@@ -1,15 +1,18 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <d3d12.h>
 #include <DirectXMath.h>
 #include "Component.h"
 #include "Graphic.h"
 
+class AssetManager;
+struct SpriteData;
+
 class SpriteComponent :
     public Component
 {
 public:
-	SpriteComponent(Actor* owner, int updateOrder = 100);
+	SpriteComponent(Actor* owner, float zDepth = 100.0f);
     ~SpriteComponent();
 
 	void endProccess() override;
@@ -17,8 +20,8 @@ public:
     void create(const std::string filename);
     virtual void draw();
 
-	//•`‰æ”ÍˆÍ‚ÌƒZƒbƒ^[
-	void setPosition(const XMFLOAT2& position);
+	//æç”»ç¯„å›²ã®ã‚»ãƒƒã‚¿ãƒ¼
+	void setPosition(const XMFLOAT3& position);
 	void setScale(const XMFLOAT2& scale);
 	void setRotation(const float rotation);
     void setSpriteSize(const XMFLOAT2& size);
@@ -26,40 +29,39 @@ public:
 	void movePositon(const XMFLOAT2& diff);
 
 protected:
-    //•`‰æ”ÍˆÍ
-    XMFLOAT2 mPosition;
+    //æç”»ç¯„å›²
+    XMFLOAT3 mPosition;
 	XMFLOAT2 mScale;
 	float mRotation;
     XMFLOAT2 mSpriteSize;
 	XMFLOAT2 mTextureSize;
 	float mBordarSize;
 
-    //ƒfƒoƒbƒN—p
+    //ãƒ‡ãƒãƒƒã‚¯ç”¨
     HRESULT Hr;
 
-    //ƒOƒ‰ƒtƒBƒbƒN
+    //ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯
     Graphic* mGraphic;
-    //ƒRƒ}ƒ“ƒhƒŠƒXƒg
+    AssetManager* mAssetManager;
+
+    //ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆ
     ID3D12GraphicsCommandList* mCommandList;
 
-    //ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@1(World Matrix)
-    SpriteConstBuf* Cb3;
-    ComPtr<ID3D12Resource> ConstBuf3;
+    //ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡1(World Matrix)
+    //ä½¿ç”¨ã™ã‚‹ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ãŠã‚ˆã³ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+    int mHeapIndex;
+    int mHeapSize;
+    int mCBIndex;
+    int mCBSize;
+    int mNumSprites;
 
-    //’¸“_ƒoƒbƒtƒ@
-    ComPtr<ID3D12Resource> VertexBuf;
-    D3D12_VERTEX_BUFFER_VIEW VertexBufView;
-    ComPtr<ID3D12Resource> IndexBuf;
-    D3D12_INDEX_BUFFER_VIEW IndexBufView;
-    //ƒeƒNƒXƒ`ƒƒƒoƒbƒtƒ@
-    ComPtr<ID3D12Resource> TextureBuf;
+    SpriteConstBuf Cb3;
 
-    //ƒfƒBƒXƒNƒŠƒvƒ^ƒq[ƒv
-    ComPtr<ID3D12DescriptorHeap> CbvTbvHeap;
-    UINT CbvTbvSize;//ƒrƒ…[‚ÌƒTƒCƒY
-    UINT NumDescriptors;//‚Ğ‚Æ‚Â‚Ìƒp[ƒc‚Åg—p‚·‚éƒfƒBƒXƒNƒŠƒvƒ^‚Ì”
-
-
+    //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+    D3D12_VERTEX_BUFFER_VIEW mVertexBufView;
+    D3D12_INDEX_BUFFER_VIEW mIndexBufView;
+    //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒƒãƒ•ã‚¡
+    ID3D12Resource* mTextureBuf;
 
 };
 

@@ -1,4 +1,4 @@
-#include "CharacterComponent.h"
+﻿#include "CharacterComponent.h"
 #include "Actor.h"
 #include "Game.h"
 
@@ -38,6 +38,11 @@ void CharacterComponent::endProccess()
 int CharacterComponent::getHP()
 {
 	return mHP;
+}
+
+int CharacterComponent::getMaxHP()
+{
+	return mMaxHP;
 }
 
 int CharacterComponent::getPower()
@@ -111,6 +116,12 @@ void CharacterComponent::setIndexPosInt(int indexPos)
 {
 	mIndexPos[0] = indexPos % mMapManager->getMapSize();
 	mIndexPos[1] = indexPos / mMapManager->getMapSize();
+}
+
+void CharacterComponent::addHP(int hp)
+{
+	mHP += hp;
+	if (mHP > mMaxHP) mHP = mMaxHP;
 }
 
 void CharacterComponent::giveDamage(int damage)

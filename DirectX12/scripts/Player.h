@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Actor.h"
 #include "Definition.h"
 #include "json.hpp"
@@ -7,23 +7,27 @@
 class CameraComponent;
 class CharacterComponent;
 class MapManager;
+class PlayerManager;
+class ItemManager;
 
 class Player : public Actor
 {
 public:
 	Player(Game* game, float x, float y);
-	~Player() {};
+	~Player();
 
 	void inputActor() override;
 	void updateActor() override;
 
 	int getDirection();
 	void getIndexPos(int(&pos)[2]);
+	int getMaxHP();
 	int getHP();
 	int getPower();
 	int getDefense();
+	int getActionLimit();
 
-	//ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW‚ğ—^‚¦‚é
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ãƒ€ãƒ¡ãƒ¼ã‚¸ã‚’ä¸ãˆã‚‹
 	void giveDamage(int damage);
 
 
@@ -37,24 +41,33 @@ private:
 	void collect();
 	void damageEffect();
 	void updateFlash();
+	void useItem();
+	void turnEnd();
 
 	float mMoveSpeed;
 	float mRotSpeed;
 
-	//ˆÚ“®ˆ——p
+	//ç§»å‹•å‡¦ç†ç”¨
 	XMFLOAT3 mTargetPos;
 	XMFLOAT3 mTargetRot;
 	bool isMoving;
 	bool isRotating;
 
-	//ƒ_ƒ[ƒWˆ—
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸å‡¦ç†
 	int mPendingDamage;
 	float mFlashTimer;
 	float mFlashDuration;
 
+	//ã‚¢ã‚¤ãƒ†ãƒ 
+	int mSelectItemIndex;
+
+	//è¡Œå‹•å›æ•°åˆ¶é™
+	int mActionLimit;
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;
 	MapManager* mMapManager;
+	ItemManager* mItemManager;
+	PlayerManager* mPlayerManager;
 };
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
@@ -25,8 +25,8 @@ class SpotLightComponent;
 class Game;
 
 struct Vertex {
-	XMFLOAT3 pos; //xyzÀ•W
-	XMFLOAT2 uv;  //uvÀ•W
+	XMFLOAT3 pos; //xyzåº§æ¨™
+	XMFLOAT2 uv;  //uvåº§æ¨™
 };
 
 class Graphic
@@ -53,17 +53,16 @@ public:
 	void createVertexBufferView(ComPtr<ID3D12Resource>& vertexBuf, UINT sizeInBytes, UINT strideInBytes, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView);
 	void createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeInBytes, D3D12_INDEX_BUFFER_VIEW& indexBufferView);
 	void createConstantBufferView(ComPtr<ID3D12Resource>& constantBuf, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-	void createConstantBufferView(int cbIndex, int cbSize, int heapIndex);
-	void createBase3DBufferView(int heapIndex);
+	void createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize);
+	void createBase3DBufferView(int heapIndex, int heapSize);
 	void createShaderResourceView(ComPtr<ID3D12Resource>& shaderResource, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-	void createShaderResourceView(ComPtr<ID3D12Resource>& shaderResource, int heapIndex);
+	void createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex);
 	
 	void clearColor(float r, float g, float b);
 	void begin3DRender();
 	void end3DRender();
-	void begin2DRender();
-	void end2DRender();
 	void moveToNextFrame();
+	void prepareCommandList();
 
 	bool quit();
 	int msg_wparam();
@@ -79,17 +78,21 @@ public:
 	ID3D12Device* getDevice();
 	float getClientWidth();
 	float getClientHeight();
+	ID3D11On12Device* getD3D11On12Device();
+	ID3D11DeviceContext* getD3D11DeviceContext();
 	ID2D1DeviceContext* getD2DDeviceContext();
 	IDWriteFactory* getDWriteFactory();
 	ID2D1Bitmap1* getD2DRenderTarget();
 	UINT8* getConstantData();
+	UINT8* getConstantData(int frame);
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
+	int getBackBufIdx();
 
 	//Setter
 	void setRenderType(STATE state);
 
 	//update
-	void updateBase3DData(); //camera‚ÌXVŒã‚ÉÀs‚µ‚È‚¯‚ê‚Î‚¢‚¯‚È‚¢
+	void updateBase3DData(); //cameraã®æ›´æ–°å¾Œã«å®Ÿè¡Œã—ãªã‘ã‚Œã°ã„ã‘ãªã„
 	void updateViewProj(XMMATRIX& viewProj);
 	void updatePointLight(const std::vector<PointLightComponent*>& lights);
 	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
@@ -111,7 +114,7 @@ private:
 
 	
 
-	//ƒEƒBƒ“ƒhƒE
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦
 	LPCWSTR WindowTitle = L"DirectX12 Sample";
 	const int ClientWidth = 1280;
 	const int ClientHeight = 720;
@@ -126,38 +129,42 @@ private:
 
 	HWND hWnd = nullptr;
 	MSG Msg;
-	
-	//ƒfƒoƒCƒX
+	static const int FrameCount = 2;
+
+	//ãƒ‡ãƒã‚¤ã‚¹
 	ComPtr<ID3D12Device> Device;
 	ComPtr<ID2D1Device> mD2DDevice;
-	//ƒfƒoƒCƒXƒRƒ“ƒeƒLƒXƒg
+	//ãƒ‡ãƒã‚¤ã‚¹ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
 	ComPtr<ID2D1DeviceContext> mD2DDeviceContext;
-	//ƒtƒ@ƒNƒgƒŠ[
+	//ãƒ•ã‚¡ã‚¯ãƒˆãƒªãƒ¼
 	ComPtr<ID2D1Factory1> mD2DFactory;
-	//ƒRƒ}ƒ“ƒh
-	ComPtr<ID3D12CommandAllocator> CommandAllocator;
-	ComPtr<ID3D12GraphicsCommandList> CommandList;
-	ComPtr<ID3D12CommandQueue> CommandQueue;
-	//ƒtƒFƒ“ƒX
-	ComPtr<ID3D12Fence> Fence;
-	HANDLE FenceEvent;
-	UINT64 FenceValue;
-	//ƒfƒoƒbƒO
+	//ã‚³ãƒãƒ³ãƒ‰
+	ComPtr<ID3D12CommandAllocator> mCommandAllocator[FrameCount];
+	ComPtr<ID3D12CommandAllocator> mLoadAllocator;
+	ComPtr<ID3D12GraphicsCommandList> mCommandList;
+	ComPtr<ID3D12GraphicsCommandList> mLoadList;
+	ComPtr<ID3D12CommandQueue> mCommandQueue;
+	//ãƒ•ã‚§ãƒ³ã‚¹
+	ComPtr<ID3D12Fence> mFence;
+	HANDLE mFenceEvent;
+	UINT64 mFenceValue;
+	UINT64 mFenceValues[FrameCount] = {};
+	//ãƒ‡ãƒãƒƒã‚°
 	HRESULT Hr;
 
-	//ƒŠƒ\[ƒX
-	//ƒoƒbƒNƒoƒbƒtƒ@
+	//ãƒªã‚½ãƒ¼ã‚¹
+	//ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡
 	ComPtr<IDXGISwapChain4> SwapChain;
-	ComPtr<ID3D12Resource> BackBuffers[2];
+	ComPtr<ID3D12Resource> BackBuffers[FrameCount];
 	UINT BackBufIdx;
 	ComPtr<ID3D12DescriptorHeap> BbvHeap; //BackBufferViewHeap
 	UINT BbvHeapSize;
 	float ClearColor[4];
 
-	//ƒfƒvƒXƒXƒeƒ“ƒVƒ‹ƒoƒbƒtƒ@
+	//ãƒ‡ãƒ—ã‚¹ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ãƒãƒƒãƒ•ã‚¡
 	ComPtr<ID3D12Resource> DepthStencilBuf;
 	ComPtr<ID3D12DescriptorHeap> DsvHeap; //DepthStencilBufView
-	//ƒpƒCƒvƒ‰ƒCƒ“
+	//ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³
 	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12RootSignature> RootSignature2D;
 	ComPtr<ID3D12RootSignature> RootSignatureDT;
@@ -167,20 +174,20 @@ private:
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
 
-	//‘S3DƒIƒuƒWƒFƒNƒg‹¤’Ê‚Ìƒf[ƒ^
+	//å…¨3Dã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆå…±é€šã®ãƒ‡ãƒ¼ã‚¿
 	Base3DData Base3DData;
 
-	//2D•`‰æ
+	//2Dæç”»
 	ComPtr<ID3D11On12Device> mD3D11On12Device;
 	ComPtr<ID3D11DeviceContext> mD3D11DeviceContext;
 	ComPtr<IDWriteFactory> mDWriteFactory;
-	ComPtr<ID2D1Bitmap1> mD2DRenderTargets[2];
-	ComPtr<ID3D11Resource> mWrappedBackBuffers[2];
+	ComPtr<ID2D1Bitmap1> mD2DRenderTargets[FrameCount];
+	ComPtr<ID3D11Resource> mWrappedBackBuffers[FrameCount];
 
-	//‹¤—L‚µ‚Äg—p‚·‚éƒq[ƒvAƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@
+	//å…±æœ‰ã—ã¦ä½¿ç”¨ã™ã‚‹ãƒ’ãƒ¼ãƒ—ã€ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡
 	ComPtr<ID3D12DescriptorHeap> mCbvTbvHeap;
-	ComPtr<ID3D12Resource> mConstantBuf;
-	UINT8* mConstantData;	//¶ƒf[ƒ^
+	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
+	UINT8* mConstantData[FrameCount];	//ç”Ÿãƒ‡ãƒ¼ã‚¿
 
 	Game* mGame;
 

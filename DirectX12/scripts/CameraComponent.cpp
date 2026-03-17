@@ -1,4 +1,4 @@
-#include "CameraComponent.h"
+ï»¿#include "CameraComponent.h"
 #include "Actor.h"
 #include "Game.h"
 #include "Math.h"
@@ -30,7 +30,7 @@ void CameraComponent::updateComponent()
 
 
 		XMMATRIX view = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&mFocus), XMLoadFloat3(&mUp));
-		//ƒvƒƒWƒFƒNƒVƒ‡ƒ“ƒ}ƒgƒŠƒbƒNƒX
+		//ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner->getGame()->getGraphic()->getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
 		mOwner->getGame()->getDamageTextManager()->updateView(view);

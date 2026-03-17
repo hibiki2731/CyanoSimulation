@@ -1,34 +1,35 @@
-#pragma once
+ï»¿#pragma once
 #include <string>
+#include <stack>
 #include "Actor.h"
 
 class Game;
 class SpriteComponent;
 
-class TextWindow : public Actor
+class Menu : public Actor
 {
 public:
-	TextWindow(Game* game, std::string windowName, int updateOrder);
-	void inputActor() override;
+	Menu(Game* game, std::string windowName, float zDepth);
+	//input
+	virtual	void inputMenu();
+	virtual void selectedAct() {};
+	virtual void updateMenu() {};
 
-
-	int getSelectedIndex();
-	bool getIsSelected();
-	bool getIsActive();
-
-	void resetSelected();
-	void setMaxIndex(int maxIndex);
-	void setActive(bool active);
+protected:
+	int mMaxIndex;	//ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®æœ€å¤§ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	int mSelectedIndex;	//é¸æŠã•ã‚Œã¦ã„ã‚‹ãƒ¡ãƒ‹ãƒ¥ãƒ¼ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	float mArrowMoveLength;	//çŸ¢å°ã®ç§»å‹•è·é›¢
+	SpriteComponent* mArrow;
 
 private:
-	SpriteComponent* mArrow;
-	float mArrowMoveLength;	//–îˆó‚ÌˆÚ“®‹——£
-	int mSelectedIndex;	//‘I‘ğ‚³‚ê‚Ä‚¢‚éƒƒjƒ…[‚ÌƒCƒ“ƒfƒbƒNƒX
-	bool isSelected;	//‘I‘ğ‚³‚ê‚Ä‚¢‚é‚©
+	void initComponent(std::string windowName, float zDepth);
 
-	int mMaxIndex;	//ƒƒjƒ…[‚ÌÅ‘åƒCƒ“ƒfƒbƒNƒX
+};
 
-	bool isActive;
+class MainMenu : public Menu {
+public:
+	MainMenu(Game* game, float zDepth);
+	void selectedAct() override;
 };
 
 class BackGround : public Actor
@@ -44,11 +45,19 @@ public:
 
 	void update();
 	void input();
+	
+	void pushMenu(Menu* menu);
+	void popMenu();
+
+	void exitStatusMenu();
 
 private:
 	Game* mGame;
+	BackGround* mBg;
 	bool isTown;
-	TextWindow* mMainMenu;
-	TextWindow* mSubMenu;
+	bool isSelected;
+	bool isSelecetdStatus;
+	bool isStatusMenu;
+	std::stack<Menu*> mMenuStack; //ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ãªãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’ç®¡ç†
 };
 

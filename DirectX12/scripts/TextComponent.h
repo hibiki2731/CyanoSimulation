@@ -1,36 +1,54 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include "Graphic.h"
 #include <string>
 
+class AssetManager;
+
 class TextComponent : public Component
 {
 public:
-	TextComponent(Actor* owner, int updateOrder = 100);
+	TextComponent(Actor* owner, float zDepth = 100.0f);
 	~TextComponent();
 
+	void drawTextTexture();
 	void draw();
 
 	void endProccess() override;
-	//ƒeƒLƒXƒg‚Ì•\¦A”ñ•\¦
+	//ãƒ†ã‚­ã‚¹ãƒˆã®è¡¨ç¤ºã€éè¡¨ç¤º
 	void showText();
 	void closeText();
 
-	//ƒZƒbƒ^[
+	//ã‚»ãƒƒã‚¿ãƒ¼
 	void setText(const std::wstring& text);
 	void setBaseLine(float x, float y);
 	void setFontSize(FLOAT size);
 	void setTextColor(const D2D1::ColorF& color);
 	void setLineSpace(float space);
 
-	//ƒQƒbƒ^[
+	//ã‚²ãƒƒã‚¿ãƒ¼
 	bool getIsActive();
 
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
 	Graphic* mGraphic;
+	AssetManager* mAssetManager;
 	ComPtr<ID2D1SolidColorBrush> mTextBrush;
 	ComPtr<IDWriteTextFormat> mTextFormat;
+	ComPtr<ID3D12Resource> mTexture;
+	bool isTextureInitialized = false;
+	ComPtr<ID3D11Resource> mWrappedTexture;
+	ComPtr<ID2D1Bitmap1> mD2DTarget;
+	//ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡1(World Matrix)
+    SpriteConstBuf Cb3;
+	int mCBIndex;
+	int mCBSize;
+	int mHeapIndex;
+	int mHeapSize;
+
+    //é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+    D3D12_VERTEX_BUFFER_VIEW mVertexBufView;
+    D3D12_INDEX_BUFFER_VIEW mIndexBufView;
 
 	std::wstring mText;
 	bool isActive;
@@ -41,9 +59,15 @@ private:
 	const WCHAR* mFontName;
 	D2D1_RECT_F mTextRect;
 	bool isLineSpaceDefault;
-	float mLineSpace; //s‚Ì‚‚³
-	float mBaseLineSpace; //s‚Ìã’[‚©‚çƒx[ƒXƒ‰ƒCƒ“‚Ü‚Å‚Ì‹——£
+	float mLineSpace; //è¡Œã®é«˜ã•
+	float mBaseLineSpace; //è¡Œã®ä¸Šç«¯ã‹ã‚‰ãƒ™ãƒ¼ã‚¹ãƒ©ã‚¤ãƒ³ã¾ã§ã®è·é›¢
 
 	int mMaxRow;
+
+	//D2D11ã‹ã‚‰D3D12ã¸ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚’æ¸¡ã™ãŸã‚ã®æº–å‚™
+	void createEmptyTexture();
+	void wrapTexture();
+	void createSprite(float zDepth);
+
 };
 

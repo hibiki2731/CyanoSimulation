@@ -1,11 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include <vector>
 #include <memory>
 #include "Definition.h"
 #include "Random.h"
-#include "SceneManager.h"
 
 class Game;
+class Player;
+class SceneManager;
 
 enum class Stage {
 	MAP1,
@@ -33,7 +34,8 @@ public:
 	MapManager(Game* game);
 	~MapManager() {};
 
-	void update();
+	void updateTurn();
+	void sceneProcess();
 
 	void createMap();
 	
@@ -50,9 +52,10 @@ public:
 	int getMapDataAt(int index);
 	int getObjectDataAt(int x, int y);
 	int getObjectDataAt(int index);
+	Player* getPlayer();
 	TurnType getTurnType();
 
-	//ƒ^[ƒ“§Œä
+	//ã‚¿ãƒ¼ãƒ³åˆ¶å¾¡
 	void moveToPlayerTurn();
 	void moveToEnemyTurn();
 	void clearMap();
@@ -72,7 +75,13 @@ private:
 	Game* mGame;
 	SceneManager* mSceneManager;
 
-	//–¢s“®“G”
+	//æœªè¡Œå‹•æ•µæ•°
 	int mPendingEnemyCount;
+
+	//å‚ç…§ç”¨ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+	Player* mPlayer;
+
+	//ã‚·ãƒ¼ãƒ³åˆ¶å¾¡
+	bool isMap;
 };
 

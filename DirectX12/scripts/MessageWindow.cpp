@@ -1,17 +1,20 @@
-#include "MessageWindow.h"
+ï»¿#include "MessageWindow.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"
+#include "SceneManager.h"
 #include "Graphic.h"
 #include "Game.h"
 #include "Player.h"
 #include "MapManager.h"
+#include "ItemManager.h"
+#include "PlayerManager.h"
 
 MessageWindow::MessageWindow(Game* game) : Actor(game)
 {
 	
-	std::wstring message = L"‰Šú‰»";
+	std::wstring message = L"åˆæœŸåŒ–";
 	mMessage = message;
-	auto text = std::make_unique<TextComponent>(this);
+	auto text = std::make_unique<TextComponent>(this, 0.9f);
 	text->setText(mMessage);
 	text->setBaseLine(100.0f, 10.0f);
 	text->setFontSize(24.0f);
@@ -20,7 +23,7 @@ MessageWindow::MessageWindow(Game* game) : Actor(game)
 	mText = text.get();
 	addComponent(std::move(text));
 
-	auto window = std::make_unique<SpriteComponent>(this);
+	auto window = std::make_unique<SpriteComponent>(this, 1.0f);
 	window->create("assets\\picture\\UI2\\PNG\\Default\\panel_brown.png");
 	window->setBordarSize(24.0f);
 	window->setSpriteSize(XMFLOAT2(600.0f, 100.0f));
@@ -33,37 +36,18 @@ void MessageWindow::inputActor()
 
 void MessageWindow::updateActor()
 {
-	mPlayer = mGame->getPlayer();
-	if (mPlayer == nullptr) return;
-	//ƒfƒoƒbƒO—p
-	std::wstring message = L"x:" + std::to_wstring(mPlayer->getPosition().x) +
-		L" y:" + std::to_wstring(mPlayer->getPosition().y) +
-		L" z:" + std::to_wstring(mPlayer->getPosition().z) + L"\n";
-	message += L"TURN: ";
-
-	switch (mGame->getMapManager()->getTurnType()) {
-	case TurnType::PLAYER:
-		message += L"PLAYER ";
-		break;
-	case TurnType::ENEMY:
-		message += L"ENEMY ";
-		break;
+	//ãƒ‡ãƒãƒƒã‚°ç”¨
+	std::wstring message;
+	if (mGame->getSceneManager()->getCurrentScene() == SceneType::TOWN) {
+		message += L"HP: " + std::to_wstring(mGame->getPlayerManager()->getPlayerData().hp) + L" ";
+	}
+	else if (mGame->getSceneManager()->getCurrentScene() == SceneType::MAP) {
+		message += L"HP: " + std::to_wstring(mGame->getMapManager()->getPlayer()->getHP()) + L" STR: " + std::to_wstring(mGame->getMapManager()->getPlayer()->getPower())
+			+ L" DEF: " + std::to_wstring(mGame->getMapManager()->getPlayer()->getDefense()) + L" ACTION_LIMIT" + std::to_wstring(mGame->getMapManager()->getPlayer()->getActionLimit()) + L"\n";
 	}
 
-	message += L"HP: " + std::to_wstring(mPlayer->getHP()) + L" ";
-
-	message += L"G:" + std::to_wstring(mGame->getItemManager()->getItemNum(Item::GRASS)) + L".";
-
+	message += L"G:" + std::to_wstring(mGame->getItemManager()->getResourceNum("GRASS")) + L"\n";
 	mMessage = message;
 	mText->setText(mMessage);
-}
-
-void MessageWindow::setTarget(Actor* actor)
-{
-	mTarget = actor;
-}
-
-void MessageWindow::setPlayer(Player* player)
-{
-	mPlayer = player;
+	mText->showText();  //ãƒãƒ«ãƒã‚¹ãƒ¬ãƒƒãƒ‰åŒ–ã—ãŸã„
 }

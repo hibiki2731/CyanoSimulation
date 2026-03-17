@@ -1,109 +1,195 @@
 {
     "MainMenu" :{
         "x" : 20.0,
-        "y" : 20.0,
+        "y" : 110.0,
         "width" : 400.0,
         "height" : 380.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
 
         "arrowOffsetX" : 310.0,
-        "arrowOffsetY" : 30.0,
-        "arrowWidth" : 40.0,
-        "arrowHeight" : 40.0,
+        "arrowOffsetY" : 20.0,
+        "arrowWidth" : 50.0,
+        "arrowHeight" : 50.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
-
+        
         "textOffsetX" : 20.0,
-        "textOffsety" : 10.0,
+        "textOffsetY" : 10.0,
         "fontSize" : 50.0,
         "lineSpace" : 10.0,
         "text" : "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n"
     },
-
+    
     "InnMenu" : {
-        "x" : 100.0,
-        "y" : 50.0,
-        "width" : 500.0,
+        "x" : 300.0,
+        "y" : 160.0,
+        "width" : 200.0,
         "height" : 300.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
-
-        "arrowOffsetX" : 310.0,
-        "arrowOffsetY" : 30.0,
+        
+        "arrowOffsetX" : 130.0,
+        "arrowOffsetY" : 75.0,
         "arrowWidth" : 40.0,
         "arrowHeight" : 40.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "Inn\n",
 
         "textOffsetX" : 20.0,
-        "textOffsety" : 10.0,
+        "textOffsetY" : 65.0,
         "fontSize" : 50.0,
         "lineSpace" : 10.0,
-        "text" : "宿屋\n"
+        "text" : "泊る\nセーブ\n"
     },
-
+    
     "ShopMenu" :{
         
-        "x" : 100.0,
-        "y" : 50.0,
-        "width" : 500.0,
+        "x" : 50.0,
+        "y" : 160.0,
+        "width" : 1000.0,
         "height" : 300.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
 
-        "arrowOffsetX" : 310.0,
-        "arrowOffsetY" : 30.0,
+        "arrowOffsetX" : 900.0,
+        "arrowOffsetY" : 75.0,
         "arrowWidth" : 40.0,
         "arrowHeight" : 40.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "Shop\n",
 
         "textOffsetX" : 20.0,
-        "textOffsety" : 10.0,
+        "textOffsetY" : 65.0,
         "fontSize" : 50.0,
         "lineSpace" : 10.0,
-        "text" : "道具屋\n"
+        "text" : "薬草  10 g  HPを回復する\n爆弾  20 g  敵に小ダメージを与える\n"
     },
 
     "ForgeMenu" : {
         
-        "x" : 100.0,
-        "y" : 50.0,
+        "x" : 50.0,
+        "y" : 160.0,
         "width" : 500.0,
         "height" : 300.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
 
-        "arrowOffsetX" : 310.0,
-        "arrowOffsetY" : 30.0,
+        "arrowOffsetX" : 400.0,
+        "arrowOffsetY" : 75.0,
         "arrowWidth" : 40.0,
         "arrowHeight" : 40.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "Forge\n",
 
         "textOffsetX" : 20.0,
-        "textOffsety" : 10.0,
+        "textOffsetY" : 65.0,
         "fontSize" : 50.0,
         "lineSpace" : 10.0,
-        "text" : "鍛冶屋\n"
+        "text" : "Weapon\nArmer\n"
     },
 
     "ExplorerShopMenu" : {
         
-        "x" : 100.0,
-        "y" : 50.0,
+        "x" : 50.0,
+        "y" : 160.0,
         "width" : 500.0,
         "height" : 300.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
 
-        "arrowOffsetX" : 310.0,
-        "arrowOffsetY" : 30.0,
+        "arrowOffsetX" : 400.0,
+        "arrowOffsetY" : 75.0,
+        "arrowWidth" : 40.0,
+        "arrowHeight" : 40.0,
+        "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "ExplorerShop\n",
+
+        "textOffsetX" : 20.0,
+        "textOffsetY" : 65.0,
+        "fontSize" : 50.0,
+        "lineSpace" : 10.0,
+        "text" : "スキルツリーみたいにしたいね\n"
+    },
+
+    "StatusMenu" : {
+        "x" : 60.0,
+        "y" : 100.0,
+        "width" : 800.0,
+        "height" : 500.0,
+        "borderSize" : 24.0,
+        "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
+        
+        "arrowOffsetX" : 300.0,
+        "arrowOffsetY" : 85.0,
         "arrowWidth" : 40.0,
         "arrowHeight" : 40.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
 
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "STATUS\n",
+
         "textOffsetX" : 20.0,
-        "textOffsety" : 10.0,
+        "textOffsetY" : 75.0,
         "fontSize" : 50.0,
         "lineSpace" : 10.0,
-        "text" : "探索道具屋\n"
+        "text" : "WEAPON\nARMER\n"
+    },
+
+    "EquipWeaponMenu" : {
+        "x" : 60.0,
+        "y" : 100.0,
+        "width" : 800.0,
+        "height" : 500.0,
+        "borderSize" : 24.0,
+        "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
+        
+        "arrowOffsetX" : 300.0,
+        "arrowOffsetY" : 80.0,
+        "arrowWidth" : 40.0,
+        "arrowHeight" : 40.0,
+        "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "WEAPON\n"
+    },
+
+    "EquipArmerMenu" : {
+        "x" : 60.0,
+        "y" : 100.0,
+        "width" : 800.0,
+        "height" : 500.0,
+        "borderSize" : 24.0,
+        "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
+        
+        "arrowOffsetX" : 300.0,
+        "arrowOffsetY" : 80.0,
+        "arrowWidth" : 40.0,
+        "arrowHeight" : 40.0,
+        "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+
+        "titleOffsetX" : 20.0,
+        "titleOffsetY" : 10.0,
+        "titleFontSize" : 50.0,
+        "title" : "ARMER\n"
     }
 }

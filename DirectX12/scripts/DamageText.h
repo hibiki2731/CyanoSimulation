@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <DirectXMath.h>
 #include "Graphic.h"
 #include <vector>
@@ -18,13 +18,14 @@ public:
 	float getPosX();
 	float getPosY();
 	float getPosZ();
+	XMFLOAT3 getPos();
 	float getLifeTime();
 
 private:
 	XMFLOAT3 mCenterPosition;
 	XMFLOAT3 mVelocity;
-	int mDigit;	//”’l
-	float mLifeTime;	//•\¦ŠÔ
+	int mDigit;	//æ•°å€¤
+	float mLifeTime;	//è¡¨ç¤ºæ™‚é–“
 };
 
 class DamageTextManager {
@@ -35,7 +36,7 @@ public:
 	void update();
 	void draw();
 
-	//ƒ_ƒ[ƒWƒeƒLƒXƒg‚Ì’Ç‰Á
+	//ãƒ€ãƒ¡ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è¿½åŠ 
 	void createDamageText(XMFLOAT3& position, int digit);
 
 	void updateView(XMMATRIX& view);
@@ -43,26 +44,37 @@ public:
 	float getSize();
 
 private:
-	std::vector<std::unique_ptr<DamageText>> mDamageTexts;
+	struct DamageTextInstance {
+		XMFLOAT3 pos;
+		float size;
+		float  digit;
+		float alpha;
+	};
 
-	const UINT NumElementsPerVertex = 6; //’¸“_‚²‚Æ‚Ì—v‘f”
+	const UINT NumElementsPerVertex = 6; //é ‚ç‚¹ã”ã¨ã®è¦ç´ æ•°
 	const int MaxNum = 16;
-	const UINT NumElements = NumElementsPerVertex * MaxNum; //‘S—v‘f”
-	const UINT SizeInByte = sizeof(float) * NumElements; //‘SƒoƒCƒg”
-	std::vector<float> mVertexRawData;	//{’†SÀ•Wx, y, z, ‘å‚«‚³, ”’l, alpha}
-	ComPtr<ID3D12Resource> mVertexBuf;
-	D3D12_VERTEX_BUFFER_VIEW mVertexBufView;
+	//const int MaxInstanceNum = MaxNum;
+	const UINT NumElements = NumElementsPerVertex * MaxNum; //å…¨è¦ç´ æ•°
+	const UINT SizeInByte = sizeof(float) * NumElements; //å…¨ãƒã‚¤ãƒˆæ•°
+	std::vector<DamageTextInstance> mInstanceRawData;	//{ä¸­å¿ƒåº§æ¨™x, y, z, å¤§ãã•, æ•°å€¤, alpha}
+	int mNextInstanceIndex; //æ¬¡ã«ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’å…¥ã‚Œã‚‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	UINT8* mMappedData[2];
+	ComPtr<ID3D12Resource> mVertexBuf[2];
+	D3D12_VERTEX_BUFFER_VIEW mVertexBufView[2];
 
-	BillboardConstBuf* mBC;
-	ComPtr<ID3D12Resource> mBillboardConstBuf;
-	ComPtr<ID3D12Resource> mTextureBuf;
-	ComPtr<ID3D12DescriptorHeap> mDescHeap;
+	BillboardConstBuf mBC;
+	ID3D12Resource* mTextureBuf;
+
+	int mCBIndex;
+	int mCBSize;
+	int mHeapIndex;
+	int mHeapSize;
 
 	Game* mGame;
 
-	//Šeƒ_ƒ[ƒWƒeƒLƒXƒg‚Ìİ’è’l
+	//å„ãƒ€ãƒ¡ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è¨­å®šå€¤
 	const float DTSize = 0.1f;
-	const float MaxLifeTime = 1.0f;	//Å‘å•\¦ŠÔ
+	const float MaxLifeTime = 1.0f;	//æœ€å¤§è¡¨ç¤ºæ™‚é–“
 	const XMFLOAT3 Velocity = {0.0f, 0.2f, 0.0f};
 
 };

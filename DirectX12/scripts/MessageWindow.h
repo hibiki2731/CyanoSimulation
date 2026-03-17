@@ -1,6 +1,6 @@
-#pragma once
-#include "Actor.h"
+﻿#pragma once
 #include <string>
+#include "Actor.h"
 
 class TextComponent;
 class Player;
@@ -14,14 +14,9 @@ public:
 	void inputActor() override;
 	void updateActor() override;
 
-	void setTarget(Actor* actor);
-	void setPlayer(Player* player);
-
 private:
 
 	std::wstring mMessage;
-	Actor* mTarget;
-	Player* mPlayer;
 	TextComponent* mText;
 };
 

@@ -1,0 +1,86 @@
+{
+    "Armer": [
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "defence": 0,
+            "id": "NONE",
+            "name": "裸",
+            "price": [
+                0
+            ]
+        },
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "defence": 10,
+            "id": "CLOTHES",
+            "name": "服",
+            "price": [
+                20
+            ]
+        }
+    ],
+    "Explorer": [
+        {
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id": "BOOTS",
+            "name": "靴",
+            "price": [
+                25
+            ],
+            "category": "ACTION_LIMIT",
+            "value": 10
+        }
+    ],
+    "Item": [
+        {
+            "category": "HP_RECOVER",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id": "POSION",
+            "name": "ポーション",
+            "price": [
+                10
+            ],
+            "value": 20
+        }
+    ],
+    "Resource": [
+        {
+            "id": "GRASS",
+            "num": 190
+        }
+    ],
+    "Weapon": [
+        {
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id": "NONE",
+            "name": "素手",
+            "power": 0,
+            "price": [
+                0
+            ]
+        },
+        {
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id": "WOODEN_SORD",
+            "name": "木の剣",
+            "power": 10,
+            "price": [
+                50
+            ]
+        }
+    ]
+}

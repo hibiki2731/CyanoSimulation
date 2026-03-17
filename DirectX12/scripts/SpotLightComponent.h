@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -12,7 +12,7 @@ public:
 	void updateComponent() override;
 	void endProccess() override;
 
-	//ƒQƒbƒ^[
+	//ã‚²ãƒƒã‚¿ãƒ¼
 	XMFLOAT4 getPosition();
 	XMFLOAT4 getDirection();
 	XMFLOAT4 getColor();
@@ -22,7 +22,7 @@ public:
 	float getUAngle();
 	float getPAngle();
 
-	//ƒZƒbƒ^[
+	//ã‚»ãƒƒã‚¿ãƒ¼
 	void setColor(const XMFLOAT4 color);
 	void setActive(const bool state);
 	void setIntensity(const float intensity);
@@ -32,13 +32,13 @@ public:
 
 private:
 
-	XMFLOAT4 mPosition; //xyz:À•W
-	XMFLOAT4 mDirection; //xyz:Œü‚«
-	XMFLOAT4 mColor; //xyz:rgb w:ƒ¿’l
+	XMFLOAT4 mPosition; //xyz:åº§æ¨™
+	XMFLOAT4 mDirection; //xyz:å‘ã
+	XMFLOAT4 mColor; //xyz:rgb w:Î±å€¤
 	float isActive;
 	float mIntensity;
 	float mRange;
-	float mUAngle; //Šp“xŒ¸Š‚ª‹N‚±‚ç‚È‚¢”ÍˆÍ radian‚É‚·‚é
-	float mPAngle; //ƒ‰ƒCƒg‚ª‚ ‚½‚é”ÍˆÍ radian‚É‚·‚é
+	float mUAngle; //è§’åº¦æ¸›è¡°ãŒèµ·ã“ã‚‰ãªã„ç¯„å›² radianã«ã™ã‚‹
+	float mPAngle; //ãƒ©ã‚¤ãƒˆãŒã‚ãŸã‚‹ç¯„å›² radianã«ã™ã‚‹
 };
 

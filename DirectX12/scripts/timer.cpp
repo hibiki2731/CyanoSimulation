@@ -1,4 +1,4 @@
-#include "timer.h"
+﻿#include "timer.h"
 #include <windows.h>
 
 unsigned int PreTime = 0;

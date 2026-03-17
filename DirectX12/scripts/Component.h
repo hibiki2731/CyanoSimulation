@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include <memory>
 #include <vector>
 #include <concepts>
 #include <algorithm>
 
-//‘O•ûéŒ¾
+//å‰æ–¹å®£è¨€
 class Actor;
 
 class Component
@@ -13,20 +13,20 @@ public:
 	Component(Actor* owner, int updateOrder = 100);
 	virtual ~Component();
 
-	//“ü—Í
+	//å…¥åŠ›
 	virtual void inputComponent() {};
 
-	//XV
+	//æ›´æ–°
 	virtual void updateComponent();
 	int getUpdateOrder() const { return mUpdateOrder; }
 
-	//I—¹ˆ—
+	//çµ‚äº†å‡¦ç†
 	virtual void endProccess() {};
 
 protected:
-	//Š—LƒAƒNƒ^[
+	//æ‰€æœ‰ã‚¢ã‚¯ã‚¿ãƒ¼
 	Actor* mOwner;
-	//XV‡˜
+	//æ›´æ–°é †åº
 	int mUpdateOrder;
 
 };

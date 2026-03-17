@@ -1,4 +1,4 @@
-#include "Math.h"
+﻿#include "Math.h"
 
 XMFLOAT3 normalZ = {0 ,0, 1};
 

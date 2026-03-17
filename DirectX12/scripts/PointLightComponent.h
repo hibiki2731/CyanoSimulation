@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include <DirectXMath.h>
 #include "Component.h"
 #include "Definition.h"
@@ -13,13 +13,13 @@ public:
 	void updateComponent() override;
 	void endProccess() override;
 
-	//ÉQÉbÉ^Å[
+	//„Ç≤„ÉÉ„Çø„Éº
 	XMFLOAT4 getPosition();
 	XMFLOAT4 getColor();
 	bool getActive();
 	float getRange();
 	float getIntensity();
-	//ÉZÉbÉ^Å[
+	//„Çª„ÉÉ„Çø„Éº
 	void setColor(const XMFLOAT4 color);
 	void setActive(const bool state);
 	void setIntensity(const float intensity);

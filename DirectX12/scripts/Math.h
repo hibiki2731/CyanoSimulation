@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <fbxsdk.h>
 #include <DirectXMath.h>
 #include <cmath>

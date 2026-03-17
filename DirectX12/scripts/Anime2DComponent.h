@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "SpriteComponent.h"
 
 class Anime2DComponent :
     public SpriteComponent
 {
 public:
-	Anime2DComponent(Actor* owner, int updateOrder = 100);
+	Anime2DComponent(Actor* owner, float zDepth = 100.0f);
 	~Anime2DComponent() {};
 
 	virtual void create(const std::string filename, int textureNum);
@@ -22,7 +22,7 @@ private:
 	int mTextureIndex;
 	int mTextureNum;
 
-	std::vector<ComPtr<ID3D12Resource>> TextureBufs;
+	std::vector<ID3D12Resource*> mTextureBufs;
 
 };
 

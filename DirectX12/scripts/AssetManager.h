@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <map>
 #include <vector>
 #include <memory>
@@ -9,24 +9,29 @@
 
 struct MeshData {
 	int NumParts;
-	//’¸“_ƒoƒbƒtƒ@
+	//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
 	std::vector<UINT> NumVertices;
 	std::vector<ComPtr<ID3D12Resource>> VertexBuf;
 	std::vector<D3D12_VERTEX_BUFFER_VIEW> VertexBufView;
-	//ƒ}ƒeƒŠƒAƒ‹ƒf[ƒ^
+	//ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿
 	std::vector<XMFLOAT4> Material;
-    std::vector<ComPtr<ID3D12Resource>> TextureBuf;
-	//ƒXƒP[ƒ‹
+    std::vector<std::string> TextureName;
+	//ã‚¹ã‚±ãƒ¼ãƒ«
 	XMFLOAT3 Scale;
 };
 
+struct SpriteData {
+	D3D12_VERTEX_BUFFER_VIEW VertexBufView;
+	D3D12_INDEX_BUFFER_VIEW IndexBufView;
+};
+
 enum class MeshName {
-	ROCK_WALL_SIDE,
 	ROCK_WALL,
 	ROCK_FLOOR,
 	GRASS,
 	SLIME,
 	NURIKABE,
+	COUNT,
 };
 
 class AssetManager
@@ -36,19 +41,23 @@ public:
 	AssetManager(Graphic* graphic);
 	~AssetManager();
 
-	void create(MeshName objectName);
 
 	//getter
-	int getCBEndIndex(int size);//•K—v‚ÈƒTƒCƒY‚ğˆø”‚Éæ‚é
-	int getHeapEndIndex(int size); //•K—v‚ÈƒTƒCƒY‚ğˆø”‚Éæ‚é
+	int getCBEndIndex(int size);//å¿…è¦ãªã‚µã‚¤ã‚ºã‚’å¼•æ•°ã«å–ã‚‹
+	int getHeapEndIndex(int size); //å¿…è¦ãªã‚µã‚¤ã‚ºã‚’å¼•æ•°ã«å–ã‚‹
 	MeshData* getMeshData(MeshName objectName); 
+	SpriteData getSpriteData();
+	XMFLOAT2 createTextureAndGetSize(const std::string& filePath);
+	ID3D12Resource* getShaderResource(const std::string& textureName);
+	UINT getSpriteVerticesSize();
+	UINT getSpriteIndicesSize();
 
 	void deleteMemory(int index, int size);
 	void deleteHeap(int index, int size);
 
 
 private:
-	//‰ğ•ú‚³‚ê‚½ƒƒ‚ƒŠ‚âƒq[ƒv‚ğŠÇ—‚·‚é‚½‚ß‚Ì\‘¢‘Ì
+	//è§£æ”¾ã•ã‚ŒãŸãƒ¡ãƒ¢ãƒªã‚„ãƒ’ãƒ¼ãƒ—ã‚’ç®¡ç†ã™ã‚‹ãŸã‚ã®æ§‹é€ ä½“
 	struct ClearedMemory {
 		int index;
 		int size;
@@ -59,19 +68,29 @@ private:
 		int size;
 	};
 
-	//ƒƒbƒVƒ…ƒf[ƒ^‚ğjson‚©‚ç“Ç‚İ‚Ş‚½‚ß‚Ì\‘¢‘Ì
+	//ãƒ¡ãƒƒã‚·ãƒ¥ãƒ‡ãƒ¼ã‚¿ã‚’jsonã‹ã‚‰èª­ã¿è¾¼ã‚€ãŸã‚ã®æ§‹é€ ä½“
 	struct MeshFileData {
 		std::string filePath;
 		std::vector<float> scale;
 	};
 
-	int mCBEndIndex; //ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚Ìg—pÏ‚İƒƒ‚ƒŠ‚ÌÅŒã”öƒCƒ“ƒfƒbƒNƒX
-	int mHeapEndIndex; //ƒfƒBƒXƒNƒŠƒvƒ^ƒq[ƒv‚ÌÅŒã”öƒCƒ“ƒfƒbƒNƒX
+	int mCBEndIndex; //ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã®ä½¿ç”¨æ¸ˆã¿ãƒ¡ãƒ¢ãƒªã®æœ€å¾Œå°¾ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
+	int mHeapEndIndex; //ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ãƒ’ãƒ¼ãƒ—ã®æœ€å¾Œå°¾ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 
 	Graphic* mGraphic;
 	std::map<MeshName, std::unique_ptr<MeshData>> mLoadData;
-	std::map<std::string, ComPtr<ID3D12Resource>> mTextureData; //ƒeƒNƒXƒ`ƒƒƒf[ƒ^‚ÌƒLƒƒƒbƒVƒ…
-	std::vector<ClearedMemory> mClearedMemory; //‰ğ•ú‚³‚ê‚½ƒƒ‚ƒŠ
-	std::vector<ClearedHeap> mClearedHeap; //‰ğ•ú‚³‚ê‚½ƒƒ‚ƒŠ
+	std::map<std::string, ComPtr<ID3D12Resource>> mTextureData; //ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‡ãƒ¼ã‚¿ã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥
+	std::vector<ClearedMemory> mClearedMemory; //è§£æ”¾ã•ã‚ŒãŸãƒ¡ãƒ¢ãƒª
+	std::vector<ClearedHeap> mClearedHeap; //è§£æ”¾ã•ã‚ŒãŸãƒ¡ãƒ¢ãƒª
+
+	//ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆç”¨
+	ComPtr<ID3D12Resource> mSpriteVertexBuf;
+	D3D12_VERTEX_BUFFER_VIEW mSpriteVertexBufView;
+	ComPtr<ID3D12Resource> mSpriteIndexBuf;
+	D3D12_INDEX_BUFFER_VIEW mSpriteIndexBufView;
+	std::map<std::string, XMFLOAT2> mTextureSizeData;
+
+	void createMesh(MeshName objectName);
+	void createSpriteBuffers();
 };
 

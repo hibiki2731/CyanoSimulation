@@ -1,4 +1,4 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include "Math.h"
 #include "timer.h"
 #include "PointLightComponent.h"
@@ -30,7 +30,7 @@ void PointLightComponent::updateComponent()
 
 void PointLightComponent::endProccess()
 {
-	//Game‚©‚çƒ‰ƒCƒg‚ðíœ
+	//Gameã‹ã‚‰ãƒ©ã‚¤ãƒˆã‚’å‰Šé™¤
 	mOwner->getGame()->removePointLight(this);
 }
 

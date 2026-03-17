@@ -1,8 +1,39 @@
 {
-    "hp" : 100,
-    "power" : 10,
-    "defense" : 3,
-    "moveSpeed" : 5.0,
-    "rotSpeed" : 4.5,
-    "flashDuration" : 0.5
+    "armers": [
+        "NONE",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES",
+        "CLOTHES"
+    ],
+    "defense": 3,
+    "equippedArmerIndex": 0,
+    "equippedWeaponIndex": 0,
+    "explorer": [
+    ],
+    "flashDuration": 0.5,
+    "hp": 70,
+    "inventory": [
+        "POSION"
+    ],
+    "maxhp": 100,
+    "moveSpeed": 5.0,
+    "power": 10,
+    "rotSpeed": 4.5,
+    "weapons": [
+        "NONE",
+        "WOODEN_SORD",
+        "WOODEN_SORD",
+        "WOODEN_SORD",
+        "WOODEN_SORD",
+        "WOODEN_SORD",
+        "WOODEN_SORD",
+        "WOODEN_SORD"
+    ],
+    "actionLimit": 10
 }
