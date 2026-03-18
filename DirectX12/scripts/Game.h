@@ -32,7 +32,7 @@ class SceneManager;
 class TownManager;
 class ItemManager;
 class PlayerManager;
-
+class AudioManager;
 
 class Game {
 public:
@@ -124,6 +124,8 @@ private:
 	//シーンマネージャー
 	std::unique_ptr<SceneManager> mSceneManager;
 
+	//オーディオマネージャー
+	std::unique_ptr<AudioManager> mAudioManager;
 	//ループ内処理
 	void input();
 	void update();

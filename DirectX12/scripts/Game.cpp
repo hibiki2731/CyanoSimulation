@@ -20,6 +20,7 @@
 #include "ItemManager.h"
 #include "json.hpp"
 #include "PlayerManager.h"
+#include "AudioManager.h"
 
 Game::Game(){
 	mUpdatingActors = false;
@@ -106,6 +107,9 @@ void Game::init() {
 
 	//PlayerManager
 	mPlayerManager = std::make_unique<PlayerManager>();
+
+	//AudioManager
+	mAudioManager = std::make_unique<AudioManager>();
 
 }
 
@@ -302,10 +306,6 @@ void Game::input()
 
 #ifdef _DEBUG
 	//デバック用
-	if (GetAsyncKeyState('P')) {
-		auto slime = std::make_unique<Enemy>(this, CharacterType::SLIME, static_cast<float>(MAPTIPSIZE * 5.0f), static_cast<float>(MAPTIPSIZE * 5.0f));
-		addActor(std::move(slime));
-	}
 	if (GetAsyncKeyState('O')) {
 		mMapManager->moveToPlayerTurn();
 	}
@@ -314,6 +314,10 @@ void Game::input()
 	}
 	if (GetAsyncKeyState('H')) {
 		mSceneManager->transitToTown();
+	}
+
+	if (GetAsyncKeyState('P')) {
+		mAudioManager->playBGM("TEST");
 	}
 #endif
 
