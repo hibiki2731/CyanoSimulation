@@ -19,8 +19,6 @@ public:
 private:
 
 	struct SoundData {
-		int currentIndex = 0;
-		int maxIndex = 1;
 		std::vector<IXAudio2SourceVoice*> sourceVoices;
 		std::vector<BYTE> audioData;
 		XAUDIO2_BUFFER buffer;
@@ -36,17 +34,6 @@ private:
 				}
 			}
 		};
-
-		void increase() {
-			currentIndex++;
-			if (currentIndex >= maxIndex) currentIndex = 0;
-		};
-
-		void decrease() {
-			currentIndex--;
-			if (currentIndex < 0) currentIndex = maxIndex - 1;
-		};
-
 	};
 
 	void initXAudio();
@@ -60,6 +47,7 @@ private:
 	HRESULT readChunkData(HANDLE hFile, void* buffer, DWORD bufferSize, DWORD bufferOffset);
 	HRESULT loadWAVFile(const std::string& filePath, SoundData& outputData, int poolSize = 1);
 	HRESULT loadOGGFile(const std::string& filePath, SoundData& outputData, int poolSize = 1);
+	HRESULT loadMP3File(const std::string& filePath, SoundData& outputData, int poolSize = 1);
 
 	DWORD fourccRIFF;
 	DWORD fourccFMT;

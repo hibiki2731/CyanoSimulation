@@ -12,6 +12,9 @@
 #include "json.hpp"
 #include "stb_vorbis.c"
 
+#define MINIMP3_IMPLEMENTATION
+#include "minimp3_ex.h"
+
 AudioManager::AudioManager() {
 	//リトルエンディアンとビッグエンディアンそれぞれに適したfourccに設定
 	if constexpr (std::endian::native == std::endian::little) {
@@ -85,11 +88,12 @@ void AudioManager::loadSoundFiles()
 		//WAVEファイルの場合
 		if (seJson["fileType"] == "wav")
 			loadWAVFile(seJson["filePath"], *soundData, 4);
-		//OGGファイルのばあい
+		//OGGファイルの場合
 		else if (seJson["fileType"] == "ogg")
 			loadOGGFile(seJson["filePath"], *soundData, 4);
-
-		soundData->maxIndex = 4;
+		//MP3ファイルの場合
+		else if (seJson["fileType"] == "mp3")
+			loadMP3File(seJson["filePath"], *soundData, 4);
 		mSoundDataList[seJson["id"]] = std::move(soundData);
 	}
 	//BGMデータを読み込む
@@ -97,11 +101,13 @@ void AudioManager::loadSoundFiles()
 		auto soundData = std::make_unique<SoundData>();
 		//WAVEファイルの場合
 		if (bgmJson["fileType"] == "wav")
-			loadWAVFile(bgmJson["filePath"], *soundData, 4);
-		//OGGファイルのばあい
+			loadWAVFile(bgmJson["filePath"], *soundData, 1);
+		//OGGファイルの場合
 		else if (bgmJson["fileType"] == "ogg")
-			loadOGGFile(bgmJson["filePath"], *soundData, 4);
-		soundData->maxIndex = 1;
+			loadOGGFile(bgmJson["filePath"], *soundData, 1);
+		//MP3ファイルの場合
+		else if (bgmJson["fileType"] == "mp3")
+			loadMP3File(bgmJson["filePath"], *soundData, 1);
 		mSoundDataList[bgmJson["id"]] = std::move(soundData);
 	}
 }
@@ -410,6 +416,7 @@ HRESULT AudioManager::loadOGGFile(const std::string& filePath, SoundData& output
 	buffer.AudioBytes = totalBytes; // 波形データの合計バイト数
     buffer.pAudioData = outputData.audioData.data(); 
 	buffer.Flags = XAUDIO2_END_OF_STREAM; // 最後まで再生する
+	outputData.buffer = std::move(buffer);
 
 	//ソースボイスを作成
 	outputData.sourceVoices.resize(poolSize);
@@ -418,10 +425,60 @@ HRESULT AudioManager::loadOGGFile(const std::string& filePath, SoundData& output
 		if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗\n";
 	}
 
-	outputData.buffer = std::move(buffer);
 
     free(decodedData);
 
 	return S_OK;
+}
+
+HRESULT AudioManager::loadMP3File(const std::string& filePath, SoundData& outputData, int poolSize)
+{
+	mp3dec_t mp3d;
+    mp3dec_file_info_t info;
+
+    //MP3ファイルを一括でPCM(16ビット)にデコードする
+    //成功すると 0 が返り、info 構造体にデータと各種情報が入る
+    if (mp3dec_load(&mp3d, filePath.c_str(), &info, NULL, NULL) != 0) {
+        std::cerr << "MP3のデコードに失敗しました。\n";
+        return S_FALSE;
+    }
+	
+	//全バイト数宇を計算　※info.samplesはstb_vorbisと違い全サンプル数
+    size_t totalBytes = info.samples * sizeof(short); 
+
+    //vectorへコピー
+    const BYTE* pByteData = reinterpret_cast<const BYTE*>(info.buffer);
+    std::vector<BYTE> audioData(pByteData, pByteData + totalBytes);
+	outputData.audioData = std::move(audioData);
+
+
+    //minimp3 が作った元の生ポインタを解放する
+    WAVEFORMATEX waveFormat = {};
+    waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+    waveFormat.nChannels = info.channels;
+    waveFormat.nSamplesPerSec = info.hz;
+    waveFormat.wBitsPerSample = 16;
+    waveFormat.nBlockAlign = (waveFormat.nChannels * waveFormat.wBitsPerSample) / 8;
+    waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+
+    //XAUDIO2_BUFFERを作成
+    XAUDIO2_BUFFER buffer = {};
+    buffer.AudioBytes = outputData.audioData.size();
+    buffer.pAudioData = outputData.audioData.data();
+    buffer.Flags = XAUDIO2_END_OF_STREAM;
+	outputData.buffer = std::move(buffer);
+
+	//ソースボイスを作成	
+	outputData.sourceVoices.resize(poolSize);
+	for (int i = 0; i < poolSize; i++) {
+		HRESULT hr = mXAudio->CreateSourceVoice(&outputData.sourceVoices[i], reinterpret_cast<WAVEFORMATEX*>(&waveFormat));
+		if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗\n";
+	}
+
+    //WAVEFORMATEXを作成
+    free(info.buffer);
+
+	return S_OK;
+
 }
 

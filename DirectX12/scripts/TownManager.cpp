@@ -42,7 +42,7 @@ void Menu::inputMenu() {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
-		mGame->getAudioManager()->playSE("UI_MOVE2");
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 	}		
 }
 
@@ -165,7 +165,10 @@ void TownManager::input()
 
 	if (!mMenuStack.empty()) mMenuStack.top()->inputMenu();
 
-	if (isKeyJustPressed(VK_RETURN)) isSelected = true;
+	if (isKeyJustPressed(VK_RETURN)) {
+		isSelected = true;
+		mGame->getAudioManager()->playSE("UI_ENTER");
+	}
 
 	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
 		popMenu();

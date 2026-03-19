@@ -19,13 +19,18 @@
    "SE": [
       {
          "id": "UI_MOVE1",
-         "fileType": "wav",
-         "filePath": "assets/sounds/SEs/cursor-01.wav"
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/btn03.mp3"
       },
       {
-         "id": "UI_MOVE2",
+         "id": "UI_ENTER",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/btn08.mp3"
+      },
+      {
+         "id": "MAP_FOOTSTEP1",
          "fileType": "wav",
-         "filePath": "assets/sounds/SEs/cursor-02.wav"
+         "filePath": "assets/sounds/SEs/maou_se_sound_footstep01.wav"
       }
    ]
 }
