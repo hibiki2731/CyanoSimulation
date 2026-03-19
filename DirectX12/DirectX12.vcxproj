@@ -215,6 +215,7 @@
     <ClCompile Include="scripts\Actor.cpp" />
     <ClCompile Include="scripts\Anime2DComponent.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
+    <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
@@ -257,6 +258,7 @@
     <ClInclude Include="scripts\Actor.h" />
     <ClInclude Include="scripts\Anime2DComponent.h" />
     <ClInclude Include="scripts\AssetManager.h" />
+    <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
     <ClInclude Include="scripts\Definition.h" />

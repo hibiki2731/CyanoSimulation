@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Grass.h"
 #include "MessageWindow.h"
+#include "AudioManager.h"
 #include "SceneManager.h"
 #include <fstream>
 #include <cassert>
@@ -62,6 +63,7 @@ void MapManager::sceneProcess() {
 	//マップシーンに切り替わった際の処理
 	if (!isMap && mSceneManager->getCurrentScene() == SceneType::MAP) {
 		isMap = true;
+		mGame->getAudioManager()->playBGM("BGM_DUNGEON2");
 	}
 
 	//マップシーンから他のシーンに切り替わった際の処理

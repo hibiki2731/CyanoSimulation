@@ -1,4 +1,5 @@
 ﻿#include "ExplorerMenu.h"
+#include "AudioManager.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
@@ -29,12 +30,16 @@ void ExplorerMenu::craftExplorer(int index)
 	for (int i = 0; i < explorerData.costResourceID.size(); i++) {
 		int possessedResource = mItemManager->getResourceNum(explorerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
-		if (explorerData.price[i] > possessedResource) return;
+		if (explorerData.price[i] > possessedResource) {
+			mGame->getAudioManager()->playSE("UI_CANCEL");
+			return;
+		}
 
 		//所持リソースを消費リソース分減らす
 		mItemManager->subResource(explorerData.costResourceID[i], explorerData.price[i]);
 	}
 
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addExplorer(explorerData.id);
 

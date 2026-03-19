@@ -1,4 +1,5 @@
 ﻿#include "ForgeMenu.h"
+#include "AudioManager.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
@@ -33,11 +34,16 @@ void ForgeMenu::craftWeapons(int index)
 	for (int i = 0; i < weaponData.costResourceID.size(); i++) {
 		int possessedResource = mItemManager->getResourceNum(weaponData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
-		if (weaponData.price[i] > possessedResource) return;
+		if (weaponData.price[i] > possessedResource) {
+			mGame->getAudioManager()->playSE("UI_CANCEL");
+			return;
+		}
 
 		//所持リソースを消費リソース分減らす
 		mItemManager->subResource(weaponData.costResourceID[i], weaponData.price[i]);
 	}
+
+	mGame->getAudioManager()->playSE("UI_ENTER");
 
 	//インベントリにアイテムを追加
 	mPlayerManager->addWeapon(weaponData.id);
@@ -50,12 +56,16 @@ void ForgeMenu::craftArmer(int index)
 	for (int i = 0; i < armerData.costResourceID.size(); i++) {
 		int possessedResource = mItemManager->getResourceNum(armerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
-		if (armerData.price[i] > possessedResource) return;
+		if (armerData.price[i] > possessedResource) {
+			mGame->getAudioManager()->playSE("UI_CANCEL");
+			return;
+		}
 
 		//所持リソースを消費リソース分減らす
 		mItemManager->subResource(armerData.costResourceID[i], armerData.price[i]);
 	}
 
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addArmer(armerData.id);
 }

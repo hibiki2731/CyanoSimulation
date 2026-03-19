@@ -18,6 +18,7 @@
 #include "ForgeMenu.h"
 #include "ExplorerMenu.h"
 #include "StatusMenu.h"
+#include "AudioManager.h"
 
 Menu::Menu(Game* game, std::string windowName, float zDepth) : Actor(game)
 {
@@ -34,12 +35,14 @@ void Menu::inputMenu() {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 	}		
 }
 
@@ -110,6 +113,7 @@ MainMenu::MainMenu(Game* game, float zDepth) : Menu(game, "MainMenu", zDepth)
 
 //各種メニューのupdate
 void MainMenu::selectedAct() {
+	mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch (mSelectedIndex) {
 	case 0: {
 		auto inn = std::make_unique<InnMenu>(mGame, 97.0f);
@@ -162,16 +166,20 @@ void TownManager::input()
 
 	if (!mMenuStack.empty()) mMenuStack.top()->inputMenu();
 
-	if (isKeyJustPressed(VK_RETURN)) isSelected = true;
+	if (isKeyJustPressed(VK_RETURN)) {
+		isSelected = true;
+	}
 
 	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
 		popMenu();
+		mGame->getAudioManager()->playSE("UI_WINDOW_CLOSE");
 	}
 
 	if (isKeyJustPressed('E') && !isStatusMenu) {
 		isStatusMenu = true;
 		auto status = std::make_unique<StatusMenu>(mGame, 50.0f);
 		mGame->addActor(std::move(status));
+		mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	}
 }
 
@@ -190,6 +198,8 @@ void TownManager::update()
 
 		auto playerWindow = std::make_unique<MessageWindow>(mGame);
 		mGame->addActor(std::move(playerWindow));
+
+		mGame->getAudioManager()->playBGM("BGM_TOWN");
 	}
 
 	//シーンがTOWNの際の処理

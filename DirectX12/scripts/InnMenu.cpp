@@ -6,6 +6,7 @@
 #include <fstream>
 #include <filesystem>
 #include "json.hpp"
+#include "AudioManager.h"
 
 InnMenu::InnMenu(Game* game, float zDepth) : Menu(game, "InnMenu", zDepth)
 {
@@ -14,6 +15,7 @@ InnMenu::InnMenu(Game* game, float zDepth) : Menu(game, "InnMenu", zDepth)
 
 void InnMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	switch (mSelectedIndex) {
 	case 0:
 		stay();

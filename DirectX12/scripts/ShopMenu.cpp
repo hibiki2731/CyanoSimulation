@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
+#include "AudioManager.h"
 
 ShopMenu::ShopMenu(Game* game, float zDepth) : Menu(game, "ShopMenu", zDepth)
 {
@@ -28,12 +29,16 @@ void ShopMenu::buyItem(int index) {
 	for (int i = 0; i < itemData.costResourceID.size(); i++) {
 		int possessedResource = mItemManager->getResourceNum(itemData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
-		if (itemData.price[i] > possessedResource) return;
+		if (itemData.price[i] > possessedResource) {
+			mGame->getAudioManager()->playSE("UI_CANCEL");
+			return;
+		}
 
 		//所持リソースを消費リソース分減らす
 		mItemManager->subResource(itemData.costResourceID[i], itemData.price[i]);
 	}
 
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addInventory(itemData.id);
 }

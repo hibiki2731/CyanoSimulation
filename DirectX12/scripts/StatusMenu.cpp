@@ -8,6 +8,7 @@
 #include "TextComponent.h"
 #include "MyUtility.h"
 #include "SpriteComponent.h"
+#include "AudioManager.h"
 
 EquipWeaponMenu::EquipWeaponMenu(Game* game, float zDepth) : Menu(game, "EquipWeaponMenu", zDepth)
 {
@@ -39,6 +40,7 @@ EquipWeaponMenu::EquipWeaponMenu(Game* game, float zDepth) : Menu(game, "EquipWe
 
 void EquipWeaponMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipWeapon(mSelectedIndex);
 }
 
@@ -63,6 +65,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -70,6 +73,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -122,6 +126,7 @@ EquipArmerMenu::EquipArmerMenu(Game* game, float zDepth) : Menu(game, "EquipArme
 
 void EquipArmerMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipArmer(mSelectedIndex);
 }
 
@@ -145,12 +150,14 @@ void EquipArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 		mSelectedIndex++;
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -181,6 +188,7 @@ StatusMenu::~StatusMenu()
 
 void StatusMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch(mSelectedIndex) {
 	case 0: {
 		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mGame, 48.0f);
