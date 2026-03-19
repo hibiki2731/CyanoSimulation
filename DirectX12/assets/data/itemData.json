@@ -27,6 +27,7 @@
     ],
     "Explorer": [
         {
+            "category": "ACTION_LIMIT",
             "costResourceID": [
                 "GRASS"
             ],
@@ -35,7 +36,6 @@
             "price": [
                 25
             ],
-            "category": "ACTION_LIMIT",
             "value": 10
         }
     ],

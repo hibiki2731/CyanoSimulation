@@ -292,6 +292,11 @@ PlayerManager* Game::getPlayerManager()
 	return mPlayerManager.get();
 }
 
+AudioManager* Game::getAudioManager()
+{
+	return mAudioManager.get();
+}
+
 void Game::input()
 {
 	updateInput();
@@ -317,7 +322,7 @@ void Game::input()
 	}
 
 	if (GetAsyncKeyState('P')) {
-		mAudioManager->playBGM("TEST");
+		mAudioManager->playBGM("UI_MOVE");
 	}
 #endif
 

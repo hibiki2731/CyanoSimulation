@@ -13,37 +13,53 @@ public:
 	AudioManager();
 	~AudioManager();
 
-	void playBGM(std::string soundID);
-	void playSE(std::string soundID);
+	void playBGM(const std::string& soundID);
+	void playSE(const std::string& soundID);
+
 private:
+
 	struct SoundData {
+		int currentIndex = 0;
+		int maxIndex = 1;
+		std::vector<IXAudio2SourceVoice*> sourceVoices;
 		std::vector<BYTE> audioData;
-		WAVEFORMATEXTENSIBLE waveFormat;
-	};
+		XAUDIO2_BUFFER buffer;
 
-	struct SoundInstance {
-		IXAudio2SourceVoice* mSourceVoice = nullptr;
-		bool isLoop = false;
+	public:
+		~SoundData() {
+			for (auto voice : sourceVoices) {
+				if (voice) {
+					voice->Stop(0);
+					voice->FlushSourceBuffers();
+					voice->DestroyVoice();
+					voice = nullptr;
+				}
+			}
+		};
 
-		~SoundInstance() {
-			if (mSourceVoice) {
-				mSourceVoice->Stop();
-				mSourceVoice->DestroyVoice();
-		        mSourceVoice = nullptr;
-		    }
-		}
+		void increase() {
+			currentIndex++;
+			if (currentIndex >= maxIndex) currentIndex = 0;
+		};
+
+		void decrease() {
+			currentIndex--;
+			if (currentIndex < 0) currentIndex = maxIndex - 1;
+		};
+
 	};
 
 	void initXAudio();
 	void loadSoundFiles();
-	void stopBGM();
-	void stopAllSounds();
+	void pauseBGM();
+	void pauseAllSounds();
 	void finishBGM();
 	void finishAllSounds();
 	void clearFinishedSounds();
 	HRESULT findChunk(HANDLE hFile, DWORD targetFourcc, DWORD& chunkSize, DWORD& chunkDataPosition); //FOURCCからそのチャンクのデータサイズとデータの位置を探す。
 	HRESULT readChunkData(HANDLE hFile, void* buffer, DWORD bufferSize, DWORD bufferOffset);
-	HRESULT loadWAVFile(const std::string& filePath, SoundData& outputData);
+	HRESULT loadWAVFile(const std::string& filePath, SoundData& outputData, int poolSize = 1);
+	HRESULT loadOGGFile(const std::string& filePath, SoundData& outputData, int poolSize = 1);
 
 	DWORD fourccRIFF;
 	DWORD fourccFMT;
@@ -52,9 +68,9 @@ private:
 
 	ComPtr<IXAudio2> mXAudio;
 	IXAudio2MasteringVoice* mMasteringVoice;
-	std::vector<std::unique_ptr<SoundInstance>> mSoundInstances;
-	std::unordered_map<std::string, SoundData> mSoundDataList;
-	SoundInstance* mCurrentBGM;
+	std::vector<IXAudio2SourceVoice*> mNowPlayingVoicess;
+	std::unordered_map<std::string, std::unique_ptr<SoundData>> mSoundDataList;
+	IXAudio2SourceVoice* mCurrentBGM;
 
 };
 

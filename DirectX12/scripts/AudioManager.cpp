@@ -10,6 +10,7 @@
 #include "AudioManager.h"
 #include "MyUtility.h"
 #include "json.hpp"
+#include "stb_vorbis.c"
 
 AudioManager::AudioManager() {
 	//リトルエンディアンとビッグエンディアンそれぞれに適したfourccに設定
@@ -33,7 +34,27 @@ AudioManager::AudioManager() {
 
 AudioManager::~AudioManager()
 {
-	mSoundInstances.clear();
+	//今後ハードウェアに送られる音声のボリュームを0にする
+	if (mMasteringVoice) mMasteringVoice->SetVolume(0.0f);
+
+	//ソースボイスの再生を停止する
+	finishAllSounds();
+
+	//SoundData内のデストラクタで、ソースボイスが破棄される
+	mSoundDataList.clear();
+
+	//マスタリングボイスを止める
+	if (mMasteringVoice) {
+		mMasteringVoice->DestroyVoice();
+		mMasteringVoice = nullptr;
+	}
+	//XAudio2のエンジンを止める
+	if (mXAudio) {
+		mXAudio->StopEngine();
+	}
+
+	//すでにハードウェアに送られた音声が再生されるのを待つ
+	Sleep(50);
 }
 
 void AudioManager::initXAudio()
@@ -58,140 +79,140 @@ void AudioManager::loadSoundFiles()
 	nlohmann::json json;
 	file >> json;
 
-	//jsonファイルに列挙したサウンドデータを読み込む
-	for (auto soundJson : json) {
-		SoundData soundData;
-		loadWAVFile(soundJson["filePath"], soundData);
-		mSoundDataList[soundJson["id"]] = std::move(soundData);
+	//SEデータを読み込む
+	for (const auto& seJson : json["SE"]) {
+		auto soundData = std::make_unique<SoundData>();
+		//WAVEファイルの場合
+		if (seJson["fileType"] == "wav")
+			loadWAVFile(seJson["filePath"], *soundData, 4);
+		//OGGファイルのばあい
+		else if (seJson["fileType"] == "ogg")
+			loadOGGFile(seJson["filePath"], *soundData, 4);
+
+		soundData->maxIndex = 4;
+		mSoundDataList[seJson["id"]] = std::move(soundData);
+	}
+	//BGMデータを読み込む
+	for (const auto& bgmJson : json["BGM"]) {
+		auto soundData = std::make_unique<SoundData>();
+		//WAVEファイルの場合
+		if (bgmJson["fileType"] == "wav")
+			loadWAVFile(bgmJson["filePath"], *soundData, 4);
+		//OGGファイルのばあい
+		else if (bgmJson["fileType"] == "ogg")
+			loadOGGFile(bgmJson["filePath"], *soundData, 4);
+		soundData->maxIndex = 1;
+		mSoundDataList[bgmJson["id"]] = std::move(soundData);
 	}
 }
 
-void AudioManager::playBGM(std::string soundID)
+void AudioManager::playBGM(const std::string& soundID)
 {
-	finishBGM();
-
-	//サウンドデータを取得
-	auto iter = mSoundDataList.find(soundID);
-	if (iter == mSoundDataList.end()) return;
-	SoundData& soundData = iter->second;
-
-	//バッファーを作成
-	XAUDIO2_BUFFER buffer = {};
-	buffer.AudioBytes = static_cast<UINT32>(soundData.audioData.size());	//バッファーのバイト数
-	buffer.pAudioData = soundData.audioData.data();							//オーディオデータのポインタ
-	buffer.Flags = XAUDIO2_END_OF_STREAM;									//このバッファの後に他のバッファが来ない
-	buffer.LoopCount = XAUDIO2_LOOP_INFINITE;								//無限ループ
-
-	auto soundInstance = std::make_unique<SoundInstance>();
-	HRESULT hr = mXAudio->CreateSourceVoice(&soundInstance->mSourceVoice, reinterpret_cast<WAVEFORMATEX*>(&soundData.waveFormat));
-	if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗/n";
-
-	soundInstance->mSourceVoice->SetVolume(1.0f);	//元音源と同じ音量
-	hr = soundInstance->mSourceVoice->SubmitSourceBuffer(&buffer);
-	if (FAILED(hr)) std::cerr << "バッファの送信失敗/n";
-
-	soundInstance->mSourceVoice->Start(0);
-
-	soundInstance->isLoop = true;
-	mCurrentBGM = soundInstance.get();
-	mSoundInstances.emplace_back(std::move(soundInstance));
-}
-
-void AudioManager::playSE(std::string soundID)
-{
-	//再生が終了したボイスをクリアする
+	//再生が終了したボイスを再生中配列から除去する
 	clearFinishedSounds();
 
 	//サウンドデータを取得
 	auto iter = mSoundDataList.find(soundID);
 	if (iter == mSoundDataList.end()) return;
-	SoundData& soundData = iter->second;
+	SoundData& soundData = *iter->second;
 
-	//バッファーを作成
-	XAUDIO2_BUFFER buffer = {};
-	buffer.AudioBytes = static_cast<UINT32>(soundData.audioData.size());	//バッファーのバイト数
-	buffer.pAudioData = soundData.audioData.data();							//オーディオデータのポインタ
-	buffer.Flags = XAUDIO2_END_OF_STREAM;									//このバッファの後に他のバッファが来ない
+	//BGMを止める
+	finishBGM();
 
-	auto soundInstance = std::make_unique<SoundInstance>();
-	HRESULT hr = mXAudio->CreateSourceVoice(&soundInstance->mSourceVoice, reinterpret_cast<WAVEFORMATEX*>(&soundData.waveFormat));
-	if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗/n";
+	soundData.sourceVoices[0]->SetVolume(1.0f);	//元音源と同じ音量
 
-	soundInstance->mSourceVoice->SetVolume(1.0f);	//元音源と同じ音量
-	hr = soundInstance->mSourceVoice->SubmitSourceBuffer(&buffer);
-	if (FAILED(hr)) std::cerr << "バッファの送信失敗/n";
+	//バッファの設定
+	soundData.buffer.LoopCount = XAUDIO2_LOOP_INFINITE;	//ループ再生
 
-	soundInstance->mSourceVoice->Start(0);
+	HRESULT hr = soundData.sourceVoices[0]->SubmitSourceBuffer(&soundData.buffer);
+	if (FAILED(hr)) std::cerr << "バッファの送信失敗\n";
+	
+	//再生開始
+	soundData.sourceVoices[0]->Start(0);
 
-	mSoundInstances.emplace_back(std::move(soundInstance));
+	//再生中のBGMに設定
+	mCurrentBGM = soundData.sourceVoices[0];
+}
+
+void AudioManager::playSE(const std::string& soundID)
+{
+	//再生が終了したボイスを再生中配列から除去する
+	clearFinishedSounds();
+
+	//サウンドデータを取得
+	auto iter = mSoundDataList.find(soundID);
+	if (iter == mSoundDataList.end()) return;
+	SoundData& soundData = *iter->second;
+	
+	for (auto voice : soundData.sourceVoices) {
+
+		XAUDIO2_VOICE_STATE state;
+		voice->GetState(&state);
+		if (state.BuffersQueued != 0) continue;
+		HRESULT hr = voice->SubmitSourceBuffer(&soundData.buffer);
+		if (FAILED(hr)) std::cerr << "バッファの送信失敗\n";
+
+		//再生開始
+		voice->Start(0);
+
+		//再生中ボイス配列に追加
+		mNowPlayingVoicess.emplace_back(voice);
+	}
+
+	//全てのボイスが再生中の場合
+	soundData.sourceVoices[0]->Stop(0);
+	soundData.sourceVoices[0]->FlushSourceBuffers();
+	soundData.sourceVoices[0]->SubmitSourceBuffer(&soundData.buffer);
+	soundData.sourceVoices[0]->Start(0);
 
 }
 
-void AudioManager::stopBGM()
+void AudioManager::pauseBGM()
 {
 	if (mCurrentBGM) {
-		mCurrentBGM->mSourceVoice->Stop();
+		mCurrentBGM->Stop();
 	}
 }
 
-void AudioManager::stopAllSounds()
+void AudioManager::pauseAllSounds()
 {
-	for (auto& soundInst : mSoundInstances) {
-		soundInst->mSourceVoice->Stop();
+	for (auto voice : mNowPlayingVoicess) {
+		voice->Stop();
 	}
+	pauseBGM();
 }
 
 void AudioManager::finishBGM()
 {
 	if (mCurrentBGM) {
-		mCurrentBGM->mSourceVoice->Stop();
-		mCurrentBGM->mSourceVoice->DestroyVoice();
-		mCurrentBGM->mSourceVoice = nullptr;
-		auto iter = std::find_if(mSoundInstances.begin(), mSoundInstances.end(),
-			[this](const std::unique_ptr<SoundInstance>& ptr) {
-				return ptr.get() == this->mCurrentBGM;
-			});
-		std::iter_swap(iter, mSoundInstances.end() - 1);
-		mSoundInstances.pop_back();
+		mCurrentBGM->Stop();
+		mCurrentBGM->FlushSourceBuffers();
+		mCurrentBGM = nullptr;
 	}
 }
 
 void AudioManager::finishAllSounds()
 {
-	for (auto& soundInst : mSoundInstances) {
-		soundInst->mSourceVoice->Stop();
-		soundInst->mSourceVoice->DestroyVoice();
-		soundInst->mSourceVoice = nullptr;
+	for (auto voice : mNowPlayingVoicess) {
+		voice->Stop();
+		voice->FlushSourceBuffers();
 	}
-	mSoundInstances.clear();
+	mNowPlayingVoicess.clear();
 
+	finishBGM();
 }
 
 void AudioManager::clearFinishedSounds()
 {
-	std::vector<std::unique_ptr<SoundInstance>> deleteInst;
-	//再生が終了したボイスを一次配列に追加
-	for (auto& soundInst : mSoundInstances) {
-		//ソースボイスがnullptrの場合、もしくはループ再生している音源はスルー
-		if (!soundInst->mSourceVoice || soundInst->isLoop) continue;
-		XAUDIO2_VOICE_STATE state;
-		soundInst->mSourceVoice->GetState(&state);
+	//再生が終了したボイスを配列から除去
+	std::erase_if(mNowPlayingVoicess,
+		[](IXAudio2SourceVoice*& voice) {
+			if (!voice) return false;
+			XAUDIO2_VOICE_STATE state;
+			voice->GetState(&state);
 
-		if (state.BuffersQueued == 0) {
-			soundInst->mSourceVoice->DestroyVoice();
-			soundInst->mSourceVoice = nullptr;
-			deleteInst.emplace_back(std::move(soundInst));
-		}
-	}
-
-	//元配列に残ったnullptrを削除
-	std::erase_if(mSoundInstances, [](const std::unique_ptr<SoundInstance>& sound) {
-		return sound == nullptr;
-	});
-
-
-
-
+			return state.BuffersQueued == 0;
+		});
 }
 
 HRESULT AudioManager::findChunk(HANDLE hFile, DWORD targetFourcc, DWORD& chunkDataSize, DWORD& chunkDataPosition)
@@ -296,7 +317,7 @@ HRESULT AudioManager::readChunkData(HANDLE hFile, void* buffer, DWORD bufferSize
     return hr;
 }
 
-HRESULT AudioManager::loadWAVFile(const std::string& filePath, SoundData& outputData)
+HRESULT AudioManager::loadWAVFile(const std::string& filePath, SoundData& outputData, int poolSize)
 {
 	const std::wstring src = Utility::stringToWString(filePath);
 	//wavファイルを開く
@@ -327,15 +348,79 @@ HRESULT AudioManager::loadWAVFile(const std::string& filePath, SoundData& output
 	if (filetype != fourccWAVE)
 		return S_FALSE;
 
+	WAVEFORMATEXTENSIBLE waveFormat;
 	//'fmt'チャンクからWAVFORMATEXTENSIBLEのデータを取得
 	findChunk(hFile, fourccFMT, chunkSize, chunkPosition);
-	readChunkData(hFile, &outputData.waveFormat, chunkSize, chunkPosition );
+	readChunkData(hFile, &waveFormat, chunkSize, chunkPosition );
 
-	
 	//'data'チャンクから内容をバッファーに書き込む
 	findChunk(hFile, fourccDATA, chunkSize, chunkPosition);
 	outputData.audioData.resize(static_cast<size_t>(chunkSize));
 	readChunkData(hFile, static_cast<void*>(outputData.audioData.data()), chunkSize, chunkPosition);
+
+	//バッファの作成
+	XAUDIO2_BUFFER buffer = {};
+	buffer.AudioBytes = static_cast<UINT32>(outputData.audioData.size());	//バッファーのバイト数
+	buffer.Flags = XAUDIO2_END_OF_STREAM;									//このバッファの後に他のバッファが来ない
+	buffer.pAudioData = outputData.audioData.data();
+	outputData.buffer = std::move(buffer);
+
+	//ソースボイスを作成
+	outputData.sourceVoices.resize(poolSize);
+	for (int i = 0; i < poolSize; i++) {
+		HRESULT hr = mXAudio->CreateSourceVoice(&outputData.sourceVoices[i], reinterpret_cast<WAVEFORMATEX*>(&waveFormat));
+		if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗\n";
+	}
+
+	return S_OK;
+}
+
+HRESULT AudioManager::loadOGGFile(const std::string& filePath, SoundData& outputData, int poolSize)
+{
+	int channels = 0;
+    int sampleRate = 0;
+    short* decodedData = nullptr; // 16ビット(2バイト)のPCMデータが入るポインタ
+
+    //Oggファイルを丸ごとPCM(16bit)にデコードする
+	//1チャネル当たりのサンプル数
+    int sampleCount = stb_vorbis_decode_filename(filePath.c_str(), &channels, &sampleRate, &decodedData);
+
+    if (sampleCount < 0) {
+        std::cerr << "Oggのデコードに失敗\n";
+        return S_FALSE;
+    }
+
+	//2バイトのデータを1バイトの配列に変換
+	size_t totalBytes = sampleCount * channels * sizeof(short);
+	const BYTE* pByteData = reinterpret_cast<const BYTE*>(decodedData);
+	std::vector<BYTE> audioData(pByteData, pByteData + totalBytes);
+	outputData.audioData = std::move(audioData);
+
+	//WAVEFORMATEXを作成
+    WAVEFORMATEX waveFormat = {};
+    waveFormat.wFormatTag = WAVE_FORMAT_PCM; 
+	waveFormat.nChannels = channels;
+    waveFormat.nSamplesPerSec = sampleRate;
+    waveFormat.wBitsPerSample = 16; // stb_vorbis は16ビット(short)でデータを出力
+    waveFormat.nBlockAlign = (waveFormat.nChannels * waveFormat.wBitsPerSample) / 8;
+    waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+
+    //XAUDIO2_BUFFERを作成
+    XAUDIO2_BUFFER buffer = {};
+	buffer.AudioBytes = totalBytes; // 波形データの合計バイト数
+    buffer.pAudioData = outputData.audioData.data(); 
+	buffer.Flags = XAUDIO2_END_OF_STREAM; // 最後まで再生する
+
+	//ソースボイスを作成
+	outputData.sourceVoices.resize(poolSize);
+	for (int i = 0; i < poolSize; i++) {
+		HRESULT hr = mXAudio->CreateSourceVoice(&outputData.sourceVoices[i], reinterpret_cast<WAVEFORMATEX*>(&waveFormat));
+		if (FAILED(hr)) std::cerr << "ソースボイスの作成に失敗\n";
+	}
+
+	outputData.buffer = std::move(buffer);
+
+    free(decodedData);
 
 	return S_OK;
 }

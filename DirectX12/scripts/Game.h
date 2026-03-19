@@ -83,6 +83,7 @@ public:
 	SceneManager* getSceneManager();
 	TownManager* getTownManager();
 	PlayerManager* getPlayerManager();
+	AudioManager* getAudioManager();
 
 private:
 

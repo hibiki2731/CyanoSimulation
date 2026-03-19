@@ -18,6 +18,7 @@
 #include "ForgeMenu.h"
 #include "ExplorerMenu.h"
 #include "StatusMenu.h"
+#include "AudioManager.h"
 
 Menu::Menu(Game* game, std::string windowName, float zDepth) : Actor(game)
 {
@@ -34,12 +35,14 @@ void Menu::inputMenu() {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
+		mGame->getAudioManager()->playSE("UI_MOVE1");
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
+		mGame->getAudioManager()->playSE("UI_MOVE2");
 	}		
 }
 
@@ -190,6 +193,8 @@ void TownManager::update()
 
 		auto playerWindow = std::make_unique<MessageWindow>(mGame);
 		mGame->addActor(std::move(playerWindow));
+
+		mGame->getAudioManager()->playBGM("BGM_TOWN");
 	}
 
 	//シーンがTOWNの際の処理

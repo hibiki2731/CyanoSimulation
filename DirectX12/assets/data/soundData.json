@@ -1,6 +1,31 @@
-[
- {
-    "id": "TEST",
-    "filePath": "assets/sounds/SEs/13 Fireworks_powerful explosions_multiples in a row_near.wav"
- }
-]
+{
+   "BGM": [
+      {
+         "id": "BGM_TOWN",
+         "fileType": "ogg",
+         "filePath": "assets/sounds/BGMs/townBGM.ogg"
+      },
+      {
+         "id": "BGM_DUNGEON1",
+         "fileType": "ogg",
+         "filePath": "assets/sounds/BGMs/dungeon_prepare.ogg"
+      },
+      {
+         "id": "BGM_DUNGEON2",
+         "fileType": "ogg",
+         "filePath": "assets/sounds/BGMs/dungeon_dangerous.ogg"
+      }
+   ],
+   "SE": [
+      {
+         "id": "UI_MOVE1",
+         "fileType": "wav",
+         "filePath": "assets/sounds/SEs/cursor-01.wav"
+      },
+      {
+         "id": "UI_MOVE2",
+         "fileType": "wav",
+         "filePath": "assets/sounds/SEs/cursor-02.wav"
+      }
+   ]
+}
