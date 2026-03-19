@@ -20,12 +20,30 @@
       {
          "id": "UI_MOVE1",
          "fileType": "mp3",
-         "filePath": "assets/sounds/SEs/btn03.mp3"
+         "filePath": "assets/sounds/SEs/btn03.mp3",
+         "poolSize": 4
       },
       {
          "id": "UI_ENTER",
          "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/btn06.mp3",
+         "poolSize": 4
+      },
+      {
+         "id": "UI_CANCEL",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/cncl03.mp3",
+         "poolSize": 4
+      },
+      {
+         "id": "UI_WINDOW_OPEN",
+         "fileType": "mp3",
          "filePath": "assets/sounds/SEs/btn08.mp3"
+      },
+      {
+         "id": "UI_WINDOW_CLOSE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/btn12.mp3"
       },
       {
          "id": "MAP_FOOTSTEP1",

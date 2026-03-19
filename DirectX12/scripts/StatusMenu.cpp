@@ -40,6 +40,7 @@ EquipWeaponMenu::EquipWeaponMenu(Game* game, float zDepth) : Menu(game, "EquipWe
 
 void EquipWeaponMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipWeapon(mSelectedIndex);
 }
 
@@ -125,6 +126,7 @@ EquipArmerMenu::EquipArmerMenu(Game* game, float zDepth) : Menu(game, "EquipArme
 
 void EquipArmerMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipArmer(mSelectedIndex);
 }
 
@@ -186,6 +188,7 @@ StatusMenu::~StatusMenu()
 
 void StatusMenu::selectedAct()
 {
+	mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch(mSelectedIndex) {
 	case 0: {
 		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mGame, 48.0f);

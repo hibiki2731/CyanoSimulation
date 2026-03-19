@@ -16,6 +16,7 @@
 #include "ItemManager.h"
 #include "input.h"
 #include "PlayerManager.h"
+#include "AudioManager.h"
 
 Player::Player(Game* game, float x, float y) : Actor(game)
 {
@@ -304,6 +305,7 @@ void Player::move(Direction direction)
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
 	isMoving = true;
+	mGame->getAudioManager()->playSE("MAP_FOOTSTEP1");
 	turnEnd();
 
 }	

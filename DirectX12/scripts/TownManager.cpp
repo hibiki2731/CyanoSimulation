@@ -113,6 +113,7 @@ MainMenu::MainMenu(Game* game, float zDepth) : Menu(game, "MainMenu", zDepth)
 
 //各種メニューのupdate
 void MainMenu::selectedAct() {
+	mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch (mSelectedIndex) {
 	case 0: {
 		auto inn = std::make_unique<InnMenu>(mGame, 97.0f);
@@ -167,17 +168,18 @@ void TownManager::input()
 
 	if (isKeyJustPressed(VK_RETURN)) {
 		isSelected = true;
-		mGame->getAudioManager()->playSE("UI_ENTER");
 	}
 
 	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
 		popMenu();
+		mGame->getAudioManager()->playSE("UI_WINDOW_CLOSE");
 	}
 
 	if (isKeyJustPressed('E') && !isStatusMenu) {
 		isStatusMenu = true;
 		auto status = std::make_unique<StatusMenu>(mGame, 50.0f);
 		mGame->addActor(std::move(status));
+		mGame->getAudioManager()->playSE("UI_WINDOW_OPEN");
 	}
 }
 

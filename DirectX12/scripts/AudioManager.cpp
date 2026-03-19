@@ -85,15 +85,16 @@ void AudioManager::loadSoundFiles()
 	//SEデータを読み込む
 	for (const auto& seJson : json["SE"]) {
 		auto soundData = std::make_unique<SoundData>();
+		int poolSize = seJson.value("poolSize", 4);
 		//WAVEファイルの場合
 		if (seJson["fileType"] == "wav")
-			loadWAVFile(seJson["filePath"], *soundData, 4);
+			loadWAVFile(seJson["filePath"], *soundData, poolSize);
 		//OGGファイルの場合
 		else if (seJson["fileType"] == "ogg")
-			loadOGGFile(seJson["filePath"], *soundData, 4);
+			loadOGGFile(seJson["filePath"], *soundData, poolSize);
 		//MP3ファイルの場合
 		else if (seJson["fileType"] == "mp3")
-			loadMP3File(seJson["filePath"], *soundData, 4);
+			loadMP3File(seJson["filePath"], *soundData, poolSize);
 		mSoundDataList[seJson["id"]] = std::move(soundData);
 	}
 	//BGMデータを読み込む
@@ -163,6 +164,7 @@ void AudioManager::playSE(const std::string& soundID)
 
 		//再生中ボイス配列に追加
 		mNowPlayingVoicess.emplace_back(voice);
+		break;
 	}
 
 	//全てのボイスが再生中の場合
