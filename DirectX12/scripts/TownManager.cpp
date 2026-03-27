@@ -147,7 +147,7 @@ BackGround::BackGround(Game* game) : Actor(game)
 	auto window = std::make_unique<SpriteComponent>(this);
 	window->create("assets\\picture\\town.png");
 	window->setBordarSize(0.0f);
-	window->setSpriteSize(XMFLOAT2(game->getGraphic()->getClientWidth(), game->getGraphic()->getClientHeight()));
+	window->setSpriteSize(XMFLOAT2(Graphic::ClientWidth, Graphic::ClientHeight));
 	addComponent(std::move(window));
 }
 

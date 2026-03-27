@@ -27,7 +27,7 @@ void MeshComponent::endProccess()
 	mOwner->getGame()->getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
 }
 
-void MeshComponent::create(MeshName objectName)
+void MeshComponent::create(const std::string& objectName)
 {	
 
 	//メッシュデータの取得

@@ -11,6 +11,13 @@ extern XMFLOAT3 normalZ;
 XMFLOAT3 operator+(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator-(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator*(const XMFLOAT3& v1, const float& val);
+XMFLOAT3 operator/(const XMFLOAT3& v1, const float& val);
+
+XMFLOAT2 operator+(const XMFLOAT2& v1, const XMFLOAT2& v2);
+XMFLOAT2 operator-(const XMFLOAT2& v1, const XMFLOAT2& v2);
+XMFLOAT2 operator*(const XMFLOAT2& v1, const float& val);
+XMFLOAT2 operator/(const XMFLOAT2& v1, const float& val);
+
 
 class Math {
 public:

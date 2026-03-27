@@ -1369,6 +1369,8 @@ void Graphic::moveToNextFrame()
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
 
+	//遅延削除を行う
+	mTrashQueue[nextBufIdx].clear();
 
 	//コマンドアロケータをリセット
 	Hr = mCommandAllocator[nextBufIdx]->Reset();
@@ -1423,6 +1425,11 @@ void Graphic::waitGPU()
 	}
 }
 
+void Graphic::delayRelease(ComPtr<IUnknown> resource)
+{
+	mTrashQueue[BackBufIdx].emplace_back(resource);
+}
+
 float Graphic::getAspect()
 {
 	return Aspect;
@@ -1451,16 +1458,6 @@ ID3D12CommandAllocator* Graphic::getCommandAllocator()
 ID3D12Device* Graphic::getDevice()
 {
 	return Device.Get();
-}
-
-float Graphic::getClientWidth()
-{
-	return ClientWidth;
-}
-
-float Graphic::getClientHeight()
-{
-	return ClientHeight;
 }
 
 ID3D11On12Device* Graphic::getD3D11On12Device()

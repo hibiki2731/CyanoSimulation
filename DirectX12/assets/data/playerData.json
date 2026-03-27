@@ -1,5 +1,5 @@
 {
-    "actionLimit": 10,
+    "actionLimit": 100,
     "armers": [
         "NONE",
         "CLOTHES",

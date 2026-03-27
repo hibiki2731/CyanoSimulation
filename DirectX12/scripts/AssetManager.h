@@ -45,7 +45,7 @@ public:
 	//getter
 	int getCBEndIndex(int size);//必要なサイズを引数に取る
 	int getHeapEndIndex(int size); //必要なサイズを引数に取る
-	MeshData* getMeshData(MeshName objectName); 
+	MeshData* getMeshData(const std::string& objectName); 
 	SpriteData getSpriteData();
 	XMFLOAT2 createTextureAndGetSize(const std::string& filePath);
 	ID3D12Resource* getShaderResource(const std::string& textureName);
@@ -78,7 +78,7 @@ private:
 	int mHeapEndIndex; //ディスクリプタヒープの最後尾インデックス
 
 	Graphic* mGraphic;
-	std::map<MeshName, std::unique_ptr<MeshData>> mLoadData;
+	std::map<std::string, std::unique_ptr<MeshData>> mLoadData;
 	std::map<std::string, ComPtr<ID3D12Resource>> mTextureData; //テクスチャデータのキャッシュ
 	std::vector<ClearedMemory> mClearedMemory; //解放されたメモリ
 	std::vector<ClearedHeap> mClearedHeap; //解放されたメモリ
@@ -90,7 +90,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW mSpriteIndexBufView;
 	std::map<std::string, XMFLOAT2> mTextureSizeData;
 
-	void createMesh(MeshName objectName);
+	void createMesh(const std::string& objectName, const MeshFileData& meshFileData);
 	void createSpriteBuffers();
 };
 

@@ -1,14 +1,16 @@
 ﻿#pragma once
+#include <string>
 #include "Actor.h"
 
-class Grass : public Actor
+class Resource : public Actor
 {
 public:
-	Grass(Game* game, float x, float y);
+	Resource(Game* game, const std::string& meshID,const std::string& resourceID, float x, float y);
 
 	void updateActor() override;
 	void inputActor() override;
 
 private:
+	const std::string& mResourceID;
 };
 

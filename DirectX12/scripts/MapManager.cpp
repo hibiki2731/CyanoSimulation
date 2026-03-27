@@ -8,6 +8,8 @@
 #include "MessageWindow.h"
 #include "AudioManager.h"
 #include "SceneManager.h"
+#include "MiniMap.h"
+#include "json.hpp"
 #include <fstream>
 #include <cassert>
 
@@ -39,6 +41,7 @@ void MapManager::updateTurn()
 			//初期化
 			mPendingEnemyCount = static_cast<int>(mGame->getEnemies().size()); //待機敵数をリセット
 			mGame->activateEnemies();
+			mMiniMap->updatePosition();
 		}
 
 		//エネミーターン→プレイヤーターンへの移行時
@@ -52,6 +55,9 @@ void MapManager::updateTurn()
 			//敵のランダム湧き
 			int random = Random::dist(1, 100);
 			if (random <= 10) spawnEnemy();
+
+			//ミニマップの更新
+			mMiniMap->updatePosition();
 		}
 
 
@@ -64,12 +70,25 @@ void MapManager::sceneProcess() {
 	if (!isMap && mSceneManager->getCurrentScene() == SceneType::MAP) {
 		isMap = true;
 		mGame->getAudioManager()->playBGM("BGM_DUNGEON2");
+
+		createMap();
+
+		std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(mGame);
+		mGame->addActor(std::move(messageWindow));
+
+		//ミニマップの作成
+		auto minimap = std::make_unique<MiniMap>(mGame);
+		mMiniMap = minimap.get();
+		mGame->addActor(std::move(minimap));
+		mMiniMap->updatePosition();
+
 	}
 
 	//マップシーンから他のシーンに切り替わった際の処理
 	if (isMap && mSceneManager->getCurrentScene() != SceneType::MAP) {
 		isMap = false;
 		mPlayer = nullptr;
+		mMiniMap = nullptr;
 	}
 }
 
@@ -80,8 +99,6 @@ void MapManager::createMap()
 	createWall();	//マップの壁、床の生成
 	createObject(); //オブジェクトの生成
 
-	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(mGame);
-	mGame->addActor(std::move(messageWindow));
 }
 
 void MapManager::setStage(Stage stage)
@@ -176,6 +193,14 @@ int MapManager::getObjectDataAt(int index)
 
 	return mObjectData[x][y];
 }
+const std::string& MapManager::getResourceID(int index)
+{
+	return mResourceIDs[index];
+}
+
+const std::string& MapManager::getResourceID(int x, int y) {
+	return mResourceIDs[y + mMapSize + x];
+}
 Player* MapManager::getPlayer()
 {
 	//シーンがMAP以外の場合はnullptrを返す
@@ -184,6 +209,14 @@ Player* MapManager::getPlayer()
 	return mPlayer;
 }
 
+MiniMap* MapManager::getMiniMap()
+{
+	//シーンがMAP以外の場合はnullptrを返す
+	if (mGame->getSceneManager()->getCurrentScene() != SceneType::MAP) return nullptr;
+
+	return mMiniMap;
+
+}
 
 TurnType MapManager::getTurnType()
 {
@@ -256,67 +289,71 @@ void MapManager::loadMap(Stage stage)
 
 void MapManager::createWall()
 {
+	std::fstream file("assets/data/mapTipData.json");
+	nlohmann::json json;
+	file >> json;
+	auto tileJson = json["tile"];
+
 	for (int y = 0; y < mMapSize; y++)
 	{
 		for (int x = 0; x < mMapSize; x++)
 		{
-			int tileNum = mMapData[x][y];
-			if (tileNum == TileType::WALL) continue; //壁の中
+			std::string tileID = std::to_string(mMapData[x][y]);
+			std::string category = tileJson[tileID]["category"].get<std::string>();
 
-			switch (tileNum) {
-			case TileType::FLOOR: {
+			if (category == "WALL") continue; //壁の中
+			else if(category == "FLOOR") {
 				//床の生成
-				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mGame, MeshName::ROCK_FLOOR, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mGame, tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mGame->addActor(std::move(rockFloor)); //所有権をGameへ渡す
-				break;
-				}
-			case TileType::GRASS: {
+			}
+			else if(category == "RESOURCE"){
 				//草の生成
-				std::unique_ptr<Object> grass = std::make_unique<Object>(mGame, MeshName::GRASS, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				std::unique_ptr<Resource> grass = std::make_unique<Resource>(mGame, tileJson[tileID]["meshID"].get<std::string>(), tileJson[tileID]["resourceID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mResourceIDs[y * mMapSize + x] = tileJson[tileID]["resourceID"].get<std::string>();
 				mGame->addActor(std::move(grass)); //所有権をGameへ渡す
-				}
 			}
 
 			//壁の生成
 			//西壁
 			if (x == 0) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2); 
 				mGame->addActor(std::move(wall));
 			} else if(mMapData[x - 1][y] == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2);
 				mGame->addActor(std::move(wall));
 			}
 			//東壁
 			if (x == mMapSize - 1) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mGame->addActor(std::move(wall));
 			}
 			else if (mMapData[x + 1][y] == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame,MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame,"ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mGame->addActor(std::move(wall));
 			}
 			//北壁
 			if (y == mMapSize - 1) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mGame->addActor(std::move(wall));
 			}
 			else if (mMapData[x][y + 1] == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mGame->addActor(std::move(wall));
 			}
 			//南壁
 			if (y == 0) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mGame->addActor(std::move(wall));
 			}
 			else if (mMapData[x][y - 1] == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, MeshName::ROCK_WALL, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mGame->addActor(std::move(wall));
 			}
 
@@ -327,27 +364,29 @@ void MapManager::createWall()
 
 void MapManager::createObject()
 {
-	int objectNum = 0;
+	std::fstream file("assets/data/mapTipData.json");
+	nlohmann::json json;
+	file >> json;
+	auto objectJson = json["object"];
+
+	std::string objectID = "";
+	std::string category = "";
 	for (int y = 0; y < mMapSize; y++){
 		for (int x = 0; x < mMapSize; x++) {
-			objectNum = mObjectData[x][y];
+			objectID = std::to_string(mObjectData[x][y]);
+			category = objectJson[objectID]["category"].get<std::string>();
 
-			switch (objectNum) {
-				case CharacterType::EMPTY:
-					break;
-				case CharacterType::PLAYER: {
-					//プレイヤー生成
-					std::unique_ptr player = std::make_unique<Player>(mGame, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-					mPlayer = player.get();
-					mGame->addActor(std::move(player)); //所有権をGameへ渡す
-					break;
-				}
-				default: {
-					//敵の生成
-					std::unique_ptr<Enemy> slime = std::make_unique<Enemy>(mGame, static_cast<CharacterType::Type>(objectNum), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-					mGame->addActor(std::move(slime)); //所有権をGameへ渡す
-					break;
-				}
+			if (category == "EMPTY") continue;
+			else if (category == "PLAYER") {
+				//プレイヤー生成
+				std::unique_ptr player = std::make_unique<Player>(mGame, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mPlayer = player.get();
+				mGame->addActor(std::move(player)); //所有権をGameへ渡す
+			}
+			else if (category == "ENEMY") {
+				//敵の生成
+				std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(mGame, objectJson[objectID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mGame->addActor(std::move(enemy)); //所有権をGameへ渡す
 			}
 
 		}
@@ -376,7 +415,7 @@ void MapManager::spawnEnemy()
 		if (distance <= 3) continue;
 
 		//敵の生成
-		std::unique_ptr<Enemy> slime = std::make_unique<Enemy>(mGame, CharacterType::SLIME, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+		std::unique_ptr<Enemy> slime = std::make_unique<Enemy>(mGame, "SLIME", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 		mGame->addActor(std::move(slime)); //所有権をGameへ渡す
 		break;
 

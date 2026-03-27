@@ -42,8 +42,8 @@ class ItemManager
 public:
 	ItemManager();
 
-	void addResource(std::string id, int num);
-	void subResource(std::string id, int num);
+	void addResource(const std::string& id, int num);
+	void subResource(const std::string& id, int num);
 
 	int getResourceNum(std::string id);
 	const std::unordered_map<std::string, size_t>& getResourceData();

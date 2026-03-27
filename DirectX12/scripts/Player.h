@@ -50,7 +50,7 @@ private:
 	//移動処理用
 	XMFLOAT3 mTargetPos;
 	XMFLOAT3 mTargetRot;
-	bool isMoving;
+	bool isActing;
 	bool isRotating;
 
 	//ダメージ処理

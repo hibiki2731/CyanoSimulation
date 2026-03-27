@@ -1,4 +1,4 @@
-//     __ _____ _____ _____
+﻿//     __ _____ _____ _____
 //  __|  |   __|     |   | |  JSON for Modern C++
 // |  |  |__   |  |  | | | |  version 3.12.0
 // |_____|_____|_____|_|___|  https://github.com/nlohmann/json
@@ -23466,7 +23466,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
         if (JSON_HEDLEY_UNLIKELY(!is_object()))
         {
-            JSON_THROW(type_error::create(312, detail::concat("cannot use update() with ", type_name()), this));
+            JSON_THROW(type_error::create(312, detail::concat("cannot use miniMapUpdate() with ", type_name()), this));
         }
 
         // check if range iterators belong to the same JSON object
@@ -23478,7 +23478,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         // passed iterators must belong to objects
         if (JSON_HEDLEY_UNLIKELY(!first.m_object->is_object()))
         {
-            JSON_THROW(type_error::create(312, detail::concat("cannot use update() with ", first.m_object->type_name()), first.m_object));
+            JSON_THROW(type_error::create(312, detail::concat("cannot use miniMapUpdate() with ", first.m_object->type_name()), first.m_object));
         }
 
         for (auto it = first; it != last; ++it)

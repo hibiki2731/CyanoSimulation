@@ -3,10 +3,11 @@
 #include "Game.h"
 #include "EnemyComponent.h"
 #include "MapManager.h"
+#include "json.hpp"
 #include "Player.h"
 #include <fstream>
 
-Enemy::Enemy(Game* game, CharacterType::Type type, float x, float y) : Actor(game)
+Enemy::Enemy(Game* game,const std::string& enemyID, float x, float y) : Actor(game)
 {
 	//敵の位置を設定
 	mPosition = XMFLOAT3(x, 0, y);
@@ -19,17 +20,15 @@ Enemy::Enemy(Game* game, CharacterType::Type type, float x, float y) : Actor(gam
 	nlohmann::json enemyData;
 	file >> enemyData;
 
-	auto typeName = magic_enum::enum_name(type); //CharacterTypeを文字列に変換
-
 	EnemyParam param;
 	//敵のタイプがjsonファイルに存在するか確認
-	if (enemyData.contains(typeName)) {
-		param.hp = enemyData[typeName]["hp"].get<int>();
-		param.power = enemyData[typeName]["power"].get<int>();
-		param.defense = enemyData[typeName]["defense"].get<int>();
-		param.meshName = magic_enum::enum_cast<MeshName>(enemyData[typeName]["meshName"].get<std::string>()).value();
-		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[typeName]["movePattern"].get<std::string>()).value();
-		param.senseRange = enemyData[typeName].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
+	if (enemyData.contains(enemyID)) {
+		param.hp = enemyData[enemyID]["hp"].get<int>();
+		param.power = enemyData[enemyID]["power"].get<int>();
+		param.defense = enemyData[enemyID]["defense"].get<int>();
+		param.meshName = enemyData[enemyID]["meshName"].get<std::string>();
+		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
+		param.senseRange = enemyData[enemyID].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
 	}
 
 	//コンポーネントの作成
@@ -39,7 +38,6 @@ Enemy::Enemy(Game* game, CharacterType::Type type, float x, float y) : Actor(gam
 	auto enemy = std::make_unique<EnemyComponent>(this);
 	mEnemy = enemy.get();
 	mEnemy->setMesh(mesh.get());
-	mEnemy->setEnemyTtype(type);
 	mEnemy->setDirection(Direction::UP); //上向き
 	mEnemy->setDefense(param.defense);
 	mEnemy->setPower(param.power);

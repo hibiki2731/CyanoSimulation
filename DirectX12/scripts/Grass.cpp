@@ -1,14 +1,19 @@
 ﻿#include "Grass.h"
 #include "MeshComponent.h"
+#include "Game.h"
+#include "json.hpp"
+#include "ItemManager.h"
+#include <fstream>
 
-Grass::Grass(Game* game, float x, float y) : Actor(game, x, y)
+Resource::Resource(Game* game, const std::string& meshID, const std::string& resourceID, float x, float y) : 
+	Actor(game, x, y), mResourceID(resourceID)
 {
 	auto mesh = std::make_unique<MeshComponent>(this);
-	mesh->create(MeshName::GRASS);
+	mesh->create(meshID);
 	addComponent(std::move(mesh));
 }
 
-void Grass::updateActor() {
+void Resource::updateActor() {
 }
 
-void Grass::inputActor(){}
+void Resource::inputActor(){}

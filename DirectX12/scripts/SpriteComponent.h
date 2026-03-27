@@ -27,6 +27,7 @@ public:
     void setSpriteSize(const XMFLOAT2& size);
 	void setBordarSize(const float size);
 	void movePositon(const XMFLOAT2& diff);
+    void setZPos(float zPos);
 
 protected:
     //描画範囲

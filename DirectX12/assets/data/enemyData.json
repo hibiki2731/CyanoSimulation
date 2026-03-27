@@ -1,18 +1,19 @@
 {
-    "SLIME":{
-        "hp" : 10,
-        "power" : 5,
-        "defense" : 3,
-        "meshName" : "SLIME",
-        "movePattern" : "SENSE",
-        "senseRange" : 4
+    "SLIME": {
+        "name": "SLIME",
+        "hp": 10,
+        "power": 5,
+        "defense": 3,
+        "meshName": "SLIME",
+        "movePattern": "SENSE",
+        "senseRange": 4
     },
-
-    "NURIKABE" : {
-        "hp" : 20,
-        "power" : 8,
-        "defense" : 4,
-        "meshName" : "NURIKABE",
-        "movePattern" : "RANDOM"
+    "NURIKABE": {
+        "name": "NURIKABE",
+        "hp": 20,
+        "power": 8,
+        "defense": 4,
+        "meshName": "NURIKABE",
+        "movePattern": "RANDOM"
     }
 }

@@ -94,7 +94,7 @@ ItemManager::ItemManager()
 	}
 }
 
-void ItemManager::addResource(std::string id, int num)
+void ItemManager::addResource(const std::string& id, int num)
 {
 	auto iter = mResourceData.find(id);
 	//idが存在しない場合
@@ -103,7 +103,7 @@ void ItemManager::addResource(std::string id, int num)
 	iter->second += static_cast<size_t>(num);
 }
 
-void ItemManager::subResource(std::string id, int num)
+void ItemManager::subResource(const std::string& id, int num)
 {
 	auto iter = mResourceData.find(id);
 	//idが存在しない場合

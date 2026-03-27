@@ -1,8 +1,4 @@
 {
-    "ROCK_WALL_SIDE" : {
-        "filePath" : "assets/3DModels/rock_side/wall_side.txt"
-    },
-
     "ROCK_WALL" : {
         "filePath" : "assets/3DModels/rockObj/rockWall.txt"
     },

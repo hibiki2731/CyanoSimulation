@@ -1,0 +1,35 @@
+{
+    "tile":{
+        "0":{
+            "category":"WALL",
+            "meshID":"ROCK_WALL"
+        },
+        "1":{
+            "category":"FLOOR",
+            "meshID":"ROCK_FLOOR"
+        },
+        "2":{
+            "category":"RESOURCE",
+            "resourceID":"GRASS",
+            "meshID":"GRASS"
+        }
+    },
+
+    "object":{
+        "-1":{
+            "category":"PLAYER"
+        },
+        "0":{
+           "category":"EMPTY" 
+        },
+        "1":{
+            "category":"ENEMY",
+            "enemyID":"SLIME"
+        },
+        "2":{
+            "category":"ENEMY",
+            "enemyID":"NURIKABE"
+        }
+    }
+
+}

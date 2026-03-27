@@ -68,6 +68,7 @@ public:
 	int msg_wparam();
 	void closeEventHandle();
 	void waitGPU();
+	void delayRelease(ComPtr<IUnknown> resource);
 
 	//Getter
 	float getAspect();
@@ -76,8 +77,6 @@ public:
 	ID3D12CommandQueue* getCommandQueue();
 	ID3D12CommandAllocator* getCommandAllocator();
 	ID3D12Device* getDevice();
-	float getClientWidth();
-	float getClientHeight();
 	ID3D11On12Device* getD3D11On12Device();
 	ID3D11DeviceContext* getD3D11DeviceContext();
 	ID2D1DeviceContext* getD2DDeviceContext();
@@ -99,6 +98,11 @@ public:
 	void updateCameraPos(XMFLOAT4& cameraPos);
 	void updateDamageFlashIntensity(float intensity);
 
+	//ウィンドウ
+	static constexpr LPCWSTR WindowTitle = L"DirectX12 Sample";
+	static constexpr int ClientWidth = 1280;
+	static constexpr int ClientHeight = 720;
+	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 private:
 	HRESULT createDevice();
 	HRESULT createCommand();
@@ -113,14 +117,9 @@ private:
 	HRESULT createCbvAndHeap();
 
 	
-
 	//ウィンドウ
-	LPCWSTR WindowTitle = L"DirectX12 Sample";
-	const int ClientWidth = 1280;
-	const int ClientHeight = 720;
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
 	const int ClientPosY = (GetSystemMetrics(SM_CYSCREEN) - ClientHeight) / 2;
-	const float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 #if 1
 	DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
 #else
@@ -190,6 +189,9 @@ private:
 	UINT8* mConstantData[FrameCount];	//生データ
 
 	Game* mGame;
+
+	//遅延削除用のごみ箱
+	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
 
 };
 

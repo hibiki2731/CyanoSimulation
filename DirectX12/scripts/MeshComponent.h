@@ -17,7 +17,7 @@ public:
 
 	void endProccess() override;
 
-    void create(MeshName objectName);
+    void create(const std::string& objectName);
 	void draw();
 
     void updateFlashIntensity(float intensity);

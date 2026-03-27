@@ -223,6 +223,7 @@
     <ClCompile Include="scripts\ForgeMenu.cpp" />
     <ClCompile Include="scripts\Grass.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
+    <ClCompile Include="scripts\MiniMap.cpp" />
     <ClCompile Include="scripts\MyUtility.cpp" />
     <ClCompile Include="scripts\InnMenu.cpp" />
     <ClCompile Include="scripts\Object.cpp" />
@@ -269,6 +270,7 @@
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />
     <ClInclude Include="scripts\magic_enum.hpp" />
+    <ClInclude Include="scripts\MiniMap.h" />
     <ClInclude Include="scripts\MyUtility.h" />
     <ClInclude Include="scripts\InnMenu.h" />
     <ClInclude Include="scripts\Object.h" />
