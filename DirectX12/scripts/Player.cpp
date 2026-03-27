@@ -17,13 +17,14 @@
 #include "input.h"
 #include "PlayerManager.h"
 #include "AudioManager.h"
+#include "MiniMap.h"
 
 Player::Player(Game* game, float x, float y) : Actor(game)
 {
 	mPosition = { x, 0.8f, y };
 	mTargetPos = mPosition;
 	mTargetRot = mRotation;
-	isMoving = false;
+	isActing = false;
 	isRotating = false;
 	mFlashTimer = 0.0f;
 	mSelectItemIndex = 0;
@@ -127,7 +128,7 @@ void Player::inputActor()
 void Player::updateActor()
 {
 	//移動処理
-	if (isMoving) {
+	if (isActing) {
 		//移動処理
 		XMFLOAT3 diffPos = mTargetPos - mPosition;
 
@@ -141,7 +142,7 @@ void Player::updateActor()
 			//移動終了時の処理
 			mPosition = mTargetPos;
 			
-			isMoving = false;
+			isActing = false;
 		}
 	}
 	//カメラ回転時の処理
@@ -161,7 +162,7 @@ void Player::updateActor()
 		}
 	}
 
-	if (!isMoving) damageEffect();
+	if (!isActing) damageEffect();
 	updateFlash();
 }
 
@@ -211,7 +212,7 @@ void Player::attack()
 	//敵ターン時は実行不可
 	if (mMapManager->getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
-	if (isMoving || isRotating) return;
+	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
 	if (mActionLimit == 0)return;
 
@@ -283,7 +284,7 @@ void Player::move(Direction direction)
 	//プレイヤーターン時のみ実行
 	if (mMapManager->getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
-	if (isMoving || isRotating) return;
+	if (isActing || isRotating) return;
 	//行動回数が0の場合実行不可
 	if (mActionLimit == 0) return;
 
@@ -304,7 +305,6 @@ void Player::move(Direction direction)
 
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
-	isMoving = true;
 	mGame->getAudioManager()->playSE("MAP_FOOTSTEP1");
 	turnEnd();
 
@@ -315,7 +315,7 @@ void Player::rotate(Direction direction)
 	//プレイヤーターン時のみ実行
 	if (mMapManager->getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
-	if (isMoving || isRotating) return;
+	if (isActing || isRotating) return;
 
 	switch (direction) {
 	case Direction::RIGHT:
@@ -330,6 +330,7 @@ void Player::rotate(Direction direction)
 	}
 
 	isRotating = true;
+	mMapManager->getMiniMap()->updateDirection();
 }
 
 void Player::calcMoveDirectionToIndexPos(Direction moveDirection, int (&indexPos)[2])
@@ -366,18 +367,18 @@ void Player::collect()
 	//プレイヤーターン時のみ実行
 	if (mMapManager->getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
-	if (isMoving || isRotating) return;
+	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
 	if (mActionLimit == 0) return;
 
 	int tileData = mMapManager->getMapDataAt(mCharacter->getIndexPosInt());
 
 	//今いるマスが通常の床ならば何も行わない
-	if (tileData <= 1) return;
+	if (tileData == TileType::FLOOR) return;
 
-	switch (tileData) {
-	case TileType::GRASS:
-		mGame->getItemManager()->addResource("GRASS", 1);
+	if (tileData >= TileType::RESOURCE){
+		std::string resourceID = mMapManager->getResourceID(mCharacter->getIndexPosInt());
+		mGame->getItemManager()->addResource(resourceID, 1);
 	}
 
 	//ターン経過
@@ -407,7 +408,7 @@ void Player::useItem()
 	//敵ターン時は実行不可
 	if (mMapManager->getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
-	if (isMoving || isRotating) return;
+	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
 	if (mActionLimit == 0) return;
 
@@ -438,4 +439,6 @@ void Player::turnEnd()
 	mMapManager->moveToEnemyTurn();
 	//残り行動回数を減らす
 	mActionLimit--;
+	//行動中フラグをtureにする
+	isActing = true;
 }

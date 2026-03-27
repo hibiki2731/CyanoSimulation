@@ -47,7 +47,6 @@ void SceneManager::transitScene()
 			mCurrentScene = SceneType::TOWN;
 			break;
 		case SceneType::MAP:
-			mGame->getMapManager()->createMap();
 			mCurrentScene = SceneType::MAP;
 			break;
 		}

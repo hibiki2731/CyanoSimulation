@@ -35,6 +35,11 @@ TextComponent::TextComponent(Actor* owner, float zDepth) : Component(owner)
 
 TextComponent::~TextComponent()
 {
+	//GPUの処理が終わってから削除する
+	if (mTexture) mGraphic->delayRelease(mTexture);
+	if (mWrappedTexture) mGraphic->delayRelease(mWrappedTexture);
+	if (mD2DTarget) mGraphic->delayRelease(mD2DTarget);
+
 }
 
 //要マルチスレッド化
@@ -93,14 +98,10 @@ void TextComponent::draw()
 	//描画。インデックスを使用
 	mGraphic->getCommandList()->IASetIndexBuffer(&mIndexBufView);
 	mGraphic->getCommandList()->DrawIndexedInstanced(mAssetManager->getSpriteIndicesSize(), 1, 0, 0, 0);
-
 }
 
 void TextComponent::endProccess()
 {
-	//テキストの描画処理が終わるのを待つ。
-	mGraphic->waitGPU();
-
 	mOwner->getGame()->removeText(this);
 }
 
@@ -186,8 +187,8 @@ bool TextComponent::getIsActive()
 void TextComponent::createEmptyTexture()
 {
 	//キャンバスのサイズ
-	UINT textWidth = mGraphic->getClientWidth();
-	UINT textHeight = mGraphic->getClientHeight();
+	UINT textWidth = Graphic::ClientWidth;
+	UINT textHeight = Graphic::ClientHeight;
 
 	D3D12_RESOURCE_DESC textDesc = {};
 	textDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
@@ -285,16 +286,16 @@ void TextComponent::createSprite(float zDepth)
 	Cb3.world = XMMatrixIdentity()
 		*XMMatrixTranslation(0.0f, 0.0f, zDepth);
 	Cb3.windowSize = XMFLOAT2(
-		(float)mGraphic->getClientWidth(),
-		(float)mGraphic->getClientHeight()
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
 	);
 	Cb3.spriteSize = XMFLOAT2(
-		(float)mGraphic->getClientWidth(),
-		(float)mGraphic->getClientHeight()
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
 	);
 	Cb3.textureSize = XMFLOAT2(
-		(float)mGraphic->getClientWidth(),
-		(float)mGraphic->getClientHeight()
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
 	);
 	Cb3.bordarSize = 0.0f;
 	memcpy(mGraphic->getConstantData(0) + mCBIndex, &Cb3, sizeof(SpriteConstBuf));

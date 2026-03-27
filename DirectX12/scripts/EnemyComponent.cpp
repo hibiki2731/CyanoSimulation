@@ -15,7 +15,6 @@ EnemyComponent::EnemyComponent(Actor* owner, int updateOrder) : CharacterCompone
 	isMoving = false;
 	mMoveSpeed =5.0f;
 
-	mEnemyType = CharacterType::EMPTY;
 	mState = MovePattern::RANDOM;
 	isActive = false;
 	mTargetPos = mOwner->getPosition();
@@ -106,12 +105,6 @@ void EnemyComponent::setMesh(MeshComponent* mesh)
 {
 	mMesh = mesh;
 }
-
-void EnemyComponent::setEnemyTtype(int type)
-{
-	mEnemyType = type;
-}
-
 void EnemyComponent::setMovePattern(MovePattern state)
 {
 	mState = state;
@@ -190,7 +183,7 @@ void EnemyComponent::move()
 
 	//マップデータや自身のインデックス座標を更新
 	mMapManager->setObjectDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
-	mMapManager->setObjectDataAt(targetIndexPos[0], targetIndexPos[1], mEnemyType); //移動先のデータを先に更新する
+	mMapManager->setObjectDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
 	mIndexPos[0] = targetIndexPos[0]; mIndexPos[1] = targetIndexPos[1]; //インデックス座標の更新
 }
 

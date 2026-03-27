@@ -1,12 +1,15 @@
 ﻿#pragma once
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include "Definition.h"
 #include "Random.h"
 
 class Game;
 class Player;
 class SceneManager;
+class MiniMap;
+class Resource;
 
 enum class Stage {
 	MAP1,
@@ -15,16 +18,15 @@ struct TileType {
 	enum Type {
 		WALL = 0,
 		FLOOR = 1,
-		GRASS = 2,
+		RESOURCE = 2,
 	};
 };
 
 struct CharacterType {
 	enum Type {
 		EMPTY = 0,
-		PLAYER = 1,
-		SLIME = 2,
-		NURIKABE = 3,
+		PLAYER = -1,
+		ENEMY = 1,
 	};
 };
 
@@ -52,7 +54,10 @@ public:
 	int getMapDataAt(int index);
 	int getObjectDataAt(int x, int y);
 	int getObjectDataAt(int index);
+	const std::string& getResourceID(int index);
+	const std::string& getResourceID(int x, int y);
 	Player* getPlayer();
+	MiniMap* getMiniMap();
 	TurnType getTurnType();
 
 	//ターン制御
@@ -70,6 +75,7 @@ private:
 	TurnType mTurnType;
 	std::vector<std::vector<int>> mMapData; //[x][y]
 	std::vector<std::vector<int>> mObjectData; //[x][y]
+	std::unordered_map<int, std::string> mResourceIDs;
 	int mMapSize;
 	Stage mStage;
 	Game* mGame;
@@ -83,5 +89,8 @@ private:
 
 	//シーン制御
 	bool isMap;
+
+	//ミニマップ
+	MiniMap* mMiniMap;
 };
 

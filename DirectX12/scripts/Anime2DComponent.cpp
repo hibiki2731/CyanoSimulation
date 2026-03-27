@@ -39,8 +39,8 @@ void Anime2DComponent::create(const std::string filename, int textureNum)
 	
 	//コンスタントバッファの初期化
 	Cb3.windowSize = XMFLOAT2(
-		(float)mGraphic->getClientWidth(),
-		(float)mGraphic->getClientHeight()
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
 	);
 	Cb3.spriteSize = mSpriteSize;
 	Cb3.textureSize = mTextureSize;

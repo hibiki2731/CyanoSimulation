@@ -4,15 +4,82 @@ XMFLOAT3 normalZ = {0 ,0, 1};
 
 XMFLOAT3 operator+(const XMFLOAT3& v1, const XMFLOAT3& v2)
 {
-    return XMFLOAT3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+	auto vec1 = XMLoadFloat3(&v1);
+	auto vec2 = XMLoadFloat3(&v2);
+
+	auto vResult = vec1 + vec2;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+	return std::move(result);
 }
 XMFLOAT3 operator-(const XMFLOAT3& v1, const XMFLOAT3& v2)
 {
-	return XMFLOAT3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+	auto vec1 = XMLoadFloat3(&v1);
+	auto vec2 = XMLoadFloat3(&v2);
+
+	auto vResult = vec1 - vec2;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+	return std::move(result);
 }
 
 XMFLOAT3 operator*(const XMFLOAT3& v1, const float& val) {
-	return XMFLOAT3(v1.x * val, v1.y * val, v1.z * val);
+	auto vec1 = XMLoadFloat3(&v1); 
+	auto vResult = vec1 * val;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT3 operator/(const XMFLOAT3& v1, const float& val)
+{
+	auto vec1 = XMLoadFloat3(&v1); 
+	auto vResult = vec1 / val;
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT2 operator+(const XMFLOAT2& v1, const XMFLOAT2& v2)
+{
+	auto vec1 = XMLoadFloat2(&v1);
+	auto vec2 = XMLoadFloat2(&v2);
+
+	auto vResult = vec1 + vec2;
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT2 operator-(const XMFLOAT2& v1, const XMFLOAT2& v2)
+{
+	auto vec1 = XMLoadFloat2(&v1);
+	auto vec2 = XMLoadFloat2(&v2);
+
+	auto vResult = vec1 - vec2;
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT2 operator*(const XMFLOAT2& v1, const float& val)
+{
+	auto vec1 = XMLoadFloat2(&v1);
+
+	auto vResult = vec1 * val;
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT2 operator/(const XMFLOAT2& v1, const float& val)
+{
+	auto vec1 = XMLoadFloat2(&v1);
+
+	auto vResult = vec1 / val;
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, vResult);
+	return std::move(result);
 }
 
 float Math::length(const XMFLOAT3& v)

@@ -1,8 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
-#include "MapManager.h"
-#include "json.hpp"
-#include  "magic_enum.hpp"
+#include <string>
 
 class EnemyComponent;
 
@@ -12,7 +10,7 @@ enum class MovePattern;
 class Enemy : public Actor
 {
 public:
-	Enemy(Game* game, CharacterType::Type type, float x, float y);
+	Enemy(Game* game, const std::string& enemyID, float x, float y);
 
 	void updateActor() override;
 	void inputActor() override;
@@ -23,7 +21,7 @@ private:
 		int hp;
 		int power;
 		int defense;
-		MeshName meshName;
+		std::string meshName;
 		MovePattern movePattern;
 		int senseRange;
 	};

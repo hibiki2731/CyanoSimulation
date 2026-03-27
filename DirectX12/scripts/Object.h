@@ -5,6 +5,6 @@
 class Object : public Actor
 {
 public:
-	Object(Game* game, MeshName meshName, float x, float y);
+	Object(Game* game, const std::string& meshID, float x, float y);
 };
 
