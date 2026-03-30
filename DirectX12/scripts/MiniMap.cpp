@@ -10,12 +10,12 @@ constexpr int TileNum = (DisplayRange * 2 + 1) * (DisplayRange * 2 + 1);
 constexpr XMFLOAT2 CanvasSize = { Graphic::ClientWidth * 0.2f, Graphic::ClientWidth * 0.2f};
 constexpr XMFLOAT2 IconSize = { CanvasSize.x / (2 * DisplayRange + 1), CanvasSize.y / (2 * DisplayRange + 1) };
 
-MiniMap::MiniMap(Game* game) : Actor(game)
+MiniMap::MiniMap(Game& game, MapManager& mapManager) 
+	: Actor(game),
+	mMapManager(mapManager)
 {
-	mMapManager = game->getMapManager();
-
 	//ミニマップの背景
-	auto canvas = std::make_unique<SpriteComponent>(this, 20.0f);
+	auto canvas = std::make_unique<SpriteComponent>(*this, 20.0f);
 	canvas->create("assets/picture/minimap_black.png");
 	canvas->setBordarSize(24.0f);
 	canvas->setSpriteSize(CanvasSize);
@@ -24,7 +24,7 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 	addComponent(std::move(canvas));
 
 	//ミニマップの外枠
-	auto border = std::make_unique<SpriteComponent>(this, 10.0f);
+	auto border = std::make_unique<SpriteComponent>(*this, 10.0f);
 	border->create("assets/picture/UI2/PNG/Default/panel_border_grey_detail.png");
 	border->setBordarSize(24.0f);
 	border->setSpriteSize(CanvasSize * 1.03f);
@@ -32,7 +32,7 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 	addComponent(std::move(border));
 
 	//プレイヤーアイコン
-	auto playerIcon = std::make_unique<SpriteComponent>(this, 18.0f);
+	auto playerIcon = std::make_unique<SpriteComponent>(*this, 18.0f);
 	playerIcon->create("assets/picture/UI2/PNG/Default/minimap_arrow_c.png");
 	playerIcon->setBordarSize(0.0f);
 	playerIcon->setSpriteSize(IconSize);
@@ -44,7 +44,7 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 	mTileIcon.resize(TileNum);
 	for (int y = 0; y < DisplayRange * 2 + 1; y++){
 		for (int x = 0; x < DisplayRange * 2 + 1; x++) {
-			auto tileIcon = std::make_unique<SpriteComponent>(this);
+			auto tileIcon = std::make_unique<SpriteComponent>(*this);
 			tileIcon->create("assets/picture/minimap_tile.png");
 			tileIcon->setBordarSize(0.0f);
 			tileIcon->setSpriteSize(IconSize);
@@ -59,7 +59,7 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 	mEnemyIcon.resize(TileNum);
 	for (int y = 0; y < DisplayRange * 2 + 1; y++) {
 		for (int x = 0; x < DisplayRange * 2 + 1; x++) {
-			auto enemyIcon = std::make_unique<SpriteComponent>(this);
+			auto enemyIcon = std::make_unique<SpriteComponent>(*this);
 			enemyIcon->create("assets/picture/UI2/PNG/Default/minimap_icon_jewel_red.png");
 			enemyIcon->setBordarSize(0.0f);
 			enemyIcon->setSpriteSize(IconSize);
@@ -73,7 +73,7 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 	mResourceIcon.resize(TileNum);
 	for (int y = 0; y < DisplayRange * 2 + 1; y++){
 		for (int x = 0; x < DisplayRange * 2 + 1; x++) {
-			auto resourceIcon = std::make_unique<SpriteComponent>(this, 19.5f);
+			auto resourceIcon = std::make_unique<SpriteComponent>(*this, 19.5f);
 			resourceIcon->create("assets/picture/UI2/PNG/Default/minimap_icon_star_yellow.png");
 			resourceIcon->setBordarSize(0.0f);
 			resourceIcon->setSpriteSize(IconSize);
@@ -88,20 +88,20 @@ MiniMap::MiniMap(Game* game) : Actor(game)
 void MiniMap::updatePosition()
 {
 	int playerPos[2];
-	mMapManager->getPlayer()->getIndexPos(playerPos);
+	mMapManager.getPlayer()->getIndexPos(playerPos);
 	//各マスのマップデータを読み込む
 	for (int i = 0; i < TileNum; i++) {
 		int x = playerPos[0] + (i % (DisplayRange * 2 + 1)) - DisplayRange;
 		int y = playerPos[1] + (i / (DisplayRange * 2 + 1)) - DisplayRange;
 
 		//マップの範囲外
-		if (x < 0 || x >= mGame->getMapManager()->getMapSize()) {
+		if (x < 0 || x >= mMapManager.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
 			continue;
 		}
-		if (y < 0 || y >= mGame->getMapManager()->getMapSize()) {
+		if (y < 0 || y >= mMapManager.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
@@ -109,12 +109,12 @@ void MiniMap::updatePosition()
 		}
 
 		//タイル情報
-		int tileType = mMapManager->getMapDataAt(x, y);
+		int tileType = mMapManager.getMapDataAt(x, y);
 		if (tileType != TileType::WALL) mTileIcon[i]->setZPos(19.0f);
 		else mTileIcon[i]->setZPos(100.0f);
 
 		//敵情報
-		int objectType = mMapManager->getObjectDataAt(x, y);
+		int objectType = mMapManager.getObjectDataAt(x, y);
 		if (objectType == CharacterType::ENEMY) mEnemyIcon[i]->setZPos(18.0f);
 		else mEnemyIcon[i]->setZPos(100.0f);
 
@@ -126,7 +126,7 @@ void MiniMap::updatePosition()
 
 void MiniMap::updateDirection()
 {
-	int	direction = mMapManager->getPlayer()->getDirection();
+	int	direction = mMapManager.getPlayer()->getDirection();
 	switch (direction) {
 	case Direction::UP:
 		mPlayerIcon->setRotation(0.0f);

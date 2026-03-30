@@ -6,7 +6,7 @@ using namespace DirectX;
 class CameraComponent :  public Component
 {
 public:
-	CameraComponent(Actor* owner, int updateOrder = 100);
+	CameraComponent(Actor& owner, int updateOrder = 100);
 
     void inputComponent() override;
     void updateComponent() override;

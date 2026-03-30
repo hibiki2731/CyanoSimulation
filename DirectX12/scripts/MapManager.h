@@ -9,6 +9,7 @@ class Game;
 class Player;
 class SceneManager;
 class MiniMap;
+class EnemyComponent;
 class Resource;
 
 enum class Stage {
@@ -33,11 +34,13 @@ struct CharacterType {
 class MapManager
 {
 public:
-	MapManager(Game* game);
+	MapManager(Game& game, SceneManager* sceneManager);
 	~MapManager() {};
 
+	void begin();
+	void end();
+
 	void updateTurn();
-	void sceneProcess();
 
 	void createMap();
 	
@@ -64,12 +67,20 @@ public:
 	void moveToPlayerTurn();
 	void moveToEnemyTurn();
 	void clearMap();
+	void startEnemyTurn();
+
+	//エネミー配列の制御
+	void addEnemy(EnemyComponent* enemy);
+	void removeEnemy(EnemyComponent* enemy);
+	EnemyComponent* getEnemyFromIndexPos(int index);
+	EnemyComponent* getEnemyFromIndexPos(int x, int y);
 
 private:
 	void loadMap(Stage stage);
 	void createWall();
 	void createObject();
 	void spawnEnemy();
+
 
 	TurnType mNextTurn;
 	TurnType mTurnType;
@@ -78,7 +89,7 @@ private:
 	std::unordered_map<int, std::string> mResourceIDs;
 	int mMapSize;
 	Stage mStage;
-	Game* mGame;
+	Game& mGame;
 	SceneManager* mSceneManager;
 
 	//未行動敵数
@@ -90,7 +101,13 @@ private:
 	//シーン制御
 	bool isMap;
 
+	//敵配列
+	std::vector<EnemyComponent*> mEnemies;
+
 	//ミニマップ
 	MiniMap* mMiniMap;
+
+	//生成したアクター
+	std::vector<class Actor*> mActors;
 };
 

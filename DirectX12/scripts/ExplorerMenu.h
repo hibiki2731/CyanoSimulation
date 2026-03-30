@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 
 class PlayerManager;
 class ItemManager;
 
 class ExplorerMenu : public Menu {
 public:
-	ExplorerMenu(Game* game, float zDepth);
+	ExplorerMenu(Game& game, TownManager& townManger, float zDepth);
 	void selectedAct() override;
 
 private:

@@ -5,7 +5,8 @@
 #include "SpotLightComponent.h"
 #include "Game.h"
 
-Graphic::Graphic(Game* game)
+Graphic::Graphic(Game& game)
+	:mGame(game)
 {
 	ClearColor[0] = 1.0f;
 	ClearColor[1] = 0.4f;
@@ -13,7 +14,6 @@ Graphic::Graphic(Game* game)
 	ClearColor[3] = 1.0f;
 
 	BackBufIdx = 0;
-	mGame = game;
 
 	Base3DData.playerFlashColor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	Base3DData.playerFlashIntensity = 0.0f;
@@ -820,8 +820,8 @@ HRESULT Graphic::createCbvAndHeap()
 void Graphic::updateBase3DData()
 {
 	//光源の更新
-	updateSpotLight(mGame->getSpotLights());
-	updatePointLight(mGame->getPointLights());
+	updateSpotLight(mGame.getSpotLights());
+	updatePointLight(mGame.getPointLights());
 	//更新したデータをコンスタントバッファへコピー
 	for(int i = 0; i < FrameCount; i++)
 	memcpy(mConstantData[i], &Base3DData, sizeof(Base3DData));
@@ -1425,9 +1425,10 @@ void Graphic::waitGPU()
 	}
 }
 
-void Graphic::delayRelease(ComPtr<IUnknown> resource)
+void Graphic::delayRelease(ComPtr<IUnknown>& resource)
 {
 	mTrashQueue[BackBufIdx].emplace_back(resource);
+	resource.Reset();
 }
 
 float Graphic::getAspect()

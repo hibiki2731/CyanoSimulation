@@ -24,12 +24,10 @@ class PointLightComponent;
 class SpotLightComponent;
 class Player;
 class TextComponent;
-class MapManager;
 class EnemyComponent;
 class DamageTextManager;
 class AssetManager;
 class SceneManager;
-class TownManager;
 class ItemManager;
 class PlayerManager;
 class AudioManager;
@@ -63,29 +61,21 @@ public:
 	//テキストの追加
 	void addText(TextComponent* text);
 	void removeText(TextComponent* text);
-	//エネミーの追加
-	void addEnemy(EnemyComponent* enemy);
-	void removeEnemy(EnemyComponent* enemy);
-	void activateEnemies();
 
 	void clearActors();
 	//ゲッター
 	Graphic* getGraphic();
-	std::vector<EnemyComponent*>& getEnemies();
-	MapManager* getMapManager();
 	DamageTextManager* getDamageTextManager();
-	EnemyComponent* getEnemyFromIndexPos(const int x, const int y);
-	EnemyComponent* getEnemyFromIndexPos(const int index);
 	AssetManager* getAssetManager();
 	std::vector<PointLightComponent*>& getPointLights();
 	std::vector<SpotLightComponent*>& getSpotLights();
 	ItemManager* getItemManager();
 	SceneManager* getSceneManager();
-	TownManager* getTownManager();
 	PlayerManager* getPlayerManager();
 	AudioManager* getAudioManager();
 
 private:
+	bool mUpdatingActors;
 
 	//グラフィック
 	std::unique_ptr<Graphic> mGraphic;
@@ -101,17 +91,8 @@ private:
 	//ライト配列
 	std::vector<PointLightComponent*> mPointLights;
 	std::vector<SpotLightComponent*> mSpotLights;
-	//キャラクター配列
-	std::vector<EnemyComponent*> mEnemies;
 	//ダメージエフェクト用
 	std::unique_ptr<DamageTextManager> mDamageTextManager;
-
-	//マップ関連
-	std::unique_ptr<MapManager> mMapManager;
-	bool mUpdatingActors;
-
-	//タウンマネージャー
-	std::unique_ptr<TownManager> mTownManager;
 
 	//プレイヤー
 	std::unique_ptr<PlayerManager> mPlayerManager;
@@ -123,7 +104,7 @@ private:
 	std::unique_ptr<ItemManager> mItemManager;
 
 	//シーンマネージャー
-	std::unique_ptr<SceneManager> mSceneManager;
+	SceneManager* mSceneManager;
 
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager> mAudioManager;

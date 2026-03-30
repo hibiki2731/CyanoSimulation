@@ -5,14 +5,14 @@
 #include "Actor.h"
 #include "Game.h"
 
-PointLightComponent::PointLightComponent(Actor* owner, int updateOrder) : Component(owner, updateOrder)
+PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
 {
 	isActive = false;
 	mPosition.w = 1.0f;
 	mIntensity = 1.0f;
 	mRange = 1.0f;
 	mColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mOwner->getGame()->addPointLight(this);
+	mOwner.getGame().addPointLight(this);
 }
 
 void PointLightComponent::inputComponent()
@@ -22,16 +22,16 @@ void PointLightComponent::inputComponent()
 void PointLightComponent::updateComponent()
 {
 	if (isActive) {
-		mPosition.x = mOwner->getPosition().x;
-		mPosition.y = mOwner->getPosition().y;
-		mPosition.z = mOwner->getPosition().z;
+		mPosition.x = mOwner.getPosition().x;
+		mPosition.y = mOwner.getPosition().y;
+		mPosition.z = mOwner.getPosition().z;
 	}
 }
 
 void PointLightComponent::endProccess()
 {
 	//Gameからライトを削除
-	mOwner->getGame()->removePointLight(this);
+	mOwner.getGame().removePointLight(this);
 }
 
 XMFLOAT4 PointLightComponent::getPosition()

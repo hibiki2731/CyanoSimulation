@@ -8,14 +8,14 @@
 #include "json.hpp"
 #include "AudioManager.h"
 
-InnMenu::InnMenu(Game* game, float zDepth) : Menu(game, "InnMenu", zDepth)
+InnMenu::InnMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "InnMenu", zDepth)
 {
 	mMaxIndex = 2;
 }
 
 void InnMenu::selectedAct()
 {
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mGame.getAudioManager()->playSE("UI_ENTER");
 	switch (mSelectedIndex) {
 	case 0:
 		stay();
@@ -28,7 +28,7 @@ void InnMenu::selectedAct()
 
 void InnMenu::stay()
 {
-	mGame->getPlayerManager()->setHP(mGame->getPlayerManager()->getPlayerData().maxHp);
+	mGame.getPlayerManager()->setHP(mGame.getPlayerManager()->getPlayerData().maxHp);
 }
 
 void InnMenu::save()
@@ -41,7 +41,7 @@ void InnMenu::save()
 		itemFile.close();
 
 		for (auto& resource : itemJson["Resource"]) {
-			resource["num"] = mGame->getItemManager()->getResourceNum(resource["id"]);
+			resource["num"] = mGame.getItemManager()->getResourceNum(resource["id"]);
 		}
 
 		//一時ファイルへの書き出し
@@ -70,7 +70,7 @@ void InnMenu::save()
 		std::ifstream playerFile("assets/data/playerData.json");
 		playerFile >> playerJson;
 		playerFile.close();
-		const PlayerData& playerData = mGame->getPlayerManager()->getPlayerData();
+		const PlayerData& playerData = mGame.getPlayerManager()->getPlayerData();
 		playerJson["hp"] = playerData.hp;
 		playerJson["inventory"] = playerData.inventory;
 		playerJson["weapons"] = playerData.weaponInventory;

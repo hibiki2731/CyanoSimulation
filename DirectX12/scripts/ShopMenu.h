@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <string>
-#include "TownManager.h"
+#include "Menu.h"
 
 class ItemManager;
 class PlayerManager;
@@ -9,7 +9,7 @@ struct ItemData;
 
 class ShopMenu : public Menu {
 public:
-	ShopMenu(Game* game, float zDepth);
+	ShopMenu(Game& game, TownManager& townManager, float zDepth);
 	void selectedAct() override;
 
 private:

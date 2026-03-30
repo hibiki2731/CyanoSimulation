@@ -6,10 +6,10 @@
 #include <fstream>
 #include "json.hpp"
 
-ForgeMenu::ForgeMenu(Game* game, float zDepth) : Menu(game, "ForgeMenu", zDepth)
+ForgeMenu::ForgeMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "ForgeMenu", zDepth)
 {
-	mPlayerManager = game->getPlayerManager();
-	mItemManager = game->getItemManager();
+	mPlayerManager = game.getPlayerManager();
+	mItemManager = game.getItemManager();
 	prepareCraftItems();
 }
 
@@ -35,7 +35,7 @@ void ForgeMenu::craftWeapons(int index)
 		int possessedResource = mItemManager->getResourceNum(weaponData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (weaponData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mGame.getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -43,7 +43,7 @@ void ForgeMenu::craftWeapons(int index)
 		mItemManager->subResource(weaponData.costResourceID[i], weaponData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mGame.getAudioManager()->playSE("UI_ENTER");
 
 	//インベントリにアイテムを追加
 	mPlayerManager->addWeapon(weaponData.id);
@@ -57,7 +57,7 @@ void ForgeMenu::craftArmer(int index)
 		int possessedResource = mItemManager->getResourceNum(armerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (armerData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mGame.getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -65,7 +65,7 @@ void ForgeMenu::craftArmer(int index)
 		mItemManager->subResource(armerData.costResourceID[i], armerData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mGame.getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addArmer(armerData.id);
 }

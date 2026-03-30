@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <string>
+#include <unordered_map>
+#include "Actor.h"
 
 class Game;
 
@@ -8,12 +11,17 @@ enum class SceneType {
 	MAP,
 };
 
-class SceneManager
+class SceneManager : public Actor
 {
 public:
-	SceneManager(Game* game);
-	void setScene(SceneType scene);
-	SceneType getCurrentScene();
+	SceneManager(Game& game);
+
+	void fastUpdateActor() override;
+	void updateActor() override;
+	void inputActor() override;
+
+
+	const std::string& getCurrentSceneType();
 
 	void transitToTitle();
 	void transitToTown();
@@ -21,8 +29,9 @@ public:
 	void transitScene();
 
 private:
-	SceneType mNextScene;
-	SceneType mCurrentScene;
-	Game* mGame;
+	std::string mNextSceneType;
+	std::string mCurrentSceneType;
+	class Scene* mCurrentScene;
+	std::unordered_map<std::string, std::unique_ptr<Scene>> mSceneMap;
 };
 

@@ -1,63 +1,46 @@
 ﻿#pragma once
 #include <string>
 #include <stack>
+#include "Scene.h"
 #include "Actor.h"
 
 class Game;
-class SpriteComponent;
-
-class Menu : public Actor
-{
-public:
-	Menu(Game* game, std::string windowName, float zDepth);
-	//input
-	virtual	void inputMenu();
-	virtual void selectedAct() {};
-	virtual void updateMenu() {};
-
-protected:
-	int mMaxIndex;	//メニューの最大インデックス
-	int mSelectedIndex;	//選択されているメニューのインデックス
-	float mArrowMoveLength;	//矢印の移動距離
-	SpriteComponent* mArrow;
-
-private:
-	void initComponent(std::string windowName, float zDepth);
-
-};
-
-class MainMenu : public Menu {
-public:
-	MainMenu(Game* game, float zDepth);
-	void selectedAct() override;
-};
+class Menu;
 
 class BackGround : public Actor
 {
 public:
-	BackGround(Game* game);
+	BackGround(Game& game);
 };
 
-class TownManager
+class TownManager :public Scene
 {
 public:
-	TownManager(Game* game);
+	TownManager(Game& game, class SceneManager* sceneManager);
 
-	void update();
-	void input();
+	void onEnter() override;
+	void onExit() override;
+	void update() override;
+	void input() override;
 	
 	void pushMenu(Menu* menu);
 	void popMenu();
 
 	void exitStatusMenu();
 
+	const std::string& getName() const override {
+		return "TOWN";
+	}
+
 private:
-	Game* mGame;
+	Game& mGame;
 	BackGround* mBg;
 	bool isTown;
 	bool isSelected;
 	bool isSelecetdStatus;
 	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
+
+	std::vector<Actor* > mActors;
 };
 

@@ -12,7 +12,7 @@
 class MeshComponent : public Component
 {
 public:
-	MeshComponent(Actor* owner, int updateOrder = 100);
+	MeshComponent(Actor& owner, int updateOrder = 100);
     ~MeshComponent();
 
 	void endProccess() override;

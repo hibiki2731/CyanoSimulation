@@ -9,12 +9,12 @@ class Game;
 class MiniMap :public Actor
 {
 public:
-	MiniMap(Game* game);
+	MiniMap(Game& game, MapManager& mapManager);
 	void updatePosition();
 	void updateDirection();
 
 private:
-	MapManager* mMapManager;
+	MapManager& mMapManager;
 	SpriteComponent* mCanvas;
 	SpriteComponent* mPlayerIcon;
 	std::vector<SpriteComponent*> mTileIcon;

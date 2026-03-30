@@ -10,7 +10,7 @@ enum class MovePattern;
 class Enemy : public Actor
 {
 public:
-	Enemy(Game* game, const std::string& enemyID, float x, float y);
+	Enemy(Game& game, class MapManager& mapManager, const std::string& enemyID, float x, float y);
 
 	void updateActor() override;
 	void inputActor() override;
@@ -26,5 +26,6 @@ private:
 		int senseRange;
 	};
 	class EnemyComponent* mEnemy;
+	class MapManager& mMapManager;
 };
 

@@ -5,10 +5,10 @@
 #include "ItemManager.h"
 #include <fstream>
 
-Resource::Resource(Game* game, const std::string& meshID, const std::string& resourceID, float x, float y) : 
+Resource::Resource(Game& game, const std::string& meshID, const std::string& resourceID, float x, float y) : 
 	Actor(game, x, y), mResourceID(resourceID)
 {
-	auto mesh = std::make_unique<MeshComponent>(this);
+	auto mesh = std::make_unique<MeshComponent>(*this);
 	mesh->create(meshID);
 	addComponent(std::move(mesh));
 }

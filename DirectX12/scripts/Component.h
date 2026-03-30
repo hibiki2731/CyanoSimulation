@@ -10,14 +10,16 @@ class Actor;
 class Component
 {
 public:
-	Component(Actor* owner, int updateOrder = 100);
-	virtual ~Component();
+	Component(Actor& owner, int updateOrder = 100);
+	virtual ~Component() {};
 
 	//入力
 	virtual void inputComponent() {};
 
 	//更新
-	virtual void updateComponent();
+	virtual void fastUpdateComponent() {};
+	virtual void updateComponent() {};
+	virtual void lateUpdateComponent() {};
 	int getUpdateOrder() const { return mUpdateOrder; }
 
 	//終了処理
@@ -25,7 +27,7 @@ public:
 
 protected:
 	//所有アクター
-	Actor* mOwner;
+	Actor& mOwner;
 	//更新順序
 	int mUpdateOrder;
 

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 #include <vector>
 #include <string>
 
@@ -9,7 +9,7 @@ class ItemManager;
 class ForgeMenu : public Menu {
 public:
 
-	ForgeMenu(Game* game, float zDepth);
+	ForgeMenu(Game& game, TownManager& townManager, float zDepth);
 	void selectedAct() override;
 
 private:

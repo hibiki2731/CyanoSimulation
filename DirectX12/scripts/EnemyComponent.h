@@ -15,14 +15,14 @@ enum class MovePattern{
 class EnemyComponent : public CharacterComponent
 {
 public:
-	EnemyComponent(Actor* owner, int updateOrder = 100);
+	EnemyComponent(Actor& owner, class MapManager& mapManager);
 
 	void inputComponent() override;
 	void updateComponent() override;
 	void endProccess() override;
 
 	//アクティブな時のみ行う。プレイヤーに近い敵から更新される
-	void updateActiveProcess();
+	void startAct();
 
 	void setMesh(MeshComponent* mesh);
 	void setMovePattern(MovePattern state);
@@ -83,6 +83,9 @@ private:
 	bool isActive;
 
 	int mDistPlayer; //プレイヤーからの距離(マンハッタン距離)
+
+	//マップマネージャー
+	class MapManager& mMapManager;
 
 };
 

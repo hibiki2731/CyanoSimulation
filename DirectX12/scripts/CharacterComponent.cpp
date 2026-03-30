@@ -1,8 +1,11 @@
 ﻿#include "CharacterComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "MapManager.h"
 
-CharacterComponent::CharacterComponent(Actor* owner, int updateOrder) : Component(owner, updateOrder)
+CharacterComponent::CharacterComponent(Actor& owner, MapManager& mapManager) 
+	: Component(owner),
+	mMapManager(mapManager)
 {
 	mMaxHP = 100;
 	mHP = mMaxHP;
@@ -12,10 +15,9 @@ CharacterComponent::CharacterComponent(Actor* owner, int updateOrder) : Componen
 
 	mDirection = 1;
 	mIndexPos = std::vector<int>{
-		static_cast<int>(std::round(mOwner->getPosition().x / MAPTIPSIZE)),
-		static_cast<int>(std::round(mOwner->getPosition().z / MAPTIPSIZE))
+		static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE)),
+		static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE))
 	};
-	mMapManager = mOwner->getGame()->getMapManager();
 }
 
 CharacterComponent::~CharacterComponent()
@@ -72,12 +74,7 @@ std::vector<int>& CharacterComponent::getIndexPos()
 
 int CharacterComponent::getIndexPosInt()
 {
-	return mIndexPos[1] * mMapManager->getMapSize() + mIndexPos[0];
-}
-
-MapManager* CharacterComponent::getMapManager()
-{
-	return mMapManager;
+	return mIndexPos[1] * mMapManager.getMapSize() + mIndexPos[0];
 }
 
 void CharacterComponent::setMaxHP(int maxHP)
@@ -114,8 +111,8 @@ void CharacterComponent::setIndexPos(int x, int y)
 
 void CharacterComponent::setIndexPosInt(int indexPos)
 {
-	mIndexPos[0] = indexPos % mMapManager->getMapSize();
-	mIndexPos[1] = indexPos / mMapManager->getMapSize();
+	mIndexPos[0] = indexPos % mMapManager.getMapSize();
+	mIndexPos[1] = indexPos / mMapManager.getMapSize();
 }
 
 void CharacterComponent::addHP(int hp)

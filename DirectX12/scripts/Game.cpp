@@ -1,5 +1,4 @@
 ﻿#include "Game.h"
-#include "TownManager.h"
 #include "SceneManager.h"
 #include "Actor.h"
 #include "Player.h"
@@ -12,7 +11,6 @@
 #include "PointLight.h"
 #include "TextComponent.h"
 #include "Enemy.h"
-#include "MapManager.h"
 #include "EnemyComponent.h"
 #include "DamageText.h"
 #include "Graphic.h"
@@ -49,7 +47,7 @@ int Game::endProcess()
 }
 
 void Game::init() {
-	mGraphic = std::make_unique<Graphic>(this);
+	mGraphic = std::make_unique<Graphic>(*this);
 	mGraphic->init();
 	mGraphic->clearColor(0.25f, 0.5f, 0.9f);
 
@@ -86,30 +84,26 @@ void Game::init() {
 	//タイマー初期化
 	initDeltaTime();
 
-	//シーンマネージャーの初期化	
-	mSceneManager = std::make_unique<SceneManager>(this);
 
 	//assetManagerの初期化 meshComponentを作成する前に初期化
 	mAssetManager = std::make_unique<AssetManager>(mGraphic.get());
-
-	//mapの生成
-	mMapManager = std::make_unique<MapManager>(this);
-	mMapManager->setStage(Stage::MAP1);
-	
-	//TownManagerの初期化
-	mTownManager = std::make_unique<TownManager>(this);
 
 	//itemManagerの初期化
 	mItemManager = std::make_unique<ItemManager>();
 
 	//damageTextの初期化
-	mDamageTextManager = std::make_unique<DamageTextManager>(this);
+	mDamageTextManager = std::make_unique<DamageTextManager>(*this);
 
 	//PlayerManager
 	mPlayerManager = std::make_unique<PlayerManager>();
 
 	//AudioManager
 	mAudioManager = std::make_unique<AudioManager>();
+
+	//シーンマネージャーの初期化	
+	auto sceneManager = std::make_unique<SceneManager>(*this);
+	mSceneManager = sceneManager.get();
+	addActor(std::move(sceneManager));
 
 }
 
@@ -183,27 +177,6 @@ void Game::removeText(TextComponent* fontText)
 	mTexts.erase(std::remove(mTexts.begin(), mTexts.end(), fontText), mTexts.end());
 }
 
-void Game::addEnemy(EnemyComponent* enemy)
-{
-	mEnemies.emplace_back(enemy);
-}
-
-void Game::removeEnemy(EnemyComponent* enemy)
-{
-	auto iter = std::find(mEnemies.begin(), mEnemies.end(), enemy);
-	if (iter != mEnemies.end()) {
-		std::iter_swap(iter, mEnemies.end() - 1);
-		mEnemies.pop_back();
-	}
-}
-
-void Game::activateEnemies()
-{
-	for (auto enemy : mEnemies) {
-		enemy->activate();
-	}
-}
-
 void Game::clearActors()
 {
 	for (auto& actor : mActors) {
@@ -216,45 +189,9 @@ Graphic* Game::getGraphic()
 	return mGraphic.get();
 }
 
-std::vector<EnemyComponent*>& Game::getEnemies()
-{
-	return mEnemies;
-}
-
-MapManager* Game::getMapManager()
-{
-	return mMapManager.get();
-}
-
 DamageTextManager* Game::getDamageTextManager()
 {
 	return mDamageTextManager.get();
-}
-
-EnemyComponent* Game::getEnemyFromIndexPos(int x, int y)
-{
-	for (auto enemy : mEnemies) {
-		std::vector<int> charIndexPos = enemy->getIndexPos();
-		if (charIndexPos[0] == x && charIndexPos[1] == y) {
-			return enemy;
-		}
-	}
-	return nullptr;
-}
-
-EnemyComponent* Game::getEnemyFromIndexPos(int index)
-{
-	int mapSize = mMapManager->getMapSize();
-	int x = index % mapSize;
-	int y = index / mapSize;
-	for (auto enemy : mEnemies) {
-		std::vector<int> charIndexPos = enemy->getIndexPos();
-		if (charIndexPos[0] == x && charIndexPos[1] == y) {
-			return enemy;
-		}
-	}
-
-	return nullptr;
 }
 
 AssetManager* Game::getAssetManager()
@@ -279,12 +216,7 @@ ItemManager* Game::getItemManager()
 
 SceneManager* Game::getSceneManager()
 {
-	return mSceneManager.get();
-}
-
-TownManager* Game::getTownManager()
-{
-	return mTownManager.get();
+	return mSceneManager;
 }
 
 PlayerManager* Game::getPlayerManager()
@@ -306,14 +238,9 @@ void Game::input()
 		actor->input();
 	}
 
-	//各種マネージャーの入力
-	mTownManager->input();
 
 #ifdef _DEBUG
-	//デバック用
-	if (GetAsyncKeyState('O')) {
-		mMapManager->moveToPlayerTurn();
-	}
+	//デバック用	}
 	if (GetAsyncKeyState('T')) {
 		mSceneManager->transitToTitle();
 	}
@@ -331,23 +258,26 @@ void Game::input()
 void Game::update()
 {
 	mUpdatingActors = true;
+
+	//アクターの更新
+	{
+		for (auto& actor : mActors) {
+			actor->fastUpdate();
+		}
+	}
+
 	//アクターの更新処理
 	{
 		for (auto& actor : mActors) {
 			actor->update();
-		}
-		//敵の更新処理
-		for (auto enemy : mEnemies) {
-			enemy->updateActiveProcess();
-		}
+		}	
 	}
+
 
 	//各種マネージャーの更新
 	{
 		mSceneManager->transitScene();	//シーンの移行
 		mDamageTextManager->update();	//ダメージテキストの更新
-		mTownManager->update();			//シーンがタウンの時の処理
-		mMapManager->sceneProcess(); //シーン変更時の初期化、終了処理
 	}
 
 	//Actorの更新中に追加されたアクターをActor配列に追加
@@ -365,30 +295,28 @@ void Game::update()
 		std::vector<std::unique_ptr<Actor>> deadActors;
 		for (auto& actor : mActors) {
 			if (actor->getState() == Actor::Dead) {
-				actor->endProccess();
-				deadActors.emplace_back(std::move(actor));
+				//actor->endProccess();
 			}
 		}
 
 		//元配列に残ったnullptrを削除
 		std::erase_if(mActors, [](const std::unique_ptr<Actor>& actor) {
-			return actor == nullptr;
+			return !actor || actor->getState() == Actor::State::Dead;
 			});
-
 
 
 	}
 
+	mUpdatingActors = true;
+
 	//アクターの除去後に行う処理
 	{
-		//敵配列をプレイヤーに近い順にソート
-		std::sort(mEnemies.begin(), mEnemies.end(), [](auto const lenemy, auto const renemy) {
-			return lenemy->getDist() < renemy->getDist();
-			});
-
+		//アクターの更新
+		for (auto& actor : mActors) {
+			actor->lateUpdate();
+		}
 		//各種マネージャーの更新
 		mGraphic->updateBase3DData();		//Base3DDataの更新
-		mMapManager->updateTurn();				//ターン制御
 	}
 }
 

@@ -3,10 +3,10 @@
 #include "Game.h"
 #include "AssetManager.h"
 
-TextComponent::TextComponent(Actor* owner, float zDepth) : Component(owner)
+TextComponent::TextComponent(Actor& owner, float zDepth) : Component(owner)
 {
-	mGraphic = mOwner->getGame()->getGraphic();
-	mAssetManager = mOwner->getGame()->getAssetManager();
+	mGraphic = mOwner.getGame().getGraphic();
+	mAssetManager = mOwner.getGame().getAssetManager();
 	isActive = false;
 	mBaseLineX = 0.0f;
 	mBaseLineY = 0.0f;
@@ -25,7 +25,7 @@ TextComponent::TextComponent(Actor* owner, float zDepth) : Component(owner)
 	mLineSpace = 0;
 	mBaseLineSpace = 0;
 
-	mOwner->getGame()->addText(this);
+	mOwner.getGame().addText(this);
 
 	createEmptyTexture();
 	wrapTexture();
@@ -35,10 +35,21 @@ TextComponent::TextComponent(Actor* owner, float zDepth) : Component(owner)
 
 TextComponent::~TextComponent()
 {
+
+	if (mGraphic->getD2DDeviceContext()) {
+        mGraphic->getD2DDeviceContext()->SetTarget(nullptr);
+        mGraphic->getD3D11DeviceContext()->Flush();
+	}
+
 	//GPUの処理が終わってから削除する
-	if (mTexture) mGraphic->delayRelease(mTexture);
-	if (mWrappedTexture) mGraphic->delayRelease(mWrappedTexture);
-	if (mD2DTarget) mGraphic->delayRelease(mD2DTarget);
+	ComPtr<IUnknown> tex, wrap, target;
+	if (mTexture) mTexture.As(&tex);
+	if (mWrappedTexture) mWrappedTexture.As(&wrap);
+	if (mD2DTarget) mD2DTarget.As(&target);
+
+	if (tex) mGraphic->delayRelease(tex);
+	if (wrap) mGraphic->delayRelease(wrap);
+	if (target) mGraphic->delayRelease(target);
 
 }
 
@@ -102,7 +113,7 @@ void TextComponent::draw()
 
 void TextComponent::endProccess()
 {
-	mOwner->getGame()->removeText(this);
+	mOwner.getGame().removeText(this);
 }
 
 void TextComponent::showText()

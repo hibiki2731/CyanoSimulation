@@ -8,23 +8,55 @@
 #include "MessageWindow.h"
 #include "AudioManager.h"
 #include "SceneManager.h"
+#include "EnemyComponent.h"
 #include "MiniMap.h"
 #include "json.hpp"
 #include <fstream>
 #include <cassert>
 
-MapManager::MapManager(Game* game)
+MapManager::MapManager(Game& game, SceneManager* sceneManager)
+	: mGame(game)
 {
 	mMapData.clear();
 	mMapSize = 1;
-	mGame = game;
 	mStage = Stage::MAP1;
 	mNextTurn = TurnType::PLAYER;
 	mTurnType = TurnType::PLAYER;
 	mPendingEnemyCount = 0;
-	mSceneManager = mGame->getSceneManager();
+	mSceneManager = sceneManager;
 	isMap = false;
 
+}
+
+void MapManager::begin()
+{
+	isMap = true;
+	mGame.getAudioManager()->playBGM("BGM_DUNGEON2");
+
+	createMap();
+
+	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(mGame);
+	messageWindow->setPlayer(mPlayer);
+	mActors.emplace_back(messageWindow.get());
+	mGame.addActor(std::move(messageWindow));
+
+	//ミニマップの作成
+	auto minimap = std::make_unique<MiniMap>(mGame, *this);
+	mMiniMap = minimap.get();
+	mActors.emplace_back(minimap.get());
+	mGame.addActor(std::move(minimap));
+	mMiniMap->updatePosition();
+}
+
+void MapManager::end()
+{
+	isMap = false;
+	for (auto& actor : mActors) {
+		actor->setState(Actor::State::Dead);
+	}
+	mPlayer = nullptr;
+	mMiniMap = nullptr;
+	mResourceIDs.clear();
 }
 
 void MapManager::updateTurn()
@@ -32,16 +64,14 @@ void MapManager::updateTurn()
 	//MAPシーン中の処理
 	if (isMap) {
 		//エネミーターン時に敵が全滅していたらプレイヤーターンへ
-		if (mTurnType == TurnType::ENEMY && mGame->getEnemies().size() == 0) {
+		if (mTurnType == TurnType::ENEMY && mEnemies.size() == 0) {
 			mNextTurn = TurnType::PLAYER;
 		}
 
 		//プレイヤーターン→エネミーターンへの移行時
 		if (mNextTurn == TurnType::ENEMY && mTurnType == TurnType::PLAYER) {
 			//初期化
-			mPendingEnemyCount = static_cast<int>(mGame->getEnemies().size()); //待機敵数をリセット
-			mGame->activateEnemies();
-			mMiniMap->updatePosition();
+			startEnemyTurn();
 		}
 
 		//エネミーターン→プレイヤーターンへの移行時
@@ -62,33 +92,6 @@ void MapManager::updateTurn()
 
 
 		mTurnType = mNextTurn;
-	}
-}
-
-void MapManager::sceneProcess() {
-	//マップシーンに切り替わった際の処理
-	if (!isMap && mSceneManager->getCurrentScene() == SceneType::MAP) {
-		isMap = true;
-		mGame->getAudioManager()->playBGM("BGM_DUNGEON2");
-
-		createMap();
-
-		std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(mGame);
-		mGame->addActor(std::move(messageWindow));
-
-		//ミニマップの作成
-		auto minimap = std::make_unique<MiniMap>(mGame);
-		mMiniMap = minimap.get();
-		mGame->addActor(std::move(minimap));
-		mMiniMap->updatePosition();
-
-	}
-
-	//マップシーンから他のシーンに切り替わった際の処理
-	if (isMap && mSceneManager->getCurrentScene() != SceneType::MAP) {
-		isMap = false;
-		mPlayer = nullptr;
-		mMiniMap = nullptr;
 	}
 }
 
@@ -203,17 +206,11 @@ const std::string& MapManager::getResourceID(int x, int y) {
 }
 Player* MapManager::getPlayer()
 {
-	//シーンがMAP以外の場合はnullptrを返す
-	if (mGame->getSceneManager()->getCurrentScene() != SceneType::MAP) return nullptr;
-
 	return mPlayer;
 }
 
 MiniMap* MapManager::getMiniMap()
 {
-	//シーンがMAP以外の場合はnullptrを返す
-	if (mGame->getSceneManager()->getCurrentScene() != SceneType::MAP) return nullptr;
-
 	return mMiniMap;
 
 }
@@ -240,6 +237,59 @@ void MapManager::clearMap()
 {
 	mMapData.clear();
 	mObjectData.clear();
+}
+
+void MapManager::startEnemyTurn()
+{
+	//敵配列をプレイヤーに近い順にソート
+	std::sort(mEnemies.begin(), mEnemies.end(), [](auto const lenemy, auto const renemy) {
+		return lenemy->getDist() < renemy->getDist();
+		});
+	mPendingEnemyCount = static_cast<int>(mEnemies.size());
+
+	for (auto enemy : mEnemies) {
+		enemy->startAct();
+	}
+	mMiniMap->updatePosition();
+}
+
+void MapManager::addEnemy(EnemyComponent* enemy)
+{
+	mEnemies.emplace_back(enemy);
+}
+
+void MapManager::removeEnemy(EnemyComponent* enemy)
+{
+	auto iter = std::find(mEnemies.begin(), mEnemies.end(), enemy);
+	if (iter != mEnemies.end()) {
+		std::iter_swap(iter, mEnemies.end() - 1);
+		mEnemies.pop_back();
+	}
+}
+
+EnemyComponent* MapManager::getEnemyFromIndexPos(int x, int y)
+{
+	for (auto enemy : mEnemies) {
+		std::vector<int> charIndexPos = enemy->getIndexPos();
+		if (charIndexPos[0] == x && charIndexPos[1] == y) {
+			return enemy;
+		}
+	}
+	return nullptr;
+}
+
+EnemyComponent* MapManager::getEnemyFromIndexPos(int index)
+{
+	int x = index % mMapSize;
+	int y = index / mMapSize;
+	for (auto enemy : mEnemies) {
+		std::vector<int> charIndexPos = enemy->getIndexPos();
+		if (charIndexPos[0] == x && charIndexPos[1] == y) {
+			return enemy;
+		}
+	}
+
+	return nullptr;
 }
 
 void MapManager::loadMap(Stage stage)
@@ -305,13 +355,15 @@ void MapManager::createWall()
 			else if(category == "FLOOR") {
 				//床の生成
 				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mGame, tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-				mGame->addActor(std::move(rockFloor)); //所有権をGameへ渡す
+				mActors.emplace_back(rockFloor.get());
+				mGame.addActor(std::move(rockFloor)); //所有権をGameへ渡す
 			}
 			else if(category == "RESOURCE"){
 				//草の生成
 				std::unique_ptr<Resource> grass = std::make_unique<Resource>(mGame, tileJson[tileID]["meshID"].get<std::string>(), tileJson[tileID]["resourceID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mResourceIDs[y * mMapSize + x] = tileJson[tileID]["resourceID"].get<std::string>();
-				mGame->addActor(std::move(grass)); //所有権をGameへ渡す
+				mActors.emplace_back(grass.get());
+				mGame.addActor(std::move(grass)); //所有権をGameへ渡す
 			}
 
 			//壁の生成
@@ -319,42 +371,50 @@ void MapManager::createWall()
 			if (x == 0) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2); 
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			} else if(mMapData[x - 1][y] == TileType::WALL) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2);
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			//東壁
 			if (x == mMapSize - 1) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			else if (mMapData[x + 1][y] == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame,"ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			//北壁
 			if (y == mMapSize - 1) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			else if (mMapData[x][y + 1] == TileType::WALL) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			//南壁
 			if (y == 0) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 			else if (mMapData[x][y - 1] == TileType::WALL) {
 				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-				mGame->addActor(std::move(wall));
+				mActors.emplace_back(wall.get());
+				mGame.addActor(std::move(wall));
 			}
 
 
@@ -379,14 +439,16 @@ void MapManager::createObject()
 			if (category == "EMPTY") continue;
 			else if (category == "PLAYER") {
 				//プレイヤー生成
-				std::unique_ptr player = std::make_unique<Player>(mGame, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				std::unique_ptr player = std::make_unique<Player>(mGame, *this, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mPlayer = player.get();
-				mGame->addActor(std::move(player)); //所有権をGameへ渡す
+				mActors.emplace_back(player.get());
+				mGame.addActor(std::move(player)); //所有権をGameへ渡す
 			}
 			else if (category == "ENEMY") {
 				//敵の生成
-				std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(mGame, objectJson[objectID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-				mGame->addActor(std::move(enemy)); //所有権をGameへ渡す
+				std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>(mGame, *this, objectJson[objectID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mActors.emplace_back(enemy.get());
+				mGame.addActor(std::move(enemy)); //所有権をGameへ渡す
 			}
 
 		}
@@ -415,8 +477,9 @@ void MapManager::spawnEnemy()
 		if (distance <= 3) continue;
 
 		//敵の生成
-		std::unique_ptr<Enemy> slime = std::make_unique<Enemy>(mGame, "SLIME", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-		mGame->addActor(std::move(slime)); //所有権をGameへ渡す
+		std::unique_ptr<Enemy> slime = std::make_unique<Enemy>(mGame, *this, "SLIME", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+		mActors.emplace_back(slime.get());
+		mGame.addActor(std::move(slime)); //所有権をGameへ渡す
 		break;
 
 		i++;

@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 
 class PlayerManager;
 class TextComponent;
 
 class EquipWeaponMenu : public Menu {
 public:
-	EquipWeaponMenu(Game* game, float zDepth);
+	EquipWeaponMenu(Game& game, TownManager& townManager, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -23,7 +23,7 @@ private:
 
 class EquipArmerMenu : public Menu {
 public:
-	EquipArmerMenu(Game* game, float zDepth);
+	EquipArmerMenu(Game& game, TownManager& townManager, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -39,7 +39,7 @@ private:
 class StatusMenu : public Menu
 {
 public:
-	StatusMenu(Game* game, float zDepth);
+	StatusMenu(Game& game, TownManager& townManager, float zDepth);
 	~StatusMenu();
 	void selectedAct() override;
 

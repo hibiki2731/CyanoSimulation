@@ -6,7 +6,7 @@ class Anime2DComponent;
 class UI : public Actor
 {
 public:
-	UI(Game* game);
+	UI(Game& game);
 	~UI() {};
 
 	void updateActor() override;

@@ -4,9 +4,9 @@
 #include "Game.h"
 #include <windows.h>
 
-PointLight::PointLight(Game* game) : Actor(game)
+PointLight::PointLight(Game& game) : Actor(game)
 {
-	auto light = std::make_unique<PointLightComponent>(this);
+	auto light = std::make_unique<PointLightComponent>(*this);
 	light->setActive(true);
 	light->setColor(XMFLOAT4(0.1f, 0.3f, 1.0f, 1.0f));
 	light->setIntensity(3.0f);

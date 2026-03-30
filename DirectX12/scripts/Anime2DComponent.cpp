@@ -4,7 +4,7 @@
 #include "AssetManager.h"
 #include <string>
 
-Anime2DComponent::Anime2DComponent(Actor* owner, float zDepth)
+Anime2DComponent::Anime2DComponent(Actor& owner, float zDepth)
 	: SpriteComponent(owner, zDepth)
 {
 	mTextureIndex = 0;
@@ -90,7 +90,7 @@ void Anime2DComponent::draw()
 
 void Anime2DComponent::endProccess()
 {
-	mOwner->getGame()->removeSprite(this);
+	mOwner.getGame().removeSprite(this);
 }
 
 void Anime2DComponent::setTextureIndex(int index)

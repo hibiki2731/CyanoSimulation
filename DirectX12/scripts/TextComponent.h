@@ -8,7 +8,7 @@ class AssetManager;
 class TextComponent : public Component
 {
 public:
-	TextComponent(Actor* owner, float zDepth = 100.0f);
+	TextComponent(Actor& owner, float zDepth = 100.0f);
 	~TextComponent();
 
 	void drawTextTexture();

@@ -7,7 +7,9 @@
 #include "Player.h"
 #include <fstream>
 
-Enemy::Enemy(Game* game,const std::string& enemyID, float x, float y) : Actor(game)
+Enemy::Enemy(Game& game, MapManager& mapManager, const std::string& enemyID, float x, float y)
+	: Actor(game),
+	mMapManager(mapManager)
 {
 	//敵の位置を設定
 	mPosition = XMFLOAT3(x, 0, y);
@@ -32,10 +34,10 @@ Enemy::Enemy(Game* game,const std::string& enemyID, float x, float y) : Actor(ga
 	}
 
 	//コンポーネントの作成
-	auto mesh = std::make_unique<MeshComponent>(this);
+	auto mesh = std::make_unique<MeshComponent>(*this);
 	mesh->create(param.meshName);
 
-	auto enemy = std::make_unique<EnemyComponent>(this);
+	auto enemy = std::make_unique<EnemyComponent>(*this, mMapManager);
 	mEnemy = enemy.get();
 	mEnemy->setMesh(mesh.get());
 	mEnemy->setDirection(Direction::UP); //上向き

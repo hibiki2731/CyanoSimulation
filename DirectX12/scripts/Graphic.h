@@ -38,7 +38,7 @@ public:
 		RENDER_DT,
 	};
 
-	Graphic(Game* game);
+	Graphic(Game& game);
 	~Graphic();
 
 	void init();	
@@ -68,7 +68,7 @@ public:
 	int msg_wparam();
 	void closeEventHandle();
 	void waitGPU();
-	void delayRelease(ComPtr<IUnknown> resource);
+	void delayRelease(ComPtr<IUnknown>& resource);
 
 	//Getter
 	float getAspect();
@@ -188,7 +188,7 @@ private:
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
 
-	Game* mGame;
+	Game& mGame;
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];

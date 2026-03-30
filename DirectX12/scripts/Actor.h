@@ -19,8 +19,8 @@ public:
 		Dead
 	};
 
-	Actor(Game* game);
-	Actor(Game* game, float x, float y);
+	Actor(Game& game);
+	Actor(Game& game, float x, float y);
 
 	virtual ~Actor();
 
@@ -29,11 +29,17 @@ public:
 	virtual void inputActor() {};
 
 	//更新関数
+	void fastUpdate();
 	void update();
+	void lateUpdate();
 	//コンポーネントを更新
+	void fastUpdateComponents();
 	void updateComponents();
+	void lateUpdateComponents();
 	//アクター独自の更新処理
+	virtual void fastUpdateActor() {};
 	virtual void updateActor() {};
+	virtual void lateUpdateActor() {};
 
 	//コンポーネントの追加/削除
 	void addComponent(std::unique_ptr<Component> component);
@@ -62,7 +68,7 @@ public:
 	XMFLOAT3 getPosition() const;
 	XMFLOAT3 getScale() const;
 	XMFLOAT3 getRotation() const;
-	Game* getGame();
+	Game& getGame();
 
 protected:
 	//アクターの状態
@@ -70,7 +76,7 @@ protected:
 
 	//コンポーネント
 	std::vector<std::unique_ptr<Component>> mComponents;
-	Game* mGame;
+	Game& mGame;
 
 	//ベクトル
 	XMFLOAT3 mPosition;

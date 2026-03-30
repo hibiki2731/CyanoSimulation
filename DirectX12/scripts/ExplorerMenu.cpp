@@ -4,10 +4,10 @@
 #include "PlayerManager.h"
 #include "ItemManager.h"
 
-ExplorerMenu::ExplorerMenu(Game* game, float zDepth) : Menu(game, "ExplorerShopMenu", zDepth)
+ExplorerMenu::ExplorerMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "ExplorerShopMenu", zDepth)
 {
-	mPlayerManager = game->getPlayerManager();
-	mItemManager = game->getItemManager();
+	mPlayerManager = game.getPlayerManager();
+	mItemManager = game.getItemManager();
 
 	prepareCraftExplorer();
 }
@@ -31,7 +31,7 @@ void ExplorerMenu::craftExplorer(int index)
 		int possessedResource = mItemManager->getResourceNum(explorerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (explorerData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mGame.getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -39,7 +39,7 @@ void ExplorerMenu::craftExplorer(int index)
 		mItemManager->subResource(explorerData.costResourceID[i], explorerData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mGame.getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addExplorer(explorerData.id);
 
