@@ -4,12 +4,13 @@
 #include "MapManager.h"
 #include "Player.h"
 #include "Random.h"
+#include "DungeonScene.h"
 
-EnemyComponent::EnemyComponent(Actor& owner, MapManager& mapManager) 
-	: CharacterComponent(owner, mapManager),
-	mMapManager(mapManager)
+EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
+	: CharacterComponent(owner, scene),
+	mScene(scene)
 {
-	mMapManager.addEnemy(this);
+	scene.addEnemy(this);
 	mMesh = nullptr;
 
 	mFlashTimer = 0.0f;
@@ -38,7 +39,7 @@ void EnemyComponent::updateComponent()
 	//点滅処理の更新
 	updateFlash();
 
-	switch (mMapManager.getTurnType()) {
+	switch (mScene.getTurnType()) {
 		//プレイヤーターン時の動作
 	case TurnType::PLAYER:
 		break;
@@ -81,8 +82,8 @@ void EnemyComponent::updateComponent()
 void EnemyComponent::endProccess()
 {
 	CharacterComponent::endProccess();
-	mMapManager.setObjectDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
-	mMapManager.removeEnemy(this);
+	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
+	mScene.removeEnemy(this);
 }
 
 void EnemyComponent::startAct()
@@ -90,7 +91,7 @@ void EnemyComponent::startAct()
 	isActive = true;
 	//プレイヤーとの距離を計算
 	int playerIndex[2];
-	mMapManager.getPlayer()->getIndexPos(playerIndex);
+	mScene.getPlayer()->getIndexPos(playerIndex);
 	mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
 
 	attack();
@@ -163,8 +164,8 @@ void EnemyComponent::move()
 	calcTargetIndex(targetIndexPos);
 
 	//進先に障害物がある場合移動不可
-	if (mMapManager.getMapDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
-		mMapManager.getObjectDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) {
+	if (mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
+		mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) {
 		mTargetPos = mOwner.getPosition();
 		return;
 	}
@@ -182,8 +183,8 @@ void EnemyComponent::move()
 	mTargetPos = XMFLOAT3(targetIndexPos[0] * MAPTIPSIZE, 0.0f, targetIndexPos[1] * MAPTIPSIZE); //移動先のワールド座標を計算
 
 	//マップデータや自身のインデックス座標を更新
-	mMapManager.setObjectDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
-	mMapManager.setObjectDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
+	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
+	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
 	mIndexPos[0] = targetIndexPos[0]; mIndexPos[1] = targetIndexPos[1]; //インデックス座標の更新
 }
 
@@ -197,7 +198,7 @@ void EnemyComponent::attack()
 	if (!isActive) return;
 
 	//プレイヤーのインデックス座標を取得
-	Player* player = mMapManager.getPlayer();
+	Player* player = mScene.getPlayer();
 	int playerIndexPos[2];
 	player->getIndexPos(playerIndexPos);
 
@@ -230,7 +231,7 @@ void EnemyComponent::attack()
 
 void EnemyComponent::finishAct()
 {
-	mMapManager.moveToPlayerTurn();
+	mScene.moveToPlayerTurn();
 	isActive = false;
 
 }
@@ -260,7 +261,7 @@ void EnemyComponent::calcTargetIndex(int(&targetIndex)[2])
 void EnemyComponent::Astar(int(&targetIndex)[2])
 {
 	std::priority_queue<Node, std::vector<Node>, std::greater<Node>> openList; //次に探索するマスのリスト
-	std::vector<std::vector<Cell>> grid(mMapManager.getMapSize(), std::vector<Cell>(mMapManager.getMapSize()));
+	std::vector<std::vector<Cell>> grid(mScene.getMapSize(), std::vector<Cell>(mScene.getMapSize()));
 
 	openList.push({ mIndexPos[0], mIndexPos[1], 0 }); //スタート地点
 	grid[mIndexPos[0]][mIndexPos[1]].gCost = 0;
@@ -268,7 +269,7 @@ void EnemyComponent::Astar(int(&targetIndex)[2])
 
 
 	int playerIndex[2];
-	mMapManager.getPlayer()->getIndexPos(playerIndex);
+	mScene.getPlayer()->getIndexPos(playerIndex);
 
 	while (!openList.empty()) {
 		//openListの先頭ノードをカレントノードに
@@ -309,10 +310,10 @@ void EnemyComponent::Astar(int(&targetIndex)[2])
 			}
 
 			//探索するマスが移動可能かつ探索していないか判定
-			if (nextIndex[0] >= 0 && nextIndex[0] < mMapManager.getMapSize()
-				&& nextIndex[1] >= 0 && nextIndex[1] < mMapManager.getMapSize()
+			if (nextIndex[0] >= 0 && nextIndex[0] < mScene.getMapSize()
+				&& nextIndex[1] >= 0 && nextIndex[1] < mScene.getMapSize()
 				&& !grid[nextIndex[0]][nextIndex[1]].isClosed
-				&& mMapManager.getMapDataAt(nextIndex[0], nextIndex[1]) != TileType::WALL
+				&& mScene.getTileDataAt(nextIndex[0], nextIndex[1]) != TileType::WALL
 				) {
 				gCost = grid[current.x][current.y].gCost + 1;
 				//よりGコストの小さいルートを見つけた場合、親ノードとGコストを更新

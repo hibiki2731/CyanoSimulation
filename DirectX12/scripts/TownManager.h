@@ -16,7 +16,7 @@ public:
 class TownManager :public Scene
 {
 public:
-	TownManager(Game& game, class SceneManager* sceneManager);
+	TownManager(Game& game);
 
 	void onEnter() override;
 	void onExit() override;

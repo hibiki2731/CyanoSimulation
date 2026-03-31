@@ -43,9 +43,6 @@ public:
 	//初期化
 	void init();
 
-	//アクターの追加
-	void addActor(std::unique_ptr<Actor> actor);
-	//コンポーネント配列への追加、除去
 	//メッシュの追加
 	void addMesh(MeshComponent* mesh);
 	void removeMesh(MeshComponent* mesh);
@@ -62,7 +59,6 @@ public:
 	void addText(TextComponent* text);
 	void removeText(TextComponent* text);
 
-	void clearActors();
 	//ゲッター
 	Graphic* getGraphic();
 	DamageTextManager* getDamageTextManager();
@@ -70,7 +66,7 @@ public:
 	std::vector<PointLightComponent*>& getPointLights();
 	std::vector<SpotLightComponent*>& getSpotLights();
 	ItemManager* getItemManager();
-	SceneManager* getSceneManager();
+	SceneManager& getSceneManager();
 	PlayerManager* getPlayerManager();
 	AudioManager* getAudioManager();
 
@@ -79,10 +75,6 @@ private:
 
 	//グラフィック
 	std::unique_ptr<Graphic> mGraphic;
-	//アクター配列（所有権を持つ）
-	std::vector<std::unique_ptr<Actor>> mActors;
-	std::vector<std::unique_ptr<Actor>> mPendingActors;
-	//コンポーネント配列（所有権は持たない）
 	//メッシュ配列
 	std::vector<MeshComponent*> mMeshes;
 	std::vector<SpriteComponent*> mSprites;
@@ -104,10 +96,11 @@ private:
 	std::unique_ptr<ItemManager> mItemManager;
 
 	//シーンマネージャー
-	SceneManager* mSceneManager;
+	std::unique_ptr<SceneManager> mSceneManager;
 
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager> mAudioManager;
+
 	//ループ内処理
 	void input();
 	void update();

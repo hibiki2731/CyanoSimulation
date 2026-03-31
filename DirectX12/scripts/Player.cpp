@@ -18,10 +18,11 @@
 #include "PlayerManager.h"
 #include "AudioManager.h"
 #include "MiniMap.h"
+#include "DungeonScene.h"
 
-Player::Player(Game& game, MapManager& mapManager, float x, float y)
-	: Actor(game),
-	mMapManager(mapManager)
+Player::Player(DungeonScene& scene, float x, float y)
+	: Actor(scene),
+	mScene(scene)
 {
 	mPosition = { x, 0.8f, y };
 	mTargetPos = mPosition;
@@ -32,7 +33,7 @@ Player::Player(Game& game, MapManager& mapManager, float x, float y)
 	mSelectItemIndex = 0;
 
 	//プレイヤーデータの取得
-	mPlayerManager = game.getPlayerManager();
+	mPlayerManager = scene.getGame().getPlayerManager();
 	const PlayerData& data = mPlayerManager->getPlayerData();
 
 	//移動速度、回転速度、点滅時間の設定
@@ -57,16 +58,16 @@ Player::Player(Game& game, MapManager& mapManager, float x, float y)
 	addComponent(std::move(spotLight));
 
 	//キャラクターコンポーネントの生成
-	auto character = std::make_unique<CharacterComponent>(*this, mapManager);
+	auto character = std::make_unique<CharacterComponent>(*this, scene);
 	character->setDirection(Direction::UP);
 	character->setIndexPos(static_cast<int>(std::round(x / MAPTIPSIZE)), static_cast<int>(std::round(y / MAPTIPSIZE)));
 	character->setMaxHP(data.maxHp);
 	character->setHP(data.hp);
 	//力の計算
-	int power = data.power + mGame.getItemManager()->getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
+	int power = data.power + mScene.getGame().getItemManager()->getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
 	character->setPower(power);
 	//防御力の計算
-	int defence = data.defence + mGame.getItemManager()->getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
+	int defence = data.defence + mScene.getGame().getItemManager()->getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
 	character->setDefense(defence);
 	mCharacter = character.get();
 	addComponent(std::move(character));
@@ -75,7 +76,7 @@ Player::Player(Game& game, MapManager& mapManager, float x, float y)
 	mActionLimit = data.actionLimit;
 
 	//アイテムマネージャーの取得
-	mItemManager = game.getItemManager();
+	mItemManager = scene.getGame().getItemManager();
 
 	//探索道具の効果を取得
 	for (const std::string toolID : data.explorerInventory) {
@@ -90,9 +91,8 @@ Player::Player(Game& game, MapManager& mapManager, float x, float y)
 
 Player::~Player()
 {
-	PlayerManager* player = mGame.getPlayerManager();
+	PlayerManager* player = mScene.getGame().getPlayerManager();
 	player->setHP(mCharacter->getHP());
-	mMapManager.removeActorToMap(this);
 }
 
 void Player::inputActor()
@@ -211,7 +211,7 @@ void Player::giveDamage(int damage)
 void Player::attack()
 {
 	//敵ターン時は実行不可
-	if (mMapManager.getTurnType() == TurnType::ENEMY) return;
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
@@ -221,16 +221,16 @@ void Player::attack()
 	EnemyComponent* target = nullptr;
 	switch (mCharacter->getDirection()) {
 	case Direction::UP:
-		target = mMapManager.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] + 1);
+		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] + 1);
 		break;
 	case Direction::DOWN:
-		target = mMapManager.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] - 1);
+		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] - 1);
 		break;
 	case Direction::RIGHT:
-		target = mMapManager.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] + 1, mCharacter->getIndexPos()[1]);
+		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] + 1, mCharacter->getIndexPos()[1]);
 		break;
 	case Direction::LEFT:
-		target = mMapManager.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] - 1, mCharacter->getIndexPos()[1]);
+		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] - 1, mCharacter->getIndexPos()[1]);
 		break;
 	}
 
@@ -270,12 +270,12 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 		value = value / 10;
 	}
 
-	float DTHalfSize = mGame.getDamageTextManager()->getSize() * 0.5f;
+	float DTHalfSize = mScene.getGame().getDamageTextManager()->getSize() * 0.5f;
 	//数値が画面中心に来るよう調整
 	textPos = textPos + (right * DTHalfSize * 0.5 * (digit - 1));
 	//桁ごとの表示位置の調整
 	for (int i = 0; i < digit; i++) {
-		mGame.getDamageTextManager()->createDamageText(textPos, num[i]);
+		mScene.getGame().getDamageTextManager()->createDamageText(textPos, num[i]);
 		textPos = textPos - right * DTHalfSize;
 	}
 }
@@ -283,7 +283,7 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 void Player::move(Direction direction)
 {
 	//プレイヤーターン時のみ実行
-	if (mMapManager.getTurnType() == TurnType::ENEMY) return;
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//行動回数が0の場合実行不可
@@ -294,19 +294,19 @@ void Player::move(Direction direction)
 	calcMoveDirectionToIndexPos(direction, targetIndexPos);
 
 	//進先に障害物がある場合移動不可
-	if (mMapManager.getMapDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
-		mMapManager.getObjectDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) return;
+	if (mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
+		mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) return;
 
 	//移動前の座標を空に
-	mMapManager.setObjectDataAt(mCharacter->getIndexPosInt(), CharacterType::EMPTY);
+	mScene.setCharacterDataAt(mCharacter->getIndexPosInt(), CharacterType::EMPTY);
 	//マップ上のオブジェクトデータ更新
-	mMapManager.setObjectDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::PLAYER);
+	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::PLAYER);
 	//プレイヤーのインデックス座標の更新
 	mCharacter->setIndexPos(targetIndexPos[0], targetIndexPos[1]);
 
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
-	mGame.getAudioManager()->playSE("MAP_FOOTSTEP1");
+	mScene.getGame().getAudioManager()->playSE("MAP_FOOTSTEP1");
 	turnEnd();
 
 }	
@@ -314,7 +314,7 @@ void Player::move(Direction direction)
 void Player::rotate(Direction direction)
 {
 	//プレイヤーターン時のみ実行
-	if (mMapManager.getTurnType() == TurnType::ENEMY) return;
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 
@@ -331,7 +331,7 @@ void Player::rotate(Direction direction)
 	}
 
 	isRotating = true;
-	mMapManager.getMiniMap()->updateDirection();
+	mScene.updateMiniMapDirection();
 }
 
 void Player::calcMoveDirectionToIndexPos(Direction moveDirection, int (&indexPos)[2])
@@ -366,20 +366,20 @@ void Player::calcMoveDirectionToIndexPos(Direction moveDirection, int (&indexPos
 void Player::collect()
 {
 	//プレイヤーターン時のみ実行
-	if (mMapManager.getTurnType() == TurnType::ENEMY) return;
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
 	if (mActionLimit == 0) return;
 
-	int tileData = mMapManager.getMapDataAt(mCharacter->getIndexPosInt());
+	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
 
 	//今いるマスが通常の床ならば何も行わない
 	if (tileData == TileType::FLOOR) return;
 
 	if (tileData >= TileType::RESOURCE){
-		std::string resourceID = mMapManager.getResourceID(mCharacter->getIndexPosInt());
-		mGame.getItemManager()->addResource(resourceID, 1);
+		std::string resourceID = mScene.getResourceID(mCharacter->getIndexPosInt());
+		mScene.getGame().getItemManager()->addResource(resourceID, 1);
 	}
 
 	//ターン経過
@@ -400,14 +400,14 @@ void Player::updateFlash()
 	if (mFlashTimer > 0.0f) {
 		mFlashTimer -= deltaTime;
 		float intensity = max(0.0f, mFlashTimer / mFlashDuration);
-		mGame.getGraphic()->updateDamageFlashIntensity(intensity);
+		mScene.getGame().getGraphic()->updateDamageFlashIntensity(intensity);
 	}
 }
 
 void Player::useItem()
 {
 	//敵ターン時は実行不可
-	if (mMapManager.getTurnType() == TurnType::ENEMY) return;
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
@@ -437,7 +437,7 @@ void Player::useItem()
 void Player::turnEnd()
 {
 	//ターンをエネミーターンに変更
-	mMapManager.moveToEnemyTurn();
+	mScene.moveToEnemyTurn();
 	//残り行動回数を減らす
 	mActionLimit--;
 	//行動中フラグをtureにする

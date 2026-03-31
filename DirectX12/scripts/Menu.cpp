@@ -26,14 +26,14 @@ void Menu::inputMenu() {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 	}		
 }
 

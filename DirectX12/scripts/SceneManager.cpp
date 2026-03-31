@@ -5,34 +5,52 @@
 #include "TownManager.h"
 #include "DungeonScene.h"
 
-SceneManager::SceneManager(Game& game) : Actor(game)
+SceneManager::SceneManager(Game& game)
 {
 	mCurrentSceneType = "TOWN";
 	mNextSceneType = mCurrentSceneType;
 	
 	//シーンの登録
-	mSceneMap["TOWN"] = std::make_unique<TownManager>(game, this);
+	mSceneMap["TOWN"] = std::make_unique<TownManager>(game);
 	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game, this);
 	mCurrentScene = mSceneMap["TOWN"].get();
 	mCurrentScene->onEnter();
 }
 
-void SceneManager::fastUpdateActor()
+void SceneManager::fastUpdateScene()
 {
 	if (mCurrentScene)
 		mCurrentScene->fastUpdate();
 }
 
-void SceneManager::updateActor()
+void SceneManager::updateScene()
 {
 	if (mCurrentScene)
 		mCurrentScene->update();
 }
 
-void SceneManager::inputActor()
+void SceneManager::lateUpdateScene()
+{
+	if (mCurrentScene)
+		mCurrentScene->lateUpdate();
+}
+
+void SceneManager::inputScene()
 {
 	if (mCurrentScene)
 		mCurrentScene->input();
+}
+
+void SceneManager::joinSceneActors()
+{
+	if (mCurrentScene)
+		mCurrentScene->joinActors();
+}
+
+void SceneManager::removeSceneActors()
+{
+	if (mCurrentScene)
+		mCurrentScene->removeActors();
 }
 
 const std::string& SceneManager::getCurrentSceneType()

@@ -10,7 +10,7 @@ UI::UI(Game& game) : Actor(game)
 	counter = 0;
 	auto anime = std::make_unique<Anime2DComponent>(*this);
 	anime->create("assets\\josei_04_akamafu\\josei_04_akamafu\\PNG\\josei_04_.png", 4);
-	setScale({ 1.0f / getGame().getGraphic()->getAspect() * 0.5f, 1.0f * 1.1f, 1.0f });
+	setScale({ 1.0f / getScene().getGraphic()->getAspect() * 0.5f, 1.0f * 1.1f, 1.0f });
 	mAnime = anime.get();
 	addComponent(std::move(anime));
 

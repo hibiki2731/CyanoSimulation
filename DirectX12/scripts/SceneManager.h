@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include <string>
 #include <unordered_map>
-#include "Actor.h"
 
 class Game;
 
@@ -11,14 +10,23 @@ enum class SceneType {
 	MAP,
 };
 
-class SceneManager : public Actor
+class SceneManager
 {
 public:
 	SceneManager(Game& game);
 
-	void fastUpdateActor() override;
-	void updateActor() override;
-	void inputActor() override;
+	//シーンの更新
+	void fastUpdateScene();
+	void updateScene();
+	void lateUpdateScene();
+	//シーンの入力
+	void inputScene();
+
+	//シーン中のアクター配列を更新
+	void joinSceneActors();
+
+	//シーン中のアクターの削除
+	void removeSceneActors();
 
 
 	const std::string& getCurrentSceneType();

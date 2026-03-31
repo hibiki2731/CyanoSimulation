@@ -19,6 +19,7 @@
 #include "json.hpp"
 #include "PlayerManager.h"
 #include "AudioManager.h"
+#include "Scene.h"
 
 Game::Game(){
 	mUpdatingActors = false;
@@ -101,21 +102,8 @@ void Game::init() {
 	mAudioManager = std::make_unique<AudioManager>();
 
 	//シーンマネージャーの初期化	
-	auto sceneManager = std::make_unique<SceneManager>(*this);
-	mSceneManager = sceneManager.get();
-	addActor(std::move(sceneManager));
+	mSceneManager = std::make_unique<SceneManager>(*this);
 
-}
-
-void Game::addActor(std::unique_ptr<Actor> actor)
-{
-	//アクターの更新中なら待ちに追加
-	if (mUpdatingActors) {
-		mPendingActors.emplace_back(std::move(actor));
-	}
-	else {
-		mActors.emplace_back(std::move(actor));
-	}
 }
 
 void Game::addMesh(MeshComponent* mesh)
@@ -177,13 +165,6 @@ void Game::removeText(TextComponent* fontText)
 	mTexts.erase(std::remove(mTexts.begin(), mTexts.end(), fontText), mTexts.end());
 }
 
-void Game::clearActors()
-{
-	for (auto& actor : mActors) {
-		actor->setState(Actor::State::Dead);
-	}
-}
-
 Graphic* Game::getGraphic()
 {
 	return mGraphic.get();
@@ -214,9 +195,9 @@ ItemManager* Game::getItemManager()
 	return mItemManager.get();
 }
 
-SceneManager* Game::getSceneManager()
+SceneManager& Game::getSceneManager()
 {
-	return mSceneManager;
+	return *mSceneManager.get();
 }
 
 PlayerManager* Game::getPlayerManager()
@@ -232,11 +213,8 @@ AudioManager* Game::getAudioManager()
 void Game::input()
 {
 	updateInput();
-
-	for (auto& actor : mActors) {
-
-		actor->input();
-	}
+	//アクターの入力処理
+	mSceneManager->inputScene();
 
 
 #ifdef _DEBUG
@@ -259,19 +237,11 @@ void Game::update()
 {
 	mUpdatingActors = true;
 
-	//アクターの更新
-	{
-		for (auto& actor : mActors) {
-			actor->fastUpdate();
-		}
-	}
+	//早めのシーン更新
+	mSceneManager->fastUpdateScene();
 
-	//アクターの更新処理
-	{
-		for (auto& actor : mActors) {
-			actor->update();
-		}	
-	}
+	//基本のシーン更新
+	mSceneManager->updateScene();
 
 
 	//各種マネージャーの更新
@@ -280,41 +250,14 @@ void Game::update()
 		mDamageTextManager->update();	//ダメージテキストの更新
 	}
 
-	//Actorの更新中に追加されたアクターをActor配列に追加
-	mUpdatingActors = false;
-	{
-		for (auto& pending : mPendingActors) {
-			mActors.emplace_back(std::move(pending));
-		}
-		mPendingActors.clear();
-	}
+	mSceneManager->joinSceneActors();	//シーンにアクターを追加
 
 	//死んだアクターの除去
-	{
-		//死んだアクターを一次配列に追加
-		std::vector<std::unique_ptr<Actor>> deadActors;
-		for (auto& actor : mActors) {
-			if (actor->getState() == Actor::Dead) {
- 				actor->endProccess();
-			}
-		}
-
-		//元配列に残ったnullptrを削除
-		std::erase_if(mActors, [](const std::unique_ptr<Actor>& actor) {
-			return !actor || actor->getState() == Actor::State::Dead;
-			});
-
-
-	}
-
-	mUpdatingActors = true;
+	mSceneManager->removeSceneActors();
 
 	//アクターの除去後に行う処理
 	{
-		//アクターの更新
-		for (auto& actor : mActors) {
-			actor->lateUpdate();
-		}
+		mSceneManager->lateUpdateScene();
 		//各種マネージャーの更新
 		mGraphic->updateBase3DData();		//Base3DDataの更新
 	}

@@ -4,12 +4,12 @@
 
 using namespace DirectX;
 
-class MapManager;
+class DungeonScene;
 
 class CharacterComponent : public Component
 {
 public:
-	CharacterComponent(Actor& owner, MapManager& mapManager);
+	CharacterComponent(Actor& owner, DungeonScene& scene);
 	~CharacterComponent();
 
 	void inputComponent() override;
@@ -56,6 +56,6 @@ protected:
 	//位置
 	std::vector<int> mIndexPos; //{x, y}
 
-	MapManager& mMapManager;
+	DungeonScene& mScene;
 };
 

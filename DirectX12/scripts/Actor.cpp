@@ -2,8 +2,8 @@
 #include "Component.h"
 #include "Game.h"
 
-Actor::Actor(Game& game)
-: mGame(game)
+Actor::Actor(Scene& scene)
+: mScene(scene)
 {
 	mPosition = { 0.0f, 0.0f, 0.0f };
 	mScale = { 1.0f, 1.0f, 1.0f };
@@ -12,8 +12,8 @@ Actor::Actor(Game& game)
 
 }
 
-Actor::Actor(Game& game, float x, float y)
-	:mGame(game)
+Actor::Actor(Scene& scene, float x, float y)
+	:mScene(scene)
 {
 	mPosition = { x, 0.0f, y };
 	mScale = { 1.0f, 1.0f, 1.0f };
@@ -24,7 +24,6 @@ Actor::Actor(Game& game, float x, float y)
 
 Actor::~Actor()
 {
-	//endProccess();
 }
 
 void Actor::input()
@@ -162,9 +161,9 @@ XMFLOAT3 Actor::getRotation() const
 	return mRotation;
 }
 
-Game& Actor::getGame()
+Scene& Actor::getScene()
 {
-	return mGame;
+	return mScene;
 }
 
 void Actor::addComponent(std::unique_ptr<Component> component)

@@ -4,15 +4,16 @@
 #include "SpriteComponent.h"
 #include "Graphic.h"
 #include "Player.h"
+#include "DungeonScene.h"
 
 constexpr int DisplayRange = 2;
 constexpr int TileNum = (DisplayRange * 2 + 1) * (DisplayRange * 2 + 1);
 constexpr XMFLOAT2 CanvasSize = { Graphic::ClientWidth * 0.2f, Graphic::ClientWidth * 0.2f};
 constexpr XMFLOAT2 IconSize = { CanvasSize.x / (2 * DisplayRange + 1), CanvasSize.y / (2 * DisplayRange + 1) };
 
-MiniMap::MiniMap(Game& game, MapManager& mapManager) 
-	: Actor(game),
-	mMapManager(mapManager)
+MiniMap::MiniMap(DungeonScene& scene) 
+	: Actor(scene),
+	 mScene(scene)
 {
 	//ミニマップの背景
 	auto canvas = std::make_unique<SpriteComponent>(*this, 20.0f);
@@ -88,20 +89,20 @@ MiniMap::MiniMap(Game& game, MapManager& mapManager)
 void MiniMap::updatePosition()
 {
 	int playerPos[2];
-	mMapManager.getPlayer()->getIndexPos(playerPos);
+	mScene.getPlayer()->getIndexPos(playerPos);
 	//各マスのマップデータを読み込む
 	for (int i = 0; i < TileNum; i++) {
 		int x = playerPos[0] + (i % (DisplayRange * 2 + 1)) - DisplayRange;
 		int y = playerPos[1] + (i / (DisplayRange * 2 + 1)) - DisplayRange;
 
 		//マップの範囲外
-		if (x < 0 || x >= mMapManager.getMapSize()) {
+		if (x < 0 || x >= mScene.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
 			continue;
 		}
-		if (y < 0 || y >= mMapManager.getMapSize()) {
+		if (y < 0 || y >= mScene.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
@@ -109,12 +110,12 @@ void MiniMap::updatePosition()
 		}
 
 		//タイル情報
-		int tileType = mMapManager.getMapDataAt(x, y);
+		int tileType = mScene.getTileDataAt(x, y);
 		if (tileType != TileType::WALL) mTileIcon[i]->setZPos(19.0f);
 		else mTileIcon[i]->setZPos(100.0f);
 
 		//敵情報
-		int objectType = mMapManager.getObjectDataAt(x, y);
+		int objectType = mScene.getCharacterDataAt(x, y);
 		if (objectType == CharacterType::ENEMY) mEnemyIcon[i]->setZPos(18.0f);
 		else mEnemyIcon[i]->setZPos(100.0f);
 
@@ -126,7 +127,7 @@ void MiniMap::updatePosition()
 
 void MiniMap::updateDirection()
 {
-	int	direction = mMapManager.getPlayer()->getDirection();
+	int	direction = mScene.getPlayer()->getDirection();
 	switch (direction) {
 	case Direction::UP:
 		mPlayerIcon->setRotation(0.0f);

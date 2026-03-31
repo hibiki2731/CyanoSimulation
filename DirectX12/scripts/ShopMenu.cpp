@@ -30,7 +30,7 @@ void ShopMenu::buyItem(int index) {
 		int possessedResource = mItemManager->getResourceNum(itemData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (itemData.price[i] > possessedResource) {
-			mGame.getAudioManager()->playSE("UI_CANCEL");
+			mScene.getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -38,7 +38,7 @@ void ShopMenu::buyItem(int index) {
 		mItemManager->subResource(itemData.costResourceID[i], itemData.price[i]);
 	}
 
-	mGame.getAudioManager()->playSE("UI_ENTER");
+	mScene.getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addInventory(itemData.id);
 }

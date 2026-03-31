@@ -15,30 +15,30 @@ MainMenu::MainMenu(Game& game,TownManager& townManager, float zDepth) : Menu(gam
 
 //各種メニューのupdate
 void MainMenu::selectedAct() {
-	mGame.getAudioManager()->playSE("UI_WINDOW_OPEN");
+	mScene.getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch (mSelectedIndex) {
 	case 0: {
-		auto inn = std::make_unique<InnMenu>(mGame, mTownManager, 97.0f);
-		mGame.addActor(std::move(inn));
+		auto inn = std::make_unique<InnMenu>(mScene, mTownManager, 97.0f);
+		mScene.addActor(std::move(inn));
 		break;
 	}
 	case 1: {
-		auto shop = std::make_unique<ShopMenu>(mGame, mTownManager, 97.0f);
-		mGame.addActor(std::move(shop));
+		auto shop = std::make_unique<ShopMenu>(mScene, mTownManager, 97.0f);
+		mScene.addActor(std::move(shop));
 		break;
 	}
 	case 2: {
-		auto forge = std::make_unique<ForgeMenu>(mGame, mTownManager, 97.0f);
-		mGame.addActor(std::move(forge));
+		auto forge = std::make_unique<ForgeMenu>(mScene, mTownManager, 97.0f);
+		mScene.addActor(std::move(forge));
 		break;
 	}
 	case 3: {
-		auto explorer = std::make_unique<ExplorerMenu>(mGame, mTownManager, 97.0f);
-		mGame.addActor(std::move(explorer));
+		auto explorer = std::make_unique<ExplorerMenu>(mScene, mTownManager, 97.0f);
+		mScene.addActor(std::move(explorer));
 		break;
 	}
 	case 4: {
-		mGame.getSceneManager()->transitToMap();
+		mScene.getSceneManager()->transitToMap();
 	}
 	}
 }

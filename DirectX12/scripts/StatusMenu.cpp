@@ -40,7 +40,7 @@ EquipWeaponMenu::EquipWeaponMenu(Game& game, TownManager& townManager, float zDe
 
 void EquipWeaponMenu::selectedAct()
 {
-	mGame.getAudioManager()->playSE("UI_ENTER");
+	mScene.getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipWeapon(mSelectedIndex);
 }
 
@@ -65,7 +65,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -73,7 +73,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -126,7 +126,7 @@ EquipArmerMenu::EquipArmerMenu(Game& game, TownManager& townManager, float zDept
 
 void EquipArmerMenu::selectedAct()
 {
-	mGame.getAudioManager()->playSE("UI_ENTER");
+	mScene.getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipArmer(mSelectedIndex);
 }
 
@@ -150,14 +150,14 @@ void EquipArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
-		mGame.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getAudioManager()->playSE("UI_MOVE1");
 		mSelectedIndex++;
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -188,16 +188,16 @@ StatusMenu::~StatusMenu()
 
 void StatusMenu::selectedAct()
 {
-	mGame.getAudioManager()->playSE("UI_WINDOW_OPEN");
+	mScene.getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch(mSelectedIndex) {
 	case 0: {
-		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mGame, mTownManager, 48.0f);
-		mGame.addActor(std::move(weaponMenu));
+		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, mTownManager, 48.0f);
+		mScene.addActor(std::move(weaponMenu));
 		break;
 	}
 	case 1: {
-		auto armerMenu = std::make_unique<EquipArmerMenu>(mGame, mTownManager, 48.0f);
-		mGame.addActor(std::move(armerMenu));
+		auto armerMenu = std::make_unique<EquipArmerMenu>(mScene, mTownManager, 48.0f);
+		mScene.addActor(std::move(armerMenu));
 		break;
 	}
 	}

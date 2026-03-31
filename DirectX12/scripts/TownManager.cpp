@@ -22,8 +22,8 @@ BackGround::BackGround(Game& game) : Actor(game)
 }
 
 //TownManager
-TownManager::TownManager(Game& game, SceneManager* sceneManager)
-	: Scene(sceneManager),
+TownManager::TownManager(Game& game)
+	: Scene(game),
 	mGame(game)
 {
 	isTown = false;
@@ -75,6 +75,7 @@ void TownManager::input()
 	if (isKeyJustPressed('E') && !isStatusMenu) {
 		isStatusMenu = true;
 		auto status = std::make_unique<StatusMenu>(mGame, *this, 50.0f);
+		mGame.addActor(std::move(status));
 		mGame.getAudioManager()->playSE("UI_WINDOW_OPEN");
 	}
 }

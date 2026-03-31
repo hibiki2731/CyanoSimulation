@@ -5,6 +5,7 @@
 #include "MeshComponent.h"
 
 class Player;
+class DungeonScene;
 
 enum class MovePattern{
 	RANDOM,
@@ -15,7 +16,7 @@ enum class MovePattern{
 class EnemyComponent : public CharacterComponent
 {
 public:
-	EnemyComponent(Actor& owner, class MapManager& mapManager);
+	EnemyComponent(Actor& owner, DungeonScene& scene);
 
 	void inputComponent() override;
 	void updateComponent() override;
@@ -85,7 +86,9 @@ private:
 	int mDistPlayer; //プレイヤーからの距離(マンハッタン距離)
 
 	//マップマネージャー
-	class MapManager& mMapManager;
+	//class MapManager& mMapManager;
+	//シーン
+	DungeonScene& mScene;
 
 };
 

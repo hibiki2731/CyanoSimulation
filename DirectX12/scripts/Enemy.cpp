@@ -5,11 +5,11 @@
 #include "MapManager.h"
 #include "json.hpp"
 #include "Player.h"
+#include "DungeonScene.h"
 #include <fstream>
 
-Enemy::Enemy(Game& game, MapManager& mapManager, const std::string& enemyID, float x, float y)
-	: Actor(game),
-	mMapManager(mapManager)
+Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
+	: Actor(scene)
 {
 	//敵の位置を設定
 	mPosition = XMFLOAT3(x, 0, y);
@@ -37,7 +37,7 @@ Enemy::Enemy(Game& game, MapManager& mapManager, const std::string& enemyID, flo
 	auto mesh = std::make_unique<MeshComponent>(*this);
 	mesh->create(param.meshName);
 
-	auto enemy = std::make_unique<EnemyComponent>(*this, mMapManager);
+	auto enemy = std::make_unique<EnemyComponent>(*this, scene);
 	mEnemy = enemy.get();
 	mEnemy->setMesh(mesh.get());
 	mEnemy->setDirection(Direction::UP); //上向き
@@ -57,8 +57,6 @@ Enemy::Enemy(Game& game, MapManager& mapManager, const std::string& enemyID, flo
 
 Enemy::~Enemy()
 {
-	mMapManager.removeEnemy(mEnemy);
-	mMapManager.removeActorToMap(this);
 }
 
 void Enemy::updateActor()

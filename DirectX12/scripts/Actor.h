@@ -6,7 +6,7 @@
 using namespace DirectX;
 
 //前方宣言
-class Game;
+class Scene;
 class Component;
 
 class Actor
@@ -19,8 +19,8 @@ public:
 		Dead
 	};
 
-	Actor(Game& game);
-	Actor(Game& game, float x, float y);
+	Actor(Scene& scene);
+	Actor(Scene& scene, float x, float y);
 
 	virtual ~Actor();
 
@@ -68,7 +68,7 @@ public:
 	XMFLOAT3 getPosition() const;
 	XMFLOAT3 getScale() const;
 	XMFLOAT3 getRotation() const;
-	Game& getGame();
+	Scene& getScene();
 
 protected:
 	//アクターの状態
@@ -76,7 +76,7 @@ protected:
 
 	//コンポーネント
 	std::vector<std::unique_ptr<Component>> mComponents;
-	Game& mGame;
+	Scene& mScene;
 
 	//ベクトル
 	XMFLOAT3 mPosition;

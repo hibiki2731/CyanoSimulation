@@ -1,11 +1,11 @@
 ﻿#include "CharacterComponent.h"
 #include "Actor.h"
 #include "Game.h"
-#include "MapManager.h"
+#include "DungeonScene.h"
 
-CharacterComponent::CharacterComponent(Actor& owner, MapManager& mapManager) 
+CharacterComponent::CharacterComponent(Actor& owner, DungeonScene& scene) 
 	: Component(owner),
-	mMapManager(mapManager)
+	mScene(scene)
 {
 	mMaxHP = 100;
 	mHP = mMaxHP;
@@ -74,7 +74,7 @@ std::vector<int>& CharacterComponent::getIndexPos()
 
 int CharacterComponent::getIndexPosInt()
 {
-	return mIndexPos[1] * mMapManager.getMapSize() + mIndexPos[0];
+	return mIndexPos[1] * mScene.getMapSize() + mIndexPos[0];
 }
 
 void CharacterComponent::setMaxHP(int maxHP)
@@ -111,8 +111,8 @@ void CharacterComponent::setIndexPos(int x, int y)
 
 void CharacterComponent::setIndexPosInt(int indexPos)
 {
-	mIndexPos[0] = indexPos % mMapManager.getMapSize();
-	mIndexPos[1] = indexPos / mMapManager.getMapSize();
+	mIndexPos[0] = indexPos % mScene.getMapSize();
+	mIndexPos[1] = indexPos / mScene.getMapSize();
 }
 
 void CharacterComponent::addHP(int hp)

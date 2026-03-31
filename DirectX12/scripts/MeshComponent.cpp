@@ -9,9 +9,9 @@
 
 MeshComponent::MeshComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
 {
-	mGraphic = mOwner.getGame().getGraphic();
+	mGraphic = mOwner.getScene().getGraphic();
 	mCommandList = mGraphic->getCommandList();
-	mOwner.getGame().addMesh(this);
+	mOwner.getScene().addMesh(this);
 	CbvTbvSize = mGraphic->getCbvTbvIncSize();
 }
 
@@ -22,22 +22,22 @@ MeshComponent::~MeshComponent()
 void MeshComponent::endProccess()
 {
 	//Gameからメッシュを削除
-	mOwner.getGame().removeMesh(this);
-	mOwner.getGame().getAssetManager()->deleteMemory(mCBIndex, mCBSize);
-	mOwner.getGame().getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
+	mOwner.getScene().removeMesh(this);
+	mOwner.getScene().getAssetManager()->deleteMemory(mCBIndex, mCBSize);
+	mOwner.getScene().getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
 }
 
 void MeshComponent::create(const std::string& objectName)
 {	
 
 	//メッシュデータの取得
-	MeshData* meshData = mOwner.getGame().getAssetManager()->getMeshData(objectName);
+	MeshData* meshData = mOwner.getScene().getAssetManager()->getMeshData(objectName);
 	
 	//コンスタントバッファのインデックスを取得
 	mCBSize = (meshData->NumParts + 1) * 256;
-	mCBIndex = mOwner.getGame().getAssetManager()->getCBEndIndex(mCBSize);
+	mCBIndex = mOwner.getScene().getAssetManager()->getCBEndIndex(mCBSize);
 	mHeapSize = NumDescriptors * meshData->NumParts;
-	mHeapIndex = mOwner.getGame().getAssetManager()->getHeapEndIndex(mHeapSize * 2); //二つ分Viewを作る必要がある
+	mHeapIndex = mOwner.getScene().getAssetManager()->getHeapEndIndex(mHeapSize * 2); //二つ分Viewを作る必要がある
 
 	//メッシュパーツ数を読み込み、メモリを確保
 	NumParts = meshData->NumParts;
@@ -61,7 +61,7 @@ void MeshComponent::create(const std::string& objectName)
 			Parts[k].Cb2.specular = meshData->Material[k * 3 + 2];
 		}
 		{
-			Parts[k].TextureBuf = mOwner.getGame().getAssetManager()->getShaderResource(meshData->TextureName[k]);
+			Parts[k].TextureBuf = mOwner.getScene().getAssetManager()->getShaderResource(meshData->TextureName[k]);
 		}
 	}
 

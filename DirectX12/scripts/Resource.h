@@ -5,7 +5,7 @@
 class Resource : public Actor
 {
 public:
-	Resource(Game& game, const std::string& meshID,const std::string& resourceID, float x, float y);
+	Resource(class DungeonScene& scene, const std::string& meshID,const std::string& resourceID, float x, float y);
 
 	void updateActor() override;
 	void inputActor() override;

@@ -222,7 +222,7 @@
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
-    <ClCompile Include="scripts\Grass.cpp" />
+    <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
     <ClCompile Include="scripts\Menu.cpp" />
@@ -271,7 +271,7 @@
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
-    <ClInclude Include="scripts\Grass.h" />
+    <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />
     <ClInclude Include="scripts\magic_enum.hpp" />
