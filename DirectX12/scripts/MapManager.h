@@ -69,6 +69,10 @@ public:
 	void clearMap();
 	void startEnemyTurn();
 
+
+	void addActorToMap(class Actor* actor);
+	void removeActorToMap(class Actor* actor);
+
 	//エネミー配列の制御
 	void addEnemy(EnemyComponent* enemy);
 	void removeEnemy(EnemyComponent* enemy);

@@ -92,6 +92,7 @@ Player::~Player()
 {
 	PlayerManager* player = mGame.getPlayerManager();
 	player->setHP(mCharacter->getHP());
+	mMapManager.removeActorToMap(this);
 }
 
 void Player::inputActor()

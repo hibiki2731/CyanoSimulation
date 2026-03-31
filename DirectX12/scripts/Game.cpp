@@ -295,7 +295,7 @@ void Game::update()
 		std::vector<std::unique_ptr<Actor>> deadActors;
 		for (auto& actor : mActors) {
 			if (actor->getState() == Actor::Dead) {
-				//actor->endProccess();
+ 				actor->endProccess();
 			}
 		}
 

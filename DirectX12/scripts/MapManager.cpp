@@ -54,6 +54,7 @@ void MapManager::end()
 	for (auto& actor : mActors) {
 		actor->setState(Actor::State::Dead);
 	}
+	mActors.clear();
 	mPlayer = nullptr;
 	mMiniMap = nullptr;
 	mResourceIDs.clear();
@@ -251,6 +252,20 @@ void MapManager::startEnemyTurn()
 		enemy->startAct();
 	}
 	mMiniMap->updatePosition();
+}
+
+void MapManager::addActorToMap(Actor* actor)
+{
+	mActors.emplace_back(actor);
+}
+
+void MapManager::removeActorToMap(Actor* actor)
+{
+	auto iter = std::find(mActors.begin(), mActors.end(), actor);
+	if (iter != mActors.end()) {
+		std::iter_swap(iter, mActors.end() - 1);
+		mEnemies.pop_back();
+	}
 }
 
 void MapManager::addEnemy(EnemyComponent* enemy)

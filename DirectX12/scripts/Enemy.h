@@ -11,6 +11,7 @@ class Enemy : public Actor
 {
 public:
 	Enemy(Game& game, class MapManager& mapManager, const std::string& enemyID, float x, float y);
+	~Enemy();
 
 	void updateActor() override;
 	void inputActor() override;

@@ -24,7 +24,7 @@ Actor::Actor(Game& game, float x, float y)
 
 Actor::~Actor()
 {
-	endProccess();
+	//endProccess();
 }
 
 void Actor::input()
@@ -164,10 +164,7 @@ XMFLOAT3 Actor::getRotation() const
 
 Game& Actor::getGame()
 {
-	if (!&mGame) {
-		assert(0 && "Actor must have a reference to Game.");
-	}
-return mGame;
+	return mGame;
 }
 
 void Actor::addComponent(std::unique_ptr<Component> component)

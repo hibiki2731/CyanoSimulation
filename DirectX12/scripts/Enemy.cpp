@@ -55,6 +55,12 @@ Enemy::Enemy(Game& game, MapManager& mapManager, const std::string& enemyID, flo
 	addComponent(std::move(enemy));
 }
 
+Enemy::~Enemy()
+{
+	mMapManager.removeEnemy(mEnemy);
+	mMapManager.removeActorToMap(this);
+}
+
 void Enemy::updateActor()
 {
 }

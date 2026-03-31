@@ -22,9 +22,6 @@ MeshComponent::~MeshComponent()
 void MeshComponent::endProccess()
 {
 	//Gameからメッシュを削除
-	if (!&mOwner) {
-		return;
-	}
 	mOwner.getGame().removeMesh(this);
 	mOwner.getGame().getAssetManager()->deleteMemory(mCBIndex, mCBSize);
 	mOwner.getGame().getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
