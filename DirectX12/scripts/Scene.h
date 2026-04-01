@@ -8,6 +8,8 @@ class SceneManager;
 class MeshComponent;
 class SpriteComponent;
 class TextComponent;
+class PointLightComponent;
+class SpotLightComponent;
 
 class Scene
 {
@@ -63,6 +65,14 @@ public:
 	//テキストの追加/削除
 	void addText(TextComponent* text);
 	void removeText(TextComponent* text);
+	//点光源の追加/削除
+	void addPointLight(PointLightComponent* light);
+	void removePointLight(PointLightComponent* light);
+	std::vector<PointLightComponent*>& getPointLights() { return mPointLights; }
+	//スポットライトの追加/削除
+	void addSpotLight(SpotLightComponent* light);
+	void removeSpotLight(SpotLightComponent* light);
+	std::vector<SpotLightComponent*>& getSpotLights() { return mSpotLights; }
 
 	//アクターの全消去
 	void refreshActors();
@@ -75,6 +85,7 @@ private:
 	std::vector<MeshComponent*> mMeshes;
 	std::vector<SpriteComponent*> mSprites;
 	std::vector<TextComponent*> mTexts;
-
+	std::vector<PointLightComponent*> mPointLights;
+	std::vector<SpotLightComponent*> mSpotLights;
 };
 

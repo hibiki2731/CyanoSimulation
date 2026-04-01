@@ -30,6 +30,12 @@ void DungeonScene::updateScene()
 	mDamageTextManaager->update();
 }
 
+void DungeonScene::lateUpdateScene()
+{
+	//光源の更新
+	mGame.getGraphic()->updateBase3DData(getPointLights(), getSpotLights());
+}
+
 void DungeonScene::drawScene()
 {
 	mGame.getGraphic()->setRenderType(Graphic::RENDER_DT);

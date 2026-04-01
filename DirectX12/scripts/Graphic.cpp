@@ -817,11 +817,11 @@ HRESULT Graphic::createCbvAndHeap()
 	return hr;
 }
 
-void Graphic::updateBase3DData()
+void Graphic::updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights)
 {
 	//光源の更新
-	updateSpotLight(mGame.getSpotLights());
-	updatePointLight(mGame.getPointLights());
+	updatePointLight(pointLights);
+	updateSpotLight(spotLights);
 	//更新したデータをコンスタントバッファへコピー
 	for(int i = 0; i < FrameCount; i++)
 	memcpy(mConstantData[i], &Base3DData, sizeof(Base3DData));

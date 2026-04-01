@@ -33,6 +33,7 @@ public:
 
     void fastUpdateScene() override;
 	void updateScene() override;
+	void lateUpdateScene() override;
 	void drawScene() override;
     void onEnter() override;
     void onExit() override;

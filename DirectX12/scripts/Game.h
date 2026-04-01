@@ -43,13 +43,6 @@ public:
 	//初期化
 	void init();
 
-	//点光源の追加
-	void addPointLight(PointLightComponent* light);
-	void removePointLight(PointLightComponent* light);
-	//スポットライトの追加
-	void addSpotLight(SpotLightComponent* light);
-	void removeSpotLight(SpotLightComponent* light);
-
 	//ゲッター
 	Graphic* getGraphic();
 	AssetManager* getAssetManager();
@@ -65,9 +58,6 @@ private:
 
 	//グラフィック
 	std::unique_ptr<Graphic> mGraphic;
-	//ライト配列
-	std::vector<PointLightComponent*> mPointLights;
-	std::vector<SpotLightComponent*> mSpotLights;
 
 	//プレイヤー
 	std::unique_ptr<PlayerManager> mPlayerManager;

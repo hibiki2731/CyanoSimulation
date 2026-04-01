@@ -27,16 +27,13 @@ void Scene::joinActors()
 
 void Scene::removeActors()
 {
-	//死んだアクターの終了処理
-	for (auto& actor : mActors) {
-		if (actor->getState() == Actor::Dead) {
-			actor->endProccess();
-		}
-	}
-
 	//配列からアクターを削除
 	std::erase_if(mActors, [](const std::unique_ptr<Actor>& actor) {
-		return !actor || actor->getState() == Actor::State::Dead;
+		if (!actor || actor->getState() == Actor::State::Dead) {
+			//アクターの終了処理
+			actor->endProccess();
+			return true;
+		}
 		});
 }
 
@@ -47,11 +44,9 @@ void Scene::addMesh(MeshComponent* mesh)
 
 void Scene::removeMesh(MeshComponent* mesh)
 {
-	auto iter = std::find(mMeshes.begin(), mMeshes.end(), mesh);
-	if (iter != mMeshes.end()) {
-		std::iter_swap(iter, mMeshes.end() - 1);
-		mSprites.pop_back();
-	}
+	std::erase_if(mMeshes, [mesh](const MeshComponent* m) {
+		return m == mesh;
+		});
 }
 
 void Scene::addSprite(SpriteComponent* sprite)
@@ -61,11 +56,9 @@ void Scene::addSprite(SpriteComponent* sprite)
 
 void Scene::removeSprite(SpriteComponent* sprite)
 {
-	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
-	if (iter != mSprites.end()) {
-		std::iter_swap(iter, mSprites.end() - 1);
-		mSprites.pop_back();
-	}
+	std::erase_if(mSprites, [sprite](const SpriteComponent* s) {
+		return s == sprite;
+		});
 }
 
 void Scene::addText(TextComponent* text)
@@ -75,11 +68,35 @@ void Scene::addText(TextComponent* text)
 
 void Scene::removeText(TextComponent* text)
 {
-	auto iter = std::find(mTexts.begin(), mTexts.end(), text);
-	if (iter != mTexts.end()) {
-		std::iter_swap(iter, mTexts.end() - 1);
-		mTexts.pop_back();
-	}
+	std::erase_if(mTexts, [text](const TextComponent* t) {
+		return t == text;
+		});
+}
+
+void Scene::addPointLight(PointLightComponent* light)
+{
+	if (mPointLights.size() > MAX_LIGHT_NUM) return;
+	mPointLights.emplace_back(light);
+}
+
+void Scene::removePointLight(PointLightComponent* light)
+{
+	std::erase_if(mPointLights, [light](const PointLightComponent* l) {
+		return l == light;
+		});
+}
+
+void Scene::addSpotLight(SpotLightComponent* light)
+{
+	if (mSpotLights.size() > MAX_LIGHT_NUM) return;
+	mSpotLights.emplace_back(light);
+}
+
+void Scene::removeSpotLight(SpotLightComponent* light)
+{
+	std::erase_if(mSpotLights, [light](const SpotLightComponent* l) {
+		return l == light;
+		});
 }
 
 void Scene::refreshActors()

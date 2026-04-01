@@ -13,7 +13,7 @@ PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Compon
 	mIntensity = 1.0f;
 	mRange = 1.0f;
 	mColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mOwner.getScene().getGame().addPointLight(this);
+	mOwner.getScene().addPointLight(this);
 }
 
 void PointLightComponent::inputComponent()
@@ -32,7 +32,7 @@ void PointLightComponent::updateComponent()
 void PointLightComponent::endProccess()
 {
 	//Gameからライトを削除
-	mOwner.getScene().getGame().removePointLight(this);
+	mOwner.getScene().removePointLight(this);
 }
 
 XMFLOAT4 PointLightComponent::getPosition()

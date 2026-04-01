@@ -103,28 +103,6 @@ void Game::init() {
 
 }
 
-void Game::addPointLight(PointLightComponent* light)
-{
-	if (mPointLights.size() > MAX_LIGHT_NUM) return;
-	mPointLights.emplace_back(light);
-}
-
-void Game::removePointLight(PointLightComponent* light)
-{
-	mPointLights.erase(std::remove(mPointLights.begin(), mPointLights.end(), light), mPointLights.end());
-}
-
-void Game::addSpotLight(SpotLightComponent* light)
-{
-	if (mSpotLights.size() > MAX_LIGHT_NUM) return;
-	mSpotLights.emplace_back(light);
-}
-
-void Game::removeSpotLight(SpotLightComponent* light)
-{
-	mSpotLights.erase(std::remove(mSpotLights.begin(), mSpotLights.end(), light), mSpotLights.end());
-}
-
 Graphic* Game::getGraphic()
 {
 	return mGraphic.get();
@@ -133,16 +111,6 @@ Graphic* Game::getGraphic()
 AssetManager* Game::getAssetManager()
 {
 	return mAssetManager.get();
-}
-
-std::vector<PointLightComponent*>& Game::getPointLights()
-{
-	return mPointLights;
-}
-
-std::vector<SpotLightComponent*>& Game::getSpotLights()
-{
-	return mSpotLights;
 }
 
 ItemManager* Game::getItemManager()
@@ -195,7 +163,7 @@ void Game::update()
 	//シーンの移行
 	mSceneManager->transitScene();	//シーンの移行
 
-	//早めのシーン更新
+	//早いシーン更新
 	mSceneManager->fastUpdateScene();
 
 	//基本のシーン更新
@@ -207,12 +175,8 @@ void Game::update()
 	//死んだアクターの除去
 	mSceneManager->removeSceneActors();
 
-	//アクターの除去後に行う処理
-	{
-		mSceneManager->lateUpdateScene();
-		//各種マネージャーの更新
-		mGraphic->updateBase3DData();		//Base3DDataの更新
-	}
+	//遅いシーン更新
+	mSceneManager->lateUpdateScene();
 }
 
 void Game::draw()
