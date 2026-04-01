@@ -22,12 +22,14 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 	for (int i = 0; i < showWeaponNum; i++) {
+		if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) message += L"<E> ";
+		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
 	float fontSize =40.0f;
 	float lineSpace = 8.0f;
 	weaponText->setText(message);
-	weaponText->setBaseLine(80.0f, 175.0f);
+	weaponText->setBaseLine(110.0f, 175.0f);
 	weaponText->setFontSize(fontSize);
 	weaponText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 	weaponText->setLineSpace(lineSpace);
@@ -37,12 +39,45 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 
 	mArrowMoveLength = fontSize + lineSpace;
 
+	//スクロールインジケーター
+	//下矢印
+	auto downArrow = std::make_unique<SpriteComponent>(*this);
+	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
+	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + showWeaponNum * 48.0f - 8.0f, zDepth - 0.5f));
+	downArrow->setBordarSize(0.0f);
+	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	downArrow->setRotation(XM_PI);
+	mDownArrow = downArrow.get();
+	addComponent(std::move(downArrow));
+
+	//上矢印
+	auto upArrow = std::make_unique<SpriteComponent>(*this);
+	upArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
+	upArrow->setPosition(XMFLOAT3(80.0f, 175.0f, zDepth - 0.5f));
+	upArrow->setBordarSize(0.0f);
+	upArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	mUpArrow = upArrow.get();
+	addComponent(std::move(upArrow));
+
+	//スクロールバー
+	auto scrollBar = std::make_unique<SpriteComponent>(*this);
+	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
+	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
+	scrollBar->setBordarSize(0.0f);
+	float arrowDistance = 48.0f * showWeaponNum - 38.0f;
+	float height = arrowDistance * MaxShowWeaponNum / mPlayerManager.getPlayerData().weaponInventory.size();
+	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().weaponInventory.size();
+	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	mScrollBar = scrollBar.get();
+	addComponent(std::move(scrollBar));
+
 }
 
 void EquipWeaponMenu::selectedAct()
 {
 	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	mPlayerManager.equipWeapon(mSelectedIndex);
+	refreshText();
 }
 
 void EquipWeaponMenu::updateMenu()
@@ -50,11 +85,13 @@ void EquipWeaponMenu::updateMenu()
 	//カーソルが下端に来たら、テキストを下にスライド
 	if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum - 1) {		
 		mScrollOffset++;
+		mScrollBar->movePositon(XMFLOAT2(0.0f, mScrollBarMoveLength));
 		refreshText();
 	}
 	//カーソルが上端に来たら、テキストを上にスライド
 	if (mSelectedIndex < mScrollOffset) {
 		mScrollOffset--;
+		mScrollBar->movePositon(XMFLOAT2(0.0f, -mScrollBarMoveLength));
 		refreshText();
 	}
 }
@@ -91,6 +128,8 @@ void EquipWeaponMenu::refreshText()
 	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 	for (int i = mScrollOffset; i < mScrollOffset + showWeaponNum; i++) {
+		if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) message += L"<E> ";
+		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
 	mTextComponent->setText(message);
@@ -111,12 +150,14 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
 	for (int i = 0; i < showArmerNum; i++) {
+		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) message += L"<E> ";
+		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
 	float fontSize =40.0f;
 	float lineSpace = 8.0f;
 	armerText->setText(message);
-	armerText->setBaseLine(80.0f, 175.0f);
+	armerText->setBaseLine(110.0f, 175.0f);
 	armerText->setFontSize(fontSize);
 	armerText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 	armerText->setLineSpace(lineSpace);
@@ -125,12 +166,45 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(armerText));
 
 	mArrowMoveLength = fontSize + lineSpace;
+
+	//スクロールインジケーター
+	//下矢印
+	auto downArrow = std::make_unique<SpriteComponent>(*this);
+	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
+	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + showArmerNum * 48.0f - 8.0f, zDepth - 0.5f));
+	downArrow->setBordarSize(0.0f);
+	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	downArrow->setRotation(XM_PI);
+	mDownArrow = downArrow.get();
+	addComponent(std::move(downArrow));
+
+	//上矢印
+	auto upArrow = std::make_unique<SpriteComponent>(*this);
+	upArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
+	upArrow->setPosition(XMFLOAT3(80.0f, 175.0f, zDepth - 0.5f));
+	upArrow->setBordarSize(0.0f);
+	upArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	mUpArrow = upArrow.get();
+	addComponent(std::move(upArrow));
+
+	//スクロールバー
+	auto scrollBar = std::make_unique<SpriteComponent>(*this);
+	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
+	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
+	scrollBar->setBordarSize(0.0f);
+	float arrowDistance = 48.0f * showArmerNum - 38.0f;
+	float height = arrowDistance * MaxShowArmerNum / mPlayerManager.getPlayerData().armerInventory.size();
+	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().armerInventory.size();
+	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	mScrollBar = scrollBar.get();
+	addComponent(std::move(scrollBar));
 }
 
 void EquipArmerMenu::selectedAct()
 {
 	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	mPlayerManager.equipArmer(mSelectedIndex);
+	refreshText();
 }
 
 void EquipArmerMenu::updateMenu()
@@ -138,11 +212,13 @@ void EquipArmerMenu::updateMenu()
 	//カーソルが下端に来たら、テキストを下にスライド
 	if (mSelectedIndex > mScrollOffset + MaxShowArmerNum - 1) {		
 		mScrollOffset++;
+		mScrollBar->movePositon(XMFLOAT2(0.0f, mScrollBarMoveLength));
 		refreshText();
 	}
 	//カーソルが上端に来たら、テキストを上にスライド
 	if (mSelectedIndex < mScrollOffset) {
 		mScrollOffset--;
+		mScrollBar->movePositon(XMFLOAT2(0.0f, -mScrollBarMoveLength));
 		refreshText();
 	}
 }
@@ -173,6 +249,8 @@ void EquipArmerMenu::refreshText()
 	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
 	for (int i = mScrollOffset; i < mScrollOffset + showArmerNum; i++) {
+		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) message += L"<E> ";
+		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
 	mTextComponent->setText(message);

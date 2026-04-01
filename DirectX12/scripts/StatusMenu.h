@@ -16,6 +16,10 @@ private:
 	void refreshText();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
+	SpriteComponent* mUpArrow;
+	SpriteComponent* mDownArrow;
+	SpriteComponent* mScrollBar;
+	float mScrollBarMoveLength;
 
 	int mScrollOffset;
 	const int MaxShowWeaponNum = 5;
@@ -32,9 +36,13 @@ private:
 	void refreshText();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
+	SpriteComponent* mUpArrow;
+	SpriteComponent* mDownArrow;
+	SpriteComponent* mScrollBar;
+	float mScrollBarMoveLength;
 
 	int mScrollOffset;
-	const int MaxShowArmerNum = 3;
+	const int MaxShowArmerNum = 6;
 };
 class StatusMenu : public Menu
 {

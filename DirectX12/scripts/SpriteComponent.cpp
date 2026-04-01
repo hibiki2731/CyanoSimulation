@@ -74,10 +74,10 @@ void SpriteComponent::draw()
 	//コンスタントバッファの更新
 	//ワールドマトリックス
 	XMMATRIX world = XMMatrixIdentity()
-		* XMMatrixScaling(mScale.x, mScale.y, 1.0f)
 		* XMMatrixTranslation(-mSpriteSize.x * 0.5f, -mSpriteSize.y * 0.5f, 0.0f)
 		* XMMatrixRotationZ(mRotation)
 		* XMMatrixTranslation(mSpriteSize.x * 0.5f, mSpriteSize.y * 0.5f, 0.0f)
+		* XMMatrixScaling(mScale.x, mScale.y, 1.0f)
 		* XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z)
 		;
 	Cb3.world = world;
