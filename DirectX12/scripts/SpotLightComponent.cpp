@@ -1,6 +1,7 @@
 ﻿#include "SpotLightComponent.h"
 #include "Actor.h"
 #include "Math.h"
+#include "Scene.h"
 #include "Game.h"
 
 SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
@@ -13,7 +14,7 @@ SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder) : Componen
 	mUAngle = 0.0f;
 	mPAngle = 0.0f;
 	mDirection = XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
-	mOwner.getScene().addSpotLight(this);
+	mOwner.getScene().getGame().addSpotLight(this);
 }
 
 void SpotLightComponent::inputComponent()
@@ -40,7 +41,7 @@ void SpotLightComponent::updateComponent()
 void SpotLightComponent::endProccess()
 {
 	//Gameからライトを削除
-	mOwner.getScene().removeSpotLight(this);
+	mOwner.getScene().getGame().removeSpotLight(this);
 }
 
 XMFLOAT4 SpotLightComponent::getPosition()

@@ -1,15 +1,13 @@
 ﻿#include "MessageWindow.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"
-#include "SceneManager.h"
-#include "Graphic.h"
 #include "Game.h"
 #include "Player.h"
-#include "MapManager.h"
 #include "ItemManager.h"
+#include "Scene.h"
 #include "PlayerManager.h"
 
-MessageWindow::MessageWindow(Game& game) : Actor(game)
+MessageWindow::MessageWindow(Scene& scene) : Actor(scene)
 {
 	
 	std::wstring message = L"初期化";
@@ -47,14 +45,14 @@ void MessageWindow::updateActor()
 	//デバッグ用
 	std::wstring message;
 	if (mPlayerManager) {
-		message += L"HP: " + std::to_wstring(mScene.getPlayerManager()->getPlayerData().hp) + L" ";
+		message += L"HP: " + std::to_wstring(mScene.getGame().getPlayerManager()->getPlayerData().hp) + L" ";
 	}
 	else if (mPlayer) {
 		message += L"HP: " + std::to_wstring(mPlayer->getHP()) + L" STR: " + std::to_wstring(mPlayer->getPower())
 			+ L" DEF: " + std::to_wstring(mPlayer->getDefense()) + L" ACTION_LIMIT" + std::to_wstring(mPlayer->getActionLimit()) + L"\n";
 	}
 
-	message += L"G:" + std::to_wstring(mScene.getItemManager()->getResourceNum("GRASS")) + L"\n";
+	message += L"G:" + std::to_wstring(mScene.getGame().getItemManager()->getResourceNum("GRASS")) + L"\n";
 	mMessage = message;
 	mText->setText(mMessage);
 	mText->showText();  //マルチスレッド化したい

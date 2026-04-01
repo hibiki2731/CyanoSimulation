@@ -1,7 +1,7 @@
 ﻿#include "input.h"
 #include "StatusMenu.h"
 #include "Game.h"
-#include "TownManager.h"
+#include "TownScene.h"
 #include "MessageWindow.h"
 #include <memory>
 #include "PlayerManager.h"
@@ -10,9 +10,9 @@
 #include "SpriteComponent.h"
 #include "AudioManager.h"
 
-EquipWeaponMenu::EquipWeaponMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "EquipWeaponMenu", zDepth)
+EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth) : Menu(scene, "EquipWeaponMenu", zDepth)
 {
-	mPlayerManager = game.getPlayerManager();
+	mPlayerManager = scene.getGame().getPlayerManager();
 	mMaxIndex = mPlayerManager->getPlayerData().weaponInventory.size();
 	mScrollOffset = 0;
 
@@ -40,7 +40,7 @@ EquipWeaponMenu::EquipWeaponMenu(Game& game, TownManager& townManager, float zDe
 
 void EquipWeaponMenu::selectedAct()
 {
-	mScene.getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipWeapon(mSelectedIndex);
 }
 
@@ -65,7 +65,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -73,7 +73,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -97,9 +97,9 @@ void EquipWeaponMenu::refreshText()
 
 }
 
-EquipArmerMenu::EquipArmerMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "EquipArmerMenu", zDepth)
+EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth) : Menu(scene, "EquipArmerMenu", zDepth)
 {
-	mPlayerManager = game.getPlayerManager();
+	mPlayerManager = scene.getGame().getPlayerManager();
 	mMaxIndex = mPlayerManager->getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
 
@@ -126,7 +126,7 @@ EquipArmerMenu::EquipArmerMenu(Game& game, TownManager& townManager, float zDept
 
 void EquipArmerMenu::selectedAct()
 {
-	mScene.getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
 	mPlayerManager->equipArmer(mSelectedIndex);
 }
 
@@ -150,14 +150,14 @@ void EquipArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 		mSelectedIndex++;
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -176,27 +176,27 @@ void EquipArmerMenu::refreshText()
 	mTextComponent->showText();
 }
 
-StatusMenu::StatusMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "StatusMenu", zDepth)
+StatusMenu::StatusMenu(TownScene& scene, float zDepth) : Menu(scene, "StatusMenu", zDepth)
 {
 	mMaxIndex = 2;
 }
 
 StatusMenu::~StatusMenu()
 {
-	mTownManager.exitStatusMenu();
+	mScene.exitStatusMenu();
 }
 
 void StatusMenu::selectedAct()
 {
-	mScene.getAudioManager()->playSE("UI_WINDOW_OPEN");
+	mScene.getGame().getAudioManager()->playSE("UI_WINDOW_OPEN");
 	switch(mSelectedIndex) {
 	case 0: {
-		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, mTownManager, 48.0f);
+		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, 48.0f);
 		mScene.addActor(std::move(weaponMenu));
 		break;
 	}
 	case 1: {
-		auto armerMenu = std::make_unique<EquipArmerMenu>(mScene, mTownManager, 48.0f);
+		auto armerMenu = std::make_unique<EquipArmerMenu>(mScene, 48.0f);
 		mScene.addActor(std::move(armerMenu));
 		break;
 	}

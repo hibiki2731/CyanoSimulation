@@ -3,7 +3,7 @@
 
 class InnMenu : public Menu {
 public:
-	InnMenu(Game& game, TownManager& townManager, float zDepth);
+	InnMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:

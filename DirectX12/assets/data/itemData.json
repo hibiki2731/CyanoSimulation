@@ -55,8 +55,8 @@
     ],
     "Resource": [
         {
-            "mapTipID": "2",
             "id": "GRASS",
+            "mapTipID": "2",
             "num": 190
         }
     ],

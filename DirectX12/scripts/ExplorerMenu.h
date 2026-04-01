@@ -6,7 +6,7 @@ class ItemManager;
 
 class ExplorerMenu : public Menu {
 public:
-	ExplorerMenu(Game& game, TownManager& townManger, float zDepth);
+	ExplorerMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:

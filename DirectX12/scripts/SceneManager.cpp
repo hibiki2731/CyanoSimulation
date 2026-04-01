@@ -2,7 +2,7 @@
 #include "SceneManager.h"
 #include "Game.h"
 #include "MapManager.h"
-#include "TownManager.h"
+#include "TownScene.h"
 #include "DungeonScene.h"
 
 SceneManager::SceneManager(Game& game)
@@ -11,8 +11,8 @@ SceneManager::SceneManager(Game& game)
 	mNextSceneType = mCurrentSceneType;
 	
 	//シーンの登録
-	mSceneMap["TOWN"] = std::make_unique<TownManager>(game);
-	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game, this);
+	mSceneMap["TOWN"] = std::make_unique<TownScene>(game);
+	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game);
 	mCurrentScene = mSceneMap["TOWN"].get();
 	mCurrentScene->onEnter();
 }
@@ -80,6 +80,7 @@ void SceneManager::transitScene()
 		//シーンから出る処理
 		if (mCurrentScene) {
 			mCurrentScene->onExit();
+			removeSceneActors();
 		}
 		
 		//新たなシーンを取得

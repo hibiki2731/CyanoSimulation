@@ -10,18 +10,18 @@ class Menu;
 class BackGround : public Actor
 {
 public:
-	BackGround(Game& game);
+	BackGround(Scene& scene);
 };
 
-class TownManager :public Scene
+class TownScene :public Scene
 {
 public:
-	TownManager(Game& game);
+	TownScene(Game& game);
 
 	void onEnter() override;
 	void onExit() override;
-	void update() override;
-	void input() override;
+	void updateScene() override;
+	void inputScene() override;
 	
 	void pushMenu(Menu* menu);
 	void popMenu();
@@ -33,14 +33,10 @@ public:
 	}
 
 private:
-	Game& mGame;
 	BackGround* mBg;
-	bool isTown;
 	bool isSelected;
 	bool isSelecetdStatus;
 	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
-
-	std::vector<Actor* > mActors;
 };
 

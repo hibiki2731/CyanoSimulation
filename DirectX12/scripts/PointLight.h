@@ -4,7 +4,7 @@ class PointLight :
     public Actor
 {
 public:
-	PointLight(Game& game);
+	PointLight(Scene& scene);
 
     void updateActor() override;
     void inputActor() override;

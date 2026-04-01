@@ -4,6 +4,7 @@
 #include "PointLightComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "Scene.h"
 
 PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
 {
@@ -12,7 +13,7 @@ PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Compon
 	mIntensity = 1.0f;
 	mRange = 1.0f;
 	mColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mOwner.getScene().addPointLight(this);
+	mOwner.getScene().getGame().addPointLight(this);
 }
 
 void PointLightComponent::inputComponent()
@@ -31,7 +32,7 @@ void PointLightComponent::updateComponent()
 void PointLightComponent::endProccess()
 {
 	//Gameからライトを削除
-	mOwner.getScene().removePointLight(this);
+	mOwner.getScene().getGame().removePointLight(this);
 }
 
 XMFLOAT4 PointLightComponent::getPosition()

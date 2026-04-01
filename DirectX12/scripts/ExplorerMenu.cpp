@@ -1,13 +1,14 @@
-﻿#include "ExplorerMenu.h"
+﻿#include "TownScene.h"
+#include "ExplorerMenu.h"
 #include "AudioManager.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
 
-ExplorerMenu::ExplorerMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "ExplorerShopMenu", zDepth)
+ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth) : Menu(scene, "ExplorerShopMenu", zDepth)
 {
-	mPlayerManager = game.getPlayerManager();
-	mItemManager = game.getItemManager();
+	mPlayerManager = scene.getGame().getPlayerManager();
+	mItemManager = scene.getGame().getItemManager();
 
 	prepareCraftExplorer();
 }
@@ -31,7 +32,7 @@ void ExplorerMenu::craftExplorer(int index)
 		int possessedResource = mItemManager->getResourceNum(explorerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (explorerData.price[i] > possessedResource) {
-			mScene.getAudioManager()->playSE("UI_CANCEL");
+			mScene.getGame().getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -39,7 +40,7 @@ void ExplorerMenu::craftExplorer(int index)
 		mItemManager->subResource(explorerData.costResourceID[i], explorerData.price[i]);
 	}
 
-	mScene.getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addExplorer(explorerData.id);
 

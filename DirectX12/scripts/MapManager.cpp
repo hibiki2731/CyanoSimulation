@@ -12,9 +12,8 @@
 #include <fstream>
 #include <cassert>
 
-MapManager::MapManager(Game& game, DungeonScene& scene)
-	: mGame(game),
-	mScene(scene)
+MapManager::MapManager(DungeonScene& scene)
+	: mScene(scene)
 {
 	mStage = Stage::MAP1;
 	mNextTurn = TurnType::PLAYER;
@@ -25,7 +24,7 @@ MapManager::MapManager(Game& game, DungeonScene& scene)
 
 void MapManager::begin()
 {
-	mGame.getAudioManager()->playBGM("BGM_DUNGEON2");
+	mScene.getGame().getAudioManager()->playBGM("BGM_DUNGEON2");
 
 	createMap();
 
@@ -33,7 +32,6 @@ void MapManager::begin()
 
 void MapManager::end()
 {
-	mMiniMap = nullptr;
 }
 
 void MapManager::updateTurn()
@@ -62,7 +60,7 @@ void MapManager::updateTurn()
 		if (random <= 10) spawnEnemy();
 
 		//ミニマップの更新
-		mMiniMap->updatePosition();
+		mScene.updateMiniMapPos();
 	}
 
 
@@ -75,12 +73,6 @@ void MapManager::createMap()
 	loadMap(mStage);	//マップデータの読み込み
 	createWall();	//マップの壁、床の生成
 	createObject(); //オブジェクトの生成
-
-}
-
-MiniMap* MapManager::getMiniMap()
-{
-	return mMiniMap;
 
 }
 
@@ -111,7 +103,7 @@ void MapManager::startEnemyTurn()
 	for (auto enemy : mScene.getEnemies()) {
 		enemy->startAct();
 	}
-	mMiniMap->updatePosition();
+	mScene.updateMiniMapPos();
 }
 
 void MapManager::loadMap(Stage stage)
@@ -132,7 +124,6 @@ void MapManager::loadMap(Stage stage)
 	}
 
 	assert(!file.fail());
-	int mapSize;
 	file >> mapSize;
 
 	//マップデータの読み込み
@@ -189,7 +180,7 @@ void MapManager::createWall()
 			if (category == "WALL") continue; //壁の中
 			else if(category == "FLOOR") {
 				//床の生成
-				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mGame, tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
 			}
 			else if(category == "RESOURCE"){
@@ -200,43 +191,43 @@ void MapManager::createWall()
 			//壁の生成
 			//西壁
 			if (x == 0) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2); 
 				mScene.addActor(std::move(wall));
 			} else if(mScene.getTileDataAt(x - 1, y) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			//東壁
 			if (x == mapSize - 1) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x + 1, y) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			//北壁
 			if (y == mapSize - 1) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x, y + 1) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mScene.addActor(std::move(wall));
 			}
 			//南壁
 			if (y == 0) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x, y - 1) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mGame, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(wall));
 			}
 

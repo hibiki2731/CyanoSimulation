@@ -1,5 +1,5 @@
 ﻿#include "Menu.h"
-#include "TownManager.h"
+#include "TownScene.h"
 #include "input.h"
 #include "Game.h"
 #include "AudioManager.h"
@@ -9,14 +9,14 @@
 #include "TextComponent.h"
 #include <fstream>
 
-Menu::Menu(Game& game, TownManager& townManager, std::string windowName, float zDepth) 
-	: Actor(game),
-	mTownManager(townManager)
+Menu::Menu(TownScene& scene, std::string windowName, float zDepth) 
+	: Actor(scene),
+	mScene(scene)
 {
 	mSelectedIndex = 0;
 	mMaxIndex = 0;
 	
-	townManager.pushMenu(this);
+	scene.pushMenu(this);
 	initComponent(windowName, zDepth);
 }
 
@@ -26,14 +26,14 @@ void Menu::inputMenu() {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
-		mScene.getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
 	}		
 }
 

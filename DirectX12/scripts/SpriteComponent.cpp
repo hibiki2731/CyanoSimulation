@@ -8,6 +8,7 @@
 #include "Actor.h"
 #include "Game.h"
 #include "AssetManager.h"
+#include "Scene.h"
 
 SpriteComponent::SpriteComponent(Actor& owner, float zDepth) : Component(owner)
 {
@@ -17,10 +18,10 @@ SpriteComponent::SpriteComponent(Actor& owner, float zDepth) : Component(owner)
 	mBordarSize = 0.0f;
 	mRotation = 0.0f;
 
-	mGraphic = mOwner.getScene().getGraphic();
-	mAssetManager = mOwner.getScene().getAssetManager();
+	mGraphic = mOwner.getScene().getGame().getGraphic();
+	mAssetManager = mOwner.getScene().getGame().getAssetManager();
 	mCommandList = mGraphic->getCommandList();
-	mOwner.getScene().addSprite(this);
+	mOwner.getScene().getGame().addSprite(this);
 	mNumSprites = 1;
 }
 
@@ -31,7 +32,7 @@ SpriteComponent::~SpriteComponent()
 void SpriteComponent::endProccess()
 {
 	//Gameからスプライトを削除
-	mOwner.getScene().removeSprite(this);
+	mOwner.getScene().getGame().removeSprite(this);
 }
 
 void SpriteComponent::create(const std::string filename)

@@ -29,7 +29,7 @@ class DungeonScene :
     public Scene
 {
 public:
-    DungeonScene(class Game& game, class SceneManager* sceneManager);
+    DungeonScene(class Game& game);
 
     void fastUpdateScene() override;
     void onEnter() override;
@@ -92,7 +92,7 @@ public:
     const std::string& getResourceID(int index);
     const std::string& getResourceID(int x, int y);
 	//ターン情報
-	TurnType getTurnType() const { return mMapManager->getTurnType(); }
+	TurnType getTurnType() const;
 
 private:
     int mMapSize;

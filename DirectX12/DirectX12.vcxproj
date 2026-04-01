@@ -255,7 +255,7 @@
     <ClCompile Include="scripts\StatusMenu.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\TownManager.cpp" />
+    <ClCompile Include="scripts\TownScene.cpp" />
     <ClCompile Include="scripts\UI.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
@@ -307,7 +307,7 @@
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\TownManager.h" />
+    <ClInclude Include="scripts\TownScene.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>
   <ItemGroup>

@@ -13,7 +13,7 @@ constexpr XMFLOAT2 IconSize = { CanvasSize.x / (2 * DisplayRange + 1), CanvasSiz
 
 MiniMap::MiniMap(DungeonScene& scene) 
 	: Actor(scene),
-	 mScene(scene)
+	 mDungeonScene(scene)
 {
 	//ミニマップの背景
 	auto canvas = std::make_unique<SpriteComponent>(*this, 20.0f);
@@ -89,20 +89,20 @@ MiniMap::MiniMap(DungeonScene& scene)
 void MiniMap::updatePosition()
 {
 	int playerPos[2];
-	mScene.getPlayer()->getIndexPos(playerPos);
+	mDungeonScene.getPlayer()->getIndexPos(playerPos);
 	//各マスのマップデータを読み込む
 	for (int i = 0; i < TileNum; i++) {
 		int x = playerPos[0] + (i % (DisplayRange * 2 + 1)) - DisplayRange;
 		int y = playerPos[1] + (i / (DisplayRange * 2 + 1)) - DisplayRange;
 
 		//マップの範囲外
-		if (x < 0 || x >= mScene.getMapSize()) {
+		if (x < 0 || x >= mDungeonScene.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
 			continue;
 		}
-		if (y < 0 || y >= mScene.getMapSize()) {
+		if (y < 0 || y >= mDungeonScene.getMapSize()) {
 			mTileIcon[i]->setZPos(100.0f);
 			mEnemyIcon[i]->setZPos(100.0f);
 			mResourceIcon[i]->setZPos(100.0f);
@@ -110,12 +110,12 @@ void MiniMap::updatePosition()
 		}
 
 		//タイル情報
-		int tileType = mScene.getTileDataAt(x, y);
+		int tileType = mDungeonScene.getTileDataAt(x, y);
 		if (tileType != TileType::WALL) mTileIcon[i]->setZPos(19.0f);
 		else mTileIcon[i]->setZPos(100.0f);
 
 		//敵情報
-		int objectType = mScene.getCharacterDataAt(x, y);
+		int objectType = mDungeonScene.getCharacterDataAt(x, y);
 		if (objectType == CharacterType::ENEMY) mEnemyIcon[i]->setZPos(18.0f);
 		else mEnemyIcon[i]->setZPos(100.0f);
 
@@ -127,7 +127,7 @@ void MiniMap::updatePosition()
 
 void MiniMap::updateDirection()
 {
-	int	direction = mScene.getPlayer()->getDirection();
+	int	direction = mDungeonScene.getPlayer()->getDirection();
 	switch (direction) {
 	case Direction::UP:
 		mPlayerIcon->setRotation(0.0f);

@@ -10,10 +10,10 @@
 #include "MessageWindow.h"
 #include "MiniMap.h"
 
-DungeonScene::DungeonScene(Game& game, SceneManager* sceneManager)
+DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
 {
-	mMapManager = std::make_unique<MapManager>(game, sceneManager);
+	mMapManager = std::make_unique<MapManager>(*this);
 	mPlayer = nullptr;
 	mMapSize = 0;
 }
@@ -26,12 +26,12 @@ void DungeonScene::onEnter()
 {
 	mMapManager->begin();
 
-	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(mGame);
+	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(*this);
 	messageWindow->setPlayer(mPlayer);
 	addActor(std::move(messageWindow)); 
 
 	//ミニマップの作成
-	auto minimap = std::make_unique<MiniMap>(mGame, *this);
+	auto minimap = std::make_unique<MiniMap>(*this);
 	mMiniMap = minimap.get();
 	addActor(std::move(minimap));
 	mMiniMap->updatePosition();
@@ -247,5 +247,10 @@ const std::string& DungeonScene::getResourceID(int x, int y)
 {
 	int index = y * mMapSize + x;
 	return getResourceID(index);
+}
+
+TurnType DungeonScene::getTurnType() const
+{
+	return mMapManager->getTurnType();
 }
 

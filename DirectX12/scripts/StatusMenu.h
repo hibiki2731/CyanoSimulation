@@ -6,7 +6,7 @@ class TextComponent;
 
 class EquipWeaponMenu : public Menu {
 public:
-	EquipWeaponMenu(Game& game, TownManager& townManager, float zDepth);
+	EquipWeaponMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -23,7 +23,7 @@ private:
 
 class EquipArmerMenu : public Menu {
 public:
-	EquipArmerMenu(Game& game, TownManager& townManager, float zDepth);
+	EquipArmerMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -39,7 +39,7 @@ private:
 class StatusMenu : public Menu
 {
 public:
-	StatusMenu(Game& game, TownManager& townManager, float zDepth);
+	StatusMenu(TownScene& scene, float zDepth);
 	~StatusMenu();
 	void selectedAct() override;
 

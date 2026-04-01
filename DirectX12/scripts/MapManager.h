@@ -11,11 +11,13 @@ class MiniMap;
 class EnemyComponent;
 class Resource;
 class DungeonScene;
+enum class Stage;
+enum class TurnType;
 
 class MapManager
 {
 public:
-	MapManager(Game& game, DungeonScene& scene);
+	MapManager(DungeonScene& scene);
 	~MapManager() {};
 
 	void begin();
@@ -26,7 +28,6 @@ public:
 	void createMap();
 	
 	//getter
-	MiniMap* getMiniMap();
 	TurnType getTurnType();
 
 	//ターン制御
@@ -47,13 +48,9 @@ private:
 	TurnType mNextTurn;
 	TurnType mTurnType;
 	Stage mStage;
-	Game& mGame;
 
 	//未行動敵数
 	int mPendingEnemyCount;
-
-	//ミニマップ
-	MiniMap* mMiniMap;
 
 };
 

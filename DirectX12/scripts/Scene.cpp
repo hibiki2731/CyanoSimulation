@@ -3,7 +3,7 @@
 #include "SceneManager.h"
 
 Scene::Scene(Game& game)
-	: mGame(game),
+	: mGame(game)
 {
 }
 

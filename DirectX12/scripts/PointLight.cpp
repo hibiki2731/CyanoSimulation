@@ -2,9 +2,10 @@
 #include "PointLightComponent.h"
 #include "timer.h"
 #include "Game.h"
+#include "Scene.h"
 #include <windows.h>
 
-PointLight::PointLight(Game& game) : Actor(game)
+PointLight::PointLight(Scene& scene) : Actor(scene)
 {
 	auto light = std::make_unique<PointLightComponent>(*this);
 	light->setActive(true);

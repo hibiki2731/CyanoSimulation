@@ -9,7 +9,7 @@ struct ItemData;
 
 class ShopMenu : public Menu {
 public:
-	ShopMenu(Game& game, TownManager& townManager, float zDepth);
+	ShopMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:

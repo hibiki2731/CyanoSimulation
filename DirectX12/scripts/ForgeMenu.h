@@ -9,7 +9,7 @@ class ItemManager;
 class ForgeMenu : public Menu {
 public:
 
-	ForgeMenu(Game& game, TownManager& townManager, float zDepth);
+	ForgeMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:

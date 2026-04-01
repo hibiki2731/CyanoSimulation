@@ -1,5 +1,6 @@
 ﻿#include "Anime2DComponent.h"
 #include "Game.h"
+#include "Scene.h"
 #include "Actor.h"
 #include "AssetManager.h"
 #include <string>
@@ -90,7 +91,7 @@ void Anime2DComponent::draw()
 
 void Anime2DComponent::endProccess()
 {
-	mOwner.getScene().removeSprite(this);
+	mOwner.getScene().getGame().removeSprite(this);
 }
 
 void Anime2DComponent::setTextureIndex(int index)

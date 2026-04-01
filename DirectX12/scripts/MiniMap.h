@@ -3,7 +3,7 @@
 #include <vector>
 
 class SpriteComponent;
-class DugeonScene;
+class DungeonScene;
 
 class MiniMap :public Actor
 {
@@ -13,7 +13,7 @@ public:
 	void updateDirection();
 
 private:
-	DungeonScene& mScene;
+	DungeonScene& mDungeonScene;
 	SpriteComponent* mCanvas;
 	SpriteComponent* mPlayerIcon;
 	std::vector<SpriteComponent*> mTileIcon;

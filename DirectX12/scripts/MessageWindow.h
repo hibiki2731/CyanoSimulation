@@ -9,7 +9,7 @@ class PlayerManager;
 class MessageWindow : public Actor
 {
 public:
-	MessageWindow(Game& game);
+	MessageWindow(class Scene& scene);
 	~MessageWindow() {};
 
 	void setPlayer(Player* player);

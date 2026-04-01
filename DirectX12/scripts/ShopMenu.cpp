@@ -1,13 +1,14 @@
 ﻿#include "ShopMenu.h"
+#include "TownScene.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
 #include "AudioManager.h"
 
-ShopMenu::ShopMenu(Game& game, TownManager& townManager, float zDepth) : Menu(game, townManager, "ShopMenu", zDepth)
+ShopMenu::ShopMenu(TownScene& scene, float zDepth) : Menu(scene, "ShopMenu", zDepth)
 {
-	mItemManager = game.getItemManager();
-	mPlayerManager = game.getPlayerManager();
+	mItemManager = scene.getGame().getItemManager();
+	mPlayerManager = scene.getGame().getPlayerManager();
 	prepareSaleItem();
 }
 
@@ -30,7 +31,7 @@ void ShopMenu::buyItem(int index) {
 		int possessedResource = mItemManager->getResourceNum(itemData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (itemData.price[i] > possessedResource) {
-			mScene.getAudioManager()->playSE("UI_CANCEL");
+			mScene.getGame().getAudioManager()->playSE("UI_CANCEL");
 			return;
 		}
 
@@ -38,7 +39,7 @@ void ShopMenu::buyItem(int index) {
 		mItemManager->subResource(itemData.costResourceID[i], itemData.price[i]);
 	}
 
-	mScene.getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager->addInventory(itemData.id);
 }

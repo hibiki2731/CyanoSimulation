@@ -1,12 +1,13 @@
 ﻿#include "TextComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "Scene.h"
 #include "AssetManager.h"
 
 TextComponent::TextComponent(Actor& owner, float zDepth) : Component(owner)
 {
-	mGraphic = mOwner.getScene().getGraphic();
-	mAssetManager = mOwner.getScene().getAssetManager();
+	mGraphic = mOwner.getScene().getGame().getGraphic();
+	mAssetManager = mOwner.getScene().getGame().getAssetManager();
 	isActive = false;
 	mBaseLineX = 0.0f;
 	mBaseLineY = 0.0f;
@@ -25,7 +26,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth) : Component(owner)
 	mLineSpace = 0;
 	mBaseLineSpace = 0;
 
-	mOwner.getScene().addText(this);
+	mOwner.getScene().getGame().addText(this);
 
 	createEmptyTexture();
 	wrapTexture();
@@ -113,7 +114,7 @@ void TextComponent::draw()
 
 void TextComponent::endProccess()
 {
-	mOwner.getScene().removeText(this);
+	mOwner.getScene().getGame().removeText(this);
 }
 
 void TextComponent::showText()
