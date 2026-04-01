@@ -32,6 +32,8 @@ public:
     DungeonScene(class Game& game);
 
     void fastUpdateScene() override;
+	void updateScene() override;
+	void drawScene() override;
     void onEnter() override;
     void onExit() override;
     
@@ -58,6 +60,9 @@ public:
 	//ミニマップの更新
 	void updateMiniMapPos();
 	void updateMiniMapDirection();
+
+	//ダメージテキストの公人
+	void updateDTView(XMMATRIX& view);
 
 	//ターンの制御
 	void moveToPlayerTurn();
@@ -93,6 +98,9 @@ public:
     const std::string& getResourceID(int x, int y);
 	//ターン情報
 	TurnType getTurnType() const;
+	//ダメージテキスト
+	int getDamageTextNum() const;
+	void createDamageText(const XMFLOAT3& pos, int digit);
 
 private:
     int mMapSize;
@@ -101,10 +109,10 @@ private:
 
 	std::vector<EnemyComponent*> mEnemies;
     std::unique_ptr<class MapManager> mMapManager;
+	std::unique_ptr<class DamageTextManager> mDamageTextManaager;
 	Player* mPlayer;
 	std::unordered_map<int, std::string> mResourceIDs;
 
 	class MiniMap* mMiniMap;
-
 };
 

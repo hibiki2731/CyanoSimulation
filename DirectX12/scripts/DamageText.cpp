@@ -146,7 +146,7 @@ void DamageTextManager::draw()
 	
 }
 
-void DamageTextManager::createDamageText(XMFLOAT3& position, int digit)
+void DamageTextManager::createDamageText(const XMFLOAT3& position, int digit)
 {
 	//生データを配列に追加
 	DamageTextInstance text;

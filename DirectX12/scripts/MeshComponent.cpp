@@ -12,7 +12,7 @@ MeshComponent::MeshComponent(Actor& owner, int updateOrder) : Component(owner, u
 {
 	mGraphic = mOwner.getScene().getGame().getGraphic();
 	mCommandList = mGraphic->getCommandList();
-	mOwner.getScene().getGame().addMesh(this);
+	mOwner.getScene().addMesh(this);
 	CbvTbvSize = mGraphic->getCbvTbvIncSize();
 }
 
@@ -23,7 +23,7 @@ MeshComponent::~MeshComponent()
 void MeshComponent::endProccess()
 {
 	//Gameからメッシュを削除
-	mOwner.getScene().getGame().removeMesh(this);
+	mOwner.getScene().removeMesh(this);
 	mOwner.getScene().getGame().getAssetManager()->deleteMemory(mCBIndex, mCBSize);
 	mOwner.getScene().getGame().getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
 }

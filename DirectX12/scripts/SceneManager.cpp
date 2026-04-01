@@ -41,6 +41,27 @@ void SceneManager::inputScene()
 		mCurrentScene->input();
 }
 
+void SceneManager::drawScene3D()
+{
+	if (mCurrentScene) {
+		mCurrentScene->draw3D();
+	}
+		
+}
+
+void SceneManager::drawScene2D()
+{
+	if (mCurrentScene) {
+		mCurrentScene->draw2D();
+	}
+}
+
+void SceneManager::drawScene()
+{
+	if (mCurrentScene)
+		mCurrentScene->drawScene();
+}
+
 void SceneManager::joinSceneActors()
 {
 	if (mCurrentScene)

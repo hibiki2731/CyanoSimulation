@@ -5,6 +5,9 @@
 #include "Actor.h"
 
 class SceneManager;
+class MeshComponent;
+class SpriteComponent;
+class TextComponent;
 
 class Scene
 {
@@ -24,6 +27,11 @@ public:
 	virtual void fastUpdateScene() {};
 	virtual void updateScene() {};
 	virtual void lateUpdateScene() {};
+
+	//描画処理
+	void draw3D();
+	void draw2D();
+	virtual	void drawScene() {};
 
 	//入力処理
 	void input();
@@ -46,6 +54,16 @@ public:
 	void joinActors();
 	void removeActors();
 
+	//メッシュの追加/削除
+	void addMesh(MeshComponent* mesh);
+	void removeMesh(MeshComponent* mesh);
+	//スプライトの追加/削除
+	void addSprite(SpriteComponent* sprite);
+	void removeSprite(SpriteComponent* sprite);
+	//テキストの追加/削除
+	void addText(TextComponent* text);
+	void removeText(TextComponent* text);
+
 	//アクターの全消去
 	void refreshActors();
 protected:
@@ -54,6 +72,9 @@ protected:
 private:
 	std::vector<std::unique_ptr<Actor>> mActors;
 	std::vector<std::unique_ptr<Actor>> mPendingActors;
+	std::vector<MeshComponent*> mMeshes;
+	std::vector<SpriteComponent*> mSprites;
+	std::vector<TextComponent*> mTexts;
 
 };
 

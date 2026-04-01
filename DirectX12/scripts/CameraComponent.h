@@ -3,10 +3,12 @@
 #include "Component.h"
 using namespace DirectX;
 
+class DungeonScene;
+
 class CameraComponent :  public Component
 {
 public:
-	CameraComponent(Actor& owner, int updateOrder = 100);
+	CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder = 100);
 
     void inputComponent() override;
     void updateComponent() override;
@@ -27,6 +29,7 @@ private:
     float mRot;
 
     bool isActive;
+	DungeonScene& mDungeonScene;
 
 };
 

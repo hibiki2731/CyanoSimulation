@@ -37,7 +37,7 @@ public:
 	void draw();
 
 	//ダメージテキストの追加
-	void createDamageText(XMFLOAT3& position, int digit);
+	void createDamageText(const XMFLOAT3& position, int digit);
 
 	void updateView(XMMATRIX& view);
 

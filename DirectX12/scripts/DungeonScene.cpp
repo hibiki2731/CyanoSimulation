@@ -8,18 +8,32 @@
 #include "Resource.h"
 #include "EnemyComponent.h"
 #include "MessageWindow.h"
+#include "DamageText.h"
 #include "MiniMap.h"
+#include "Graphic.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
 {
 	mMapManager = std::make_unique<MapManager>(*this);
+	mDamageTextManaager = std::make_unique<DamageTextManager>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
 }
 
 void DungeonScene::fastUpdateScene() {
 	mMapManager->updateTurn();
+}
+
+void DungeonScene::updateScene()
+{
+	mDamageTextManaager->update();
+}
+
+void DungeonScene::drawScene()
+{
+	mGame.getGraphic()->setRenderType(Graphic::RENDER_DT);
+	mDamageTextManaager->draw();
 }
 
 void DungeonScene::onEnter()
@@ -193,6 +207,11 @@ void DungeonScene::updateMiniMapDirection()
 	mMiniMap->updateDirection();
 }
 
+void DungeonScene::updateDTView(XMMATRIX& view)
+{
+	mDamageTextManaager->updateView(view);
+}
+
 void DungeonScene::moveToEnemyTurn()
 {
 	mMapManager->moveToEnemyTurn();
@@ -252,5 +271,15 @@ const std::string& DungeonScene::getResourceID(int x, int y)
 TurnType DungeonScene::getTurnType() const
 {
 	return mMapManager->getTurnType();
+}
+
+int DungeonScene::getDamageTextNum() const
+{
+	return mDamageTextManaager->getSize();
+}
+
+void DungeonScene::createDamageText(const XMFLOAT3& pos, int digit)
+{
+	mDamageTextManaager->createDamageText(pos, digit);
 }
 

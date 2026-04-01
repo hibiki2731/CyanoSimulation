@@ -42,7 +42,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mFlashDuration = data.flushDuration;
 
 	//カメラの生成
-	std::unique_ptr camera = std::make_unique<CameraComponent>(*this);
+	std::unique_ptr camera = std::make_unique<CameraComponent>(*this, scene);
 	camera->setActive(true);
 	mCamera = camera.get();
 	addComponent(std::move(camera));
@@ -270,12 +270,12 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 		value = value / 10;
 	}
 
-	float DTHalfSize = mScene.getGame().getDamageTextManager()->getSize() * 0.5f;
+	float DTHalfSize = mScene.getDamageTextNum() * 0.5f;
 	//数値が画面中心に来るよう調整
 	textPos = textPos + (right * DTHalfSize * 0.5 * (digit - 1));
 	//桁ごとの表示位置の調整
 	for (int i = 0; i < digit; i++) {
-		mScene.getGame().getDamageTextManager()->createDamageText(textPos, num[i]);
+		mScene.createDamageText(textPos, num[i]);
 		textPos = textPos - right * DTHalfSize;
 	}
 }

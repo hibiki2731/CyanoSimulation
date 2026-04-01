@@ -92,9 +92,6 @@ void Game::init() {
 	//itemManagerの初期化
 	mItemManager = std::make_unique<ItemManager>();
 
-	//damageTextの初期化
-	mDamageTextManager = std::make_unique<DamageTextManager>(*this);
-
 	//PlayerManager
 	mPlayerManager = std::make_unique<PlayerManager>();
 
@@ -104,33 +101,6 @@ void Game::init() {
 	//シーンマネージャーの初期化	
 	mSceneManager = std::make_unique<SceneManager>(*this);
 
-}
-
-void Game::addMesh(MeshComponent* mesh)
-{
-	mMeshes.emplace_back(mesh);
-}
-
-void Game::removeMesh(MeshComponent* mesh)
-{
-	auto iter = std::find(mMeshes.begin(), mMeshes.end(), mesh);
-	if (iter != mMeshes.end()) {
-		std::iter_swap(iter, mMeshes.end() - 1);
-		mMeshes.pop_back();
-	}
-}
-void Game::addSprite(SpriteComponent* sprite)
-{
-	mSprites.emplace_back(sprite);
-}
-
-void Game::removeSprite(SpriteComponent* sprite)
-{
-	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
-	if (iter != mSprites.end()) {
-		std::iter_swap(iter, mSprites.end() - 1);
-		mSprites.pop_back();
-	}
 }
 
 void Game::addPointLight(PointLightComponent* light)
@@ -155,24 +125,9 @@ void Game::removeSpotLight(SpotLightComponent* light)
 	mSpotLights.erase(std::remove(mSpotLights.begin(), mSpotLights.end(), light), mSpotLights.end());
 }
 
-void Game::addText(TextComponent* text)
-{
-	mTexts.emplace_back(text);
-}
-
-void Game::removeText(TextComponent* fontText)
-{
-	mTexts.erase(std::remove(mTexts.begin(), mTexts.end(), fontText), mTexts.end());
-}
-
 Graphic* Game::getGraphic()
 {
 	return mGraphic.get();
-}
-
-DamageTextManager* Game::getDamageTextManager()
-{
-	return mDamageTextManager.get();
 }
 
 AssetManager* Game::getAssetManager()
@@ -237,20 +192,17 @@ void Game::update()
 {
 	mUpdatingActors = true;
 
+	//シーンの移行
+	mSceneManager->transitScene();	//シーンの移行
+
 	//早めのシーン更新
 	mSceneManager->fastUpdateScene();
 
 	//基本のシーン更新
 	mSceneManager->updateScene();
-
-
-	//各種マネージャーの更新
-	{
-		mSceneManager->transitScene();	//シーンの移行
-		mDamageTextManager->update();	//ダメージテキストの更新
-	}
-
-	mSceneManager->joinSceneActors();	//シーンにアクターを追加
+ 
+	//シーンにアクターを追加
+	mSceneManager->joinSceneActors();
 
 	//死んだアクターの除去
 	mSceneManager->removeSceneActors();
@@ -269,22 +221,14 @@ void Game::draw()
 	//3D描画
 	mGraphic->begin3DRender();
 	mGraphic->setRenderType(Graphic::RENDER_3D);
-	for (auto& mesh : mMeshes) {
-		mesh->draw();
-	}
+	mSceneManager->drawScene3D();
 
 	//2D描画
 	mGraphic->setRenderType(Graphic::RENDER_2D);
-	for (auto& sprite : mSprites) {
-		sprite->draw();
-	}
-	for (auto& text : mTexts) {
-		text->draw();
-	}
+	mSceneManager->drawScene2D();
 
-	//ダメージエフェクト
-	mGraphic->setRenderType(Graphic::RENDER_DT);
-	mDamageTextManager->draw();
+	//シーン独自の描画
+	mSceneManager->drawScene();
 
 	mGraphic->end3DRender();
 

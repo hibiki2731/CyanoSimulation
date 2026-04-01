@@ -91,7 +91,7 @@ void Anime2DComponent::draw()
 
 void Anime2DComponent::endProccess()
 {
-	mOwner.getScene().getGame().removeSprite(this);
+	mOwner.getScene().removeSprite(this);
 }
 
 void Anime2DComponent::setTextureIndex(int index)

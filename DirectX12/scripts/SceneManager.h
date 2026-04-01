@@ -21,6 +21,10 @@ public:
 	void lateUpdateScene();
 	//シーンの入力
 	void inputScene();
+	//シーンの描画
+	void drawScene3D();
+	void drawScene2D();
+	void drawScene();
 
 	//シーン中のアクター配列を更新
 	void joinSceneActors();

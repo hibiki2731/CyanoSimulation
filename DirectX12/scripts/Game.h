@@ -43,25 +43,15 @@ public:
 	//初期化
 	void init();
 
-	//メッシュの追加
-	void addMesh(MeshComponent* mesh);
-	void removeMesh(MeshComponent* mesh);
-	//スプライトの追加
-	void addSprite(SpriteComponent* mesh);
-	void removeSprite(SpriteComponent* mesh);
 	//点光源の追加
 	void addPointLight(PointLightComponent* light);
 	void removePointLight(PointLightComponent* light);
 	//スポットライトの追加
 	void addSpotLight(SpotLightComponent* light);
 	void removeSpotLight(SpotLightComponent* light);
-	//テキストの追加
-	void addText(TextComponent* text);
-	void removeText(TextComponent* text);
 
 	//ゲッター
 	Graphic* getGraphic();
-	DamageTextManager* getDamageTextManager();
 	AssetManager* getAssetManager();
 	std::vector<PointLightComponent*>& getPointLights();
 	std::vector<SpotLightComponent*>& getSpotLights();
@@ -75,16 +65,9 @@ private:
 
 	//グラフィック
 	std::unique_ptr<Graphic> mGraphic;
-	//メッシュ配列
-	std::vector<MeshComponent*> mMeshes;
-	std::vector<SpriteComponent*> mSprites;
-	//テキスト配列
-	std::vector<TextComponent*> mTexts;
 	//ライト配列
 	std::vector<PointLightComponent*> mPointLights;
 	std::vector<SpotLightComponent*> mSpotLights;
-	//ダメージエフェクト用
-	std::unique_ptr<DamageTextManager> mDamageTextManager;
 
 	//プレイヤー
 	std::unique_ptr<PlayerManager> mPlayerManager;

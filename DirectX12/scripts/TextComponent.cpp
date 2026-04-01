@@ -26,7 +26,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth) : Component(owner)
 	mLineSpace = 0;
 	mBaseLineSpace = 0;
 
-	mOwner.getScene().getGame().addText(this);
+	mOwner.getScene().addText(this);
 
 	createEmptyTexture();
 	wrapTexture();
@@ -114,7 +114,7 @@ void TextComponent::draw()
 
 void TextComponent::endProccess()
 {
-	mOwner.getScene().getGame().removeText(this);
+	mOwner.getScene().removeText(this);
 }
 
 void TextComponent::showText()

@@ -4,10 +4,13 @@
 #include "Scene.h"
 #include "Math.h"
 #include "DamageText.h"
+#include "DungeonScene.h"
 #include <windows.h>
 
 
-CameraComponent::CameraComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
+CameraComponent::CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder)
+	: Component(owner, updateOrder),
+	mDungeonScene(scene)
 {
 	mFront = { 0, 0, 1.0f };  mUp = { 0, 1, 0 };
 	mFocus = mOwner.getPosition() + mFront;
@@ -34,7 +37,7 @@ void CameraComponent::updateComponent()
 		//プロジェクションマトリックス
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic()->getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
-		mOwner.getScene().getGame().getDamageTextManager()->updateView(view);
+		mDungeonScene.updateDTView(view);
 		mOwner.getScene().getGame().getGraphic()->updateViewProj(viewProj);
 
 		XMFLOAT4 cameraPos;
