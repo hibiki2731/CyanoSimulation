@@ -44,14 +44,12 @@ public:
 	void init();
 
 	//ゲッター
-	Graphic* getGraphic();
-	AssetManager* getAssetManager();
-	std::vector<PointLightComponent*>& getPointLights();
-	std::vector<SpotLightComponent*>& getSpotLights();
-	ItemManager* getItemManager();
+	Graphic& getGraphic();
+	AssetManager& getAssetManager();
+	ItemManager& getItemManager();
 	SceneManager& getSceneManager();
-	PlayerManager* getPlayerManager();
-	AudioManager* getAudioManager();
+	PlayerManager& getPlayerManager();
+	AudioManager& getAudioManager();
 
 private:
 	bool mUpdatingActors;

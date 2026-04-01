@@ -37,10 +37,10 @@ void TownScene::onEnter() {
 	addActor(std::move(mainMenu));
 
 	auto playerWindow = std::make_unique<MessageWindow>(*this);
-	playerWindow->setPlayerManager(mGame.getPlayerManager());
+	playerWindow->setPlayerManager(&mGame.getPlayerManager());
 	addActor(std::move(playerWindow));
 
-	mGame.getAudioManager()->playBGM("BGM_TOWN");
+	mGame.getAudioManager().playBGM("BGM_TOWN");
 }
 
 void TownScene::onExit() {
@@ -59,14 +59,14 @@ void TownScene::inputScene()
 
 	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
 		popMenu();
-		mGame.getAudioManager()->playSE("UI_WINDOW_CLOSE");
+		mGame.getAudioManager().playSE("UI_WINDOW_CLOSE");
 	}
 
 	if (isKeyJustPressed('E') && !isStatusMenu) {
 		isStatusMenu = true;
 		auto status = std::make_unique<StatusMenu>(*this, 50.0f);
 		addActor(std::move(status));
-		mGame.getAudioManager()->playSE("UI_WINDOW_OPEN");
+		mGame.getAudioManager().playSE("UI_WINDOW_OPEN");
 	}
 }
 

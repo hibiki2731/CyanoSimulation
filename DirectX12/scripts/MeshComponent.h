@@ -27,7 +27,7 @@ private:
     HRESULT Hr;
 
     //コマンドリスト
-    Graphic* mGraphic;
+    Graphic& mGraphic;
     ID3D12GraphicsCommandList* mCommandList;
 
     //コンスタントバッファ1(World Matrix)

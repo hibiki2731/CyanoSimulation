@@ -22,7 +22,9 @@
 
 Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
-	mScene(scene)
+	mScene(scene),
+	mPlayerManager(scene.getGame().getPlayerManager()),
+	mItemManager(scene.getGame().getItemManager())
 {
 	mPosition = { x, 0.8f, y };
 	mTargetPos = mPosition;
@@ -33,8 +35,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mSelectItemIndex = 0;
 
 	//プレイヤーデータの取得
-	mPlayerManager = scene.getGame().getPlayerManager();
-	const PlayerData& data = mPlayerManager->getPlayerData();
+	const PlayerData& data = mPlayerManager.getPlayerData();
 
 	//移動速度、回転速度、点滅時間の設定
 	mMoveSpeed = data.moveSpeed;
@@ -64,10 +65,10 @@ Player::Player(DungeonScene& scene, float x, float y)
 	character->setMaxHP(data.maxHp);
 	character->setHP(data.hp);
 	//力の計算
-	int power = data.power + mScene.getGame().getItemManager()->getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
+	int power = data.power + mScene.getGame().getItemManager().getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
 	character->setPower(power);
 	//防御力の計算
-	int defence = data.defence + mScene.getGame().getItemManager()->getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
+	int defence = data.defence + mScene.getGame().getItemManager().getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
 	character->setDefense(defence);
 	mCharacter = character.get();
 	addComponent(std::move(character));
@@ -75,12 +76,9 @@ Player::Player(DungeonScene& scene, float x, float y)
 	//行動回数制限の取得
 	mActionLimit = data.actionLimit;
 
-	//アイテムマネージャーの取得
-	mItemManager = scene.getGame().getItemManager();
-
 	//探索道具の効果を取得
 	for (const std::string toolID : data.explorerInventory) {
-		auto toolData = mItemManager->getExplorerData(toolID);
+		auto toolData = mItemManager.getExplorerData(toolID);
 
 		std::string category = toolData.category;
 		if (category == "ACTION_LIMIT") {
@@ -91,8 +89,8 @@ Player::Player(DungeonScene& scene, float x, float y)
 
 Player::~Player()
 {
-	PlayerManager* player = mScene.getGame().getPlayerManager();
-	player->setHP(mCharacter->getHP());
+	PlayerManager& player = mScene.getGame().getPlayerManager();
+	player.setHP(mCharacter->getHP());
 }
 
 void Player::inputActor()
@@ -306,7 +304,7 @@ void Player::move(Direction direction)
 
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
-	mScene.getGame().getAudioManager()->playSE("MAP_FOOTSTEP1");
+	mScene.getGame().getAudioManager().playSE("MAP_FOOTSTEP1");
 	turnEnd();
 
 }	
@@ -379,7 +377,7 @@ void Player::collect()
 
 	if (tileData >= TileType::RESOURCE){
 		std::string resourceID = mScene.getResourceID(mCharacter->getIndexPosInt());
-		mScene.getGame().getItemManager()->addResource(resourceID, 1);
+		mScene.getGame().getItemManager().addResource(resourceID, 1);
 	}
 
 	//ターン経過
@@ -400,7 +398,7 @@ void Player::updateFlash()
 	if (mFlashTimer > 0.0f) {
 		mFlashTimer -= deltaTime;
 		float intensity = max(0.0f, mFlashTimer / mFlashDuration);
-		mScene.getGame().getGraphic()->updateDamageFlashIntensity(intensity);
+		mScene.getGame().getGraphic().updateDamageFlashIntensity(intensity);
 	}
 }
 
@@ -414,13 +412,13 @@ void Player::useItem()
 	if (mActionLimit == 0) return;
 
 	//アイテムのIDを取得
-	const auto& itemID = mPlayerManager->getInventoryItem(mSelectItemIndex);
+	const auto& itemID = mPlayerManager.getInventoryItem(mSelectItemIndex);
 	if (itemID == "NONE") {
 		return;
 	}
 	
 	//アイテムデータを取得
-	const ItemData& itemData = mItemManager->getItemData(itemID);
+	const ItemData& itemData = mItemManager.getItemData(itemID);
 
 	//アイテムのカテゴリーから効果を発揮
 	if (itemData.category == "HP_RECOVER") {
@@ -428,7 +426,7 @@ void Player::useItem()
 	}
 
 	//インベントリーから削除
-	mPlayerManager->removeInventory(mSelectItemIndex);
+	mPlayerManager.removeInventory(mSelectItemIndex);
 
 	//ターン経過
 	turnEnd();

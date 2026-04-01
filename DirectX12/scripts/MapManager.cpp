@@ -24,7 +24,7 @@ MapManager::MapManager(DungeonScene& scene)
 
 void MapManager::begin()
 {
-	mScene.getGame().getAudioManager()->playBGM("BGM_DUNGEON2");
+	mScene.getGame().getAudioManager().playBGM("BGM_DUNGEON2");
 
 	createMap();
 

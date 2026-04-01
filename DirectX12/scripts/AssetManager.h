@@ -38,7 +38,7 @@ class AssetManager
 {
 public:
 
-	AssetManager(Graphic* graphic);
+	AssetManager(Graphic& graphic);
 	~AssetManager();
 
 
@@ -77,7 +77,7 @@ private:
 	int mCBEndIndex; //コンスタントバッファの使用済みメモリの最後尾インデックス
 	int mHeapEndIndex; //ディスクリプタヒープの最後尾インデックス
 
-	Graphic* mGraphic;
+	Graphic& mGraphic;
 	std::map<std::string, std::unique_ptr<MeshData>> mLoadData;
 	std::map<std::string, ComPtr<ID3D12Resource>> mTextureData; //テクスチャデータのキャッシュ
 	std::vector<ClearedMemory> mClearedMemory; //解放されたメモリ

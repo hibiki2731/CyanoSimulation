@@ -20,8 +20,8 @@ private:
 	std::vector<std::string> mWeapons;
 	std::vector<std::string> mArmers;
 
-	PlayerManager* mPlayerManager;
-	ItemManager* mItemManager;
+	PlayerManager& mPlayerManager;
+	ItemManager& mItemManager;
 
 };
 

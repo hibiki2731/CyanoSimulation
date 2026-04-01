@@ -8,12 +8,13 @@
 
 
 
-MeshComponent::MeshComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
+MeshComponent::MeshComponent(Actor& owner, int updateOrder) 
+	: Component(owner, updateOrder),
+	mGraphic(owner.getScene().getGame().getGraphic())
 {
-	mGraphic = mOwner.getScene().getGame().getGraphic();
-	mCommandList = mGraphic->getCommandList();
+	mCommandList = mGraphic.getCommandList();
 	mOwner.getScene().addMesh(this);
-	CbvTbvSize = mGraphic->getCbvTbvIncSize();
+	CbvTbvSize = mGraphic.getCbvTbvIncSize();
 }
 
 MeshComponent::~MeshComponent()
@@ -24,21 +25,21 @@ void MeshComponent::endProccess()
 {
 	//Gameからメッシュを削除
 	mOwner.getScene().removeMesh(this);
-	mOwner.getScene().getGame().getAssetManager()->deleteMemory(mCBIndex, mCBSize);
-	mOwner.getScene().getGame().getAssetManager()->deleteHeap(mHeapIndex, mHeapSize);
+	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
+	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize);
 }
 
 void MeshComponent::create(const std::string& objectName)
 {	
 
 	//メッシュデータの取得
-	MeshData* meshData = mOwner.getScene().getGame().getAssetManager()->getMeshData(objectName);
+	MeshData* meshData = mOwner.getScene().getGame().getAssetManager().getMeshData(objectName);
 	
 	//コンスタントバッファのインデックスを取得
 	mCBSize = (meshData->NumParts + 1) * 256;
-	mCBIndex = mOwner.getScene().getGame().getAssetManager()->getCBEndIndex(mCBSize);
+	mCBIndex = mOwner.getScene().getGame().getAssetManager().getCBEndIndex(mCBSize);
 	mHeapSize = NumDescriptors * meshData->NumParts;
-	mHeapIndex = mOwner.getScene().getGame().getAssetManager()->getHeapEndIndex(mHeapSize * 2); //二つ分Viewを作る必要がある
+	mHeapIndex = mOwner.getScene().getGame().getAssetManager().getHeapEndIndex(mHeapSize * 2); //二つ分Viewを作る必要がある
 
 	//メッシュパーツ数を読み込み、メモリを確保
 	NumParts = meshData->NumParts;
@@ -62,14 +63,14 @@ void MeshComponent::create(const std::string& objectName)
 			Parts[k].Cb2.specular = meshData->Material[k * 3 + 2];
 		}
 		{
-			Parts[k].TextureBuf = mOwner.getScene().getGame().getAssetManager()->getShaderResource(meshData->TextureName[k]);
+			Parts[k].TextureBuf = mOwner.getScene().getGame().getAssetManager().getShaderResource(meshData->TextureName[k]);
 		}
 	}
 
 	//コンスタントバッファへデータをコピー
 	for (int i = 0; i < NumParts; i++) {
-		memcpy(mGraphic->getConstantData(0) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
-		memcpy(mGraphic->getConstantData(1) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
+		memcpy(mGraphic.getConstantData(0) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
+		memcpy(mGraphic.getConstantData(1) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
 
 	}
 
@@ -78,11 +79,11 @@ void MeshComponent::create(const std::string& objectName)
 	int heapIndex = mHeapIndex;
 	//コンスタントバッファビューを作成
 	for (int k = 0; k < NumParts; k++) {
-		mGraphic->createBase3DBufferView(heapIndex, mHeapSize); heapIndex++;
-		mGraphic->createConstantBufferView(mCBIndex, 256, heapIndex, mHeapSize); heapIndex++;
-		mGraphic->createConstantBufferView(mCBIndex + 256 * (k + 1), 256, heapIndex, mHeapSize); heapIndex++;
-		mGraphic->createShaderResourceView(Parts[k].TextureBuf, heapIndex); 
-		mGraphic->createShaderResourceView(Parts[k].TextureBuf, heapIndex + mHeapSize); 
+		mGraphic.createBase3DBufferView(heapIndex, mHeapSize); heapIndex++;
+		mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, mHeapSize); heapIndex++;
+		mGraphic.createConstantBufferView(mCBIndex + 256 * (k + 1), 256, heapIndex, mHeapSize); heapIndex++;
+		mGraphic.createShaderResourceView(Parts[k].TextureBuf, heapIndex); 
+		mGraphic.createShaderResourceView(Parts[k].TextureBuf, heapIndex + mHeapSize); 
 		heapIndex++;
 	}
 
@@ -103,10 +104,10 @@ void MeshComponent::draw()
 		;
 	Cb1.world = world;
 
-	memcpy(mGraphic->getConstantData() + mCBIndex, &Cb1, sizeof(World3DConstBuf));
+	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb1, sizeof(World3DConstBuf));
 
-	auto hCbvTbvHeap = mGraphic->getHeapHandle();
-	hCbvTbvHeap.ptr += CbvTbvSize * (mHeapIndex + mGraphic->getBackBufIdx() * mHeapSize);
+	auto hCbvTbvHeap = mGraphic.getHeapHandle();
+	hCbvTbvHeap.ptr += CbvTbvSize * (mHeapIndex + mGraphic.getBackBufIdx() * mHeapSize);
 
 	//パーツごとに描画
 	for (int k = 0; k < NumParts; ++k)

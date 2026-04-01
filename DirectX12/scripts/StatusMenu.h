@@ -14,7 +14,7 @@ public:
 	int getScrollOffset();
 private:
 	void refreshText();
-	PlayerManager* mPlayerManager;
+	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
 
 	int mScrollOffset;
@@ -30,7 +30,7 @@ public:
 
 private:
 	void refreshText();
-	PlayerManager* mPlayerManager;
+	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
 
 	int mScrollOffset;

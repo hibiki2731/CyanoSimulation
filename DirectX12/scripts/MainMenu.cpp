@@ -16,7 +16,7 @@ MainMenu::MainMenu(TownScene& scene, float zDepth) : Menu(scene, "MainMenu", zDe
 
 //各種メニューのupdate
 void MainMenu::selectedAct() {
-	mScene.getGame().getAudioManager()->playSE("UI_WINDOW_OPEN");
+	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
 	switch (mSelectedIndex) {
 	case 0: {
 		auto inn = std::make_unique<InnMenu>(mScene, 97.0f);

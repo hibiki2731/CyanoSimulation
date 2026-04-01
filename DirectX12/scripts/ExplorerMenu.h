@@ -15,8 +15,8 @@ private:
 
 	std::vector<std::string> mExplorer;
 
-	PlayerManager* mPlayerManager;
-	ItemManager* mItemManager;
+	PlayerManager& mPlayerManager;
+	ItemManager& mItemManager;
 
 
 };

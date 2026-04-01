@@ -17,7 +17,7 @@ private:
 	void prepareSaleItem();
 
 	std::vector<std::string> mSaleItem;
-	ItemManager* mItemManager;
-	PlayerManager* mPlayerManager;
+	ItemManager& mItemManager;
+	PlayerManager& mPlayerManager;
 };
 

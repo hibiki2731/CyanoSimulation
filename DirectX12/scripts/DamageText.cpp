@@ -49,14 +49,14 @@ DamageTextManager::DamageTextManager(Game& game) :
 {
 	mCBSize = 256; //使用するコンスタントバッファは一つだけ
 	mHeapSize = 4;
-	mCBIndex = mGame.getAssetManager()->getCBEndIndex(mCBSize);
-	mHeapIndex = mGame.getAssetManager()->getHeapEndIndex(mHeapSize);
+	mCBIndex = mGame.getAssetManager().getCBEndIndex(mCBSize);
+	mHeapIndex = mGame.getAssetManager().getHeapEndIndex(mHeapSize);
 	mNextInstanceIndex = 0;
 
 	mInstanceRawData.reserve(MaxNum);
 	////vertexBuffer作成
 	HRESULT hr;
-	for(int i = 0; i < 2; i ++) hr = mGame.getGraphic()->createBuf(SizeInByte, mVertexBuf[i]);
+	for(int i = 0; i < 2; i ++) hr = mGame.getGraphic().createBuf(SizeInByte, mVertexBuf[i]);
 	assert(SUCCEEDED(hr));
 
 	////vertexBufferView作成
@@ -70,19 +70,19 @@ DamageTextManager::DamageTextManager(Game& game) :
 	HRESULT hr = mVertexBuf[i]->Map(0, nullptr, reinterpret_cast<void**>(&mMappedData[i]));
 
 	//コンスタントバッファの初期化
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mGame.getGraphic()->getAspect(), 0.01f, 50.0f);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mGame.getGraphic().getAspect(), 0.01f, 50.0f);
 	mBC.proj = proj;
-	memcpy(mGame.getGraphic()->getConstantData(0) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
-	memcpy(mGame.getGraphic()->getConstantData(1) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
+	memcpy(mGame.getGraphic().getConstantData(0) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
+	memcpy(mGame.getGraphic().getConstantData(1) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
 
 	////ファイルを読み込み、テクスチャバッファをつくる
-	mTextureBuf = mGame.getAssetManager()->getShaderResource("assets\\picture\\digits.png");
+	mTextureBuf = mGame.getAssetManager().getShaderResource("assets\\picture\\digits.png");
 
 	////ディスクリプタヒープにビューを作成
 	auto heapIndex = mHeapIndex;
-	mGame.getGraphic()->createConstantBufferView(mCBIndex, mCBSize, heapIndex, 2); heapIndex ++;
-	mGame.getGraphic()->createShaderResourceView(mTextureBuf, heapIndex); heapIndex += 2;
-	mGame.getGraphic()->createShaderResourceView(mTextureBuf, heapIndex); 
+	mGame.getGraphic().createConstantBufferView(mCBIndex, mCBSize, heapIndex, 2); heapIndex ++;
+	mGame.getGraphic().createShaderResourceView(mTextureBuf, heapIndex); heapIndex += 2;
+	mGame.getGraphic().createShaderResourceView(mTextureBuf, heapIndex); 
 
 
 }
@@ -122,7 +122,7 @@ void DamageTextManager::update()
 	}
 
 	//VertexBufferを更新
-	memcpy(mMappedData[mGame.getGraphic()->getBackBufIdx()], mInstanceRawData.data(), mInstanceRawData.size() * sizeof(DamageTextInstance));
+	memcpy(mMappedData[mGame.getGraphic().getBackBufIdx()], mInstanceRawData.data(), mInstanceRawData.size() * sizeof(DamageTextInstance));
 
 }
 
@@ -131,18 +131,18 @@ void DamageTextManager::draw()
 	//描画するダメージテキストがなければ、描画処理を抜ける
 	if (mInstanceRawData.size() == 0)  return; 
 
-	mGame.getGraphic()->getCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	mGame.getGraphic().getCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	//頂点をセット
-	int backBufIdx = mGame.getGraphic()->getBackBufIdx();
-	mGame.getGraphic()->getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView[backBufIdx]);
+	int backBufIdx = mGame.getGraphic().getBackBufIdx();
+	mGame.getGraphic().getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView[backBufIdx]);
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
-	auto hDescHeap = mGame.getGraphic()->getHeapHandle();
-	hDescHeap.ptr += (mHeapIndex + backBufIdx * 2) * mGame.getGraphic()->getCbvTbvIncSize();
-	mGame.getGraphic()->getCommandList()->SetGraphicsRootDescriptorTable(0, hDescHeap);
+	auto hDescHeap = mGame.getGraphic().getHeapHandle();
+	hDescHeap.ptr += (mHeapIndex + backBufIdx * 2) * mGame.getGraphic().getCbvTbvIncSize();
+	mGame.getGraphic().getCommandList()->SetGraphicsRootDescriptorTable(0, hDescHeap);
 	//描画。インデックスを使用しない
-	mGame.getGraphic()->getCommandList()->DrawInstanced(1, mInstanceRawData.size(), 0, 0);
+	mGame.getGraphic().getCommandList()->DrawInstanced(1, mInstanceRawData.size(), 0, 0);
 	
 }
 
@@ -172,7 +172,7 @@ void DamageTextManager::createDamageText(const XMFLOAT3& position, int digit)
 void DamageTextManager::updateView(XMMATRIX& view)
 {
 	mBC.view = view;
-	memcpy(mGame.getGraphic()->getConstantData() + mCBIndex, &mBC, sizeof(BillboardConstBuf));
+	memcpy(mGame.getGraphic().getConstantData() + mCBIndex, &mBC, sizeof(BillboardConstBuf));
 }
 
 float DamageTextManager::getSize()

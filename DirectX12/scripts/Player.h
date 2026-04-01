@@ -67,8 +67,8 @@ private:
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;
-	ItemManager* mItemManager;
-	PlayerManager* mPlayerManager;
+	ItemManager& mItemManager;
+	PlayerManager& mPlayerManager;
 	DungeonScene& mScene;
 };
 

@@ -44,10 +44,10 @@ static UINT16 spriteIndices[] = {
 
 
 
-AssetManager::AssetManager(Graphic* graphic)
+AssetManager::AssetManager(Graphic& graphic)
+	: mGraphic(graphic)
 {
-	mGraphic = graphic;
-	mCBEndIndex = mGraphic->alignedSize(sizeof(Base3DData));
+	mCBEndIndex = mGraphic.alignedSize(sizeof(Base3DData));
 	mHeapEndIndex = 0;
 	createSpriteBuffers();
 	std::fstream file("assets/data/meshData.json");
@@ -114,11 +114,11 @@ void AssetManager::createMesh(const std::string& objectName, const MeshFileData&
 
 			//頂点バッファをつくる
 			UINT sizeInByte = sizeof(float) * NumElements;//全バイト数
-			HRESULT hr = mGraphic->createBuf(sizeInByte,meshData->VertexBuf[k]);
+			HRESULT hr = mGraphic.createBuf(sizeInByte,meshData->VertexBuf[k]);
 			assert(SUCCEEDED(hr));
 
 			//頂点バッファに生データをコピー
-			hr = mGraphic->updateBuf(vertices.data(), sizeInByte, meshData->VertexBuf[k]);
+			hr = mGraphic.updateBuf(vertices.data(), sizeInByte, meshData->VertexBuf[k]);
 			assert(SUCCEEDED(hr));
 
 			//位置バッファのビューを初期化しておく。（ディスクリプタヒープに作らなくてよい）
@@ -159,7 +159,7 @@ void AssetManager::createMesh(const std::string& objectName, const MeshFileData&
 			}
 
 			ComPtr<ID3D12Resource> textureBuf;
-			HRESULT hr = mGraphic->createShaderResource(textureFileName, textureBuf);
+			HRESULT hr = mGraphic.createShaderResource(textureFileName, textureBuf);
 			assert(SUCCEEDED(hr));
 			meshData->TextureName[k] = textureFileName;
 			mTextureData[textureFileName] = std::move(textureBuf);
@@ -181,7 +181,7 @@ XMFLOAT2 AssetManager::createTextureAndGetSize(const std::string& filePath)
 	}
 	else {
 		ComPtr<ID3D12Resource> textureBuf;
-		size = mGraphic->createShaderResourceGetSize(filePath, textureBuf);
+		size = mGraphic.createShaderResourceGetSize(filePath, textureBuf);
 		mTextureSizeData[filePath] = size;
 		mTextureData[filePath] = std::move(textureBuf);
 	}
@@ -199,7 +199,7 @@ ID3D12Resource* AssetManager::getShaderResource(const std::string& textureName)
 	}
 	else {
 		ComPtr<ID3D12Resource> textureBuf;
-		mTextureSizeData[textureName] = mGraphic->createShaderResourceGetSize(textureName, textureBuf);
+		mTextureSizeData[textureName] = mGraphic.createShaderResourceGetSize(textureName, textureBuf);
 		texture = textureBuf.Get();
 		mTextureData[textureName] = std::move(textureBuf);
 	}
@@ -322,11 +322,11 @@ void AssetManager::createSpriteBuffers()
 	{
 		//頂点バッファの作成
 		UINT sizeInByte = sizeof(spriteVertices);
-		HRESULT hr = mGraphic->createBuf(sizeInByte, mSpriteVertexBuf);
+		HRESULT hr = mGraphic.createBuf(sizeInByte, mSpriteVertexBuf);
 		assert(SUCCEEDED(hr));
 
 		//頂点バッファに生データをコピー
-		hr = mGraphic->updateBuf(spriteVertices, sizeInByte, mSpriteVertexBuf);
+		hr = mGraphic.updateBuf(spriteVertices, sizeInByte, mSpriteVertexBuf);
 		assert(SUCCEEDED(hr));
 
 		//位置バッファのビューを初期化しておく。（ディスクリプタヒープに作らなくてよい）
@@ -337,11 +337,11 @@ void AssetManager::createSpriteBuffers()
 	{
 		//インデックスバッファの作成
 		UINT sizeInByte = sizeof(spriteIndices);
-		HRESULT hr = mGraphic->createBuf(sizeInByte, mSpriteIndexBuf);
+		HRESULT hr = mGraphic.createBuf(sizeInByte, mSpriteIndexBuf);
 		assert(SUCCEEDED(hr));
 
 		//インデックスバッファに生データをコピー
-		hr = mGraphic->updateBuf(spriteIndices, sizeInByte, mSpriteIndexBuf);
+		hr = mGraphic.updateBuf(spriteIndices, sizeInByte, mSpriteIndexBuf);
 		assert(SUCCEEDED(hr));
 
 		//インデックスバッファービューを作る

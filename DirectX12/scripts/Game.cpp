@@ -87,7 +87,7 @@ void Game::init() {
 
 
 	//assetManagerの初期化 meshComponentを作成する前に初期化
-	mAssetManager = std::make_unique<AssetManager>(mGraphic.get());
+	mAssetManager = std::make_unique<AssetManager>(*mGraphic.get());
 
 	//itemManagerの初期化
 	mItemManager = std::make_unique<ItemManager>();
@@ -103,19 +103,19 @@ void Game::init() {
 
 }
 
-Graphic* Game::getGraphic()
+Graphic& Game::getGraphic()
 {
-	return mGraphic.get();
+	return *mGraphic.get();
 }
 
-AssetManager* Game::getAssetManager()
+AssetManager& Game::getAssetManager()
 {
-	return mAssetManager.get();
+	return *mAssetManager.get();
 }
 
-ItemManager* Game::getItemManager()
+ItemManager& Game::getItemManager()
 {
-	return mItemManager.get();
+	return *mItemManager.get();
 }
 
 SceneManager& Game::getSceneManager()
@@ -123,14 +123,14 @@ SceneManager& Game::getSceneManager()
 	return *mSceneManager.get();
 }
 
-PlayerManager* Game::getPlayerManager()
+PlayerManager& Game::getPlayerManager()
 {
-	return mPlayerManager.get();
+	return *mPlayerManager.get();
 }
 
-AudioManager* Game::getAudioManager()
+AudioManager& Game::getAudioManager()
 {
-	return mAudioManager.get();
+	return *mAudioManager.get();
 }
 
 void Game::input()

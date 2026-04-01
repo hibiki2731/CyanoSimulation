@@ -10,15 +10,16 @@
 #include "SpriteComponent.h"
 #include "AudioManager.h"
 
-EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth) : Menu(scene, "EquipWeaponMenu", zDepth)
+EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
+	: Menu(scene, "EquipWeaponMenu", zDepth),
+	mPlayerManager(scene.getGame().getPlayerManager())
 {
-	mPlayerManager = scene.getGame().getPlayerManager();
-	mMaxIndex = mPlayerManager->getPlayerData().weaponInventory.size();
+	mMaxIndex = mPlayerManager.getPlayerData().weaponInventory.size();
 	mScrollOffset = 0;
 
 	auto weaponText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	std::wstring message;
-	const auto& inventory = mPlayerManager->getPlayerData().weaponInventory;
+	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 	for (int i = 0; i < showWeaponNum; i++) {
 		message += Utility::stringToWString(inventory[i]) + L"\n";
@@ -40,8 +41,8 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth) : Menu(scene, "
 
 void EquipWeaponMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
-	mPlayerManager->equipWeapon(mSelectedIndex);
+	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mPlayerManager.equipWeapon(mSelectedIndex);
 }
 
 void EquipWeaponMenu::updateMenu()
@@ -65,7 +66,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -73,7 +74,7 @@ void EquipWeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
 		mSelectedIndex++;
-		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -87,7 +88,7 @@ int EquipWeaponMenu::getScrollOffset()
 void EquipWeaponMenu::refreshText()
 {
 	std::wstring message;
-	const auto& inventory = mPlayerManager->getPlayerData().weaponInventory;
+	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 	for (int i = mScrollOffset; i < mScrollOffset + showWeaponNum; i++) {
 		message += Utility::stringToWString(inventory[i]) + L"\n";
@@ -97,15 +98,17 @@ void EquipWeaponMenu::refreshText()
 
 }
 
-EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth) : Menu(scene, "EquipArmerMenu", zDepth)
+EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
+	: Menu(scene, "EquipArmerMenu", zDepth),
+	mPlayerManager(scene.getGame().getPlayerManager())
 {
 	mPlayerManager = scene.getGame().getPlayerManager();
-	mMaxIndex = mPlayerManager->getPlayerData().armerInventory.size();
+	mMaxIndex = mPlayerManager.getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
 
 	auto armerText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	std::wstring message;
-	const auto& inventory = mPlayerManager->getPlayerData().armerInventory;
+	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
 	for (int i = 0; i < showArmerNum; i++) {
 		message += Utility::stringToWString(inventory[i]) + L"\n";
@@ -126,8 +129,8 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth) : Menu(scene, "Eq
 
 void EquipArmerMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager()->playSE("UI_ENTER");
-	mPlayerManager->equipArmer(mSelectedIndex);
+	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mPlayerManager.equipArmer(mSelectedIndex);
 }
 
 void EquipArmerMenu::updateMenu()
@@ -150,14 +153,14 @@ void EquipArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex == 0) return;
 		mSelectedIndex--;
-		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex == mMaxIndex - 1) return;
-		mScene.getGame().getAudioManager()->playSE("UI_MOVE1");
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		mSelectedIndex++;
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -167,7 +170,7 @@ void EquipArmerMenu::inputMenu()
 void EquipArmerMenu::refreshText()
 {
 	std::wstring message;
-	const auto& inventory = mPlayerManager->getPlayerData().armerInventory;
+	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
 	for (int i = mScrollOffset; i < mScrollOffset + showArmerNum; i++) {
 		message += Utility::stringToWString(inventory[i]) + L"\n";
@@ -188,7 +191,7 @@ StatusMenu::~StatusMenu()
 
 void StatusMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager()->playSE("UI_WINDOW_OPEN");
+	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
 	switch(mSelectedIndex) {
 	case 0: {
 		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, 48.0f);

@@ -42,8 +42,8 @@ protected:
     HRESULT Hr;
 
     //グラフィック
-    Graphic* mGraphic;
-    AssetManager* mAssetManager;
+    Graphic& mGraphic;
+    AssetManager& mAssetManager;
 
     //コマンドリスト
     ID3D12GraphicsCommandList* mCommandList;

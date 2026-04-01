@@ -17,11 +17,11 @@ void Anime2DComponent::create(const std::string filename, int textureNum)
 	//コンスタントバッファ、ディスクリプタヒープ用のインデックスを取得
 	mCBSize = 256 * (1 + textureNum); //spriteConstantBuf + textureの数
 	mHeapSize = 2 + textureNum;
-	mCBIndex = mAssetManager->getCBEndIndex(mCBSize);
-	mHeapIndex = mAssetManager->getHeapEndIndex(mHeapSize);
+	mCBIndex = mAssetManager.getCBEndIndex(mCBSize);
+	mHeapIndex = mAssetManager.getHeapEndIndex(mHeapSize);
 
 	//Sprite用の各Viewを取得
-	SpriteData spriteData= mAssetManager->getSpriteData();
+	SpriteData spriteData= mAssetManager.getSpriteData();
 	mVertexBufView = spriteData.VertexBufView;
 	mIndexBufView = spriteData.IndexBufView;
 
@@ -34,8 +34,8 @@ void Anime2DComponent::create(const std::string filename, int textureNum)
 	for (int i = 0;i < mTextureNum;i++)
 	{
 		std::string textureName = preName + std::to_string(i) + postName;
-		mTextureSize = mAssetManager->createTextureAndGetSize(textureName);
-		mTextureBufs[i] = mAssetManager->getShaderResource(textureName);
+		mTextureSize = mAssetManager.createTextureAndGetSize(textureName);
+		mTextureBufs[i] = mAssetManager.getShaderResource(textureName);
 	}
 	
 	//コンスタントバッファの初期化
@@ -46,12 +46,12 @@ void Anime2DComponent::create(const std::string filename, int textureNum)
 	Cb3.spriteSize = mSpriteSize;
 	Cb3.textureSize = mTextureSize;
 	Cb3.bordarSize = mBordarSize;
-	memcpy(mGraphic->getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
+	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
 
 	//ディスクリプタヒープにViewを作る
 	auto heapIndex = mHeapIndex;
-	mGraphic->createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
-	for (int i = 0; i < mTextureNum; i++) mGraphic->createShaderResourceView(mTextureBufs[i], heapIndex); heapIndex++;
+	mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
+	for (int i = 0; i < mTextureNum; i++) mGraphic.createShaderResourceView(mTextureBufs[i], heapIndex); heapIndex++;
 
 }
 
@@ -70,23 +70,23 @@ void Anime2DComponent::draw()
 	Cb3.spriteSize = mSpriteSize;	//スプライトサイズ
 	Cb3.bordarSize = mBordarSize;	//ボーダーサイズ
 	//コンスタントバッファへコピー
-	memcpy(mGraphic->getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
+	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
 \
 	//頂点をセット
 	mCommandList->IASetVertexBuffers(0, 1, &mVertexBufView);
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
-	auto hCbvTbvHeap = mGraphic->getHeapHandle();
-	UINT CbvTbvSize = mGraphic->getCbvTbvIncSize();
-	hCbvTbvHeap.ptr += (mHeapIndex + mGraphic->getBackBufIdx()) * CbvTbvSize;
+	auto hCbvTbvHeap = mGraphic.getHeapHandle();
+	UINT CbvTbvSize = mGraphic.getCbvTbvIncSize();
+	hCbvTbvHeap.ptr += (mHeapIndex + mGraphic.getBackBufIdx()) * CbvTbvSize;
 
 	mCommandList->SetGraphicsRootDescriptorTable(0, hCbvTbvHeap);
-	hCbvTbvHeap = mGraphic->getHeapHandle();
+	hCbvTbvHeap = mGraphic.getHeapHandle();
 	hCbvTbvHeap.ptr += CbvTbvSize * (mHeapIndex + 2 + mTextureIndex);
 	mCommandList->SetGraphicsRootDescriptorTable(1, hCbvTbvHeap);
 	//描画。インデックスを使用
 	mCommandList->IASetIndexBuffer(&mIndexBufView);
-	mCommandList->DrawIndexedInstanced(mAssetManager->getSpriteIndicesSize(), 1, 0, 0, 0);
+	mCommandList->DrawIndexedInstanced(mAssetManager.getSpriteIndicesSize(), 1, 0, 0, 0);
 }
 
 void Anime2DComponent::endProccess()

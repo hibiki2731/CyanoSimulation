@@ -35,17 +35,17 @@ void CameraComponent::updateComponent()
 
 		XMMATRIX view = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&mFocus), XMLoadFloat3(&mUp));
 		//プロジェクションマトリックス
-		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic()->getAspect(), 0.01f, 50.0f);
+		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic().getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
 		mDungeonScene.updateDTView(view);
-		mOwner.getScene().getGame().getGraphic()->updateViewProj(viewProj);
+		mOwner.getScene().getGame().getGraphic().updateViewProj(viewProj);
 
 		XMFLOAT4 cameraPos;
 		cameraPos.x = eye.x;
 		cameraPos.y = eye.y;
 		cameraPos.z = eye.z;
 		cameraPos.w = 1;
-		mOwner.getScene().getGame().getGraphic()->updateCameraPos(cameraPos);
+		mOwner.getScene().getGame().getGraphic().updateCameraPos(cameraPos);
 	}
 
 }
