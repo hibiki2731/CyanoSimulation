@@ -9,11 +9,12 @@ class CharacterComponent;
 class MapManager;
 class PlayerManager;
 class ItemManager;
+class DungeonScene;
 
 class Player : public Actor
 {
 public:
-	Player(Game* game, float x, float y);
+	Player(DungeonScene& scene, float x, float y);
 	~Player();
 
 	void inputActor() override;
@@ -66,8 +67,8 @@ private:
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;
-	MapManager* mMapManager;
-	ItemManager* mItemManager;
-	PlayerManager* mPlayerManager;
+	ItemManager& mItemManager;
+	PlayerManager& mPlayerManager;
+	DungeonScene& mScene;
 };
 

@@ -1,12 +1,16 @@
 ﻿#include "EnemyComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "MapManager.h"
 #include "Player.h"
 #include "Random.h"
+#include "DungeonScene.h"
 
-EnemyComponent::EnemyComponent(Actor* owner, int updateOrder) : CharacterComponent(owner, updateOrder)
+EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
+	: CharacterComponent(owner, scene),
+	mScene(scene)
 {
-	mOwner->getGame()->addEnemy(this);
+	scene.addEnemy(this);
 	mMesh = nullptr;
 
 	mFlashTimer = 0.0f;
@@ -17,11 +21,11 @@ EnemyComponent::EnemyComponent(Actor* owner, int updateOrder) : CharacterCompone
 
 	mState = MovePattern::RANDOM;
 	isActive = false;
-	mTargetPos = mOwner->getPosition();
+	mTargetPos = mOwner.getPosition();
 	mDistPlayer = 10000000;
 
-	mIndexPos[0] = static_cast<int>(std::round(mOwner->getPosition().x / MAPTIPSIZE));
-	mIndexPos[1] = static_cast<int>(std::round(mOwner->getPosition().z / MAPTIPSIZE));
+	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
+	mIndexPos[1] = static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE));
 }
 
 void EnemyComponent::inputComponent()
@@ -35,7 +39,7 @@ void EnemyComponent::updateComponent()
 	//点滅処理の更新
 	updateFlash();
 
-	switch (mMapManager->getTurnType()) {
+	switch (mScene.getTurnType()) {
 		//プレイヤーターン時の動作
 	case TurnType::PLAYER:
 		break;
@@ -46,17 +50,17 @@ void EnemyComponent::updateComponent()
 		//移動
 		if (isMoving) {
 			//移動する差分の計算
-			XMFLOAT3 diffPos = mTargetPos - mOwner->getPosition();
+			XMFLOAT3 diffPos = mTargetPos - mOwner.getPosition();
 			float moveLength = deltaTime * mMoveSpeed;
 
 			//位置の更新
 			if (fabsf(diffPos.x) > moveLength || fabsf(diffPos.y) > moveLength || fabsf(diffPos.z) > moveLength) {
-				mOwner->setPosition(mOwner->getPosition() + Math::normalize(diffPos) * moveLength);
+				mOwner.setPosition(mOwner.getPosition() + Math::normalize(diffPos) * moveLength);
 			}
 			//移動終了時の処理
 			else
 			{
-				mOwner->setPosition(mTargetPos);
+				mOwner.setPosition(mTargetPos);
 
 				//ターン経過
 				isMoving = false;
@@ -69,7 +73,7 @@ void EnemyComponent::updateComponent()
 
 	//死亡したらActor配列から除去
 	if (!isAlive) {
-		mOwner->setState(Actor::State::Dead);
+		mOwner.setState(Actor::State::Dead);
 		finishAct();
 	}
 
@@ -78,26 +82,23 @@ void EnemyComponent::updateComponent()
 void EnemyComponent::endProccess()
 {
 	CharacterComponent::endProccess();
-	mMapManager->setObjectDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
-	mOwner->getGame()->removeEnemy(this);
+	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
+	mScene.removeEnemy(this);
 }
 
-void EnemyComponent::updateActiveProcess()
+void EnemyComponent::startAct()
 {
-	//activeな時にのみ行う
-	if (isActive)
-	{
-		//プレイヤーとの距離を計算
-		int playerIndex[2];
-		mMapManager->getPlayer()->getIndexPos(playerIndex);
-		mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
+	isActive = true;
+	//プレイヤーとの距離を計算
+	int playerIndex[2];
+	mScene.getPlayer()->getIndexPos(playerIndex);
+	mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
 
-		attack();
-		move();
+	attack();
+	move();
 
-		//プレイヤーとの距離を計算
-		mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
-	}
+	//プレイヤーとの距離を計算
+	mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
 
 }
 
@@ -127,7 +128,7 @@ void EnemyComponent::startFlash()
 
 XMFLOAT3 EnemyComponent::getPosition()
 {
-	return mOwner->getPosition();
+	return mOwner.getPosition();
 }
 
 int EnemyComponent::getDist()
@@ -150,9 +151,9 @@ void EnemyComponent::updateFlash()
 void EnemyComponent::move()
 {
 	//移動時は実行できない
-	if (isMoving) return;
+	//if (isMoving) return;
 	//エネミーターン時のみ実行
-	if (mMapManager->getTurnType() == TurnType::PLAYER) return;
+	//if (mMapManager.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 
@@ -163,41 +164,41 @@ void EnemyComponent::move()
 	calcTargetIndex(targetIndexPos);
 
 	//進先に障害物がある場合移動不可
-	if (mMapManager->getMapDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
-		mMapManager->getObjectDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) {
-		mTargetPos = mOwner->getPosition();
+	if (mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
+		mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) {
+		mTargetPos = mOwner.getPosition();
 		return;
 	}
 
 	//向きの変更
 	//右向き
-	if (targetIndexPos[0] - mIndexPos[0] == 1) mOwner->setYRot(XM_PIDIV2);
+	if (targetIndexPos[0] - mIndexPos[0] == 1) mOwner.setYRot(XM_PIDIV2);
 	//左向き
-	else if (targetIndexPos[0] - mIndexPos[0] == -1) mOwner->setYRot(-XM_PIDIV2);
+	else if (targetIndexPos[0] - mIndexPos[0] == -1) mOwner.setYRot(-XM_PIDIV2);
 	//上向き
-	else if (targetIndexPos[1] - mIndexPos[1] == 1) mOwner->setYRot(0.0f);
+	else if (targetIndexPos[1] - mIndexPos[1] == 1) mOwner.setYRot(0.0f);
 	//下向き
-	else if (targetIndexPos[1] - mIndexPos[1] == -1) mOwner->setYRot(XM_PI);
+	else if (targetIndexPos[1] - mIndexPos[1] == -1) mOwner.setYRot(XM_PI);
 
 	mTargetPos = XMFLOAT3(targetIndexPos[0] * MAPTIPSIZE, 0.0f, targetIndexPos[1] * MAPTIPSIZE); //移動先のワールド座標を計算
 
 	//マップデータや自身のインデックス座標を更新
-	mMapManager->setObjectDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
-	mMapManager->setObjectDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
+	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
+	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
 	mIndexPos[0] = targetIndexPos[0]; mIndexPos[1] = targetIndexPos[1]; //インデックス座標の更新
 }
 
 void EnemyComponent::attack()
 {
 	//移動時は実行できない
-	if (isMoving) return;
+	//if (isMoving) return;
 	//エネミーターン時のみ実行
-	if (mMapManager->getTurnType() == TurnType::PLAYER) return;
+	//if (mMapManager.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 
 	//プレイヤーのインデックス座標を取得
-	Player* player = mMapManager->getPlayer();
+	Player* player = mScene.getPlayer();
 	int playerIndexPos[2];
 	player->getIndexPos(playerIndexPos);
 
@@ -205,18 +206,18 @@ void EnemyComponent::attack()
 
 	//プレイヤーが左側
 	if (diffIndexPos[0] == -1 && diffIndexPos[1] == 0) {
-		mOwner->setYRot(-XM_PIDIV2);
+		mOwner.setYRot(-XM_PIDIV2);
 	}
 	//プレイヤーが右側
 	else if (diffIndexPos[0] == 1 && diffIndexPos[1] == 0) {
-		mOwner->setYRot(XM_PIDIV2);
+		mOwner.setYRot(XM_PIDIV2);
 	}
 	//プレイヤーが下
 	else if (diffIndexPos[0] == 0 && diffIndexPos[1] == -1) {
-		mOwner->setYRot(XM_PI);
+		mOwner.setYRot(XM_PI);
 	}
 	else if (diffIndexPos[0] == 0 && diffIndexPos[1] == 1) {
-		mOwner->setYRot(0.0f);
+		mOwner.setYRot(0.0f);
 	}
 	else {
 		return;
@@ -230,7 +231,7 @@ void EnemyComponent::attack()
 
 void EnemyComponent::finishAct()
 {
-	mMapManager->moveToPlayerTurn();
+	mScene.moveToPlayerTurn();
 	isActive = false;
 
 }
@@ -260,7 +261,7 @@ void EnemyComponent::calcTargetIndex(int(&targetIndex)[2])
 void EnemyComponent::Astar(int(&targetIndex)[2])
 {
 	std::priority_queue<Node, std::vector<Node>, std::greater<Node>> openList; //次に探索するマスのリスト
-	std::vector<std::vector<Cell>> grid(mMapManager->getMapSize(), std::vector<Cell>(mMapManager->getMapSize()));
+	std::vector<std::vector<Cell>> grid(mScene.getMapSize(), std::vector<Cell>(mScene.getMapSize()));
 
 	openList.push({ mIndexPos[0], mIndexPos[1], 0 }); //スタート地点
 	grid[mIndexPos[0]][mIndexPos[1]].gCost = 0;
@@ -268,7 +269,7 @@ void EnemyComponent::Astar(int(&targetIndex)[2])
 
 
 	int playerIndex[2];
-	mMapManager->getPlayer()->getIndexPos(playerIndex);
+	mScene.getPlayer()->getIndexPos(playerIndex);
 
 	while (!openList.empty()) {
 		//openListの先頭ノードをカレントノードに
@@ -309,10 +310,10 @@ void EnemyComponent::Astar(int(&targetIndex)[2])
 			}
 
 			//探索するマスが移動可能かつ探索していないか判定
-			if (nextIndex[0] >= 0 && nextIndex[0] < mMapManager->getMapSize()
-				&& nextIndex[1] >= 0 && nextIndex[1] < mMapManager->getMapSize()
+			if (nextIndex[0] >= 0 && nextIndex[0] < mScene.getMapSize()
+				&& nextIndex[1] >= 0 && nextIndex[1] < mScene.getMapSize()
 				&& !grid[nextIndex[0]][nextIndex[1]].isClosed
-				&& mMapManager->getMapDataAt(nextIndex[0], nextIndex[1]) != TileType::WALL
+				&& mScene.getTileDataAt(nextIndex[0], nextIndex[1]) != TileType::WALL
 				) {
 				gCost = grid[current.x][current.y].gCost + 1;
 				//よりGコストの小さいルートを見つけた場合、親ノードとGコストを更新

@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 
 class PlayerManager;
 class ItemManager;
 
 class ExplorerMenu : public Menu {
 public:
-	ExplorerMenu(Game* game, float zDepth);
+	ExplorerMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:
@@ -15,8 +15,8 @@ private:
 
 	std::vector<std::string> mExplorer;
 
-	PlayerManager* mPlayerManager;
-	ItemManager* mItemManager;
+	PlayerManager& mPlayerManager;
+	ItemManager& mItemManager;
 
 
 };

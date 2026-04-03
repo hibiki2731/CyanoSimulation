@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 
 class InnMenu : public Menu {
 public:
-	InnMenu(Game* game, float zDepth);
+	InnMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 
 private:

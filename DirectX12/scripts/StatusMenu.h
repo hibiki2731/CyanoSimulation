@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "TownManager.h"
+#include "Menu.h"
 
 class PlayerManager;
 class TextComponent;
 
 class EquipWeaponMenu : public Menu {
 public:
-	EquipWeaponMenu(Game* game, float zDepth);
+	EquipWeaponMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -14,8 +14,12 @@ public:
 	int getScrollOffset();
 private:
 	void refreshText();
-	PlayerManager* mPlayerManager;
+	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
+	SpriteComponent* mUpArrow;
+	SpriteComponent* mDownArrow;
+	SpriteComponent* mScrollBar;
+	float mScrollBarMoveLength;
 
 	int mScrollOffset;
 	const int MaxShowWeaponNum = 5;
@@ -23,23 +27,27 @@ private:
 
 class EquipArmerMenu : public Menu {
 public:
-	EquipArmerMenu(Game* game, float zDepth);
+	EquipArmerMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
 
 private:
 	void refreshText();
-	PlayerManager* mPlayerManager;
+	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
+	SpriteComponent* mUpArrow;
+	SpriteComponent* mDownArrow;
+	SpriteComponent* mScrollBar;
+	float mScrollBarMoveLength;
 
 	int mScrollOffset;
-	const int MaxShowArmerNum = 3;
+	const int MaxShowArmerNum = 6;
 };
 class StatusMenu : public Menu
 {
 public:
-	StatusMenu(Game* game, float zDepth);
+	StatusMenu(TownScene& scene, float zDepth);
 	~StatusMenu();
 	void selectedAct() override;
 

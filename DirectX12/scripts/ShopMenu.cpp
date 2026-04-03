@@ -1,13 +1,15 @@
 ﻿#include "ShopMenu.h"
+#include "TownScene.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ItemManager.h"
 #include "AudioManager.h"
 
-ShopMenu::ShopMenu(Game* game, float zDepth) : Menu(game, "ShopMenu", zDepth)
+ShopMenu::ShopMenu(TownScene& scene, float zDepth) 
+	: Menu(scene, "ShopMenu", zDepth),
+	mItemManager(scene.getGame().getItemManager()),
+	mPlayerManager(scene.getGame().getPlayerManager())
 {
-	mItemManager = game->getItemManager();
-	mPlayerManager = game->getPlayerManager();
 	prepareSaleItem();
 }
 
@@ -25,22 +27,22 @@ void ShopMenu::prepareSaleItem()
 
 void ShopMenu::buyItem(int index) {
 	//リソースを消費
-	const auto& itemData = mItemManager->getItemData(mSaleItem[index]);
+	const auto& itemData = mItemManager.getItemData(mSaleItem[index]);
 	for (int i = 0; i < itemData.costResourceID.size(); i++) {
-		int possessedResource = mItemManager->getResourceNum(itemData.costResourceID[i]);
+		int possessedResource = mItemManager.getResourceNum(itemData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (itemData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
 		}
 
 		//所持リソースを消費リソース分減らす
-		mItemManager->subResource(itemData.costResourceID[i], itemData.price[i]);
+		mItemManager.subResource(itemData.costResourceID[i], itemData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	//インベントリにアイテムを追加
-	mPlayerManager->addInventory(itemData.id);
+	mPlayerManager.addInventory(itemData.id);
 }
 
 

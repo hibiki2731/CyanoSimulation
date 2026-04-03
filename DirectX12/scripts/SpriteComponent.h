@@ -12,7 +12,7 @@ class SpriteComponent :
     public Component
 {
 public:
-	SpriteComponent(Actor* owner, float zDepth = 100.0f);
+	SpriteComponent(Actor& owner, float zDepth = 100.0f);
     ~SpriteComponent();
 
 	void endProccess() override;
@@ -42,8 +42,8 @@ protected:
     HRESULT Hr;
 
     //グラフィック
-    Graphic* mGraphic;
-    AssetManager* mAssetManager;
+    Graphic& mGraphic;
+    AssetManager& mAssetManager;
 
     //コマンドリスト
     ID3D12GraphicsCommandList* mCommandList;

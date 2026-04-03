@@ -3,18 +3,17 @@
 #include <vector>
 
 class SpriteComponent;
-class MapManager;
-class Game;
+class DungeonScene;
 
 class MiniMap :public Actor
 {
 public:
-	MiniMap(Game* game);
+	MiniMap(DungeonScene& scene);
 	void updatePosition();
 	void updateDirection();
 
 private:
-	MapManager* mMapManager;
+	DungeonScene& mDungeonScene;
 	SpriteComponent* mCanvas;
 	SpriteComponent* mPlayerIcon;
 	std::vector<SpriteComponent*> mTileIcon;

@@ -8,7 +8,7 @@ class AssetManager;
 class TextComponent : public Component
 {
 public:
-	TextComponent(Actor* owner, float zDepth = 100.0f);
+	TextComponent(Actor& owner, float zDepth = 100.0f);
 	~TextComponent();
 
 	void drawTextTexture();
@@ -31,8 +31,8 @@ public:
 
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
-	Graphic* mGraphic;
-	AssetManager* mAssetManager;
+	Graphic& mGraphic;
+	AssetManager& mAssetManager;
 	ComPtr<ID2D1SolidColorBrush> mTextBrush;
 	ComPtr<IDWriteTextFormat> mTextFormat;
 	ComPtr<ID3D12Resource> mTexture;

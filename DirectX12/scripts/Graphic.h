@@ -38,7 +38,7 @@ public:
 		RENDER_DT,
 	};
 
-	Graphic(Game* game);
+	Graphic(Game& game);
 	~Graphic();
 
 	void init();	
@@ -68,7 +68,7 @@ public:
 	int msg_wparam();
 	void closeEventHandle();
 	void waitGPU();
-	void delayRelease(ComPtr<IUnknown> resource);
+	void delayRelease(ComPtr<IUnknown>& resource);
 
 	//Getter
 	float getAspect();
@@ -91,7 +91,7 @@ public:
 	void setRenderType(STATE state);
 
 	//update
-	void updateBase3DData(); //cameraの更新後に実行しなければいけない
+	void updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights); //cameraの更新後に実行しなければいけない
 	void updateViewProj(XMMATRIX& viewProj);
 	void updatePointLight(const std::vector<PointLightComponent*>& lights);
 	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
@@ -103,6 +103,7 @@ public:
 	static constexpr int ClientWidth = 1280;
 	static constexpr int ClientHeight = 720;
 	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
+	static constexpr int FrameCount = 2;
 private:
 	HRESULT createDevice();
 	HRESULT createCommand();
@@ -128,7 +129,6 @@ private:
 
 	HWND hWnd = nullptr;
 	MSG Msg;
-	static const int FrameCount = 2;
 
 	//デバイス
 	ComPtr<ID3D12Device> Device;
@@ -188,7 +188,7 @@ private:
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
 
-	Game* mGame;
+	Game& mGame;
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];

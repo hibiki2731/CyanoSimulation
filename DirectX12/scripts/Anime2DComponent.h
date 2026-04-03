@@ -5,7 +5,7 @@ class Anime2DComponent :
     public SpriteComponent
 {
 public:
-	Anime2DComponent(Actor* owner, float zDepth = 100.0f);
+	Anime2DComponent(Actor& owner, float zDepth = 100.0f);
 	~Anime2DComponent() {};
 
 	virtual void create(const std::string filename, int textureNum);

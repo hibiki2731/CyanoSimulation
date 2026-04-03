@@ -1,15 +1,15 @@
 ﻿#pragma once
 #include "Component.h"
-#include "MapManager.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
 
+class DungeonScene;
 
 class CharacterComponent : public Component
 {
 public:
-	CharacterComponent(Actor* owner, int updateOrder = 100);
+	CharacterComponent(Actor& owner, DungeonScene& scene);
 	~CharacterComponent();
 
 	void inputComponent() override;
@@ -25,7 +25,6 @@ public:
 	bool getAlive();
 	std::vector<int>& getIndexPos();
 	int getIndexPosInt();
-	MapManager* getMapManager();
 
 	//setter
 	void setMaxHP(int maxHP);
@@ -57,6 +56,6 @@ protected:
 	//位置
 	std::vector<int> mIndexPos; //{x, y}
 
-	MapManager* mMapManager;
+	DungeonScene& mScene;
 };
 

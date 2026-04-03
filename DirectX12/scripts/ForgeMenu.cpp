@@ -1,4 +1,5 @@
 ﻿#include "ForgeMenu.h"
+#include "TownScene.h"
 #include "AudioManager.h"
 #include "Game.h"
 #include "PlayerManager.h"
@@ -6,10 +7,11 @@
 #include <fstream>
 #include "json.hpp"
 
-ForgeMenu::ForgeMenu(Game* game, float zDepth) : Menu(game, "ForgeMenu", zDepth)
+ForgeMenu::ForgeMenu(TownScene& scene, float zDepth) 
+	: Menu(scene, "ForgeMenu", zDepth),
+	mPlayerManager(scene.getGame().getPlayerManager()),
+	mItemManager(scene.getGame().getItemManager())
 {
-	mPlayerManager = game->getPlayerManager();
-	mItemManager = game->getItemManager();
 	prepareCraftItems();
 }
 
@@ -30,43 +32,43 @@ void ForgeMenu::prepareCraftItems()
 void ForgeMenu::craftWeapons(int index)
 {
 	//リソースを消費
-	const auto& weaponData = mItemManager->getWeaponData(mWeapons[index]);
+	const auto& weaponData = mItemManager.getWeaponData(mWeapons[index]);
 	for (int i = 0; i < weaponData.costResourceID.size(); i++) {
-		int possessedResource = mItemManager->getResourceNum(weaponData.costResourceID[i]);
+		int possessedResource = mItemManager.getResourceNum(weaponData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (weaponData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
 		}
 
 		//所持リソースを消費リソース分減らす
-		mItemManager->subResource(weaponData.costResourceID[i], weaponData.price[i]);
+		mItemManager.subResource(weaponData.costResourceID[i], weaponData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 
 	//インベントリにアイテムを追加
-	mPlayerManager->addWeapon(weaponData.id);
+	mPlayerManager.addWeapon(weaponData.id);
 }
 
 void ForgeMenu::craftArmer(int index)
 {
 	//リソースを消費
-	const auto& armerData = mItemManager->getArmerData(mArmers[index]);
+	const auto& armerData = mItemManager.getArmerData(mArmers[index]);
 	for (int i = 0; i < armerData.costResourceID.size(); i++) {
-		int possessedResource = mItemManager->getResourceNum(armerData.costResourceID[i]);
+		int possessedResource = mItemManager.getResourceNum(armerData.costResourceID[i]);
 		//消費リソース分持っていなかったら買えない
 		if (armerData.price[i] > possessedResource) {
-			mGame->getAudioManager()->playSE("UI_CANCEL");
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
 		}
 
 		//所持リソースを消費リソース分減らす
-		mItemManager->subResource(armerData.costResourceID[i], armerData.price[i]);
+		mItemManager.subResource(armerData.costResourceID[i], armerData.price[i]);
 	}
 
-	mGame->getAudioManager()->playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	//インベントリにアイテムを追加
-	mPlayerManager->addArmer(armerData.id);
+	mPlayerManager.addArmer(armerData.id);
 }
 

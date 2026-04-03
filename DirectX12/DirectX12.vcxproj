@@ -218,11 +218,14 @@
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
+    <ClCompile Include="scripts\DungeonScene.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
-    <ClCompile Include="scripts\Grass.cpp" />
+    <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
+    <ClCompile Include="scripts\MainMenu.cpp" />
+    <ClCompile Include="scripts\Menu.cpp" />
     <ClCompile Include="scripts\MiniMap.cpp" />
     <ClCompile Include="scripts\MyUtility.cpp" />
     <ClCompile Include="scripts\InnMenu.cpp" />
@@ -244,6 +247,7 @@
     <ClCompile Include="scripts\MeshComponent.cpp" />
     <ClCompile Include="scripts\Random.cpp" />
     <ClCompile Include="scripts\Enemy.cpp" />
+    <ClCompile Include="scripts\Scene.cpp" />
     <ClCompile Include="scripts\SceneManager.cpp" />
     <ClCompile Include="scripts\ShopMenu.cpp" />
     <ClCompile Include="scripts\SpotLightComponent.cpp" />
@@ -251,7 +255,7 @@
     <ClCompile Include="scripts\StatusMenu.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\TownManager.cpp" />
+    <ClCompile Include="scripts\TownScene.cpp" />
     <ClCompile Include="scripts\UI.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
@@ -263,13 +267,16 @@
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
     <ClInclude Include="scripts\Definition.h" />
+    <ClInclude Include="scripts\DungeonScene.h" />
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
-    <ClInclude Include="scripts\Grass.h" />
+    <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />
     <ClInclude Include="scripts\magic_enum.hpp" />
+    <ClInclude Include="scripts\MainMenu.h" />
+    <ClInclude Include="scripts\Menu.h" />
     <ClInclude Include="scripts\MiniMap.h" />
     <ClInclude Include="scripts\MyUtility.h" />
     <ClInclude Include="scripts\InnMenu.h" />
@@ -291,6 +298,7 @@
     <ClInclude Include="scripts\MeshComponent.h" />
     <ClInclude Include="scripts\Random.h" />
     <ClInclude Include="scripts\Enemy.h" />
+    <ClInclude Include="scripts\Scene.h" />
     <ClInclude Include="scripts\SceneManager.h" />
     <ClInclude Include="scripts\ShopMenu.h" />
     <ClInclude Include="scripts\SpotLightComponent.h" />
@@ -299,7 +307,7 @@
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\TownManager.h" />
+    <ClInclude Include="scripts\TownScene.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>
   <ItemGroup>

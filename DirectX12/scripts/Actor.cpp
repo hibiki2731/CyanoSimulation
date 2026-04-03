@@ -2,23 +2,23 @@
 #include "Component.h"
 #include "Game.h"
 
-Actor::Actor(Game* game)
+Actor::Actor(Scene& scene)
+: mScene(scene)
 {
 	mPosition = { 0.0f, 0.0f, 0.0f };
 	mScale = { 1.0f, 1.0f, 1.0f };
 	mRotation = { 0.0f, 0.0f, 0.0f };
 	mState = Active;
-	mGame = game;
 
 }
 
-Actor::Actor(Game* game, float x, float y)
+Actor::Actor(Scene& scene, float x, float y)
+	:mScene(scene)
 {
 	mPosition = { x, 0.0f, y };
 	mScale = { 1.0f, 1.0f, 1.0f };
 	mRotation = { 0.0f, 0.0f, 0.0f };
 	mState = Active;
-	mGame = game;
 
 }
 
@@ -36,6 +36,14 @@ void Actor::input()
 	}
 }
 
+void Actor::fastUpdate()
+{
+	if (mState == Active) {
+		fastUpdateComponents();
+		fastUpdateActor();
+	}
+}
+
 void Actor::update()
 {
 	if (mState == Active) {
@@ -44,10 +52,30 @@ void Actor::update()
 	}
 }
 
+void Actor::lateUpdate() {
+	if (mState == Active) {
+		lateUpdateComponents();
+		lateUpdateActor();
+	}
+}
+
+void Actor::fastUpdateComponents()
+{
+	for (auto& component : mComponents) {
+		component->fastUpdateComponent();
+	}
+}
+
 void Actor::updateComponents()
 {
 	for (auto& component : mComponents) {
 		component->updateComponent();
+	}
+}
+
+void Actor::lateUpdateComponents() {
+	for (auto& component : mComponents) {
+		component->lateUpdateComponent();
 	}
 }
 
@@ -133,9 +161,9 @@ XMFLOAT3 Actor::getRotation() const
 	return mRotation;
 }
 
-Game* Actor::getGame()
+Scene& Actor::getScene()
 {
-	return mGame;
+	return mScene;
 }
 
 void Actor::addComponent(std::unique_ptr<Component> component)

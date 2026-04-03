@@ -30,14 +30,14 @@ private:
 
 class DamageTextManager {
 public:
-	DamageTextManager(Game* game);
+	DamageTextManager(Game& game);
 	~DamageTextManager();
 
 	void update();
 	void draw();
 
 	//ダメージテキストの追加
-	void createDamageText(XMFLOAT3& position, int digit);
+	void createDamageText(const XMFLOAT3& position, int digit);
 
 	void updateView(XMMATRIX& view);
 
@@ -70,7 +70,7 @@ private:
 	int mHeapIndex;
 	int mHeapSize;
 
-	Game* mGame;
+	Game& mGame;
 
 	//各ダメージテキストの設定値
 	const float DTSize = 0.1f;

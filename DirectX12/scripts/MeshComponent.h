@@ -12,7 +12,7 @@
 class MeshComponent : public Component
 {
 public:
-	MeshComponent(Actor* owner, int updateOrder = 100);
+	MeshComponent(Actor& owner, int updateOrder = 100);
     ~MeshComponent();
 
 	void endProccess() override;
@@ -27,7 +27,7 @@ private:
     HRESULT Hr;
 
     //コマンドリスト
-    Graphic* mGraphic;
+    Graphic& mGraphic;
     ID3D12GraphicsCommandList* mCommandList;
 
     //コンスタントバッファ1(World Matrix)

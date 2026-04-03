@@ -6,7 +6,7 @@ using namespace DirectX;
 class SpotLightComponent : public Component
 {
 public:
-	SpotLightComponent(Actor* owner, int updateOrder = 100);
+	SpotLightComponent(Actor& owner, int updateOrder = 100);
 
 	void inputComponent() override;
 	void updateComponent() override;
