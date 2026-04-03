@@ -109,7 +109,8 @@ private:
 	std::vector<std::vector<int>> mCharacterData; //[x][y]
 
 	std::vector<EnemyComponent*> mEnemies;
-    std::unique_ptr<class MapManager> mMapManager;
+    std::unique_ptr<class MapGenerator> mMapGenerator;
+	std::unique_ptr<class TurnObserver > mTurnObserver;
 	std::unique_ptr<class DamageTextManager> mDamageTextManaager;
 	Player* mPlayer;
 	std::unordered_map<int, std::string> mResourceIDs;

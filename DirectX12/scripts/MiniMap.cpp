@@ -1,5 +1,4 @@
 ﻿#include "MiniMap.h"
-#include "MapManager.h"
 #include "Game.h"
 #include "SpriteComponent.h"
 #include "Graphic.h"

@@ -86,7 +86,7 @@ private:
 	int mDistPlayer; //プレイヤーからの距離(マンハッタン距離)
 
 	//マップマネージャー
-	//class MapManager& mMapManager;
+	//class MapGenerator& mMapGenerator;
 	//シーン
 	DungeonScene& mScene;
 

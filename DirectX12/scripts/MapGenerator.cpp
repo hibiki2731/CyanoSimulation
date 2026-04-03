@@ -1,4 +1,4 @@
-﻿#include "MapManager.h"
+﻿#include "MapGenerator.h"
 #include "Game.h"
 #include "DungeonScene.h"
 #include "Object.h"
@@ -12,17 +12,14 @@
 #include <fstream>
 #include <cassert>
 
-MapManager::MapManager(DungeonScene& scene)
+MapGenerator::MapGenerator(DungeonScene& scene)
 	: mScene(scene)
 {
 	mStage = Stage::MAP1;
-	mNextTurn = TurnType::PLAYER;
-	mTurnType = TurnType::PLAYER;
-	mPendingEnemyCount = 0;
 
 }
 
-void MapManager::begin()
+void MapGenerator::begin()
 {
 	mScene.getGame().getAudioManager().playBGM("BGM_DUNGEON2");
 
@@ -30,44 +27,11 @@ void MapManager::begin()
 
 }
 
-void MapManager::end()
+void MapGenerator::end()
 {
 }
 
-void MapManager::updateTurn()
-{
-	//エネミーターン時に敵が全滅していたらプレイヤーターンへ
-	if (mTurnType == TurnType::ENEMY &&  mScene.getEnemyCount() == 0) {
-		mNextTurn = TurnType::PLAYER;
-	}
-
-	//プレイヤーターン→エネミーターンへの移行時
-	if (mNextTurn == TurnType::ENEMY && mTurnType == TurnType::PLAYER) {
-		//初期化
-		startEnemyTurn();
-	}
-
-	//エネミーターン→プレイヤーターンへの移行時
-	if (mNextTurn == TurnType::PLAYER && mTurnType == TurnType::ENEMY) {
-		//プレイヤーの残り行動回数が0ならば街に帰らせる
-		if (mScene.getPlayerActLimit() == 0) {
-			mScene.returnToTown();
-		}
-
-
-		//敵のランダム湧き
-		int random = Random::dist(1, 100);
-		if (random <= 10) spawnEnemy();
-
-		//ミニマップの更新
-		mScene.updateMiniMapPos();
-	}
-
-
-	mTurnType = mNextTurn;
-}
-
-void MapManager::createMap()
+void MapGenerator::createMap()
 {
 
 	loadMap(mStage);	//マップデータの読み込み
@@ -76,37 +40,7 @@ void MapManager::createMap()
 
 }
 
-TurnType MapManager::getTurnType()
-{
-	return mTurnType;
-}
-
-void MapManager::moveToPlayerTurn()
-{
-	mPendingEnemyCount--;
-	if (mPendingEnemyCount == 0) mNextTurn = TurnType::PLAYER;
-
-}
-
-void MapManager::moveToEnemyTurn()
-{
-	mNextTurn = TurnType::ENEMY;
-	
-}
-
-void MapManager::startEnemyTurn()
-{
-	//敵配列をプレイヤーに近い順にソート
-	mScene.sortEnemiesByDistanceToPlayer();
-	mPendingEnemyCount = static_cast<int>(mScene.getEnemyCount());
-
-	for (auto enemy : mScene.getEnemies()) {
-		enemy->startAct();
-	}
-	mScene.updateMiniMapPos();
-}
-
-void MapManager::loadMap(Stage stage)
+void MapGenerator::loadMap(Stage stage)
 {
 	//読み込み用変数
 	int mapSize;
@@ -162,7 +96,7 @@ void MapManager::loadMap(Stage stage)
 
 }
 
-void MapManager::createWall()
+void MapGenerator::createWall()
 {
 	std::fstream file("assets/data/mapTipData.json");
 	nlohmann::json json;
@@ -236,7 +170,7 @@ void MapManager::createWall()
 	}
 }
 
-void MapManager::createObject()
+void MapGenerator::createObject()
 {
 	std::fstream file("assets/data/mapTipData.json");
 	nlohmann::json json;
@@ -262,35 +196,5 @@ void MapManager::createObject()
 			}
 
 		}
-	}
-}
-
-void MapManager::spawnEnemy()
-{
-	int playerIndex[2];
-	mScene.getPlayer()->getIndexPos(playerIndex);
-
-	int i = 0; //湧き場がない場合、一定回数のループ後にループを抜ける
-
-	//障害物がない　かつ　プレイヤーから3マス離れているところにスポーン
-	int mapSize = mScene.getMapSize();
-	while (i < 10) {
-		//スポーンするマスを乱数で決定
-		int x = Random::dist(0, mapSize - 1);
-		int y = Random::dist(0, mapSize - 1);
-
-		//障害物がある場合、もう一度乱数を振りなおす
-		if (mScene.getTileDataAt(x, y) == TileType::WALL) continue;
-		if (mScene.getCharacterDataAt(x, y) != CharacterType::EMPTY) continue;
-		
-		//プレイヤーから3マスいないならば、もう一度乱数を振りなおす
-		int distance = abs(playerIndex[0] - x) + abs(playerIndex[1] - y);
-		if (distance <= 3) continue;
-
-		//敵の生成
-		mScene.createEnemy("SLIME", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-		break;
-
-		i++;
 	}
 }

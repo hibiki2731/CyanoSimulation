@@ -1,6 +1,7 @@
 ﻿#include "Definition.h"
 #include "DungeonScene.h"
-#include "MapManager.h"
+#include "MapGenerator.h"
+#include "TurnObserver.h"
 #include "Game.h"
 #include "SceneManager.h"
 #include "Enemy.h"
@@ -15,14 +16,15 @@
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
 {
-	mMapManager = std::make_unique<MapManager>(*this);
+	mMapGenerator = std::make_unique<MapGenerator>(*this);
+	mTurnObserver = std::make_unique<TurnObserver>(*this);
 	mDamageTextManaager = std::make_unique<DamageTextManager>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
 }
 
 void DungeonScene::fastUpdateScene() {
-	mMapManager->updateTurn();
+	mTurnObserver->updateTurn();
 }
 
 void DungeonScene::updateScene()
@@ -44,7 +46,7 @@ void DungeonScene::drawScene()
 
 void DungeonScene::onEnter()
 {
-	mMapManager->begin();
+	mMapGenerator->begin();
 
 	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(*this);
 	messageWindow->setPlayer(mPlayer);
@@ -59,7 +61,7 @@ void DungeonScene::onEnter()
 
 void DungeonScene::onExit()
 {
-	mMapManager->end();
+	mMapGenerator->end();
 	mResourceIDs.clear();
 	refreshActors();	//シーン中のアクターをすべてDeadにする
 }
@@ -220,12 +222,12 @@ void DungeonScene::updateDTView(XMMATRIX& view)
 
 void DungeonScene::moveToEnemyTurn()
 {
-	mMapManager->moveToEnemyTurn();
+	mTurnObserver->moveToEnemyTurn();
 }
 
 void DungeonScene::moveToPlayerTurn()
 {
-	mMapManager->moveToPlayerTurn();
+	mTurnObserver->moveToPlayerTurn();
 }
 
 EnemyComponent* DungeonScene::getEnemyFromIndexPos(int index)
@@ -276,7 +278,7 @@ const std::string& DungeonScene::getResourceID(int x, int y)
 
 TurnType DungeonScene::getTurnType() const
 {
-	return mMapManager->getTurnType();
+	return mTurnObserver->getTurnType();
 }
 
 int DungeonScene::getDamageTextNum() const

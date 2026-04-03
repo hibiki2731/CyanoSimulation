@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cmath>
 #include "Game.h"
-#include "MapManager.h"
 #include "Graphic.h"
 #include "ItemManager.h"
 #include "input.h"

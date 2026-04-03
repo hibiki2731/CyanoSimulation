@@ -6,7 +6,7 @@
 
 class CameraComponent;
 class CharacterComponent;
-class MapManager;
+class MapGenerator;
 class PlayerManager;
 class ItemManager;
 class DungeonScene;

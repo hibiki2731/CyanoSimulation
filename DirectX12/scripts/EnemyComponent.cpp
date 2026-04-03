@@ -1,7 +1,6 @@
 ﻿#include "EnemyComponent.h"
 #include "Actor.h"
 #include "Game.h"
-#include "MapManager.h"
 #include "Player.h"
 #include "Random.h"
 #include "DungeonScene.h"
@@ -153,7 +152,7 @@ void EnemyComponent::move()
 	//移動時は実行できない
 	//if (isMoving) return;
 	//エネミーターン時のみ実行
-	//if (mMapManager.getTurnType() == TurnType::PLAYER) return;
+	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 
@@ -193,7 +192,7 @@ void EnemyComponent::attack()
 	//移動時は実行できない
 	//if (isMoving) return;
 	//エネミーターン時のみ実行
-	//if (mMapManager.getTurnType() == TurnType::PLAYER) return;
+	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 
