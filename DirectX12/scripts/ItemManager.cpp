@@ -145,6 +145,11 @@ const ItemData& ItemManager::getItemData(std::string id)
 		return EmptyItem;
 }
 
+const std::unordered_map<std::string, ItemData>& ItemManager::getItemData()
+{
+	return mItemData;
+}
+
 const WeaponData& ItemManager::getWeaponData(std::string id)
 {
 	auto iter = mWeaponData.find(id);
@@ -209,7 +214,7 @@ void ItemManager::setArmerPossession(std::string id, bool possession)
 		iter->second.inPossession = possession;
 }
 
-void ItemManager::setExplorerPossession(std::string id, bool possession)
+void ItemManager::setToolPossession(std::string id, bool possession)
 {
 	auto iter = mExplorerData.find(id);
 	if (iter != mExplorerData.end())

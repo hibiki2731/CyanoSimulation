@@ -47,16 +47,15 @@
     },
     
     "ShopMenu" :{
-        
-        "x" : 50.0,
-        "y" : 160.0,
-        "width" : 1000.0,
-        "height" : 300.0,
+        "x" : 60.0,
+        "y" : 100.0,
+        "width" : 800.0,
+        "height" : 500.0,
         "borderSize" : 24.0,
         "spriteFileName" : "assets/picture/UI2/PNG/Default/panel_brown.png",
-
-        "arrowOffsetX" : 900.0,
-        "arrowOffsetY" : 75.0,
+        
+        "arrowOffsetX" : 300.0,
+        "arrowOffsetY" : 80.0,
         "arrowWidth" : 40.0,
         "arrowHeight" : 40.0,
         "arrowFileName" : "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
@@ -64,13 +63,7 @@
         "titleOffsetX" : 20.0,
         "titleOffsetY" : 10.0,
         "titleFontSize" : 50.0,
-        "title" : "Shop\n",
-
-        "textOffsetX" : 20.0,
-        "textOffsetY" : 65.0,
-        "fontSize" : 50.0,
-        "lineSpace" : 10.0,
-        "text" : "薬草  10 g  HPを回復する\n爆弾  20 g  敵に小ダメージを与える\n"
+        "title" : "Shop\n"
     },
 
     "ForgeMenu" : {
@@ -156,13 +149,7 @@
         "titleOffsetX" : 20.0,
         "titleOffsetY" : 10.0,
         "titleFontSize" : 50.0,
-        "title" : "ExplorerShop\n",
-
-        "textOffsetX" : 20.0,
-        "textOffsetY" : 65.0,
-        "fontSize" : 50.0,
-        "lineSpace" : 10.0,
-        "text" : "スキルツリーみたいにしたいね\n"
+        "title" : "ExplorerShop\n"
     },
 
     "StatusMenu" : {

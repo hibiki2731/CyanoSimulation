@@ -150,6 +150,8 @@ void ArmerMenu::prepareCraftItems()
 
 void ArmerMenu::craftArmer(int index)
 {
+	if (mArmers.size() == 0)return;
+
 	//リソースを消費
 	const auto& armerData = mItemManager.getArmerData(mArmers[index]);
 	for (int i = 0; i < armerData.costResourceID.size(); i++) {
@@ -178,9 +180,10 @@ void ArmerMenu::refreshText()
 {
 	//テキストの更新
 	std::wstring armerText = L"";
-	for (const auto& armerID : mArmers) {
-		const auto& armerData = mItemManager.getArmerData(armerID);
-		armerText += L"・" + Utility::stringToWString(armerData.name) + L"\n";
+	int showArmerNum = min(mArmers.size(), MaxShowArmerNum);
+	for (int i = mScrollOffset; i < mScrollOffset + showArmerNum; i++) {
+		const auto& armerData = mItemManager.getWeaponData(mArmers[i]);
+		armerText += Utility::stringToWString(armerData.name) + L"\n";
 	}
 	if (armerText.size() == 0) armerText = L"なし\n";
 	mArmerText->setText(armerText);
@@ -190,7 +193,11 @@ void ArmerMenu::refreshText()
 	mMaxIndex--;
 	if (mSelectedIndex >= mMaxIndex && mSelectedIndex > 0) {
 		mSelectedIndex--;
-		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
+		if (mSelectedIndex < mScrollOffset) {
+			mScrollOffset--;
+			mScrollBar->movePosition(XMFLOAT2(0.0f, -mScrollBarMoveLength));
+		}
+		else mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 }
 
@@ -309,6 +316,8 @@ void WeaponMenu::prepareCraftItems()
 
 void WeaponMenu::craftWeapon(int index)
 {
+	if (mWeapons.size() == 0) return;
+
 	//リソースを消費
 	const auto& weaponData = mItemManager.getWeaponData(mWeapons[index]);
 	for (int i = 0; i < weaponData.costResourceID.size(); i++) {
@@ -337,8 +346,9 @@ void WeaponMenu::refreshText()
 {
 	//テキストの更新
 	std::wstring weaponText = L"";
-	for (const auto& weaponID : mWeapons) {
-		const auto& weaponData = mItemManager.getWeaponData(weaponID);
+	int showItemNum = min(mWeapons.size(), MaxShowWeaponNum);
+	for (int i = mScrollOffset; i < mScrollOffset + showItemNum; i++) {
+		const auto& weaponData = mItemManager.getWeaponData(mWeapons[i]);
 		weaponText += Utility::stringToWString(weaponData.name) + L"\n";
 	}
 	if (weaponText.size() == 0) weaponText = L"なし\n";
@@ -349,6 +359,10 @@ void WeaponMenu::refreshText()
 	mMaxIndex--;
 	if (mSelectedIndex >= mMaxIndex && mSelectedIndex > 0) {
 		mSelectedIndex--;
-		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
+		if (mSelectedIndex < mScrollOffset) {
+			mScrollOffset--;
+			mScrollBar->movePosition(XMFLOAT2(0.0f, -mScrollBarMoveLength));
+		}
+		else mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 }
