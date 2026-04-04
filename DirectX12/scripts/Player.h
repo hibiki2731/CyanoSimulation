@@ -29,6 +29,7 @@ public:
 	int getAP();
 	int getMaxAP();
 	int getStorageSize();
+	int getSelectItemIndex();
 
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
@@ -46,6 +47,8 @@ private:
 	void updateFlash();
 	void useItem();
 	void turnEnd();
+	void selectNextItem();
+	void selectPreviousItem();
 
 	float mMoveSpeed;
 	float mRotSpeed;

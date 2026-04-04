@@ -37,10 +37,8 @@ const PlayerData& PlayerManager::getPlayerData()
 const std::string& PlayerManager::getInventoryItem(int index)
 {
 	int inventorySize = mPlayerData.inventory.size();
-	if (inventorySize == 0) return "NONE";
+	if (inventorySize == 0 || index >= inventorySize || index < 0) return "";
 
-	if (index < 0) index = 0;
-	else if (index >= inventorySize) index = inventorySize - 1;
 	return mPlayerData.inventory[index];
 }
 

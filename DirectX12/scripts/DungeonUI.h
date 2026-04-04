@@ -12,6 +12,7 @@ public:
 	void updateHP();
 	void updateAP();
 	void updateItemIcon();
+	void updateItemFrame();
 
 private:
 	TextComponent* mHPValueText;
@@ -24,6 +25,7 @@ private:
 	XMFLOAT2 mAPBarOffsetPos;
 	SpriteComponent* mCanvas;
 	DungeonScene& mDungeonScene;
+	SpriteComponent* mItemSelectFrame;
 
 	//アイテムアイコン
 	XMFLOAT2 mItemIconOriginPos;

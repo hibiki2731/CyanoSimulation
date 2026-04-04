@@ -141,17 +141,6 @@ void Game::input()
 
 
 #ifdef _DEBUG
-	//デバック用	}
-	if (GetAsyncKeyState('T')) {
-		mSceneManager->transitToTitle();
-	}
-	if (GetAsyncKeyState('H')) {
-		mSceneManager->transitToTown();
-	}
-
-	if (GetAsyncKeyState('P')) {
-		mAudioManager->playBGM("UI_MOVE");
-	}
 #endif
 
 }

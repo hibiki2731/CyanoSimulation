@@ -65,6 +65,7 @@ public:
 	void updateHPUI();
 	void updateAPUI();
 	void updateItemUI();
+	void updateItemFrame();
 
 	//ダメージテキストの公人
 	void updateDTView(XMMATRIX& view);

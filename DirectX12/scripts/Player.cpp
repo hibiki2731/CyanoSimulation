@@ -110,6 +110,12 @@ void Player::inputActor()
 	if (isKeyJustPressed('I')) {
 		useItem();
 	}
+	if (isKeyJustPressed('U')) {
+		selectPreviousItem();
+	}
+	if (isKeyJustPressed('O')) {
+		selectNextItem();
+	}
 	
 }
 
@@ -205,6 +211,11 @@ int Player::getMaxAP()
 int Player::getStorageSize()
 {
 	return mStorageSize;
+}
+
+int Player::getSelectItemIndex()
+{
+	return mSelectItemIndex;
 }
 
 void Player::giveDamage(int damage)
@@ -427,7 +438,7 @@ void Player::useItem()
 
 	//アイテムのIDを取得
 	const auto& itemID = mPlayerManager.getInventoryItem(mSelectItemIndex);
-	if (itemID == "NONE") {
+	if (itemID == "") {
 		return;
 	}
 	
@@ -437,6 +448,7 @@ void Player::useItem()
 	//アイテムのカテゴリーから効果を発揮
 	if (itemData.category == "HP_RECOVER") {
 		mCharacter->addHP(itemData.value);
+		mScene.updateHPUI();
 	}
 
 	//インベントリーから削除
@@ -444,6 +456,7 @@ void Player::useItem()
 
 	//UIの更新
 	mScene.updateItemUI();
+
 	//ターン経過
 	turnEnd();
 }
@@ -458,4 +471,18 @@ void Player::turnEnd()
 	if(mAP > 0) mScene.updateAPUI();
 	//行動中フラグをtureにする
 	isActing = true;
+}
+
+void Player::selectNextItem()
+{
+	if (mSelectItemIndex >= mStorageSize - 1) return;
+	mSelectItemIndex++;
+	mScene.updateItemFrame();
+}
+
+void Player::selectPreviousItem()
+{
+	if (mSelectItemIndex <= 0) return;
+	mSelectItemIndex--;
+	mScene.updateItemFrame();
 }

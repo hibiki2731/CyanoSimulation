@@ -139,6 +139,14 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		addComponent(std::move(itemIcon));
 	}
 
+	//選択中アイテムの枠
+	auto itemSelectFrame = std::make_unique<SpriteComponent>(*this);
+	itemSelectFrame->create("assets/picture/SelectFrame.png");
+	itemSelectFrame->setSpriteSize(ItemIconSize);
+	itemSelectFrame->setPosition(XMFLOAT3(mItemIconOriginPos.x, mItemIconOriginPos.y, CanvasZ - 2.0f));
+	mItemSelectFrame = itemSelectFrame.get();
+	addComponent(std::move(itemSelectFrame));
+
 }
 
 void DungeonUI::updateHP()
@@ -195,4 +203,10 @@ void DungeonUI::updateItemIcon()
 	}
 
 
+}
+
+void DungeonUI::updateItemFrame()
+{
+	int selectIndex = mDungeonScene.getPlayer()->getSelectItemIndex();
+	mItemSelectFrame->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * selectIndex, mItemIconOriginPos.y, CanvasZ - 2.0f));
 }
