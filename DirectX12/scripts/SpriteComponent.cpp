@@ -30,7 +30,7 @@ SpriteComponent::~SpriteComponent()
 {
 }
 
-void SpriteComponent::endProccess()
+void SpriteComponent::endProcess()
 {
 	//Gameからスプライトを削除
 	mOwner.getScene().removeSprite(this);
@@ -129,7 +129,7 @@ void SpriteComponent::setBordarSize(const float size)
 	mBordarSize = size;
 }
 
-void SpriteComponent::movePositon(const XMFLOAT2& diff)
+void SpriteComponent::movePosition(const XMFLOAT2& diff)
 {
 	mPosition.x += diff.x;
 	mPosition.y += diff.y;

@@ -34,16 +34,30 @@ void InnMenu::stay()
 
 void InnMenu::save()
 {
-	//リソースデータの保存
+	//アイテムデータの更新
 	{
 		nlohmann::json itemJson;
 		std::ifstream itemFile("assets/data/itemData.json");
 		itemFile >> itemJson;
 		itemFile.close();
 
+		//リソースの所持数を更新
 		for (auto& resource : itemJson["Resource"]) {
 			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
 		}
+		//武器の所有を更新
+		for (auto& weapon : itemJson["Weapon"]) {
+			weapon["inPossession"] = mScene.getGame().getItemManager().getWeaponData(weapon["id"]).inPossession;
+		}
+		//防具の所有を更新
+		for (auto& armer : itemJson["Armer"]) {
+			armer["inPossession"] = mScene.getGame().getItemManager().getArmerData(armer["id"]).inPossession;
+		}
+		//探索道具の所有を更新
+		for (auto& tool : itemJson["Explorer"]) {
+			tool["inPossession"] = mScene.getGame().getItemManager().getExplorerData(tool["id"]).inPossession;
+		}
+
 
 		//一時ファイルへの書き出し
 		try {

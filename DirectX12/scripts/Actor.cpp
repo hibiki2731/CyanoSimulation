@@ -79,11 +79,12 @@ void Actor::lateUpdateComponents() {
 	}
 }
 
-void Actor::endProccess()
+void Actor::endProcess()
 {
 	for (auto& component : mComponents) {
-		component->endProccess();
+		component->endProcess();
 	}
+	endProcessActor();
 }
 
 void Actor::setState(State state)
@@ -136,7 +137,7 @@ void Actor::setZRot(float z)
 	mRotation.z = z;
 }
 
-void Actor::movePositon(const XMFLOAT3& diff)
+void Actor::movePosition(const XMFLOAT3& diff)
 {
 	mPosition = mPosition + diff;
 }

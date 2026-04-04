@@ -46,7 +46,8 @@ public:
 	void removeComponent(std::unique_ptr<Component>& component);
 
 	//終了処理
-	void endProccess();
+	void endProcess();
+	virtual void endProcessActor() {};
 
 	//セッター
 	void setState(State state);
@@ -61,7 +62,7 @@ public:
 	void setYRot(float y);
 	void setZRot(float z);
 
-	void movePositon(const XMFLOAT3& diff);
+	void movePosition(const XMFLOAT3& diff);
 
 	//ゲッター
 	State getState();

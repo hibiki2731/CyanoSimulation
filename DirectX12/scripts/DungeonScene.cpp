@@ -12,13 +12,14 @@
 #include "DamageText.h"
 #include "MiniMap.h"
 #include "Graphic.h"
+#include "DungeonUI.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
 {
 	mMapGenerator = std::make_unique<MapGenerator>(*this);
 	mTurnObserver = std::make_unique<TurnObserver>(*this);
-	mDamageTextManaager = std::make_unique<DamageTextManager>(game);
+	mDamageTextManaager = std::make_unique<DamageTextGenerator>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
 }
@@ -48,15 +49,17 @@ void DungeonScene::onEnter()
 {
 	mMapGenerator->begin();
 
-	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(*this);
-	messageWindow->setPlayer(mPlayer);
-	addActor(std::move(messageWindow)); 
-
 	//ミニマップの作成
 	auto minimap = std::make_unique<MiniMap>(*this);
 	mMiniMap = minimap.get();
 	addActor(std::move(minimap));
 	mMiniMap->updatePosition();
+
+	//UIの作成
+	auto dungeonUI = std::make_unique<DungeonUI>(*this);
+	mUI = dungeonUI.get();
+	addActor(std::move(dungeonUI));
+
 }
 
 void DungeonScene::onExit()
@@ -215,6 +218,16 @@ void DungeonScene::updateMiniMapDirection()
 	mMiniMap->updateDirection();
 }
 
+void DungeonScene::updateHPUI()
+{
+	mUI->updateHP();
+}
+
+void DungeonScene::updateAPUI()
+{
+	mUI->updateAP();
+}
+
 void DungeonScene::updateDTView(XMMATRIX& view)
 {
 	mDamageTextManaager->updateView(view);
@@ -256,7 +269,7 @@ EnemyComponent* DungeonScene::getEnemyFromIndexPos(int x, int y)
 
 int DungeonScene::getPlayerActLimit()
 {
-	return (mPlayer) ? mPlayer->getActionLimit() : 0;
+	return (mPlayer) ? mPlayer->getAP() : 0;
 }
 
 const std::string& DungeonScene::getResourceID(int index)

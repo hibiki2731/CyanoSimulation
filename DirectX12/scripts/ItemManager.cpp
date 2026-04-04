@@ -68,6 +68,7 @@ ItemManager::ItemManager()
 		weapon.costResourceID = weaponJson["costResourceID"];
 		weapon.price = weaponJson["price"].get<std::vector<int>>();
 		weapon.power = weaponJson["power"];
+		weapon.inPossession = weaponJson["inPossession"];
 		mWeaponData[weaponJson["id"]] = weapon;
 	}
 	//防具データを読み込む
@@ -79,6 +80,7 @@ ItemManager::ItemManager()
 		armer.costResourceID = armerJson["costResourceID"];
 		armer.price = armerJson["price"].get<std::vector<int>>();
 		armer.defence = armerJson["defence"];
+		armer.inPossession = armerJson["inPossession"];
 		mArmerData[armerJson["id"]] = armer;
 	}
 	//探索道具データを読み込む
@@ -90,6 +92,7 @@ ItemManager::ItemManager()
 		explorer.price = explorerJson["price"].get<std::vector<int>>();
 		explorer.category = explorerJson["category"];
 		explorer.value = explorerJson["value"];
+		explorer.inPossession = explorerJson["inPossession"];
 		mExplorerData[explorerJson["id"]] = explorer;
 	}
 }
@@ -153,6 +156,11 @@ const WeaponData& ItemManager::getWeaponData(std::string id)
 		return EmptyWeapon;
 }
 
+const std::unordered_map<std::string, WeaponData>& ItemManager::getWeaponData()
+{
+	return mWeaponData;
+}
+
 const ArmerData& ItemManager::getArmerData(std::string id)
 {
 	auto iter = mArmerData.find(id);
@@ -165,6 +173,11 @@ const ArmerData& ItemManager::getArmerData(std::string id)
 
 }
 
+const std::unordered_map<std::string, ArmerData>& ItemManager::getArmerData()
+{
+	return mArmerData;
+}
+
 const ExplorerData& ItemManager::getExplorerData(std::string id)
 {
 	auto iter = mExplorerData.find(id);
@@ -175,4 +188,30 @@ const ExplorerData& ItemManager::getExplorerData(std::string id)
 		//idが存在しない場合、空データを渡す
 		return EmptyExplorer;
 
+}
+
+const std::unordered_map<std::string, ExplorerData>& ItemManager::getExplorerData()
+{
+	return mExplorerData;
+}
+
+void ItemManager::setWeaopnPossession(std::string id, bool possession)
+{
+	auto iter = mWeaponData.find(id);
+	if (iter != mWeaponData.end())
+		iter->second.inPossession = possession;
+}
+
+void ItemManager::setArmerPossession(std::string id, bool possession)
+{
+	auto iter = mArmerData.find(id);
+	if (iter != mArmerData.end())
+		iter->second.inPossession = possession;
+}
+
+void ItemManager::setExplorerPossession(std::string id, bool possession)
+{
+	auto iter = mExplorerData.find(id);
+	if (iter != mExplorerData.end())
+		iter->second.inPossession = possession;
 }

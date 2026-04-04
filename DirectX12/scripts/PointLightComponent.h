@@ -11,7 +11,7 @@ public:
 
 	void inputComponent() override;
 	void updateComponent() override;
-	void endProccess() override;
+	void endProcess() override;
 
 	//ゲッター
 	XMFLOAT4 getPosition();

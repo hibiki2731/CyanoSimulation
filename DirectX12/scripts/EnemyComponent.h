@@ -20,7 +20,7 @@ public:
 
 	void inputComponent() override;
 	void updateComponent() override;
-	void endProccess() override;
+	void endProcess() override;
 
 	//アクティブな時のみ行う。プレイヤーに近い敵から更新される
 	void startAct();

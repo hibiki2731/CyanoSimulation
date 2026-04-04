@@ -15,7 +15,7 @@ public:
 	SpriteComponent(Actor& owner, float zDepth = 100.0f);
     ~SpriteComponent();
 
-	void endProccess() override;
+	void endProcess() override;
 
     void create(const std::string filename);
     virtual void draw();
@@ -26,7 +26,7 @@ public:
 	void setRotation(const float rotation);
     void setSpriteSize(const XMFLOAT2& size);
 	void setBordarSize(const float size);
-	void movePositon(const XMFLOAT2& diff);
+	void movePosition(const XMFLOAT2& diff);
     void setZPos(float zPos);
 
 protected:

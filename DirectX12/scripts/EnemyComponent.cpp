@@ -78,9 +78,9 @@ void EnemyComponent::updateComponent()
 
 }	
 
-void EnemyComponent::endProccess()
+void EnemyComponent::endProcess()
 {
-	CharacterComponent::endProccess();
+	CharacterComponent::endProcess();
 	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
 	mScene.removeEnemy(this);
 }

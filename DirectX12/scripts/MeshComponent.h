@@ -15,7 +15,7 @@ public:
 	MeshComponent(Actor& owner, int updateOrder = 100);
     ~MeshComponent();
 
-	void endProccess() override;
+	void endProcess() override;
 
     void create(const std::string& objectName);
 	void draw();

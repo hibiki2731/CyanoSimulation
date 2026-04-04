@@ -33,7 +33,7 @@ void CharacterComponent::updateComponent()
 
 }
 
-void CharacterComponent::endProccess()
+void CharacterComponent::endProcess()
 {
 }
 

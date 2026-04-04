@@ -38,7 +38,7 @@ void SpotLightComponent::updateComponent()
 	}
 }
 
-void SpotLightComponent::endProccess()
+void SpotLightComponent::endProcess()
 {
 	//Gameからライトを削除
 	mOwner.getScene().removeSpotLight(this);

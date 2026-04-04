@@ -44,7 +44,7 @@ float DamageText::getLifeTime()
 	return mLifeTime;
 }
 
-DamageTextManager::DamageTextManager(Game& game) :
+DamageTextGenerator::DamageTextGenerator(Game& game) :
 	mGame(game)
 {
 	mCBSize = 256; //使用するコンスタントバッファは一つだけ
@@ -87,12 +87,12 @@ DamageTextManager::DamageTextManager(Game& game) :
 
 }
 
-DamageTextManager::~DamageTextManager()
+DamageTextGenerator::~DamageTextGenerator()
 {
 	for (int i = 0; i < 2; i++) mVertexBuf[i]->Unmap(0, nullptr);
 }
 
-void DamageTextManager::update()
+void DamageTextGenerator::update()
 {
 	std::vector<int> deadTextsIndex;
 
@@ -126,7 +126,7 @@ void DamageTextManager::update()
 
 }
 
-void DamageTextManager::draw()
+void DamageTextGenerator::draw()
 {
 	//描画するダメージテキストがなければ、描画処理を抜ける
 	if (mInstanceRawData.size() == 0)  return; 
@@ -146,7 +146,7 @@ void DamageTextManager::draw()
 	
 }
 
-void DamageTextManager::createDamageText(const XMFLOAT3& position, int digit)
+void DamageTextGenerator::createDamageText(const XMFLOAT3& position, int digit)
 {
 	//生データを配列に追加
 	DamageTextInstance text;
@@ -169,13 +169,13 @@ void DamageTextManager::createDamageText(const XMFLOAT3& position, int digit)
 	else mInstanceRawData.emplace_back(text);
 }
 
-void DamageTextManager::updateView(XMMATRIX& view)
+void DamageTextGenerator::updateView(XMMATRIX& view)
 {
 	mBC.view = view;
 	memcpy(mGame.getGraphic().getConstantData() + mCBIndex, &mBC, sizeof(BillboardConstBuf));
 }
 
-float DamageTextManager::getSize()
+float DamageTextGenerator::getSize()
 {
 	return DTSize;
 }

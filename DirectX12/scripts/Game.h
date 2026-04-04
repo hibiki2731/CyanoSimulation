@@ -25,7 +25,7 @@ class SpotLightComponent;
 class Player;
 class TextComponent;
 class EnemyComponent;
-class DamageTextManager;
+class DamageTextGenerator;
 class AssetManager;
 class SceneManager;
 class ItemManager;

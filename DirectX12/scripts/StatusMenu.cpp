@@ -43,7 +43,7 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	//下矢印
 	auto downArrow = std::make_unique<SpriteComponent>(*this);
 	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + showWeaponNum * 48.0f - 8.0f, zDepth - 0.5f));
+	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + MaxShowWeaponNum * 48.0f - 8.0f, zDepth - 0.5f));
 	downArrow->setBordarSize(0.0f);
 	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
 	downArrow->setRotation(XM_PI);
@@ -64,8 +64,9 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
 	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
 	scrollBar->setBordarSize(0.0f);
-	float arrowDistance = 48.0f * showWeaponNum - 38.0f;
+	float arrowDistance = 48.0f * MaxShowWeaponNum - 38.0f;
 	float height = arrowDistance * MaxShowWeaponNum / mPlayerManager.getPlayerData().weaponInventory.size();
+	if (mPlayerManager.getPlayerData().weaponInventory.size() < MaxShowWeaponNum) height = arrowDistance;
 	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().weaponInventory.size();
 	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
 	mScrollBar = scrollBar.get();
@@ -85,13 +86,13 @@ void EquipWeaponMenu::updateMenu()
 	//カーソルが下端に来たら、テキストを下にスライド
 	if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum - 1) {		
 		mScrollOffset++;
-		mScrollBar->movePositon(XMFLOAT2(0.0f, mScrollBarMoveLength));
+		mScrollBar->movePosition(XMFLOAT2(0.0f, mScrollBarMoveLength));
 		refreshText();
 	}
 	//カーソルが上端に来たら、テキストを上にスライド
 	if (mSelectedIndex < mScrollOffset) {
 		mScrollOffset--;
-		mScrollBar->movePositon(XMFLOAT2(0.0f, -mScrollBarMoveLength));
+		mScrollBar->movePosition(XMFLOAT2(0.0f, -mScrollBarMoveLength));
 		refreshText();
 	}
 }
@@ -101,19 +102,19 @@ void EquipWeaponMenu::inputMenu()
 
 
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex == 0) return;
+		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
-		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex == mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
-		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
 }
 
@@ -171,7 +172,7 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	//下矢印
 	auto downArrow = std::make_unique<SpriteComponent>(*this);
 	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + showArmerNum * 48.0f - 8.0f, zDepth - 0.5f));
+	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + MaxShowArmerNum * 48.0f - 8.0f, zDepth - 0.5f));
 	downArrow->setBordarSize(0.0f);
 	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
 	downArrow->setRotation(XM_PI);
@@ -192,8 +193,9 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
 	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
 	scrollBar->setBordarSize(0.0f);
-	float arrowDistance = 48.0f * showArmerNum - 38.0f;
+	float arrowDistance = 48.0f * MaxShowArmerNum - 38.0f;
 	float height = arrowDistance * MaxShowArmerNum / mPlayerManager.getPlayerData().armerInventory.size();
+	if (mPlayerManager.getPlayerData().armerInventory.size() < MaxShowArmerNum) height = arrowDistance;
 	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().armerInventory.size();
 	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
 	mScrollBar = scrollBar.get();
@@ -212,13 +214,13 @@ void EquipArmerMenu::updateMenu()
 	//カーソルが下端に来たら、テキストを下にスライド
 	if (mSelectedIndex > mScrollOffset + MaxShowArmerNum - 1) {		
 		mScrollOffset++;
-		mScrollBar->movePositon(XMFLOAT2(0.0f, mScrollBarMoveLength));
+		mScrollBar->movePosition(XMFLOAT2(0.0f, mScrollBarMoveLength));
 		refreshText();
 	}
 	//カーソルが上端に来たら、テキストを上にスライド
 	if (mSelectedIndex < mScrollOffset) {
 		mScrollOffset--;
-		mScrollBar->movePositon(XMFLOAT2(0.0f, -mScrollBarMoveLength));
+		mScrollBar->movePosition(XMFLOAT2(0.0f, -mScrollBarMoveLength));
 		refreshText();
 	}
 }
@@ -227,19 +229,19 @@ void EquipArmerMenu::inputMenu()
 {
 
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex == 0) return;
+		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
-		mArrow->movePositon(XMFLOAT2(0.0f, -mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex == mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		mSelectedIndex++;
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
-		mArrow->movePositon(XMFLOAT2(0.0f, mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
 }
 

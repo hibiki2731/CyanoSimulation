@@ -31,7 +31,7 @@ void Scene::removeActors()
 	std::erase_if(mActors, [](const std::unique_ptr<Actor>& actor) {
 		if (!actor || actor->getState() == Actor::State::Dead) {
 			//アクターの終了処理
-			actor->endProccess();
+			actor->endProcess();
 			return true;
 		}
 		});

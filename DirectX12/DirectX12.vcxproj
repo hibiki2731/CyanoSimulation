@@ -219,6 +219,7 @@
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
     <ClCompile Include="scripts\DungeonScene.cpp" />
+    <ClCompile Include="scripts\DungeonUI.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
@@ -269,6 +270,7 @@
     <ClInclude Include="scripts\DamageText.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DungeonScene.h" />
+    <ClInclude Include="scripts\DungeonUI.h" />
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />

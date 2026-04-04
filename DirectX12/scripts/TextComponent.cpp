@@ -113,7 +113,7 @@ void TextComponent::draw()
 	mGraphic.getCommandList()->DrawIndexedInstanced(mAssetManager.getSpriteIndicesSize(), 1, 0, 0, 0);
 }
 
-void TextComponent::endProccess()
+void TextComponent::endProcess()
 {
 	mOwner.getScene().removeText(this);
 }
@@ -195,6 +195,12 @@ void TextComponent::setLineSpace(float space)
 bool TextComponent::getIsActive()
 {
 	return isActive;
+}
+
+float TextComponent::getAscent()
+{
+
+	return 0.0f;
 }
 
 void TextComponent::createEmptyTexture()

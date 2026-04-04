@@ -1,0 +1,21 @@
+{
+    "canvas":{
+        "pos" : [0, 0]
+    },
+    "hp": {
+        "textPosition" : [10.0, 5.0],
+        "textFontSize" : 20.0,
+        "textSpace": 30.0,
+        "barTexturePath" : "assets/picture/UI2/PNG/Default/progress_green.png",
+        "barBackTexturePath" : "assets/picture/UI2/PNG/Default/progress_green_black.png",
+        "barOffsetPos":[0.0, 7.0]
+    },
+   "ap": { 
+        "textPosition" : [10.0, 25.0],
+        "textFontSize" : 20.0,
+        "textSpace": 30.0,
+        "barTexturePath" : "assets/picture/UI2/PNG/Default/progress_red.png",
+        "barBackTexturePath" : "assets/picture/UI2/PNG/Default/progress_red_black.png",
+        "barOffsetPos":[0.0, 7.0]
+   }
+}

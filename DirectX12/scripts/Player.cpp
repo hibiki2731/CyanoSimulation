@@ -73,7 +73,8 @@ Player::Player(DungeonScene& scene, float x, float y)
 	addComponent(std::move(character));
 
 	//行動回数制限の取得
-	mActionLimit = data.actionLimit;
+	mAP = data.actionLimit;
+	mMaxAP = data.actionLimit;
 
 	//探索道具の効果を取得
 	for (const std::string toolID : data.explorerInventory) {
@@ -81,15 +82,9 @@ Player::Player(DungeonScene& scene, float x, float y)
 
 		std::string category = toolData.category;
 		if (category == "ACTION_LIMIT") {
-			mActionLimit += toolData.value;
+			mAP += toolData.value;
 		}
 	}
-}
-
-Player::~Player()
-{
-	PlayerManager& player = mScene.getGame().getPlayerManager();
-	player.setHP(mCharacter->getHP());
 }
 
 void Player::inputActor()
@@ -160,8 +155,15 @@ void Player::updateActor()
 		}
 	}
 
-	if (!isActing) damageEffect();
+	if (!isActing) damagedProcess();
 	updateFlash();
+}
+
+void Player::endProcessActor()
+{
+	PlayerManager& player = mScene.getGame().getPlayerManager();
+	player.setHP(mCharacter->getHP());
+	mScene.getGame().getGraphic().updateDamageFlashIntensity(0.0f);
 }
 
 int Player::getDirection()
@@ -195,9 +197,14 @@ int Player::getDefense()
 	return mCharacter->getDefense();
 }
 
-int Player::getActionLimit()
+int Player::getAP()
 {
-	return mActionLimit;
+	return mAP;
+}
+
+int Player::getMaxAP()
+{
+	return mMaxAP;
 }
 
 void Player::giveDamage(int damage)
@@ -212,7 +219,7 @@ void Player::attack()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0)return;
+	if (mAP == 0)return;
 
 	//前方のエネミーを取得
 	EnemyComponent* target = nullptr;
@@ -284,7 +291,7 @@ void Player::move(Direction direction)
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
 
 	int targetIndexPos[2] = {mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1]};
 	//進行する差分のインデックスを取得
@@ -367,7 +374,7 @@ void Player::collect()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
 
 	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
 
@@ -383,12 +390,20 @@ void Player::collect()
 	turnEnd();
 }
 
-void Player::damageEffect()
+void Player::damagedProcess()
 {
+	//ダメージの反映
 	if (mPendingDamage <= 0) return;
-	mCharacter->setHP(mCharacter->getHP() - mPendingDamage); //ダメージの反映
+	int hp = mCharacter->getHP() - mPendingDamage;
+	mCharacter->setHP(hp);
 	mPendingDamage = 0;
-	mFlashTimer = mFlashDuration; //点滅の開始
+
+	//ダメージの点滅処理
+	mFlashTimer = mFlashDuration;
+
+	//UIの更新
+	if(hp > 0)mScene.updateHPUI();
+	
 }
 
 void Player::updateFlash()
@@ -408,7 +423,7 @@ void Player::useItem()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
 
 	//アイテムのIDを取得
 	const auto& itemID = mPlayerManager.getInventoryItem(mSelectItemIndex);
@@ -436,7 +451,9 @@ void Player::turnEnd()
 	//ターンをエネミーターンに変更
 	mScene.moveToEnemyTurn();
 	//残り行動回数を減らす
-	mActionLimit--;
+	mAP--;
+	//UIの更新
+	if(mAP > 0) mScene.updateAPUI();
 	//行動中フラグをtureにする
 	isActing = true;
 }

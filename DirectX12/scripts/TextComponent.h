@@ -14,7 +14,7 @@ public:
 	void drawTextTexture();
 	void draw();
 
-	void endProccess() override;
+	void endProcess() override;
 	//テキストの表示、非表示
 	void showText();
 	void closeText();
@@ -28,6 +28,7 @@ public:
 
 	//ゲッター
 	bool getIsActive();
+	float getAscent();
 
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);

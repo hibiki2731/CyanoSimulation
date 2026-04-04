@@ -89,7 +89,7 @@ void Anime2DComponent::draw()
 	mCommandList->DrawIndexedInstanced(mAssetManager.getSpriteIndicesSize(), 1, 0, 0, 0);
 }
 
-void Anime2DComponent::endProccess()
+void Anime2DComponent::endProcess()
 {
 	mOwner.getScene().removeSprite(this);
 }

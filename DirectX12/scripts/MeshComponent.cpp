@@ -21,7 +21,7 @@ MeshComponent::~MeshComponent()
 {
 }
 
-void MeshComponent::endProccess()
+void MeshComponent::endProcess()
 {
 	//Gameからメッシュを削除
 	mOwner.getScene().removeMesh(this);

@@ -15,10 +15,10 @@ class Player : public Actor
 {
 public:
 	Player(DungeonScene& scene, float x, float y);
-	~Player();
 
 	void inputActor() override;
 	void updateActor() override;
+	void endProcessActor() override;
 
 	int getDirection();
 	void getIndexPos(int(&pos)[2]);
@@ -26,7 +26,8 @@ public:
 	int getHP();
 	int getPower();
 	int getDefense();
-	int getActionLimit();
+	int getAP();
+	int getMaxAP();
 
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
@@ -40,7 +41,7 @@ private:
 	void rotate(Direction direction);
 	void calcMoveDirectionToIndexPos(Direction moveDirection, int (& indexPos)[2]);
 	void collect();
-	void damageEffect();
+	void damagedProcess();
 	void updateFlash();
 	void useItem();
 	void turnEnd();
@@ -63,7 +64,8 @@ private:
 	int mSelectItemIndex;
 
 	//行動回数制限
-	int mActionLimit;
+	int mAP;
+	int mMaxAP;
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;
