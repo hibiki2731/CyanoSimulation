@@ -8,12 +8,8 @@
     "equippedWeaponIndex": 0,
     "explorer": [],
     "flashDuration": 0.5,
-    "hp": 100,
+    "hp": 80,
     "inventory": [
-        "POSION",
-        "POSION",
-        "POSION",
-        "POSION",
         "POSION"
     ],
     "maxhp": 100,

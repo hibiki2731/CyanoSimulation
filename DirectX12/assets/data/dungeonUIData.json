@@ -17,5 +17,8 @@
         "barTexturePath" : "assets/picture/UI2/PNG/Default/progress_red.png",
         "barBackTexturePath" : "assets/picture/UI2/PNG/Default/progress_red_black.png",
         "barOffsetPos":[0.0, 7.0]
+   },
+   "itemIcon":{
+        "HP_RECOVER": "assets/picture/HerbIcon.png" 
    }
 }

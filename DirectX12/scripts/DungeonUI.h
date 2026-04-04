@@ -11,6 +11,7 @@ public:
 	DungeonUI(DungeonScene& scene);
 	void updateHP();
 	void updateAP();
+	void updateItemIcon();
 
 private:
 	TextComponent* mHPValueText;
@@ -24,5 +25,9 @@ private:
 	SpriteComponent* mCanvas;
 	DungeonScene& mDungeonScene;
 
+	//アイテムアイコン
+	XMFLOAT2 mItemIconOriginPos;
+	static constexpr XMFLOAT2 ItemIconSize = {60.0f, 60.0f};
+	std::vector<SpriteComponent*> mItemIcons;
 };
 

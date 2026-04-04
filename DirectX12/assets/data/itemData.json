@@ -40,6 +40,18 @@
                 25
             ],
             "value": 10
+        },
+        {
+            "category": "STORAGE_SIZE",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id": "BACKPACK",
+            "inPossession": false,
+            "name": "バックパック",
+            "price": [
+                25
+            ]
         }
     ],
     "Item": [
@@ -59,7 +71,7 @@
     "Resource": [
         {
             "id": "GRASS",
-            "num": 100
+            "num": 80
         }
     ],
     "Weapon": [

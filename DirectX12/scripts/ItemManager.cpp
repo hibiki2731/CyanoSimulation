@@ -91,7 +91,7 @@ ItemManager::ItemManager()
 		explorer.costResourceID = explorerJson["costResourceID"];
 		explorer.price = explorerJson["price"].get<std::vector<int>>();
 		explorer.category = explorerJson["category"];
-		explorer.value = explorerJson["value"];
+		explorer.value = explorerJson.value("value", 0);
 		explorer.inPossession = explorerJson["inPossession"];
 		mExplorerData[explorerJson["id"]] = explorer;
 	}

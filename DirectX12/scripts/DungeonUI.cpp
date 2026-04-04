@@ -3,6 +3,9 @@
 #include "TextComponent.h"
 #include "DungeonScene.h"
 #include "Graphic.h"
+#include "Game.h"
+#include "PlayerManager.h"
+#include "ItemManager.h"
 #include "json.hpp"
 #include "Player.h"
 #include <fstream>
@@ -123,6 +126,19 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		addComponent(std::move(apBarBack));
 	}
 
+	//アイテムアイコン
+	mItemIconOriginPos = XMFLOAT2(10.0f, 55.0f);
+	auto& inventory = scene.getGame().getPlayerManager().getInventory();
+	for (int i = 0; i < scene.getPlayer()->getStorageSize(); i++) {
+		auto itemIcon = std::make_unique<SpriteComponent>(*this);
+		itemIcon->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , mItemIconOriginPos.y, CanvasZ - 1.0f));
+		itemIcon->setSpriteSize(ItemIconSize);
+		if (i < inventory.size()) itemIcon->create(uiData["itemIcon"][scene.getGame().getItemManager().getItemData(inventory[i]).category].get<std::string>());
+		else itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+		mItemIcons.push_back(itemIcon.get());
+		addComponent(std::move(itemIcon));
+	}
+
 }
 
 void DungeonUI::updateHP()
@@ -153,4 +169,30 @@ void DungeonUI::updateAP()
 	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x, mAPBarOriginalSize.y * ap / maxAp);
 	mAPBar->setSpriteSize(apBarSize);
 	mAPBar->setPosition(XMFLOAT3(mAPBarOffsetPos.x + (apBarSize.y - apBarSize.x) * 0.5f, mAPBarOffsetPos.y - (apBarSize.y - apBarSize.x) * 0.5f, CanvasZ - 1.0f));
+}
+
+void DungeonUI::updateItemIcon()
+{
+	nlohmann::json uiData;
+	std::fstream file("assets\\data\\dungeonUIData.json");
+	file >> uiData;
+
+	//アイテムアイコンを空にする
+	for (auto itemIcon : mItemIcons) {
+		removeComponent(itemIcon);
+	}
+	mItemIcons.clear();
+
+	auto& data = mScene.getGame().getPlayerManager().getPlayerData();
+	for (int i = 0; i < data.storageSize; i++) {
+		auto itemIcon = std::make_unique<SpriteComponent>(*this);
+		itemIcon->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , mItemIconOriginPos.y, CanvasZ - 1.0f));
+		itemIcon->setSpriteSize(ItemIconSize);
+		if (i < data.inventory.size()) itemIcon->create(uiData["itemIcon"][mScene.getGame().getItemManager().getItemData(data.inventory[i]).category].get<std::string>());
+		else itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+		mItemIcons.push_back(itemIcon.get());
+		addComponent(std::move(itemIcon));
+	}
+
+
 }

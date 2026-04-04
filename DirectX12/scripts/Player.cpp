@@ -34,6 +34,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mSelectItemIndex = 0;
 
 	//プレイヤーデータの取得
+	mPlayerManager.applyToolParamater();
 	const PlayerData& data = mPlayerManager.getPlayerData();
 
 	//移動速度、回転速度、点滅時間の設定
@@ -73,18 +74,12 @@ Player::Player(DungeonScene& scene, float x, float y)
 	addComponent(std::move(character));
 
 	//行動回数制限の取得
-	mAP = data.actionLimit;
 	mMaxAP = data.actionLimit;
+	mAP = mMaxAP;
 
-	//探索道具の効果を取得
-	for (const std::string toolID : data.explorerInventory) {
-		auto toolData = mItemManager.getExplorerData(toolID);
+	//最大所持アイテム数
+	mStorageSize = data.storageSize;
 
-		std::string category = toolData.category;
-		if (category == "ACTION_LIMIT") {
-			mAP += toolData.value;
-		}
-	}
 }
 
 void Player::inputActor()
@@ -205,6 +200,11 @@ int Player::getAP()
 int Player::getMaxAP()
 {
 	return mMaxAP;
+}
+
+int Player::getStorageSize()
+{
+	return mStorageSize;
 }
 
 void Player::giveDamage(int damage)
@@ -442,6 +442,8 @@ void Player::useItem()
 	//インベントリーから削除
 	mPlayerManager.removeInventory(mSelectItemIndex);
 
+	//UIの更新
+	mScene.updateItemUI();
 	//ターン経過
 	turnEnd();
 }

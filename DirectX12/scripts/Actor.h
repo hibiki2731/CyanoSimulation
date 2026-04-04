@@ -44,6 +44,7 @@ public:
 	//コンポーネントの追加/削除
 	void addComponent(std::unique_ptr<Component> component);
 	void removeComponent(std::unique_ptr<Component>& component);
+	void removeComponent(Component* component);
 
 	//終了処理
 	void endProcess();

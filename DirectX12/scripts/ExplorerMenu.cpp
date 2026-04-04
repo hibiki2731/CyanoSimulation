@@ -113,7 +113,10 @@ void ExplorerMenu::inputMenu()
 
 void ExplorerMenu::prepareCraftExplorer()
 {
-	mTools.emplace_back("BOOTS");
+	for (auto& data : mItemManager.getExplorerData()) {
+		if (data.second.inPossession) continue;
+		mTools.emplace_back(data.second.id);
+	}
 	mMaxIndex = mTools.size();
 }
 
@@ -142,6 +145,8 @@ void ExplorerMenu::craftExplorer(int index)
 	//インベントリにアイテムを追加
 	mPlayerManager.addExplorer(explorerData.id);
 	refreshText();
+	//プレイヤーデータを更新
+	mPlayerManager.applyToolParamater();
 
 }
 

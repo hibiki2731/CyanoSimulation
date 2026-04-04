@@ -142,7 +142,6 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "EquipArmerMenu", zDepth),
 	mPlayerManager(scene.getGame().getPlayerManager())
 {
-	mPlayerManager = scene.getGame().getPlayerManager();
 	mMaxIndex = mPlayerManager.getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
 

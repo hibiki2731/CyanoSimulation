@@ -1,28 +1,32 @@
 ﻿#include "PlayerManager.h"
+#include "Game.h"
+#include "ItemManager.h"
 #include <fstream>
 #include "json.hpp"
 
-PlayerManager::PlayerManager()
+PlayerManager::PlayerManager(Game& game) : mGame(game)
 {
 	//プレイヤーデータの初期化
 	std::ifstream file("assets\\data\\playerData.json");
 	assert(!file.fail());
 	nlohmann::json json;
 	file >> json;
-	mPlayerData.maxHp = json["maxhp"].get<int>();
-	mPlayerData.hp = json["hp"].get<int>();
-	mPlayerData.power = json["power"].get<int>();
-	mPlayerData.defence = json["defense"].get<int>();
-	mPlayerData.moveSpeed = json["moveSpeed"].get<float>();
-	mPlayerData.rotSpeed = json["rotSpeed"].get<float>();
-	mPlayerData.flushDuration = json["flashDuration"].get<float>();
-	mPlayerData.inventory = std::move(json["inventory"].get<std::vector<std::string>>());
-	mPlayerData.weaponInventory = std::move(json["weapons"].get<std::vector<std::string>>());
-	mPlayerData.armerInventory = std::move(json["armers"].get<std::vector<std::string>>());
-	mPlayerData.explorerInventory = std::move(json["explorer"].get<std::vector<std::string>>());
-	mPlayerData.equippedWeaponIndex = json["equippedWeaponIndex"].get<int>();
-	mPlayerData.equippedArmerIndex = json["equippedArmerIndex"].get<int>();
-	mPlayerData.actionLimit = json["actionLimit"].get<int>();
+	mDefaultPlayerData.maxHp = json["maxhp"].get<int>();
+	mDefaultPlayerData.hp = json["hp"].get<int>();
+	mDefaultPlayerData.power = json["power"].get<int>();
+	mDefaultPlayerData.defence = json["defense"].get<int>();
+	mDefaultPlayerData.moveSpeed = json["moveSpeed"].get<float>();
+	mDefaultPlayerData.rotSpeed = json["rotSpeed"].get<float>();
+	mDefaultPlayerData.flushDuration = json["flashDuration"].get<float>();
+	mDefaultPlayerData.inventory = std::move(json["inventory"].get<std::vector<std::string>>());
+	mDefaultPlayerData.weaponInventory = std::move(json["weapons"].get<std::vector<std::string>>());
+	mDefaultPlayerData.armerInventory = std::move(json["armers"].get<std::vector<std::string>>());
+	mDefaultPlayerData.explorerInventory = std::move(json["explorer"].get<std::vector<std::string>>());
+	mDefaultPlayerData.equippedWeaponIndex = json["equippedWeaponIndex"].get<int>();
+	mDefaultPlayerData.equippedArmerIndex = json["equippedArmerIndex"].get<int>();
+	mDefaultPlayerData.actionLimit = json["actionLimit"].get<int>();
+
+	mPlayerData = mDefaultPlayerData; //プレイヤーデータを初期値で初期化:
 }
 
 const PlayerData& PlayerManager::getPlayerData()
@@ -38,6 +42,11 @@ const std::string& PlayerManager::getInventoryItem(int index)
 	if (index < 0) index = 0;
 	else if (index >= inventorySize) index = inventorySize - 1;
 	return mPlayerData.inventory[index];
+}
+
+const std::vector<std::string>& PlayerManager::getInventory()
+{
+	return mPlayerData.inventory;
 }
 
 void PlayerManager::setHP(int hp)
@@ -135,5 +144,21 @@ void PlayerManager::removeExplorer(std::string id) {
 		if (mPlayerData.equippedWeaponIndex == mPlayerData.weaponInventory.size() - 1) mPlayerData.equippedWeaponIndex = index;
 		std::iter_swap(iter, mPlayerData.explorerInventory.end() - 1);
 		mPlayerData.explorerInventory.pop_back();
+	}
+}
+
+void PlayerManager::applyToolParamater()
+{
+	//ストレージサイズを初期化
+	mPlayerData.storageSize = mDefaultPlayerData.storageSize;
+	for (auto& toolID : mPlayerData.explorerInventory) {
+		auto toolData = mGame.getItemManager().getExplorerData(toolID);
+		std::string category = toolData.category;
+		if (category == "ACTION_LIMIT") {
+			mPlayerData.actionLimit = mDefaultPlayerData.actionLimit + toolData.value;
+		}
+		else if (category == "STORAGE_SIZE") {
+			mPlayerData.storageSize++;
+		}
 	}
 }

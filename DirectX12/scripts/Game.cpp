@@ -93,7 +93,7 @@ void Game::init() {
 	mItemManager = std::make_unique<ItemManager>();
 
 	//PlayerManager
-	mPlayerManager = std::make_unique<PlayerManager>();
+	mPlayerManager = std::make_unique<PlayerManager>(*this);
 
 	//AudioManager
 	mAudioManager = std::make_unique<AudioManager>();

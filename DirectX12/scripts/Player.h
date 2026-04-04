@@ -28,6 +28,7 @@ public:
 	int getDefense();
 	int getAP();
 	int getMaxAP();
+	int getStorageSize();
 
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
@@ -62,10 +63,12 @@ private:
 
 	//アイテム
 	int mSelectItemIndex;
+	int mStorageSize;
 
 	//行動回数制限
 	int mAP;
 	int mMaxAP;
+
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;

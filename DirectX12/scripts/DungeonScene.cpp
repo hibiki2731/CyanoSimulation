@@ -228,6 +228,11 @@ void DungeonScene::updateAPUI()
 	mUI->updateAP();
 }
 
+void DungeonScene::updateItemUI()
+{
+	mUI->updateItemIcon();
+}
+
 void DungeonScene::updateDTView(XMMATRIX& view)
 {
 	mDamageTextManaager->updateView(view);

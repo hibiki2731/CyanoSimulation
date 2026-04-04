@@ -2,6 +2,8 @@
 #include <vector>
 #include <string>
 
+class Game;
+
 struct PlayerData {
 	int maxHp = 0;
 	int hp = 0;
@@ -17,15 +19,17 @@ struct PlayerData {
 	std::vector<std::string> explorerInventory;
 	int equippedWeaponIndex = 0;
 	int equippedArmerIndex = 0;
+	int storageSize = 1;
 };
 
 class PlayerManager
 {
 public:
-	PlayerManager();
+	PlayerManager(Game& game);
 
 	const PlayerData& getPlayerData();
 	const std::string& getInventoryItem(int index);
+	const std::vector<std::string>& getInventory();
 
 	void setHP(int hp);
 	void setMaxHP(int maxhp);
@@ -45,7 +49,10 @@ public:
 	void removeArmer(std::string id);
 	void removeExplorer(std::string id);
 
+	void applyToolParamater();
 private:
 	PlayerData mPlayerData;
+	PlayerData mDefaultPlayerData; //プレイヤーデータの初期値を保持する変数
+	Game& mGame;
 };
 

@@ -135,6 +135,12 @@ void ShopMenu::refreshText()
 }
 
 void ShopMenu::buyItem(int index) {
+	auto& playerData = mPlayerManager.getPlayerData();
+	if (playerData.storageSize <= playerData.inventory.size()) {
+		mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+		return;
+	}
+
 	//リソースを消費
 	const auto& itemData = mItemManager.getItemData(mSaleItem[index]);
 	for (int i = 0; i < itemData.costResourceID.size(); i++) {
