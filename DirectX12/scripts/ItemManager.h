@@ -45,6 +45,8 @@ class ItemManager
 public:
 	ItemManager();
 
+	void loadItemData();
+
 	void addResource(const std::string& id, int num);
 	void subResource(const std::string& id, int num);
 

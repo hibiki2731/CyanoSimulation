@@ -38,8 +38,10 @@ const ExplorerData ItemManager::EmptyExplorer{
 
 ItemManager::ItemManager()
 {
+}
 
-
+void ItemManager::loadItemData()
+{
 	std::fstream file("assets/data/ItemData.json");
 	assert(!file.fail());
 

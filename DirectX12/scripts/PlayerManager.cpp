@@ -6,27 +6,6 @@
 
 PlayerManager::PlayerManager(Game& game) : mGame(game)
 {
-	//プレイヤーデータの初期化
-	std::ifstream file("assets\\data\\playerData.json");
-	assert(!file.fail());
-	nlohmann::json json;
-	file >> json;
-	mDefaultPlayerData.maxHp = json["maxhp"].get<int>();
-	mDefaultPlayerData.hp = json["hp"].get<int>();
-	mDefaultPlayerData.power = json["power"].get<int>();
-	mDefaultPlayerData.defence = json["defense"].get<int>();
-	mDefaultPlayerData.moveSpeed = json["moveSpeed"].get<float>();
-	mDefaultPlayerData.rotSpeed = json["rotSpeed"].get<float>();
-	mDefaultPlayerData.flushDuration = json["flashDuration"].get<float>();
-	mDefaultPlayerData.inventory = std::move(json["inventory"].get<std::vector<std::string>>());
-	mDefaultPlayerData.weaponInventory = std::move(json["weapons"].get<std::vector<std::string>>());
-	mDefaultPlayerData.armerInventory = std::move(json["armers"].get<std::vector<std::string>>());
-	mDefaultPlayerData.explorerInventory = std::move(json["explorer"].get<std::vector<std::string>>());
-	mDefaultPlayerData.equippedWeaponIndex = json["equippedWeaponIndex"].get<int>();
-	mDefaultPlayerData.equippedArmerIndex = json["equippedArmerIndex"].get<int>();
-	mDefaultPlayerData.actionLimit = json["actionLimit"].get<int>();
-
-	mPlayerData = mDefaultPlayerData; //プレイヤーデータを初期値で初期化:
 }
 
 const PlayerData& PlayerManager::getPlayerData()
@@ -159,4 +138,29 @@ void PlayerManager::applyToolParamater()
 			mPlayerData.storageSize++;
 		}
 	}
+}
+
+void PlayerManager::loadPlayerData()
+{
+	//プレイヤーデータの初期化
+	std::ifstream file("assets\\data\\playerData.json");
+	assert(!file.fail());
+	nlohmann::json json;
+	file >> json;
+	mDefaultPlayerData.maxHp = json["maxhp"].get<int>();
+	mDefaultPlayerData.hp = json["hp"].get<int>();
+	mDefaultPlayerData.power = json["power"].get<int>();
+	mDefaultPlayerData.defence = json["defense"].get<int>();
+	mDefaultPlayerData.moveSpeed = json["moveSpeed"].get<float>();
+	mDefaultPlayerData.rotSpeed = json["rotSpeed"].get<float>();
+	mDefaultPlayerData.flushDuration = json["flashDuration"].get<float>();
+	mDefaultPlayerData.inventory = std::move(json["inventory"].get<std::vector<std::string>>());
+	mDefaultPlayerData.weaponInventory = std::move(json["weapons"].get<std::vector<std::string>>());
+	mDefaultPlayerData.armerInventory = std::move(json["armers"].get<std::vector<std::string>>());
+	mDefaultPlayerData.explorerInventory = std::move(json["explorer"].get<std::vector<std::string>>());
+	mDefaultPlayerData.equippedWeaponIndex = json["equippedWeaponIndex"].get<int>();
+	mDefaultPlayerData.equippedArmerIndex = json["equippedArmerIndex"].get<int>();
+	mDefaultPlayerData.actionLimit = json["actionLimit"].get<int>();
+
+	mPlayerData = mDefaultPlayerData; //プレイヤーデータを初期値で初期化:
 }

@@ -4,17 +4,19 @@
 #include "TownScene.h"
 #include "DungeonScene.h"
 #include "GameOverScene.h"
+#include "TitleScene.h"
 
 SceneManager::SceneManager(Game& game)
 {
-	mCurrentSceneType = "TOWN";
+	mCurrentSceneType = "TITLE";
 	mNextSceneType = mCurrentSceneType;
 	
 	//シーンの登録
 	mSceneMap["TOWN"] = std::make_unique<TownScene>(game);
 	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game);
-	mSceneMap["GAME_OVER"] = std::make_unique<GameOverScene>(game); //仮でダンジョンシーンを使用
-	mCurrentScene = mSceneMap["TOWN"].get();
+	mSceneMap["GAME_OVER"] = std::make_unique<GameOverScene>(game); 
+	mSceneMap["TITLE"] = std::make_unique<TitleScene>(game);
+	mCurrentScene = mSceneMap[mCurrentSceneType].get();
 	mCurrentScene->onEnter();
 }
 

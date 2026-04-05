@@ -257,6 +257,7 @@
     <ClCompile Include="scripts\StatusMenu.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
+    <ClCompile Include="scripts\TitleScene.cpp" />
     <ClCompile Include="scripts\TownScene.cpp" />
     <ClCompile Include="scripts\TurnObserver.cpp" />
     <ClCompile Include="scripts\UI.cpp" />
@@ -313,6 +314,7 @@
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
+    <ClInclude Include="scripts\TitleScene.h" />
     <ClInclude Include="scripts\TownScene.h" />
     <ClInclude Include="scripts\TurnObserver.h" />
     <ClInclude Include="scripts\WinMain.h" />

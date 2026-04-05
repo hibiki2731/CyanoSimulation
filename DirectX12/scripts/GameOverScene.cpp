@@ -44,6 +44,6 @@ GameOverUI::GameOverUI(GameOverScene& scene)
 void GameOverUI::inputActor()
 {
 	if (isKeyJustPressed(VK_RETURN)) {
-		getScene().getGame().getSceneManager().transitToTown();
+		getScene().getGame().getSceneManager().transitToTitle();
 	}
 }

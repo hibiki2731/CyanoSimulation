@@ -50,6 +50,8 @@ public:
 	void removeExplorer(std::string id);
 
 	void applyToolParamater();
+
+	void loadPlayerData();
 private:
 	PlayerData mPlayerData;
 	PlayerData mDefaultPlayerData; //プレイヤーデータの初期値を保持する変数
