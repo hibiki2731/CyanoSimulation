@@ -274,6 +274,7 @@
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
+    <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />

@@ -416,6 +416,7 @@ void Player::damagedProcess()
 
 	//ダメージの点滅処理
 	mFlashTimer = mFlashDuration;
+	mCamera->startShake();
 
 	//UIの更新
 	if(hp > 0)mScene.updateHPUI();

@@ -4,5 +4,6 @@ class Random
 {
 public:
 	static int dist(int l, int r);
+	static float dist(float l, float r);
 };
 

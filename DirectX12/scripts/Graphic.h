@@ -70,6 +70,9 @@ public:
 	void waitGPU();
 	void delayRelease(ComPtr<IUnknown>& resource);
 
+	//エフェクト
+	void startShake();
+
 	//Getter
 	float getAspect();
 	UINT getCbvTbvIncSize();
@@ -105,6 +108,7 @@ public:
 	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 	static constexpr int FrameCount = 2;
 private:
+	//初期化関数
 	HRESULT createDevice();
 	HRESULT createCommand();
 	HRESULT createFence();
@@ -117,7 +121,6 @@ private:
 	HRESULT createD2D();
 	HRESULT createCbvAndHeap();
 
-	
 	//ウィンドウ
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
 	const int ClientPosY = (GetSystemMetrics(SM_CYSCREEN) - ClientHeight) / 2;
@@ -188,11 +191,14 @@ private:
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
 
-	Game& mGame;
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
 
+	//参照
+	Game& mGame;
+
+	
 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
