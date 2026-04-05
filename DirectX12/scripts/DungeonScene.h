@@ -52,6 +52,7 @@ public:
 
     //シーン遷移
     void returnToTown();
+	void transitToGameOver();
 
     //エネミー配列の制御
 	void addEnemy(EnemyComponent* enemy);

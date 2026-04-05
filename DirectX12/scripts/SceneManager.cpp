@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "TownScene.h"
 #include "DungeonScene.h"
+#include "GameOverScene.h"
 
 SceneManager::SceneManager(Game& game)
 {
@@ -12,6 +13,7 @@ SceneManager::SceneManager(Game& game)
 	//シーンの登録
 	mSceneMap["TOWN"] = std::make_unique<TownScene>(game);
 	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game);
+	mSceneMap["GAME_OVER"] = std::make_unique<GameOverScene>(game); //仮でダンジョンシーンを使用
 	mCurrentScene = mSceneMap["TOWN"].get();
 	mCurrentScene->onEnter();
 }
@@ -91,6 +93,10 @@ void SceneManager::transitToTown()
 void SceneManager::transitToMap()
 {
 	mNextSceneType = "DUNGEON";
+}
+
+void SceneManager::transitToGameOver(){
+	mNextSceneType = "GAME_OVER";
 }
 
 void SceneManager::transitScene()

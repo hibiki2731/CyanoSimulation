@@ -414,6 +414,12 @@ void Player::damagedProcess()
 	mCharacter->setHP(hp);
 	mPendingDamage = 0;
 
+	//死亡処理
+	if (hp <= 0) {
+		mScene.transitToGameOver();
+		return;
+	}
+
 	//ダメージの点滅処理
 	mFlashTimer = mFlashDuration;
 	mCamera->startShake();
@@ -466,6 +472,7 @@ void Player::useItem()
 
 	//UIの更新
 	mScene.updateItemUI();
+	mScene.updateItemFrame();
 
 	//ターン経過
 	turnEnd();

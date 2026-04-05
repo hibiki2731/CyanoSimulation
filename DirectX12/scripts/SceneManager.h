@@ -38,6 +38,7 @@ public:
 	void transitToTitle();
 	void transitToTown();
 	void transitToMap();
+	void transitToGameOver();
 	void transitScene();
 
 private:

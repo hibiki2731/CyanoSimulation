@@ -98,6 +98,11 @@ void DungeonScene::returnToTown()
 	mGame.getSceneManager().transitToTown();
 }
 
+void DungeonScene::transitToGameOver()
+{
+	mGame.getSceneManager().transitToGameOver();
+}
+
 void DungeonScene::setTileDataAt(int x, int y, int data)
 {
 	//配列範囲外なら無効

@@ -67,11 +67,12 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		hpBar->create(uiData["hp"]["barTexturePath"].get<std::string>());
 		mHPBarOriginalSize = XMFLOAT2(hpTextFontSize * 0.7f, CanvasWidth * 0.5f);
 		XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * hp / maxHp);
+		if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
 		hpBar->setSpriteSize(hpBarSize);
 		auto hpBarOffsetPos = uiData["hp"]["barOffsetPos"].get<std::vector<float>>();
 		mHPBarOffsetPos = XMFLOAT2(CanvasWidth * 0.4 + hpBarOffsetPos[0], hpTextPosition[1] + hpBarOffsetPos[1]);
 		hpBar->setPosition(XMFLOAT3(mHPBarOffsetPos.x + (hpBarSize.y - hpBarSize.x) * 0.5f, mHPBarOffsetPos.y - (hpBarSize.y - hpBarSize.x) * 0.5f, CanvasZ - 1.0f));
-		hpBar->setBordarSize(10.0f);
+		hpBar->setBordarSize(5.0f);
 		hpBar->setRotation(XM_PIDIV2);
 		mHPBar = hpBar.get();
 		addComponent(std::move(hpBar));
@@ -81,7 +82,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		hpBarBack->create(uiData["hp"]["barBackTexturePath"].get<std::string>());
 		hpBarBack->setSpriteSize(mHPBarOriginalSize);
 		hpBarBack->setPosition(XMFLOAT3(CanvasWidth * 0.4 + hpBarOffsetPos[0] + (mHPBarOriginalSize.y - mHPBarOriginalSize.x) * 0.5f, hpTextPosition[1] + hpBarOffsetPos[1] - (mHPBarOriginalSize.y - mHPBarOriginalSize.x) * 0.5f, CanvasZ - 0.5f));
-		hpBarBack->setBordarSize(10.0f);
+		hpBarBack->setBordarSize(5.0f);
 		hpBarBack->setRotation(XM_PIDIV2);
 		addComponent(std::move(hpBarBack));
 	}
@@ -116,7 +117,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		auto apBarOffsetPos = uiData["ap"]["barOffsetPos"].get<std::vector<float>>();
 		mAPBarOffsetPos = XMFLOAT2(CanvasWidth * 0.4 + apBarOffsetPos[0], apTextPosition[1] + apBarOffsetPos[1]);
 		apBar->setPosition(XMFLOAT3(mAPBarOffsetPos.x + (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, mAPBarOffsetPos.y - (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, CanvasZ - 1.0f));
-		apBar->setBordarSize(10.0f);
+		apBar->setBordarSize(5.0f);
 		apBar->setRotation(XM_PIDIV2);
 		mAPBar = apBar.get();
 		addComponent(std::move(apBar));
@@ -126,7 +127,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		apBarBack->create(uiData["ap"]["barBackTexturePath"].get<std::string>());
 		apBarBack->setSpriteSize(mAPBarOriginalSize);
 		apBarBack->setPosition(XMFLOAT3(CanvasWidth * 0.4 + apBarOffsetPos[0] + (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, apTextPosition[1] + apBarOffsetPos[1] - (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, CanvasZ - 0.5f));
-		apBarBack->setBordarSize(10.0f);
+		apBarBack->setBordarSize(5.0f);
 		apBarBack->setRotation(XM_PIDIV2);
 		addComponent(std::move(apBarBack));
 	}
@@ -171,7 +172,8 @@ void DungeonUI::updateHP()
 	mHPValueText->setText(text);
 	mHPValueText->showText();
 	//HPバーのサイズを更新
-	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * hp / maxHp);
+	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * static_cast<float>(hp) / static_cast<float>(maxHp));
+	if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
 	mHPBar->setSpriteSize(hpBarSize);
 	mHPBar->setPosition(XMFLOAT3(mHPBarOffsetPos.x + (hpBarSize.y - hpBarSize.x) * 0.5f, mHPBarOffsetPos.y - (hpBarSize.y - hpBarSize.x) * 0.5f, CanvasZ - 1.0f));
 }
@@ -186,7 +188,8 @@ void DungeonUI::updateAP()
 	mAPValueText->setText(text);
 	mAPValueText->showText();
 	//APバーのサイズを更新
-	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x, mAPBarOriginalSize.y * ap / maxAp);
+	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x, mAPBarOriginalSize.y * static_cast<float>(ap) / static_cast<float>(maxAp));
+	if (apBarSize.y < 10.0f) apBarSize.y = 10.0f; //HPバーの最小サイズ
 	mAPBar->setSpriteSize(apBarSize);
 	mAPBar->setPosition(XMFLOAT3(mAPBarOffsetPos.x + (apBarSize.y - apBarSize.x) * 0.5f, mAPBarOffsetPos.y - (apBarSize.y - apBarSize.x) * 0.5f, CanvasZ - 1.0f));
 }

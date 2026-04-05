@@ -223,6 +223,7 @@
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
+    <ClCompile Include="scripts\GameOverScene.cpp" />
     <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
+    <ClInclude Include="scripts\GameOverScene.h" />
     <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
