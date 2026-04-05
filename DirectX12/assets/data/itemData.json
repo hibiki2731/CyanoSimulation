@@ -60,10 +60,22 @@
             "costResourceID": [
                 "GRASS"
             ],
-            "id": "POSION",
-            "name": "ポーション",
+            "id": "HERB",
+            "name": "薬草",
             "price": [
                 10
+            ],
+            "value": 20
+        },
+        {
+            "category": "AP_RECOVER",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "id":"SALTED_KELP",
+            "name":"塩昆布",
+            "price":[
+                40
             ],
             "value": 20
         }

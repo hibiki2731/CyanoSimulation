@@ -15,6 +15,7 @@ public:
 	void updateItemFrame();
 
 private:
+	//各種UIコンポーネント
 	TextComponent* mHPValueText;
 	TextComponent* mAPValueText;
 	SpriteComponent* mHPBar;
@@ -24,12 +25,17 @@ private:
 	XMFLOAT2 mAPBarOriginalSize;
 	XMFLOAT2 mAPBarOffsetPos;
 	SpriteComponent* mCanvas;
-	DungeonScene& mDungeonScene;
 	SpriteComponent* mItemSelectFrame;
+	TextComponent* mSelectItemText;
 
 	//アイテムアイコン
-	XMFLOAT2 mItemIconOriginPos;
-	static constexpr XMFLOAT2 ItemIconSize = {60.0f, 60.0f};
+	static XMFLOAT2 ItemIconOriginPos;
+	static XMFLOAT2 ItemIconSize;
 	std::vector<SpriteComponent*> mItemIcons;
+
+	//参照
+	class ItemManager& mItemManager;
+	class PlayerManager& mPlayerManager;
+	class Player& mPlayer;
 };
 

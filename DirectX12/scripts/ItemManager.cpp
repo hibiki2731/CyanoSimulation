@@ -5,8 +5,8 @@
 //空のアイテムデータ
 const ItemData ItemManager::EmptyItem = {
 	"",
-	"",
-	"",
+	"なし",
+	"EMPTY",
 	{""},
 	{0},
 	0

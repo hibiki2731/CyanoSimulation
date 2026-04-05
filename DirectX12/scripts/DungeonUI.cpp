@@ -7,6 +7,7 @@
 #include "PlayerManager.h"
 #include "ItemManager.h"
 #include "json.hpp"
+#include "MyUtility.h"
 #include "Player.h"
 #include <fstream>
 #include <string>
@@ -14,10 +15,14 @@
 constexpr float CanvasWidth = Graphic::ClientWidth * 0.3f;
 constexpr float CanvasHeight = Graphic::ClientHeight * 0.2;
 constexpr float CanvasZ = 50.0f;
+XMFLOAT2 DungeonUI::ItemIconOriginPos = { 10.0f, 52.0f };
+XMFLOAT2 DungeonUI::ItemIconSize = { 60.0f, 60.0f };
 
 DungeonUI::DungeonUI(DungeonScene& scene)
 	:Actor(scene),
-	mDungeonScene(scene)
+	mItemManager(scene.getGame().getItemManager()),
+	mPlayerManager(scene.getGame().getPlayerManager()),
+	mPlayer(*scene.getPlayer())
 {
 	nlohmann::json uiData;
 	std::fstream file("assets\\data\\dungeonUIData.json");
@@ -49,8 +54,8 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		auto hpValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		hpValueText->setFontSize(hpTextFontSize);
 		hpValueText->setBaseLine(hpTextPosition[0] + uiData["hp"]["textSpace"].get<float>(), hpTextPosition[1]);
-		int hp = scene.getPlayer()->getHP();
-		int maxHp = scene.getPlayer()->getMaxHP();
+		int hp = mPlayer.getHP();
+		int maxHp = mPlayer.getMaxHP();
 		text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 		hpValueText->setText(text);
 		hpValueText->showText();
@@ -97,7 +102,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		auto apValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		apValueText->setFontSize(apTextFontSize);
 		apValueText->setBaseLine(apTextPosition[0] + uiData["ap"]["textSpace"].get<float>(), apTextPosition[1]);
-		text = std::to_wstring(scene.getPlayer()->getAP()) + L"/" + std::to_wstring(scene.getPlayer()->getMaxAP()) + L"\n";
+		text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
 		apValueText->setText(text);
 		apValueText->showText();
 		mAPValueText = apValueText.get();
@@ -127,14 +132,11 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 	}
 
 	//アイテムアイコン
-	mItemIconOriginPos = XMFLOAT2(10.0f, 55.0f);
-	auto& inventory = scene.getGame().getPlayerManager().getInventory();
 	for (int i = 0; i < scene.getPlayer()->getStorageSize(); i++) {
 		auto itemIcon = std::make_unique<SpriteComponent>(*this);
-		itemIcon->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , mItemIconOriginPos.y, CanvasZ - 1.0f));
+		itemIcon->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , ItemIconOriginPos.y, CanvasZ - 1.0f));
 		itemIcon->setSpriteSize(ItemIconSize);
-		if (i < inventory.size()) itemIcon->create(uiData["itemIcon"][scene.getGame().getItemManager().getItemData(inventory[i]).category].get<std::string>());
-		else itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+		itemIcon->create(uiData["itemIcon"][mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category].get<std::string>());
 		mItemIcons.push_back(itemIcon.get());
 		addComponent(std::move(itemIcon));
 	}
@@ -143,17 +145,27 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 	auto itemSelectFrame = std::make_unique<SpriteComponent>(*this);
 	itemSelectFrame->create("assets/picture/SelectFrame.png");
 	itemSelectFrame->setSpriteSize(ItemIconSize);
-	itemSelectFrame->setPosition(XMFLOAT3(mItemIconOriginPos.x, mItemIconOriginPos.y, CanvasZ - 2.0f));
+	itemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x, ItemIconOriginPos.y, CanvasZ - 2.0f));
 	mItemSelectFrame = itemSelectFrame.get();
 	addComponent(std::move(itemSelectFrame));
 
+	//選択アイテムの名前
+	auto selectItemText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+	selectItemText->setFontSize(uiData["selectItemText"]["fontSize"].get<float>());
+	auto selectItemTextPosition = uiData["selectItemText"]["position"].get<std::vector<float>>();
+	selectItemText->setBaseLine(selectItemTextPosition[0], selectItemTextPosition[1]);
+	std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
+	selectItemText->setText(selectItemTextStr);
+	selectItemText->showText();
+	mSelectItemText = selectItemText.get();
+	addComponent(std::move(selectItemText));
 }
 
 void DungeonUI::updateHP()
 {
 	//現在のHPを取得
-	int hp = mDungeonScene.getPlayer()->getHP();
-	int maxHp = mDungeonScene.getPlayer()->getMaxHP();
+	int hp =mPlayer.getHP();
+	int maxHp = mPlayer.getMaxHP();
 	//HP値のテキストを更新
 	std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 	mHPValueText->setText(text);
@@ -167,8 +179,8 @@ void DungeonUI::updateHP()
 void DungeonUI::updateAP()
 {
 	//現在のAPを取得
-	int ap = mDungeonScene.getPlayer()->getAP();
-	int maxAp = mDungeonScene.getPlayer()->getMaxAP();
+	int ap = mPlayer.getAP();
+	int maxAp = mPlayer.getMaxAP();
 	//AP値のテキストを更新
 	std::wstring text = std::to_wstring(ap) + L"/" + std::to_wstring(maxAp) + L"\n";
 	mAPValueText->setText(text);
@@ -191,13 +203,11 @@ void DungeonUI::updateItemIcon()
 	}
 	mItemIcons.clear();
 
-	auto& data = mScene.getGame().getPlayerManager().getPlayerData();
-	for (int i = 0; i < data.storageSize; i++) {
+	for (int i = 0; i < mPlayer.getStorageSize(); i++) {
 		auto itemIcon = std::make_unique<SpriteComponent>(*this);
-		itemIcon->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , mItemIconOriginPos.y, CanvasZ - 1.0f));
+		itemIcon->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , ItemIconOriginPos.y, CanvasZ - 1.0f));
 		itemIcon->setSpriteSize(ItemIconSize);
-		if (i < data.inventory.size()) itemIcon->create(uiData["itemIcon"][mScene.getGame().getItemManager().getItemData(data.inventory[i]).category].get<std::string>());
-		else itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+		itemIcon->create(uiData["itemIcon"][mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category].get<std::string>());
 		mItemIcons.push_back(itemIcon.get());
 		addComponent(std::move(itemIcon));
 	}
@@ -207,6 +217,12 @@ void DungeonUI::updateItemIcon()
 
 void DungeonUI::updateItemFrame()
 {
-	int selectIndex = mDungeonScene.getPlayer()->getSelectItemIndex();
-	mItemSelectFrame->setPosition(XMFLOAT3(mItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * selectIndex, mItemIconOriginPos.y, CanvasZ - 2.0f));
+	//選択アイテムの枠を更新
+	int selectIndex = mPlayer.getSelectItemIndex();
+	mItemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * selectIndex, ItemIconOriginPos.y, CanvasZ - 2.0f));
+
+	//選択アイテムの名前を更新
+	std::wstring selectItemText = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
+	mSelectItemText->setText(selectItemText);
+	mSelectItemText->showText();
 }

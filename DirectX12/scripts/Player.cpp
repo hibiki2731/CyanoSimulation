@@ -97,13 +97,13 @@ void Player::inputActor()
 	if (GetAsyncKeyState('S')) {
 		move(Direction::DOWN);
 	}
-	if (GetAsyncKeyState(VK_RIGHT)) {
+	if (GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState('L')) {
 		rotate(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState(VK_LEFT)) {
+	if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState('J')) {
 		rotate(Direction::LEFT);
 	}
-	if (isKeyJustPressed(VK_RETURN)) {
+	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		attack();
 	    collect();
 	}
@@ -216,6 +216,11 @@ int Player::getStorageSize()
 int Player::getSelectItemIndex()
 {
 	return mSelectItemIndex;
+}
+
+const std::string& Player::getSelectItemID()
+{
+	return mPlayerManager.getInventoryItem(mSelectItemIndex);
 }
 
 void Player::giveDamage(int damage)
@@ -449,6 +454,11 @@ void Player::useItem()
 	if (itemData.category == "HP_RECOVER") {
 		mCharacter->addHP(itemData.value);
 		mScene.updateHPUI();
+	}
+	else if (itemData.category == "AP_RECOVER") {
+		mAP += itemData.value;
+		if (mAP > mMaxAP) mAP = mMaxAP;
+		mScene.updateAPUI();
 	}
 
 	//インベントリーから削除

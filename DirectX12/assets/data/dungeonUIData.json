@@ -19,6 +19,12 @@
         "barOffsetPos":[0.0, 7.0]
    },
    "itemIcon":{
+        "EMPTY":"assets/picture/UI2/PNG/Default/panel_grey_bolts.png",
         "HP_RECOVER": "assets/picture/HerbIcon.png" 
+   },
+   "selectItemText":{
+    "fontSize": 20.0,
+    "position": [10.0 , 110.0]
    }
+   
 }
