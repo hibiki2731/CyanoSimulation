@@ -207,7 +207,7 @@ void DungeonUI::updateItemIcon()
 		auto itemIcon = std::make_unique<SpriteComponent>(*this);
 		itemIcon->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , ItemIconOriginPos.y, CanvasZ - 1.0f));
 		itemIcon->setSpriteSize(ItemIconSize);
-		itemIcon->create(uiData["itemIcon"][mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category].get<std::string>());
+		itemIcon->create(uiData["itemIcon"].value(mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category, "assets/picture/UI2/PNG/Default/panel_grey_bolts.png"));
 		mItemIcons.push_back(itemIcon.get());
 		addComponent(std::move(itemIcon));
 	}

@@ -20,7 +20,8 @@
    },
    "itemIcon":{
         "EMPTY":"assets/picture/UI2/PNG/Default/panel_grey_bolts.png",
-        "HP_RECOVER": "assets/picture/HerbIcon.png" 
+        "HP_RECOVER": "assets/picture/HerbIcon.png",
+        "AP_RECOVER": "assets/picture/SaltedKerp.png" 
    },
    "selectItemText":{
     "fontSize": 20.0,

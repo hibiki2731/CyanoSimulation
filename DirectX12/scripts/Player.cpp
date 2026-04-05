@@ -457,8 +457,7 @@ void Player::useItem()
 	}
 	else if (itemData.category == "AP_RECOVER") {
 		mAP += itemData.value;
-		if (mAP > mMaxAP) mAP = mMaxAP;
-		mScene.updateAPUI();
+		if (mAP > mMaxAP) mAP = mMaxAP + 1;
 	}
 
 	//インベントリーから削除

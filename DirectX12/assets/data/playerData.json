@@ -10,7 +10,6 @@
     "flashDuration": 0.5,
     "hp": 80,
     "inventory": [
-        "POSION"
     ],
     "maxhp": 100,
     "moveSpeed": 5.0,
