@@ -1,19 +1,24 @@
 {
    "BGM": [
       {
+         "id" : "BGM_TITLE",
+         "fileType" : "ogg",
+         "filePath" : "assets/sounds/BGMs/titleBGM2.ogg"
+      },
+      {
          "id": "BGM_TOWN",
          "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/townBGM.ogg"
+         "filePath": "assets/sounds/BGMs/townBGM2.ogg"
       },
       {
-         "id": "BGM_DUNGEON1",
+         "id": "BGM_DUNGEON",
          "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/dungeon_prepare.ogg"
+         "filePath": "assets/sounds/BGMs/dungeonBGM4.ogg"
       },
       {
-         "id": "BGM_DUNGEON2",
-         "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/dungeon_dangerous.ogg"
+      "id": "BGM_GAMEOVER",
+      "fileType": "ogg",
+      "filePath": "assets/sounds/BGMs/gameoverBGM.ogg"
       }
    ],
    "SE": [
@@ -46,9 +51,15 @@
          "filePath": "assets/sounds/SEs/btn12.mp3"
       },
       {
-         "id": "MAP_FOOTSTEP1",
+         "id": "TITLE_FOOTSTEP",
          "fileType": "wav",
          "filePath": "assets/sounds/SEs/maou_se_sound_footstep01.wav"
+      },
+      {
+         "id":"DUNGEON_FOOTSTEP",
+         "fileType" :"wav",
+         "filePath" :"assets/sounds/SEs/footstep1.wav",
+         "poolSize" : 1
       }
    ]
 }

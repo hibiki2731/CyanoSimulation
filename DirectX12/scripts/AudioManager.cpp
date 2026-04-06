@@ -141,14 +141,14 @@ void AudioManager::playBGM(const std::string& soundID)
 	mCurrentBGM = soundData.sourceVoices[0];
 }
 
-void AudioManager::playSE(const std::string& soundID)
+IXAudio2SourceVoice* AudioManager::playSE(const std::string& soundID)
 {
 	//再生が終了したボイスを再生中配列から除去する
 	clearFinishedSounds();
 
 	//サウンドデータを取得
 	auto iter = mSoundDataList.find(soundID);
-	if (iter == mSoundDataList.end()) return;
+	if (iter == mSoundDataList.end()) return nullptr;
 	SoundData& soundData = *iter->second;
 	
 	for (auto voice : soundData.sourceVoices) {
@@ -164,7 +164,7 @@ void AudioManager::playSE(const std::string& soundID)
 
 		//再生中ボイス配列に追加
 		mNowPlayingVoicess.emplace_back(voice);
-		break;
+		return voice;
 	}
 
 	//全てのボイスが再生中の場合
@@ -172,6 +172,7 @@ void AudioManager::playSE(const std::string& soundID)
 	soundData.sourceVoices[0]->FlushSourceBuffers();
 	soundData.sourceVoices[0]->SubmitSourceBuffer(&soundData.buffer);
 	soundData.sourceVoices[0]->Start(0);
+	return soundData.sourceVoices[0];
 
 }
 

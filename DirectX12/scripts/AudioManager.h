@@ -14,7 +14,9 @@ public:
 	~AudioManager();
 
 	void playBGM(const std::string& soundID);
-	void playSE(const std::string& soundID);
+	IXAudio2SourceVoice* playSE(const std::string& soundID);
+	void pauseBGM();
+	void pauseAllSounds();
 
 private:
 
@@ -38,8 +40,6 @@ private:
 
 	void initXAudio();
 	void loadSoundFiles();
-	void pauseBGM();
-	void pauseAllSounds();
 	void finishBGM();
 	void finishAllSounds();
 	void clearFinishedSounds();

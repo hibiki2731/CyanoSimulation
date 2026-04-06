@@ -13,6 +13,7 @@
 #include "MiniMap.h"
 #include "Graphic.h"
 #include "DungeonUI.h"
+#include "AudioManager.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -60,6 +61,7 @@ void DungeonScene::onEnter()
 	mUI = dungeonUI.get();
 	addActor(std::move(dungeonUI));
 
+	mGame.getAudioManager().playBGM("BGM_DUNGEON");
 }
 
 void DungeonScene::onExit()

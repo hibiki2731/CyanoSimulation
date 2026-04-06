@@ -4,6 +4,7 @@
 #include "input.h"
 #include "SceneManager.h"
 #include "TextComponent.h"
+#include "AudioManager.h"
 #include "SpriteComponent.h"
 
 GameOverScene::GameOverScene(Game& game)
@@ -15,6 +16,9 @@ void GameOverScene::onEnter()
 {
 	auto gameOverUI = std::make_unique<GameOverUI>(*this);
 	addActor(std::move(gameOverUI));
+
+	//BGM再生
+	mGame.getAudioManager().playBGM("BGM_GAMEOVER");
 }
 
 void GameOverScene::onExit()

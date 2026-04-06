@@ -326,7 +326,7 @@ void Player::move(Direction direction)
 
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
-	mScene.getGame().getAudioManager().playSE("MAP_FOOTSTEP1");
+	mScene.getGame().getAudioManager().playSE("DUNGEON_FOOTSTEP");
 	turnEnd();
 
 }	
