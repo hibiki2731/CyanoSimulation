@@ -27,6 +27,13 @@
         "x": 80.0,
         "y": 110.0
     },
+    "ExplorerMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "靴\nバックパック\n",
+        "x": 310.0,
+        "y": 193.0
+    },
     "ExplorerShopMenuText": {
         "fontSize": 50.0,
         "lineSpace": 0.0,
@@ -38,8 +45,15 @@
         "fontSize": 50.0,
         "lineSpace": 0.0,
         "text": "ExplorerShop\n",
-        "x": 80.0,
+        "x": 280.0,
         "y": 110.0
+    },
+    "ForgeArmerMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "服\n",
+        "x": 310.0,
+        "y": 193.0
     },
     "ForgeArmerMenuText": {
         "fontSize": 50.0,
@@ -51,23 +65,30 @@
     "ForgeArmerMenuTitle": {
         "fontSize": 50.0,
         "lineSpace": 0.0,
-        "text": "WEAPON\n",
-        "x": 80.0,
+        "text": "Armer\n",
+        "x": 280.0,
         "y": 110.0
     },
     "ForgeMenuText": {
-        "fontSize": 50.0,
-        "lineSpace": 10.0,
-        "text": "Armer\nWeapon\n",
-        "x": 145.58999633789063,
-        "y": 225.0
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "Weapon\nArmer\n",
+        "x": 290.0,
+        "y": 230.0
     },
     "ForgeMenuTitle": {
         "fontSize": 50.0,
         "lineSpace": 0.0,
         "text": "Forge\n",
-        "x": 145.58999633789063,
+        "x": 280.0,
         "y": 170.0
+    },
+    "ForgeWeaponMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 8.0,
+        "text": "なし\n",
+        "x": 320.0,
+        "y": 235.0
     },
     "ForgeWeaponMenuText": {
         "fontSize": 50.0,
@@ -80,29 +101,29 @@
         "fontSize": 50.0,
         "lineSpace": 0.0,
         "text": "WEAPON\n",
-        "x": 80.0,
+        "x": 280.0,
         "y": 110.0
     },
     "InnMenuText": {
         "fontSize": 50.0,
-        "lineSpace": 10.0,
+        "lineSpace": 60.0,
         "text": "泊る\nセーブ\n",
-        "x": 320.0,
-        "y": 230.71400451660156
+        "x": 290.0,
+        "y": 200.0
     },
     "InnMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": -50.0,
         "text": "Inn\n",
-        "x": 320.0,
-        "y": 175.71400451660156
+        "x": 280.0,
+        "y": 140.0
     },
     "MainMenuText": {
         "fontSize": 50.0,
-        "lineSpace": 10.0,
+        "lineSpace": 60.0,
         "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n",
-        "x": 20.0,
-        "y": 116.4000015258789
+        "x": 60.0,
+        "y": 140.0
     },
     "MainMenuTitle": {
         "fontSize": 0.0,
@@ -110,6 +131,13 @@
         "text": "",
         "x": 0.0,
         "y": 0.0
+    },
+    "ShopMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "薬草\n塩昆布\n",
+        "x": 320.0,
+        "y": 193.0
     },
     "ShopMenuText": {
         "fontSize": 50.0,
@@ -122,7 +150,7 @@
         "fontSize": 50.0,
         "lineSpace": 0.0,
         "text": "Shop\n",
-        "x": 80.0,
+        "x": 280.0,
         "y": 110.0
     },
     "StatusMenuText": {

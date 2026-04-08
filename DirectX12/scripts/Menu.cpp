@@ -58,12 +58,12 @@ void Menu::initComponent(std::string windowName, float zDepth)
 	mPosition = XMFLOAT3(spriteJson[windowName]["x"].get<float>(), spriteJson[windowName]["y"].get<float>(), zDepth);
 	window->setPosition(mPosition);
 #ifdef _DEBUG
-	window->activateControll("assets\\data\\townMenuData.json", windowName);
+	window->activateControll(windowName);
 #endif
 	addComponent(std::move(window));
 
 	//見出し
-	std::wstring titleName = Utility::stringToWString(textJson[windowName + "Title"].value("title", ""));
+	std::wstring titleName = Utility::stringToWString(textJson[windowName + "Title"].value("text", ""));
 	if (titleName != L"") {
 		auto title = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 		title->setText(titleName);
@@ -71,6 +71,9 @@ void Menu::initComponent(std::string windowName, float zDepth)
 		title->setFontSize(textJson[windowName + "Title"]["fontSize"].get<float>());
 		title->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 		title->showText();
+#ifdef _DEBUG
+		title->activateControll(windowName + "Title");
+#endif 
 		addComponent(std::move(title));
 	}
 
@@ -86,8 +89,11 @@ void Menu::initComponent(std::string windowName, float zDepth)
 		text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 		text->setLineSpace(lineSpace);
 		text->showText();
+#ifdef _DEBUG
+		text->activateControll(windowName + "Text");
+#endif
 		addComponent(std::move(text));
-		mArrowMoveLength = fontSize + lineSpace;
+		mArrowMoveLength = lineSpace;
 	}
 
 	//矢印
@@ -98,6 +104,9 @@ void Menu::initComponent(std::string windowName, float zDepth)
 	arrow->setPosition(XMFLOAT3(spriteJson[windowName + "Arrow"]["x"].get<float>(), spriteJson[windowName + "Arrow"]["y"].get<float>(), zDepth - 1.0f));
 	arrow->setRotation(spriteJson[windowName + "Arrow"]["rotation"].get<float>());
 	mArrow = arrow.get();
+#ifdef _DEBUG
+	arrow->activateControll(windowName + "Arrow");
+#endif
 	addComponent(std::move(arrow));
 
 }

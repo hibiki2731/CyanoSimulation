@@ -165,7 +165,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 
 	{
 		//所持金
-		auto moneyText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+		//auto moneyText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		//moneyText->setFontSize
 	}
 

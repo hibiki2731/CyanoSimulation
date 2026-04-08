@@ -136,7 +136,7 @@ const std::unordered_map<std::string, size_t>& ItemManager::getResourceData()
 	return mResourceData;
 }
 
-const ItemData& ItemManager::getItemData(std::string id)
+const ItemData& ItemManager::getItemData(const std::string& id)
 {
 	auto iter = mItemData.find(id);
 	if (iter != mItemData.end())
@@ -152,7 +152,7 @@ const std::unordered_map<std::string, ItemData>& ItemManager::getItemData()
 	return mItemData;
 }
 
-const WeaponData& ItemManager::getWeaponData(std::string id)
+const WeaponData& ItemManager::getWeaponData(const std::string& id)
 {
 	auto iter = mWeaponData.find(id);
 	if (iter != mWeaponData.end())
@@ -185,7 +185,7 @@ const std::unordered_map<std::string, ArmerData>& ItemManager::getArmerData()
 	return mArmerData;
 }
 
-const ExplorerData& ItemManager::getExplorerData(std::string id)
+const ExplorerData& ItemManager::getExplorerData(const std::string& id)
 {
 	auto iter = mExplorerData.find(id);
 	if (iter != mExplorerData.end())

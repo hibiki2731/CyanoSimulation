@@ -30,6 +30,11 @@ public:
 	bool getIsActive();
 	float getAscent();
 
+#ifdef _DEBUG
+	void activateControll(const std::string& structName);
+	bool getActiveControll() const { return mActiveControll; }
+#endif
+
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
 	Graphic& mGraphic;
@@ -69,6 +74,13 @@ private:
 	void createEmptyTexture();
 	void wrapTexture();
 	void createSprite(float zDepth);
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+	bool mActiveControll = false;
+	std::string mStructName;
+	std::string mTextBuffer;
+#endif
 
 };
 

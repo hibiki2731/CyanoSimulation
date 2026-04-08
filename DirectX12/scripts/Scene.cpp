@@ -129,7 +129,6 @@ void Scene::lateUpdate()
 void Scene::draw3D()
 {
 	for (auto& mesh : mMeshes) {
-		if (!mesh) continue;
 		mesh->draw();
 	}
 }
@@ -137,11 +136,9 @@ void Scene::draw3D()
 void Scene::draw2D()
 {
 	for (auto& sprite : mSprites) {
-		if (!sprite) continue;
 		sprite->draw();
 	}
 	for (auto& text : mTexts) {
-		if (!text) continue;
 		text->draw();
 	}
 }
@@ -183,15 +180,17 @@ void Scene::inputActors()
 #ifdef _DEBUG
 void Scene::drawDebugGUI()
 {
-	//mGame.getGUIDebugger().begin();
-
 	for (auto sprite : mSprites) {
 		if (sprite->getActiveControll()) {
 			mGame.getGUIDebugger().drawSpriteDebugGUI(*sprite);
 		}
 	}
 
-	//mGame.getGUIDebugger().end();
+	for (auto text : mTexts) {
+		if (text->getActiveControll()) {
+			mGame.getGUIDebugger().drawTextDebugGUI(*text);
+		}
+	}
 }
 #endif
 

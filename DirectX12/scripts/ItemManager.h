@@ -53,13 +53,13 @@ public:
 	//getter
 	int getResourceNum(std::string id);
 	const std::unordered_map<std::string, size_t>& getResourceData();
-	const ItemData& getItemData(std::string id);
+	const ItemData& getItemData(const std::string& id);
 	const std::unordered_map<std::string, ItemData>& getItemData();
-	const WeaponData& getWeaponData(std::string id);
+	const WeaponData& getWeaponData(const std::string& id);
 	const std::unordered_map<std::string, WeaponData>& getWeaponData();
 	const ArmerData& getArmerData(std::string id);
 	const std::unordered_map<std::string, ArmerData>& getArmerData();
-	const ExplorerData& getExplorerData(std::string id);
+	const ExplorerData& getExplorerData(const std::string& id);
 	const std::unordered_map<std::string, ExplorerData>& getExplorerData();
 
 	//setter

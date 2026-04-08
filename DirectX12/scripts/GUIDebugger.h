@@ -13,10 +13,11 @@ public:
 	void begin();
 	void end();
 	void drawSpriteDebugGUI(class SpriteComponent& sprite);
+	void drawTextDebugGUI(class TextComponent& text);
 private:
 	ComPtr<ID3D12DescriptorHeap> mSrvHeap;
 	Graphic& mGraphic;
 	//スプライト用
-	const char* mSpriteFilePathBuffer = "default.png";
+	std::string mSpriteFilePathBuffer = "default.png";
 	
 };

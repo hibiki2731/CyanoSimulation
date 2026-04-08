@@ -31,7 +31,7 @@ public:
 
     //デバッグ用
 #ifdef _DEBUG
-    void activateControll(const std::string& filePath, const std::string& structName);
+    void activateControll(const std::string& structName);
 	bool getActiveControll() const { return mActiveControll; }
 
 #endif
@@ -44,6 +44,7 @@ private:
     XMFLOAT2 mSpriteSize;
 	XMFLOAT2 mTextureSize;
 	float mBordarSize;
+	std::string mTextureFilePath;
 
     //デバック用
     HRESULT Hr;
@@ -75,7 +76,6 @@ private:
 #ifdef _DEBUG
 	friend class GUIDebugger;
 	bool mActiveControll = false;
-	std::string mSaveFilePath;
 	std::string mStructName;
 #endif
 

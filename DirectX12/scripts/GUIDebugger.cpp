@@ -1,7 +1,10 @@
 ﻿#include "GUIDebugger.h"
 #include "SpriteComponent.h"
+#include "TextComponent.h"
 #include "fstream"
 #include "json.hpp"
+#include "Imgui/imgui_stdlib.h"
+#include "MyUtility.h"
 
 struct ExampleDescriptorHeapAllocator
 {
@@ -78,7 +81,7 @@ GUIDebugger::GUIDebugger(Graphic& graphic)
 
     // Setup scaling
     ImGuiStyle& style = ImGui::GetStyle();
-    style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
+    //style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
     style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
 
 	//Win32バックエンドの初期化
@@ -129,22 +132,75 @@ void GUIDebugger::drawSpriteDebugGUI(SpriteComponent& sprite)
 		ImGui::SliderFloat("Y", &sprite.mPosition.y, 0.0f, Graphic::ClientHeight);
 		ImGui::SliderFloat("Width", &sprite.mSpriteSize.x, 0.01f, Graphic::ClientWidth);
 		ImGui::SliderFloat("Height", &sprite.mSpriteSize.y, 0.1f, Graphic::ClientHeight);
+		ImGui::SliderFloat("BorderSize", &sprite.mBordarSize, 0.0f, 100.0f);
+		ImGui::SliderFloat("Rotation", &sprite.mRotation, 0.0f, 2.0f * XM_PI);
 
         //テクスチャの変更
-		if (ImGui::InputText("Texture Path", mSpriteFilePathBuffer)) {
-			sprite.create(sprite.mTexturePath);
+        ImGui::InputText("Texture Path", &sprite.mTextureFilePath);
+        ImGui::SameLine();
+
+		if (ImGui::Button("Apply")) {
+			sprite.create(sprite.mTextureFilePath);
 		}
 
         if (ImGui::Button("Save to Json")) {
-			std::fstream infile(sprite.mSaveFilePath);
+			std::ifstream infile("assets/data/spriteData.json");
 			nlohmann::json j;
             infile >> j;
 			j[sprite.mStructName]["x"] = sprite.mPosition.x;
 			j[sprite.mStructName]["y"] = sprite.mPosition.y;
 			j[sprite.mStructName]["width"] = sprite.mSpriteSize.x;
 			j[sprite.mStructName]["height"] = sprite.mSpriteSize.y;
+			j[sprite.mStructName]["borderSize"] = sprite.mBordarSize;
+			j[sprite.mStructName]["rotation"] = sprite.mRotation;
+			j[sprite.mStructName]["filePath"] = sprite.mTextureFilePath;
             
-			std::ofstream outfile(sprite.mSaveFilePath);
+			std::ofstream outfile("assets/data/spriteData.json");
+			outfile << j.dump(4); // 4はインデントスペースの数			
+        }
+
+	}
+	ImGui::End();
+}
+
+void GUIDebugger::drawTextDebugGUI(TextComponent& text)
+{
+	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin(text.mStructName.c_str())) {
+        if (ImGui::SliderFloat("X", &text.mBaseLineX, 0.0f, Graphic::ClientWidth)) {
+            text.showText();
+        }
+        if (ImGui::SliderFloat("Y", &text.mBaseLineY, 0.0f, Graphic::ClientHeight)) {
+			text.showText();
+        }
+        if (ImGui::SliderFloat("FontSize", &text.mFontSize, 0.01f, Graphic::ClientWidth)) {
+            text.showText();
+        }
+        if (ImGui::SliderFloat("LineSpace", &text.mLineSpace, 0.0f, 100.0f)) {
+			text.mBaseLineSpace = text.mLineSpace * 0.8f;
+			text.showText();
+        }
+
+        //テキストの変更
+        ImGui::InputText("Text", &text.mTextBuffer);
+
+		if (ImGui::Button("Apply")) {
+			text.mText = Utility::stringToWString(text.mTextBuffer);
+            text.showText();
+		}
+
+        if (ImGui::Button("Save to Json")) {
+			std::ifstream infile("assets/data/textData.json");
+			nlohmann::json j;
+            infile >> j;
+			j[text.mStructName]["x"] = text.mBaseLineX;
+			j[text.mStructName]["y"] = text.mBaseLineY;
+			j[text.mStructName]["fontSize"] = text.mFontSize;
+            j[text.mStructName]["lineSpace"] = text.mLineSpace;
+			j[text.mStructName]["text"] = Utility::wstringToString(text.mText);
+            
+			std::ofstream outfile("assets/data/textData.json");
 			outfile << j.dump(4); // 4はインデントスペースの数			
         }
 

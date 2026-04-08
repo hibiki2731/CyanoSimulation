@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Scene.h"
 #include "AssetManager.h"
+#include "MyUtility.h"
 
 TextComponent::TextComponent(Actor& owner, float zDepth) 
 	: Component(owner),
@@ -188,8 +189,8 @@ void TextComponent::setTextColor(const D2D1::ColorF& color)
 void TextComponent::setLineSpace(float space)
 {
 	isLineSpaceDefault = false;
-	mLineSpace = space + mFontSize; //行間の大きさ
-	mBaseLineSpace = mFontSize; //文字のベースライン
+	mLineSpace = space; //行間の大きさ
+	mBaseLineSpace = mLineSpace * 0.8f; //文字のベースライン
 }
 
 bool TextComponent::getIsActive()
@@ -202,6 +203,7 @@ float TextComponent::getAscent()
 
 	return 0.0f;
 }
+
 
 void TextComponent::createEmptyTexture()
 {
@@ -312,3 +314,12 @@ void TextComponent::createSprite(float zDepth)
 	mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
 	mGraphic.createShaderResourceView(mTexture.Get(), heapIndex);
 }
+
+#ifdef _DEBUG
+void TextComponent::activateControll(const std::string& structName)
+{
+	mActiveControll = true;
+	mStructName = structName;
+	mTextBuffer = Utility::wstringToString(mText);
+}
+#endif

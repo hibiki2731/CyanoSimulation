@@ -4,6 +4,8 @@
 #include <fstream>
 #include "json.hpp"
 
+static std::string empty = "";
+
 PlayerManager::PlayerManager(Game& game) : mGame(game)
 {
 }
@@ -16,7 +18,7 @@ const PlayerData& PlayerManager::getPlayerData()
 const std::string& PlayerManager::getInventoryItem(int index)
 {
 	int inventorySize = mPlayerData.inventory.size();
-	if (inventorySize == 0 || index >= inventorySize || index < 0) return "";
+	if (inventorySize == 0 || index >= inventorySize || index < 0) return empty;
 
 	return mPlayerData.inventory[index];
 }

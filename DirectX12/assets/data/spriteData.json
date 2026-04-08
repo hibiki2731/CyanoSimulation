@@ -35,13 +35,40 @@
         "x": 300.0,
         "y": 80.0
     },
+    "ExplorerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 620.0
+    },
+    "ExplorerMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 203.0
+    },
+    "ExplorerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 175.0
+    },
     "ExplorerShopMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
-        "height": 368.7239990234375,
+        "height": 565.0,
         "rotation": 0.0,
-        "width": 800.0,
-        "x": 60.0,
+        "width": 350.0,
+        "x": 256.0,
         "y": 100.0
     },
     "ExplorerShopMenuArrow": {
@@ -50,16 +77,16 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 536.0,
+        "y": 203.0
     },
     "ForgeArmerMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
-        "height": 500.0,
+        "height": 565.0,
         "rotation": 0.0,
-        "width": 800.0,
-        "x": 60.0,
+        "width": 350.0,
+        "x": 256.0,
         "y": 100.0
     },
     "ForgeArmerMenuArrow": {
@@ -68,16 +95,43 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 536.0,
+        "y": 203.0
+    },
+    "ForgeArmerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 620.0
+    },
+    "ForgeArmerMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 203.0
+    },
+    "ForgeArmerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 175.0
     },
     "ForgeMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
         "height": 229.1439971923828,
         "rotation": 0.0,
-        "width": 313.5450134277344,
-        "x": 125.58999633789063,
+        "width": 278.9179992675781,
+        "x": 256.0,
         "y": 160.0
     },
     "ForgeMenuArrow": {
@@ -86,16 +140,16 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 400.0,
-        "y": 75.0
+        "x": 472.9110107421875,
+        "y": 245.0
     },
     "ForgeWeaponMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
-        "height": 500.0,
+        "height": 565.0,
         "rotation": 0.0,
-        "width": 800.0,
-        "x": 60.0,
+        "width": 350.0,
+        "x": 256.0,
         "y": 100.0
     },
     "ForgeWeaponMenuArrow": {
@@ -104,17 +158,44 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 536.0,
+        "y": 205.0
+    },
+    "ForgeWeaponMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 620.0
+    },
+    "ForgeWeaponMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 202.0
+    },
+    "ForgeWeaponMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 175.0
     },
     "InnMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
         "height": 220.01100158691406,
         "rotation": 0.0,
-        "width": 200.0,
-        "x": 300.0,
-        "y": 165.71400451660156
+        "width": 240.94900512695313,
+        "x": 256.0,
+        "y": 135.5290069580078
     },
     "InnMenuArrow": {
         "borderSize": 0.0,
@@ -122,16 +203,16 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 130.0,
-        "y": 75.0
+        "x": 428.20098876953125,
+        "y": 210.0
     },
     "MainMenu": {
-        "borderSize": 24.0,
-        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
-        "height": 344.0050048828125,
+        "borderSize": 39.0,
+        "filePath": "assets/picture/UI2/PNG/Default/hexagon_brown.png",
+        "height": 366.5610046386719,
         "rotation": 0.0,
         "width": 374.3999938964844,
-        "x": 0.0,
+        "x": 13.229999542236328,
         "y": 106.4000015258789
     },
     "MainMenuArrow": {
@@ -140,16 +221,16 @@
         "height": 50.0,
         "rotation": -1.5707963705062866,
         "width": 50.0,
-        "x": 310.0,
-        "y": 20.0
+        "x": 319.3089904785156,
+        "y": 144.0
     },
     "ShopMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
-        "height": 446.2139892578125,
+        "height": 565.0,
         "rotation": 0.0,
-        "width": 800.0,
-        "x": 60.0,
+        "width": 350.0,
+        "x": 256.0,
         "y": 100.0
     },
     "ShopMenuArrow": {
@@ -158,8 +239,35 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 536.0,
+        "y": 203.0
+    },
+    "ShopMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 620.0
+    },
+    "ShopMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 202.0
+    },
+    "ShopMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 175.0
     },
     "StatusMenu": {
         "borderSize": 24.0,

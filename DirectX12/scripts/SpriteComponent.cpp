@@ -71,6 +71,8 @@ void SpriteComponent::create(const std::string filename)
 	int heapIndex = mHeapIndex;
 	mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
 	mGraphic.createShaderResourceView(mTextureBuf, heapIndex);
+
+	mTextureFilePath = filename;
 }
 
 void SpriteComponent::draw()
@@ -146,10 +148,9 @@ void SpriteComponent::setZPos(float zPos)
 
 //デバッグ用
 #ifdef _DEBUG
-void SpriteComponent::activateControll(const std::string& filePath, const std::string& structName)
+void SpriteComponent::activateControll(const std::string& structName)
 {
 	mActiveControll = true;
-	mSaveFilePath = filePath;
 	mStructName = structName;
 }
 #endif
