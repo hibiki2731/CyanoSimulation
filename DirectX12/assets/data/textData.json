@@ -1,0 +1,142 @@
+{
+    "EquipArmerMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "EquipArmerMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "ARMER\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "EquipWeaponMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "EquipWeaponMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "WEAPON\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "ExplorerShopMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ExplorerShopMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "ExplorerShop\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "ForgeArmerMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ForgeArmerMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "WEAPON\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "ForgeMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 10.0,
+        "text": "Armer\nWeapon\n",
+        "x": 145.58999633789063,
+        "y": 225.0
+    },
+    "ForgeMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "Forge\n",
+        "x": 145.58999633789063,
+        "y": 170.0
+    },
+    "ForgeWeaponMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ForgeWeaponMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "WEAPON\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "InnMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 10.0,
+        "text": "泊る\nセーブ\n",
+        "x": 320.0,
+        "y": 230.71400451660156
+    },
+    "InnMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "Inn\n",
+        "x": 320.0,
+        "y": 175.71400451660156
+    },
+    "MainMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 10.0,
+        "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n",
+        "x": 20.0,
+        "y": 116.4000015258789
+    },
+    "MainMenuTitle": {
+        "fontSize": 0.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "ShopMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ShopMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "Shop\n",
+        "x": 80.0,
+        "y": 110.0
+    },
+    "StatusMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 10.0,
+        "text": "WEAPON\nARMER\n",
+        "x": 80.0,
+        "y": 175.0
+    },
+    "StatusMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "STATUS\n",
+        "x": 80.0,
+        "y": 110.0
+    }
+}

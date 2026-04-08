@@ -1,5 +1,4 @@
 ﻿#include "SpriteComponent.h"
-
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -24,11 +23,14 @@ SpriteComponent::SpriteComponent(Actor& owner, float zDepth)
 	mCommandList = mGraphic.getCommandList();
 	mOwner.getScene().addSprite(this);
 	mNumSprites = 1;
+
+	//初期化
+	mCBIndex = 0;
+	mHeapIndex = 0;
+	mCBSize = 0;
+	mHeapSize = 0;
 }
 
-SpriteComponent::~SpriteComponent()
-{
-}
 
 void SpriteComponent::endProcess()
 {
@@ -38,17 +40,19 @@ void SpriteComponent::endProcess()
 
 void SpriteComponent::create(const std::string filename)
 {
-	//コンスタントバッファ、ディスクリプタヒープ用のインデックスを取得
-	mCBSize = 256 * (1 + mNumSprites); //spriteConstantBuf + textureの数
-	mHeapSize = 2 + mNumSprites;
-	mCBIndex = mAssetManager.getCBEndIndex(mCBSize);
-	mHeapIndex = mAssetManager.getHeapEndIndex(mHeapSize);
+	if(mCBSize == 0 && mHeapSize == 0) {
+		//コンスタントバッファ、ディスクリプタヒープ用のインデックスを取得
+		mCBSize = 256 * (1 + mNumSprites); //spriteConstantBuf + textureの数
+		mHeapSize = 2 + mNumSprites;
+		mCBIndex = mAssetManager.getCBEndIndex(mCBSize);
+		mHeapIndex = mAssetManager.getHeapEndIndex(mHeapSize);
 
-	//Sprite用の各Viewを取得
-	SpriteData spriteData = mAssetManager.getSpriteData();
-	mVertexBufView = spriteData.VertexBufView;
-	mIndexBufView = spriteData.IndexBufView;
+		//Sprite用の各Viewを取得
+		SpriteData spriteData = mAssetManager.getSpriteData();
+		mVertexBufView = spriteData.VertexBufView;
+		mIndexBufView = spriteData.IndexBufView;
 
+	}
 	//テクスチャを取得
 	mTextureSize = mAssetManager.createTextureAndGetSize(filename);
 	mTextureBuf = mAssetManager.getShaderResource(filename);
@@ -139,3 +143,13 @@ void SpriteComponent::setZPos(float zPos)
 {
 	mPosition.z = zPos;
 }
+
+//デバッグ用
+#ifdef _DEBUG
+void SpriteComponent::activateControll(const std::string& filePath, const std::string& structName)
+{
+	mActiveControll = true;
+	mSaveFilePath = filePath;
+	mStructName = structName;
+}
+#endif

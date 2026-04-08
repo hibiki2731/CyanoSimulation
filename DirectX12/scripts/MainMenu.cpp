@@ -12,6 +12,7 @@
 MainMenu::MainMenu(TownScene& scene, float zDepth) : Menu(scene, "MainMenu", zDepth)
 {
 	mMaxIndex = 5;
+	
 }
 
 //各種メニューのupdate

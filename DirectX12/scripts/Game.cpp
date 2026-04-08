@@ -2,8 +2,6 @@
 #include "SceneManager.h"
 #include "Actor.h"
 #include "Player.h"
-#include "UI.h"
-#include "Player.h"
 #include "MessageWindow.h"
 #include "MeshComponent.h"
 #include "SpriteComponent.h"
@@ -20,6 +18,7 @@
 #include "PlayerManager.h"
 #include "AudioManager.h"
 #include "Scene.h"
+#include "GUIDebugger.h"
 
 Game::Game(){
 	mUpdatingActors = false;
@@ -79,6 +78,9 @@ void Game::init() {
 		fbxConverter.fbxToTxt(fbx[i], text[i], 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
 		
 	}
+
+	//GUIControllerの初期化
+	mGUIDebugger = std::make_unique<GUIDebugger>(*mGraphic.get());
 #endif
 
 
@@ -133,6 +135,7 @@ AudioManager& Game::getAudioManager()
 	return *mAudioManager.get();
 }
 
+
 void Game::input()
 {
 	updateInput();
@@ -173,6 +176,8 @@ void Game::draw()
 
 	//3D描画
 	mGraphic->begin3DRender();
+
+
 	mGraphic->setRenderType(Graphic::RENDER_3D);
 	mSceneManager->drawScene3D();
 
@@ -183,9 +188,23 @@ void Game::draw()
 	//シーン独自の描画
 	mSceneManager->drawScene();
 
+#ifdef _DEBUG
+	mGUIDebugger->begin();
+	mSceneManager->drawDebugGUI();
+	mGUIDebugger->end();
+#endif
+
 	mGraphic->end3DRender();
 
 	mGraphic->moveToNextFrame();
 
 
 }
+
+#ifdef _DEBUG
+
+GUIDebugger& Game::getGUIDebugger()
+{
+	return *mGUIDebugger.get();
+}
+#endif

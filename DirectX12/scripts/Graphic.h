@@ -70,10 +70,8 @@ public:
 	void waitGPU();
 	void delayRelease(ComPtr<IUnknown>& resource);
 
-	//エフェクト
-	void startShake();
-
-	//Getter
+	//getter
+	HWND getWindowHandle();
 	float getAspect();
 	UINT getCbvTbvIncSize();
 	ID3D12GraphicsCommandList* getCommandList();
@@ -107,6 +105,10 @@ public:
 	static constexpr int ClientHeight = 720;
 	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 	static constexpr int FrameCount = 2;
+
+#ifdef _DEBUG
+	void setShareDescriptor();
+#endif
 private:
 	//初期化関数
 	HRESULT createDevice();

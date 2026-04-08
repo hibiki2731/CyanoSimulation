@@ -31,6 +31,7 @@ class SceneManager;
 class ItemManager;
 class PlayerManager;
 class AudioManager;
+class GUIDebugger;
 
 class Game {
 public:
@@ -50,6 +51,11 @@ public:
 	SceneManager& getSceneManager();
 	PlayerManager& getPlayerManager();
 	AudioManager& getAudioManager();
+
+#ifdef _DEBUG
+	GUIDebugger& getGUIDebugger();
+#endif
+
 
 private:
 	bool mUpdatingActors;
@@ -71,6 +77,11 @@ private:
 
 	//オーディオマネージャー
 	std::unique_ptr<AudioManager> mAudioManager;
+
+#ifdef _DEBUG
+	//GUI編集用
+	std::unique_ptr<GUIDebugger> mGUIDebugger;
+#endif 
 
 	//ループ内処理
 	void input();

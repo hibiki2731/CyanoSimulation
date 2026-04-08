@@ -7,13 +7,13 @@
 
 class AssetManager;
 struct SpriteData;
+class GUIDebugger;
 
 class SpriteComponent :
     public Component
 {
 public:
 	SpriteComponent(Actor& owner, float zDepth = 100.0f);
-    ~SpriteComponent();
 
 	void endProcess() override;
 
@@ -29,7 +29,14 @@ public:
 	void movePosition(const XMFLOAT2& diff);
     void setZPos(float zPos);
 
-protected:
+    //デバッグ用
+#ifdef _DEBUG
+    void activateControll(const std::string& filePath, const std::string& structName);
+	bool getActiveControll() const { return mActiveControll; }
+
+#endif
+
+private:
     //描画範囲
     XMFLOAT3 mPosition;
 	XMFLOAT2 mScale;
@@ -63,6 +70,14 @@ protected:
     D3D12_INDEX_BUFFER_VIEW mIndexBufView;
     //テクスチャバッファ
     ID3D12Resource* mTextureBuf;
+
+    //デバッグ用
+#ifdef _DEBUG
+	friend class GUIDebugger;
+	bool mActiveControll = false;
+	std::string mSaveFilePath;
+	std::string mStructName;
+#endif
 
 };
 

@@ -142,24 +142,33 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		addComponent(std::move(itemIcon));
 	}
 
-	//選択中アイテムの枠
-	auto itemSelectFrame = std::make_unique<SpriteComponent>(*this);
-	itemSelectFrame->create("assets/picture/SelectFrame.png");
-	itemSelectFrame->setSpriteSize(ItemIconSize);
-	itemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x, ItemIconOriginPos.y, CanvasZ - 2.0f));
-	mItemSelectFrame = itemSelectFrame.get();
-	addComponent(std::move(itemSelectFrame));
+	{
+		//選択中アイテムの枠
+		auto itemSelectFrame = std::make_unique<SpriteComponent>(*this);
+		itemSelectFrame->create("assets/picture/SelectFrame.png");
+		itemSelectFrame->setSpriteSize(ItemIconSize);
+		itemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x, ItemIconOriginPos.y, CanvasZ - 2.0f));
+		mItemSelectFrame = itemSelectFrame.get();
+		addComponent(std::move(itemSelectFrame));
 
-	//選択アイテムの名前
-	auto selectItemText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-	selectItemText->setFontSize(uiData["selectItemText"]["fontSize"].get<float>());
-	auto selectItemTextPosition = uiData["selectItemText"]["position"].get<std::vector<float>>();
-	selectItemText->setBaseLine(selectItemTextPosition[0], selectItemTextPosition[1]);
-	std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
-	selectItemText->setText(selectItemTextStr);
-	selectItemText->showText();
-	mSelectItemText = selectItemText.get();
-	addComponent(std::move(selectItemText));
+		//選択アイテムの名前
+		auto selectItemText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+		selectItemText->setFontSize(uiData["selectItemText"]["fontSize"].get<float>());
+		auto selectItemTextPosition = uiData["selectItemText"]["position"].get<std::vector<float>>();
+		selectItemText->setBaseLine(selectItemTextPosition[0], selectItemTextPosition[1]);
+		std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
+		selectItemText->setText(selectItemTextStr);
+		selectItemText->showText();
+		mSelectItemText = selectItemText.get();
+		addComponent(std::move(selectItemText));
+	}
+
+	{
+		//所持金
+		auto moneyText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+		//moneyText->setFontSize
+	}
+
 }
 
 void DungeonUI::updateHP()

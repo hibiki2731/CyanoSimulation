@@ -126,3 +126,9 @@ void SceneManager::transitScene()
 	}
 }
 
+#ifdef _DEBUG
+void SceneManager::drawDebugGUI()
+{
+	mCurrentScene->drawDebugGUI();
+}
+#endif

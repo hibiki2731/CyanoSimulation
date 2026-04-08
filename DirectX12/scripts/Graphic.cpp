@@ -4,6 +4,7 @@
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
 #include "Game.h"
+#include "Imgui/imgui_impl_win32.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -68,6 +69,15 @@ void Graphic::init() {
 
 	ShowWindow(hWnd, SW_SHOW);
 }
+
+#ifdef _DEBUG
+void Graphic::setShareDescriptor()
+{
+	//ディスクリプタヒープをＧＰＵにセット
+	UINT numDescriptorHeaps = 1;
+	mCommandList->SetDescriptorHeaps(numDescriptorHeaps, mCbvTbvHeap.GetAddressOf());
+}
+#endif
 
 HRESULT Graphic::createDevice() {
 	{
@@ -1431,6 +1441,11 @@ void Graphic::delayRelease(ComPtr<IUnknown>& resource)
 	resource.Reset();
 }
 
+HWND Graphic::getWindowHandle()
+{
+	return hWnd;
+}
+
 float Graphic::getAspect()
 {
 	return Aspect;
@@ -1529,7 +1544,17 @@ void Graphic::setRenderType(STATE state)
 	}
 }
 
+#ifdef _DEBUG
+    extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+#if _DEBUG
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+#endif 
+
 
 	switch (message) {
 	case WM_DESTROY:
