@@ -67,7 +67,7 @@ void Menu::initComponent(std::string windowName, float zDepth)
 	if (titleName != L"") {
 		auto title = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 		title->setText(titleName);
-		title->setBaseLine(textJson[windowName + "Title"]["x"].get<float>(), textJson[windowName + "Title"]["y"].get<float>());
+		title->setPosition(textJson[windowName + "Title"]["x"].get<float>(), textJson[windowName + "Title"]["y"].get<float>());
 		title->setFontSize(textJson[windowName + "Title"]["fontSize"].get<float>());
 		title->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 		title->showText();
@@ -84,7 +84,7 @@ void Menu::initComponent(std::string windowName, float zDepth)
 		float lineSpace = textJson[windowName + "Text"].value("lineSpace", 0.0f);
 		auto text = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 		text->setText(message);
-		text->setBaseLine(textJson[windowName + "Text"]["x"].get<float>(), textJson[windowName + "Text"]["y"].get<float>());
+		text->setPosition(textJson[windowName + "Text"]["x"].get<float>(), textJson[windowName + "Text"]["y"].get<float>());
 		text->setFontSize(fontSize);
 		text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 		text->setLineSpace(lineSpace);

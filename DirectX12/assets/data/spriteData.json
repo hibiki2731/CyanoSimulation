@@ -14,8 +14,8 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 900.0,
-        "y": 180.0
+        "x": 750.0,
+        "y": 200.0
     },
     "EquipArmerMenuDownArrow": {
         "borderSize": 0.0,
@@ -27,13 +27,13 @@
         "y": 488.0
     },
     "EquipArmerMenuScrollBar": {
-        "borderSize": 10.0,
+        "borderSize": 9.0,
         "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
-        "height": 20.0,
-        "rotation": 1.5709999799728394,
-        "width": 275.0,
-        "x": 285.5,
-        "y": 338.0
+        "height": 275.0,
+        "rotation": 0.0,
+        "width": 20.0,
+        "x": 412.5400085449219,
+        "y": 210.0
     },
     "EquipArmerMenuUpArrow": {
         "borderSize": 0.0,
@@ -59,8 +59,8 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 900.0,
-        "y": 180.0
+        "x": 750.0,
+        "y": 200.0
     },
     "EquipWeaponMenuDownArrow": {
         "borderSize": 0.0,
@@ -71,14 +71,23 @@
         "x": 410.0,
         "y": 488.0
     },
+    "EquipWeaponMenuEquipIcon": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_compass_future_e.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 439.0,
+        "y": 562.5
+    },
     "EquipWeaponMenuScrollBar": {
         "borderSize": 9.0,
         "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
-        "height": 20.0,
-        "rotation": 1.570796012878418,
-        "width": 275.0,
-        "x": 285.5,
-        "y": 338.0
+        "height": 275.0,
+        "rotation": 0.0,
+        "width": 20.0,
+        "x": 412.5400085449219,
+        "y": 210.0
     },
     "EquipWeaponMenuUpArrow": {
         "borderSize": 0.0,

@@ -37,7 +37,7 @@ GameOverUI::GameOverUI(GameOverScene& scene)
 	//テキスト
 	auto text = std::make_unique<TextComponent>(*this, 90.0f);
 	text->setFontSize(80.0f);
-	text->setBaseLine(Graphic::ClientWidth * 0.33f, Graphic::ClientHeight * 0.4f);
+	text->setPosition(Graphic::ClientWidth * 0.33f, Graphic::ClientHeight * 0.4f);
 	std::wstring message = L"GAME OVER\n";
 	text->setText(message);
 	text->setTextColor(D2D1::ColorF::Red);

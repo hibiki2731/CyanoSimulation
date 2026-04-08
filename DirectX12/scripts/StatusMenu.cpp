@@ -9,49 +9,55 @@
 #include "MyUtility.h"
 #include "SpriteComponent.h"
 #include "AudioManager.h"
-#include <fstream>
-#include "json.hpp"
+#include "ItemManager.h"
 
 EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "EquipWeaponMenu", zDepth),
-	mPlayerManager(scene.getGame().getPlayerManager())
+	mPlayerManager(scene.getGame().getPlayerManager()),
+	mItemManager(scene.getGame().getItemManager())
 {
 	mMaxIndex = mPlayerManager.getPlayerData().weaponInventory.size();
 	mScrollOffset = 0;
 
 	//ファイルの読み込み
-	std::ifstream spriteFile("assets\\data\\spriteData.json");
-	nlohmann::json spriteJson;
-	spriteFile >> spriteJson;
-	std::ifstream textFile("assets\\data\\textData.json");
-	nlohmann::json textJson;
-	textFile >> textJson;
+	std::string structName;
+
+	//装備中アイコン
+	structName = "EquipWeaponMenuEquipIcon";
+	auto equipIcon = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
+	equipIcon->loadFileAndCreate(structName);
+	equipIcon->setPosY(-100.0f); //初期位置はテキストの外にしておく
+	mEquipIcon = equipIcon.get();
+#ifdef _DEBUG
+	equipIcon->activateControll(structName);
+#endif
+	addComponent(std::move(equipIcon));
 
 	//所持武器のテキストを作成
-	std::string structName = "EquipWeaponMenuScrollText";
+	structName = "EquipWeaponMenuScrollText";
 	auto weaponText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	weaponText->loadFileAndCreate(structName);
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 	for (int i = 0; i < showWeaponNum; i++) {
-		if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) message += L"<E> ";
-		else message += L"        ";
-		message += Utility::stringToWString(inventory[i]) + L"\n";
+		if (mPlayerManager.getPlayerData().equippedWeaponIndex == i) {
+			float y = weaponText->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + weaponText->getLineSpace() * i;
+			mEquipIcon->setPosY(y);
+		}
+		message += Utility::stringToWString(mItemManager.getWeaponData(inventory[i]).name) + L"\n";
 	}
 	weaponText->setText(message);
-	weaponText->setBaseLine(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
-	weaponText->setFontSize(textJson[structName]["fontSize"].get<float>());
-	weaponText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	weaponText->setLineSpace(textJson[structName]["lineSpace"].get<float>());
+	weaponText->setTextColor(D2D1::ColorF::Black);
 	weaponText->showText();
 #ifdef _DEBUG
 	weaponText->activateControll(structName);
 #endif
 
+	mArrowMoveLength = weaponText->getLineSpace();
 	mTextComponent = weaponText.get();
 	addComponent(std::move(weaponText));
 
-	mArrowMoveLength = textJson[structName]["lineSpace"].get<float>();
 
 	//スクロールインジケーター
 	//下矢印
@@ -62,7 +68,6 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 #ifdef _DEBUG
 	downArrow->activateControll(structName);
 #endif
-	mDownArrow = downArrow.get();
 	addComponent(std::move(downArrow));
 
 	//上矢印
@@ -73,7 +78,6 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 #ifdef _DEBUG
 	upArrow->activateControll(structName);
 #endif
-	mUpArrow = upArrow.get();
 	addComponent(std::move(upArrow));
 
 	//スクロールバー
@@ -81,11 +85,11 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
 	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = scrollBar->getSpriteSize().x;
+	float maxHeight = scrollBar->getSpriteSize().y;
 	float height = maxHeight * MaxShowWeaponNum / mPlayerManager.getPlayerData().weaponInventory.size();
 	if (mPlayerManager.getPlayerData().weaponInventory.size() < MaxShowWeaponNum) height = maxHeight;
 	mScrollBarMoveLength = maxHeight / mPlayerManager.getPlayerData().weaponInventory.size();
-	scrollBar->setSpriteSize(XMFLOAT2(height, scrollBar->getSpriteSize().y));
+	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
 #ifdef _DEBUG
 	scrollBar->activateControll(structName);
 #endif
@@ -148,10 +152,13 @@ void EquipWeaponMenu::refreshText()
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 	int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
+	mEquipIcon->setPosY(-100.0f); //一旦装備中アイコンをテキストの外に出す
 	for (int i = mScrollOffset; i < mScrollOffset + showWeaponNum; i++) {
-		if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) message += L"<E> ";
-		else message += L"        ";
-		message += Utility::stringToWString(inventory[i]) + L"\n";
+		if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) {
+			float y = mTextComponent->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + mTextComponent->getLineSpace() * (i - mScrollOffset);
+			mEquipIcon->setPosY(y);
+		}
+		message += Utility::stringToWString(mItemManager.getWeaponData(inventory[i]).name) + L"\n";
 	}
 	mTextComponent->setText(message);
 	mTextComponent->showText();
@@ -160,21 +167,38 @@ void EquipWeaponMenu::refreshText()
 
 EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "EquipArmerMenu", zDepth),
-	mPlayerManager(scene.getGame().getPlayerManager())
+	mPlayerManager(scene.getGame().getPlayerManager()),
+	mItemManager(scene.getGame().getItemManager())
 {
 	mMaxIndex = mPlayerManager.getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
 
-	std::string structName = "EquipArmerMenuScrollText";
+	std::string structName;
+
+	//装備中アイコン
+	structName = "EquipWeaponMenuEquipIcon";
+	auto equipIcon = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
+	equipIcon->loadFileAndCreate(structName);
+	equipIcon->setPosY(-100.0f); //初期位置はテキストの外にしておく
+	mEquipIcon = equipIcon.get();
+#ifdef _DEBUG
+	equipIcon->activateControll(structName);
+#endif
+	addComponent(std::move(equipIcon));
+
+	//所持防具のテキストを作成
+	structName = "EquipArmerMenuScrollText";
 	auto armerText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	armerText->loadFileAndCreate(structName);
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
 	for (int i = 0; i < showArmerNum; i++) {
-		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) message += L"<E> ";
-		else message += L"        ";
-		message += Utility::stringToWString(inventory[i]) + L"\n";
+		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) {
+			float y = armerText->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + armerText->getLineSpace() * i;
+			mEquipIcon->setPosY(y);
+		}
+		message += Utility::stringToWString(mItemManager.getArmerData(inventory[i]).name) + L"\n";
 	}
 	armerText->setText(message);
 	armerText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
@@ -193,7 +217,6 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
 	downArrow->loadFileAndCreate(structName);
-	mDownArrow = downArrow.get();
 #ifdef _DEBUG
 	downArrow->activateControll(structName);
 #endif
@@ -207,7 +230,6 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 #ifdef _DEBUG
 	upArrow->activateControll(structName);
 #endif
-	mUpArrow = upArrow.get();
 	addComponent(std::move(upArrow));
 
 	//スクロールバー
@@ -215,11 +237,11 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
 	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = scrollBar->getSpriteSize().x;
+	float maxHeight = scrollBar->getSpriteSize().y;
 	float height = maxHeight * MaxShowArmerNum / mPlayerManager.getPlayerData().armerInventory.size();
 	if (mPlayerManager.getPlayerData().armerInventory.size() < MaxShowArmerNum) height = maxHeight;
 	mScrollBarMoveLength = maxHeight / mPlayerManager.getPlayerData().armerInventory.size();
-	scrollBar->setSpriteSize(XMFLOAT2(height, scrollBar->getSpriteSize().y));
+	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
 	mScrollBar = scrollBar.get();
 #ifdef _DEBUG
 	scrollBar->activateControll(structName);
@@ -275,10 +297,13 @@ void EquipArmerMenu::refreshText()
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
+	mEquipIcon->setPosY(-100.0f); //一旦装備中アイコンをテキストの外に出す
 	for (int i = mScrollOffset; i < mScrollOffset + showArmerNum; i++) {
-		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) message += L"<E> ";
-		else message += L"        ";
-		message += Utility::stringToWString(inventory[i]) + L"\n";
+		if (i == mPlayerManager.getPlayerData().equippedArmerIndex) {
+			float y = mTextComponent->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + mTextComponent->getLineSpace() * (i - mScrollOffset);
+			mEquipIcon->setPosY(y);
+		}
+		message += Utility::stringToWString(mItemManager.getItemData(inventory[i]).name) + L"\n";
 	}
 	mTextComponent->setText(message);
 	mTextComponent->showText();

@@ -2,9 +2,9 @@
     "EquipArmerMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,
-        "text": "        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n",
-        "x": 440.0,
-        "y": 180.0
+        "text": "NONE\nCLOTHES\nCLOTHES\nCLOTHES\nCLOTHES\nCLOTHES\n",
+        "x": 470.0,
+        "y": 200.0
     },
     "EquipArmerMenuText": {
         "fontSize": 50.0,
@@ -23,9 +23,9 @@
     "EquipWeaponMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,
-        "text": "<E> NONE\n        WOODEN_SORD\n",
-        "x": 440.0,
-        "y": 180.0
+        "text": "WOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\n",
+        "x": 470.0,
+        "y": 200.0
     },
     "EquipWeaponMenuText": {
         "fontSize": 50.0,

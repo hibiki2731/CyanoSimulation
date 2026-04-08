@@ -31,9 +31,7 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 	std::string structName = "ExplorerMenuScrollText";
 	std::wstring toolText = L"";
 	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
-	textComponent->setFontSize(textJson[structName]["fontSize"].get<float>());
-	textComponent->setLineSpace(textJson[structName]["lineSpace"].get<float>());
-	textComponent->setBaseLine(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
+	textComponent->loadFileAndCreate(structName);
 	textComponent->setTextColor(D2D1::ColorF::Black);
 	for (const auto& toolID : mTools) {
 		const auto& toolData = mItemManager.getExplorerData(toolID);
@@ -54,12 +52,8 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 	//スクロールバー
 	//下矢印
 	structName = "ExplorerMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this);
-	downArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	downArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	downArrow->setBordarSize(0.0f);
-	downArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
-	downArrow->setRotation(spriteJson[structName]["rotation"].get<float>());
+	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	downArrow->loadFileAndCreate(structName);
 #ifdef _DEBUG
 	downArrow->activateControll(structName);
 #endif
@@ -67,11 +61,8 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 
 	//上矢印
 	structName = "ExplorerMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this);
-	upArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	upArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	upArrow->setBordarSize(0.0f);
-	upArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
+	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	upArrow->loadFileAndCreate(structName);
 #ifdef _DEBUG
 	upArrow->activateControll(structName);
 #endif
@@ -79,15 +70,13 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 
 	//スクロールバー
 	structName = "ExplorerMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this);
-	scrollBar->create(spriteJson[structName]["filePath"].get<std::string>());
-	scrollBar->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	scrollBar->setBordarSize(10.0f);
-	float maxHeight = spriteJson[structName]["height"].get<float>();
-	float height = maxHeight * mTools.size() / MaxShowToolNum;
+	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	scrollBar->loadFileAndCreate(structName);
+	float maxHeight = scrollBar->getSpriteSize().y;
+	float height = maxHeight * MaxShowToolNum / mTools.size();
 	if (mTools.size() < MaxShowToolNum) height = maxHeight;
 	mScrollBarMoveLength = maxHeight / mTools.size();
-	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
 #ifdef _DEBUG
 	scrollBar->activateControll(structName);
 #endif

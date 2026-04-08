@@ -29,7 +29,9 @@ public:
     void setSpriteSize(const XMFLOAT2& size);
 	void setBordarSize(const float size);
 	void movePosition(const XMFLOAT2& diff);
-    void setZPos(float zPos);
+	void setPosX(float xPos);
+	void setPosY(float yPos);
+    void setPosZ(float zPos);
 
 	//ゲッター
 	const XMFLOAT3& getPosition() const { return mPosition; }

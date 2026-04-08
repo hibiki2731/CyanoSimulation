@@ -168,10 +168,10 @@ void GUIDebugger::drawTextDebugGUI(TextComponent& text)
 	ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin(text.mStructName.c_str())) {
-        if (ImGui::SliderFloat("X", &text.mBaseLineX, 0.0f, Graphic::ClientWidth)) {
+        if (ImGui::SliderFloat("X", &text.mPosX, 0.0f, Graphic::ClientWidth)) {
             text.showText();
         }
-        if (ImGui::SliderFloat("Y", &text.mBaseLineY, 0.0f, Graphic::ClientHeight)) {
+        if (ImGui::SliderFloat("Y", &text.mPosY, 0.0f, Graphic::ClientHeight)) {
 			text.showText();
         }
         if (ImGui::SliderFloat("FontSize", &text.mFontSize, 0.01f, Graphic::ClientWidth)) {
@@ -194,8 +194,8 @@ void GUIDebugger::drawTextDebugGUI(TextComponent& text)
 			std::ifstream infile("assets/data/textData.json");
 			nlohmann::json j;
             infile >> j;
-			j[text.mStructName]["x"] = text.mBaseLineX;
-			j[text.mStructName]["y"] = text.mBaseLineY;
+			j[text.mStructName]["x"] = text.mPosX;
+			j[text.mStructName]["y"] = text.mPosY;
 			j[text.mStructName]["fontSize"] = text.mFontSize;
             j[text.mStructName]["lineSpace"] = text.mLineSpace;
 			j[text.mStructName]["text"] = Utility::wstringToString(text.mText);

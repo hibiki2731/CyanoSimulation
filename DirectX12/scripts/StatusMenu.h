@@ -16,13 +16,14 @@ private:
 	void refreshText();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
-	SpriteComponent* mUpArrow;
-	SpriteComponent* mDownArrow;
 	SpriteComponent* mScrollBar;
+	SpriteComponent* mEquipIcon;
 	float mScrollBarMoveLength;
 
 	int mScrollOffset;
-	const int MaxShowWeaponNum = 5;
+	const int MaxShowWeaponNum = 6;
+
+	class ItemManager& mItemManager;
 };
 
 class EquipArmerMenu : public Menu {
@@ -36,13 +37,14 @@ private:
 	void refreshText();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
-	SpriteComponent* mUpArrow;
-	SpriteComponent* mDownArrow;
 	SpriteComponent* mScrollBar;
+	SpriteComponent* mEquipIcon;
 	float mScrollBarMoveLength;
 
 	int mScrollOffset;
 	const int MaxShowArmerNum = 6;
+	
+	class ItemManager& mItemManager;
 };
 class StatusMenu : public Menu
 {

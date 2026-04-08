@@ -22,7 +22,7 @@ public:
 
 	//セッター
 	void setText(const std::wstring& text);
-	void setBaseLine(float x, float y);
+	void setPosition(float x, float y);
 	void setFontSize(FLOAT size);
 	void setTextColor(const D2D1::ColorF& color);
 	void setLineSpace(float space);
@@ -30,6 +30,8 @@ public:
 	//ゲッター
 	bool getIsActive();
 	float getLineSpace();
+	const float getPosX() const { return mPosX; }
+	const float getPosY() const { return mPosY; }
 
 #ifdef _DEBUG
 	void activateControll(const std::string& structName);
@@ -60,8 +62,8 @@ private:
 	std::wstring mText;
 	bool isActive;
 
-	float mBaseLineX;
-	float mBaseLineY;
+	float mPosX;
+	float mPosY;
 	FLOAT mFontSize;
 	const WCHAR* mFontName;
 	D2D1_RECT_F mTextRect;

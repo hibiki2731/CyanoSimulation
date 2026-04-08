@@ -57,7 +57,7 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
 	textComponent->setFontSize(textJson[structName]["fontSize"].get<float>());
 	textComponent->setLineSpace(textJson[structName]["lineSpace"].get<float>());
-	textComponent->setBaseLine(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
+	textComponent->setPosition(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
 	textComponent->setTextColor(D2D1::ColorF::Black);
 	for (const auto& armerID : mArmers) {
 		const auto& armerData = mItemManager.getArmerData(armerID);
@@ -78,7 +78,7 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 	//スクロールバー
 	//下矢印
 	structName = "ForgeArmerMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this);
+	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
 	downArrow->create(spriteJson[structName]["filePath"].get<std::string>());
 	downArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
 	downArrow->setBordarSize(0.0f);
@@ -91,7 +91,7 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 
 	//上矢印
 	structName = "ForgeArmerMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this);
+	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
 	upArrow->create(spriteJson[structName]["filePath"].get<std::string>());
 	upArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
 	upArrow->setBordarSize(0.0f);
@@ -104,14 +104,12 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 	//スクロールバー
 	structName = "ForgeArmerMenuScrollBar";
 	auto scrollBar = std::make_unique<SpriteComponent>(*this);
-	scrollBar->create(spriteJson[structName]["filePath"].get<std::string>());
-	scrollBar->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	scrollBar->setBordarSize(10.0f);
+	scrollBar->loadFileAndCreate(structName);
 	float maxHeight = spriteJson[structName]["height"].get<float>();
-	float height = maxHeight * mArmers.size() / MaxShowArmerNum;
+	float height = maxHeight * MaxShowArmerNum / mArmers.size();
 	if (mArmers.size() < MaxShowArmerNum) height = maxHeight;
 	mScrollBarMoveLength = maxHeight / mArmers.size();
-	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
 #ifdef _DEBUG
 	scrollBar->activateControll(structName);
 #endif
@@ -245,7 +243,7 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
 	textComponent->setFontSize(textJson[structName]["fontSize"].get<float>());
 	textComponent->setLineSpace(textJson[structName]["lineSpace"].get<float>());
-	textComponent->setBaseLine(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
+	textComponent->setPosition(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
 	textComponent->setTextColor(D2D1::ColorF::Black);
 	for (const auto& weaponID : mWeapons) {
 		const auto& weaponData = mItemManager.getWeaponData(weaponID);
@@ -266,12 +264,8 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 	//スクロールバー
 	//下矢印
 	structName = "ForgeWeaponMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this);
-	downArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	downArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	downArrow->setBordarSize(0.0f);
-	downArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
-	downArrow->setRotation(spriteJson[structName]["rotation"].get<float>());
+	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	downArrow->loadFileAndCreate(structName);
 #ifdef _DEBUG
 	downArrow->activateControll(structName);
 #endif
@@ -279,11 +273,8 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 
 	//上矢印
 	structName = "ForgeWeaponMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this);
-	upArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	upArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	upArrow->setBordarSize(0.0f);
-	upArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
+	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	upArrow->loadFileAndCreate(structName);
 #ifdef _DEBUG
 	upArrow->activateControll(structName);
 #endif
@@ -291,15 +282,13 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 
 	//スクロールバー
 	structName = "ForgeWeaponMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this);
-	scrollBar->create(spriteJson[structName]["filePath"].get<std::string>());
-	scrollBar->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	scrollBar->setBordarSize(spriteJson[structName]["borderSize"].get<float>());
-	float maxHeight = spriteJson[structName]["height"].get<float>();
-	float height = maxHeight * mWeapons.size() / MaxShowWeaponNum;
+	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
+	scrollBar->loadFileAndCreate(structName);
+	float maxHeight = scrollBar->getSpriteSize().y;
+	float height = maxHeight * MaxShowWeaponNum / mWeapons.size();
 	if (mWeapons.size() < MaxShowWeaponNum) height = maxHeight;
 	mScrollBarMoveLength = maxHeight / mWeapons.size();
-	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
 #ifdef _DEBUG
 	scrollBar->activateControll(structName);
 #endif

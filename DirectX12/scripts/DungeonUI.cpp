@@ -45,7 +45,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		float hpTextFontSize = uiData["hp"]["textFontSize"].get<float>();
 		hpText->setFontSize(hpTextFontSize);
 		std::vector<float> hpTextPosition = uiData["hp"]["textPosition"].get<std::vector<float>>();
-		hpText->setBaseLine(hpTextPosition[0], hpTextPosition[1]);
+		hpText->setPosition(hpTextPosition[0], hpTextPosition[1]);
 		hpText->setText(text);
 		hpText->showText();
 		addComponent(std::move(hpText));
@@ -53,7 +53,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		//HP値のテキスト
 		auto hpValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		hpValueText->setFontSize(hpTextFontSize);
-		hpValueText->setBaseLine(hpTextPosition[0] + uiData["hp"]["textSpace"].get<float>(), hpTextPosition[1]);
+		hpValueText->setPosition(hpTextPosition[0] + uiData["hp"]["textSpace"].get<float>(), hpTextPosition[1]);
 		int hp = mPlayer.getHP();
 		int maxHp = mPlayer.getMaxHP();
 		text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
@@ -94,7 +94,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		float apTextFontSize = uiData["ap"]["textFontSize"].get<float>();
 		apText->setFontSize(apTextFontSize);
 		std::vector<float> apTextPosition = uiData["ap"]["textPosition"].get<std::vector<float>>();
-		apText->setBaseLine(apTextPosition[0], apTextPosition[1]);
+		apText->setPosition(apTextPosition[0], apTextPosition[1]);
 		apText->setText(text);
 		apText->showText();
 		addComponent(std::move(apText));
@@ -102,7 +102,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		//AP値のテキスト
 		auto apValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		apValueText->setFontSize(apTextFontSize);
-		apValueText->setBaseLine(apTextPosition[0] + uiData["ap"]["textSpace"].get<float>(), apTextPosition[1]);
+		apValueText->setPosition(apTextPosition[0] + uiData["ap"]["textSpace"].get<float>(), apTextPosition[1]);
 		text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
 		apValueText->setText(text);
 		apValueText->showText();
@@ -155,7 +155,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		auto selectItemText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		selectItemText->setFontSize(uiData["selectItemText"]["fontSize"].get<float>());
 		auto selectItemTextPosition = uiData["selectItemText"]["position"].get<std::vector<float>>();
-		selectItemText->setBaseLine(selectItemTextPosition[0], selectItemTextPosition[1]);
+		selectItemText->setPosition(selectItemTextPosition[0], selectItemTextPosition[1]);
 		std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
 		selectItemText->setText(selectItemTextStr);
 		selectItemText->showText();

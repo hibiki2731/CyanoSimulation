@@ -14,7 +14,7 @@ MessageWindow::MessageWindow(Scene& scene) : Actor(scene)
 	mMessage = message;
 	auto text = std::make_unique<TextComponent>(*this, 0.9f);
 	text->setText(mMessage);
-	text->setBaseLine(100.0f, 10.0f);
+	text->setPosition(100.0f, 10.0f);
 	text->setFontSize(24.0f);
 	text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 	text->showText();

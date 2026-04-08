@@ -56,9 +56,9 @@ public:
 	void setScale(const XMFLOAT3& scale);
 	void setRotation(const XMFLOAT3& rotation);
 
-	void setXPos(float x);
-	void setYPos(float y);
-	void setZPos(float z);
+	void setPosX(float x);
+	void setPosY(float y);
+	void setPosZ(float z);
 	void setXRot(float x);
 	void setYRot(float y);
 	void setZRot(float z);

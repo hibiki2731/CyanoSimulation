@@ -102,7 +102,9 @@ void SpriteComponent::loadFileAndCreate(const std::string& structName)
 	}
 
 	//スプライトの作成
-	create(spriteJson[structName].value("filePath", mTextureFilePath));
+	auto filePath = spriteJson[structName].value("filePath", "");
+	if ( filePath != "")
+		create(spriteJson[structName].value("filePath", mTextureFilePath));
 	//スプライトのセッティング
 	setPosition(XMFLOAT3(spriteJson[structName].value("x", 0.0f), spriteJson[structName].value("y", 0.0f), mPosition.z));
 	setBordarSize(spriteJson[structName].value("borderSize", 0.0f));
@@ -176,7 +178,17 @@ void SpriteComponent::movePosition(const XMFLOAT2& diff)
 	mPosition.y += diff.y;
 }
 
-void SpriteComponent::setZPos(float zPos)
+void SpriteComponent::setPosX(float xPos)
+{
+	mPosition.x = xPos;
+}
+
+void SpriteComponent::setPosY(float yPos)
+{
+	mPosition.y = yPos;
+}
+
+void SpriteComponent::setPosZ(float zPos)
 {
 	mPosition.z = zPos;
 }

@@ -107,17 +107,17 @@ void Actor::setRotation(const XMFLOAT3& rotation)
 	mRotation = rotation;
 }
 
-void Actor::setXPos(float x)
+void Actor::setPosX(float x)
 {
 	mPosition.x = x;
 }
 
-void Actor::setYPos(float y)
+void Actor::setPosY(float y)
 {
 	mPosition.y = y;
 }
 
-void Actor::setZPos(float z)
+void Actor::setPosZ(float z)
 {
 	mPosition.z = z;
 }

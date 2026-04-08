@@ -13,14 +13,14 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	mAssetManager(owner.getScene().getGame().getAssetManager())
 {
 	isActive = false;
-	mBaseLineX = 0.0f;
-	mBaseLineY = 0.0f;
+	mPosX = 0.0f;
+	mPosY = 0.0f;
 	mFontSize = 32;
 	mFontName = L"MS P明朝";
 	mMaxRow = 20;
 	mTextRect = D2D1::RectF(
-		mBaseLineX,
-		mBaseLineY,
+		mPosX,
+		mPosY,
 		mMaxRow * mFontSize,
 		mFontSize
 	);
@@ -68,8 +68,8 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	//構造体が存在しない場合、作成する
 	if (!textJson.contains(structName)) {
 		textJson[structName] = {
-			{"x", mBaseLineX},
-			{"y", mBaseLineY},
+			{"x", mPosX},
+			{"y", mPosY},
 			{"fontSize", mFontSize},
 			{"lineSpace", mLineSpace},
 			{"text", Utility::wstringToString(mText)}
@@ -79,9 +79,9 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	}
 
 	mFontSize = textJson[structName].value("fontSize", mFontSize);
-	mLineSpace = textJson[structName].value("lineSpace", mLineSpace);
-	mBaseLineX = textJson[structName].value("x", mBaseLineX);
-	mBaseLineY = textJson[structName].value("y", mBaseLineY);
+	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));
+	mPosX = textJson[structName].value("x", mPosX);
+	mPosY = textJson[structName].value("y", mPosY);
 	mText = Utility::stringToWString(textJson[structName].value("text", ""));
 }
 
@@ -151,10 +151,10 @@ void TextComponent::endProcess()
 void TextComponent::showText()
 {
 	mTextRect = D2D1::RectF(
-		mBaseLineX,
-		mBaseLineY,
-		mBaseLineX + mMaxRow * mFontSize,
-		mBaseLineY + mFontSize * (mText.size() / mMaxRow + 1)
+		mPosX,
+		mPosY,
+		mPosX + mMaxRow * mFontSize,
+		mPosY + mFontSize * (mText.size() / mMaxRow + 1)
 	);
 
     HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
@@ -199,10 +199,10 @@ void TextComponent::setText(const std::wstring& text)
 	mText = text;
 }
 
-void TextComponent::setBaseLine(float x, float y)
+void TextComponent::setPosition(float x, float y)
 {
-	mBaseLineX = x;
-	mBaseLineY = y;
+	mPosX = x;
+	mPosY = y;
 }
 
 void TextComponent::setFontSize(FLOAT size)
