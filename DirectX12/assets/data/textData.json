@@ -1,4 +1,11 @@
 {
+    "EquipArmerMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
+        "text": "        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n        CLOTHES\n",
+        "x": 440.0,
+        "y": 180.0
+    },
     "EquipArmerMenuText": {
         "fontSize": 50.0,
         "lineSpace": 0.0,
@@ -8,10 +15,17 @@
     },
     "EquipArmerMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "ARMER\n",
-        "x": 80.0,
+        "x": 410.0,
         "y": 110.0
+    },
+    "EquipWeaponMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
+        "text": "<E> NONE\n        WOODEN_SORD\n",
+        "x": 440.0,
+        "y": 180.0
     },
     "EquipWeaponMenuText": {
         "fontSize": 50.0,
@@ -22,9 +36,9 @@
     },
     "EquipWeaponMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "WEAPON\n",
-        "x": 80.0,
+        "x": 410.0,
         "y": 110.0
     },
     "ExplorerMenuScrollText": {
@@ -154,17 +168,17 @@
         "y": 110.0
     },
     "StatusMenuText": {
-        "fontSize": 50.0,
-        "lineSpace": 10.0,
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
         "text": "WEAPON\nARMER\n",
-        "x": 80.0,
-        "y": 175.0
+        "x": 100.0,
+        "y": 180.0
     },
     "StatusMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "STATUS\n",
-        "x": 80.0,
+        "x": 70.0,
         "y": 110.0
     }
 }

@@ -4,6 +4,7 @@
 #include <DirectXMath.h>
 #include "Component.h"
 #include "Graphic.h"
+#include <execution>
 
 class AssetManager;
 struct SpriteData;
@@ -18,6 +19,7 @@ public:
 	void endProcess() override;
 
     void create(const std::string filename);
+    void loadFileAndCreate(const std::string& structName);
     virtual void draw();
 
 	//描画範囲のセッター
@@ -28,6 +30,13 @@ public:
 	void setBordarSize(const float size);
 	void movePosition(const XMFLOAT2& diff);
     void setZPos(float zPos);
+
+	//ゲッター
+	const XMFLOAT3& getPosition() const { return mPosition; }
+	const XMFLOAT2& getSpriteSize() const { return mSpriteSize; }
+	const XMFLOAT2& getTextureSize() const { return mTextureSize; }
+	const float getBordarSize() const { return mBordarSize; }
+	const float getRotation() const { return mRotation; }
 
     //デバッグ用
 #ifdef _DEBUG

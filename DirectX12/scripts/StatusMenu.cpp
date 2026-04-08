@@ -9,6 +9,8 @@
 #include "MyUtility.h"
 #include "SpriteComponent.h"
 #include "AudioManager.h"
+#include <fstream>
+#include "json.hpp"
 
 EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "EquipWeaponMenu", zDepth),
@@ -17,6 +19,16 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	mMaxIndex = mPlayerManager.getPlayerData().weaponInventory.size();
 	mScrollOffset = 0;
 
+	//ファイルの読み込み
+	std::ifstream spriteFile("assets\\data\\spriteData.json");
+	nlohmann::json spriteJson;
+	spriteFile >> spriteJson;
+	std::ifstream textFile("assets\\data\\textData.json");
+	nlohmann::json textJson;
+	textFile >> textJson;
+
+	//所持武器のテキストを作成
+	std::string structName = "EquipWeaponMenuScrollText";
 	auto weaponText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
@@ -26,49 +38,57 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
-	float fontSize =40.0f;
-	float lineSpace = 8.0f;
 	weaponText->setText(message);
-	weaponText->setBaseLine(110.0f, 175.0f);
-	weaponText->setFontSize(fontSize);
+	weaponText->setBaseLine(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
+	weaponText->setFontSize(textJson[structName]["fontSize"].get<float>());
 	weaponText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	weaponText->setLineSpace(lineSpace);
+	weaponText->setLineSpace(textJson[structName]["lineSpace"].get<float>());
 	weaponText->showText();
+#ifdef _DEBUG
+	weaponText->activateControll(structName);
+#endif
+
 	mTextComponent = weaponText.get();
 	addComponent(std::move(weaponText));
 
-	mArrowMoveLength = fontSize + lineSpace;
+	mArrowMoveLength = textJson[structName]["lineSpace"].get<float>();
 
 	//スクロールインジケーター
 	//下矢印
-	auto downArrow = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipWeaponMenuDownArrow";
+	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + MaxShowWeaponNum * 48.0f - 8.0f, zDepth - 0.5f));
-	downArrow->setBordarSize(0.0f);
-	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
-	downArrow->setRotation(XM_PI);
+	downArrow->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	downArrow->activateControll(structName);
+#endif
 	mDownArrow = downArrow.get();
 	addComponent(std::move(downArrow));
 
 	//上矢印
-	auto upArrow = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipWeaponMenuUpArrow";
+	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	upArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	upArrow->setPosition(XMFLOAT3(80.0f, 175.0f, zDepth - 0.5f));
-	upArrow->setBordarSize(0.0f);
-	upArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	upArrow->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	upArrow->activateControll(structName);
+#endif
 	mUpArrow = upArrow.get();
 	addComponent(std::move(upArrow));
 
 	//スクロールバー
-	auto scrollBar = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipWeaponMenuScrollBar";
+	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
-	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
-	scrollBar->setBordarSize(0.0f);
-	float arrowDistance = 48.0f * MaxShowWeaponNum - 38.0f;
-	float height = arrowDistance * MaxShowWeaponNum / mPlayerManager.getPlayerData().weaponInventory.size();
-	if (mPlayerManager.getPlayerData().weaponInventory.size() < MaxShowWeaponNum) height = arrowDistance;
-	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().weaponInventory.size();
-	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	scrollBar->loadFileAndCreate(structName);
+	float maxHeight = scrollBar->getSpriteSize().x;
+	float height = maxHeight * MaxShowWeaponNum / mPlayerManager.getPlayerData().weaponInventory.size();
+	if (mPlayerManager.getPlayerData().weaponInventory.size() < MaxShowWeaponNum) height = maxHeight;
+	mScrollBarMoveLength = maxHeight / mPlayerManager.getPlayerData().weaponInventory.size();
+	scrollBar->setSpriteSize(XMFLOAT2(height, scrollBar->getSpriteSize().y));
+#ifdef _DEBUG
+	scrollBar->activateControll(structName);
+#endif
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
 
@@ -145,7 +165,9 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	mMaxIndex = mPlayerManager.getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
 
+	std::string structName = "EquipArmerMenuScrollText";
 	auto armerText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	armerText->loadFileAndCreate(structName);
 	std::wstring message;
 	const auto& inventory = mPlayerManager.getPlayerData().armerInventory;
 	int showArmerNum = min(inventory.size(), MaxShowArmerNum);
@@ -154,50 +176,54 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 		else message += L"        ";
 		message += Utility::stringToWString(inventory[i]) + L"\n";
 	}
-	float fontSize =40.0f;
-	float lineSpace = 8.0f;
 	armerText->setText(message);
-	armerText->setBaseLine(110.0f, 175.0f);
-	armerText->setFontSize(fontSize);
 	armerText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	armerText->setLineSpace(lineSpace);
 	armerText->showText();
+#ifdef _DEBUG
+	armerText->activateControll(structName);
+#endif
+	mArrowMoveLength = armerText->getLineSpace();
 	mTextComponent = armerText.get();
 	addComponent(std::move(armerText));
 
-	mArrowMoveLength = fontSize + lineSpace;
 
 	//スクロールインジケーター
 	//下矢印
-	auto downArrow = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipArmerMenuDownArrow";
+	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	downArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	downArrow->setPosition(XMFLOAT3(80.0f, 175.0f + MaxShowArmerNum * 48.0f - 8.0f, zDepth - 0.5f));
-	downArrow->setBordarSize(0.0f);
-	downArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
-	downArrow->setRotation(XM_PI);
+	downArrow->loadFileAndCreate(structName);
 	mDownArrow = downArrow.get();
+#ifdef _DEBUG
+	downArrow->activateControll(structName);
+#endif
 	addComponent(std::move(downArrow));
 
 	//上矢印
-	auto upArrow = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipArmerMenuUpArrow";
+	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	upArrow->create("assets/picture/UI2/PNG/Default/minimap_arrow_a.png");
-	upArrow->setPosition(XMFLOAT3(80.0f, 175.0f, zDepth - 0.5f));
-	upArrow->setBordarSize(0.0f);
-	upArrow->setSpriteSize(XMFLOAT2(25.0f, 25.0f));
+	upArrow->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	upArrow->activateControll(structName);
+#endif
 	mUpArrow = upArrow.get();
 	addComponent(std::move(upArrow));
 
 	//スクロールバー
-	auto scrollBar = std::make_unique<SpriteComponent>(*this);
+	structName = "EquipArmerMenuScrollBar";
+	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
 	scrollBar->create("assets/picture/UI2/PNG/Default/scrollbar_future_grey.png");
-	scrollBar->setPosition(XMFLOAT3(80.0f, 175.0f + 30.0f, zDepth - 0.5f));
-	scrollBar->setBordarSize(0.0f);
-	float arrowDistance = 48.0f * MaxShowArmerNum - 38.0f;
-	float height = arrowDistance * MaxShowArmerNum / mPlayerManager.getPlayerData().armerInventory.size();
-	if (mPlayerManager.getPlayerData().armerInventory.size() < MaxShowArmerNum) height = arrowDistance;
-	mScrollBarMoveLength = arrowDistance / mPlayerManager.getPlayerData().armerInventory.size();
-	scrollBar->setSpriteSize(XMFLOAT2(25.0f, height));
+	scrollBar->loadFileAndCreate(structName);
+	float maxHeight = scrollBar->getSpriteSize().x;
+	float height = maxHeight * MaxShowArmerNum / mPlayerManager.getPlayerData().armerInventory.size();
+	if (mPlayerManager.getPlayerData().armerInventory.size() < MaxShowArmerNum) height = maxHeight;
+	mScrollBarMoveLength = maxHeight / mPlayerManager.getPlayerData().armerInventory.size();
+	scrollBar->setSpriteSize(XMFLOAT2(height, scrollBar->getSpriteSize().y));
 	mScrollBar = scrollBar.get();
+#ifdef _DEBUG
+	scrollBar->activateControll(structName);
+#endif
 	addComponent(std::move(scrollBar));
 }
 

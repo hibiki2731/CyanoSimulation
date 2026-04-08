@@ -8,6 +8,8 @@
 #include "Game.h"
 #include "AssetManager.h"
 #include "Scene.h"
+#include <fstream>
+#include "json.hpp"
 
 SpriteComponent::SpriteComponent(Actor& owner, float zDepth) 
 	: Component(owner),
@@ -29,6 +31,8 @@ SpriteComponent::SpriteComponent(Actor& owner, float zDepth)
 	mHeapIndex = 0;
 	mCBSize = 0;
 	mHeapSize = 0;
+
+	mTextureFilePath = "";
 }
 
 
@@ -73,6 +77,37 @@ void SpriteComponent::create(const std::string filename)
 	mGraphic.createShaderResourceView(mTextureBuf, heapIndex);
 
 	mTextureFilePath = filename;
+}
+
+void SpriteComponent::loadFileAndCreate(const std::string& structName)
+{
+	//ファイルの読み込み
+	std::ifstream spriteFile("assets\\data\\spriteData.json");
+	nlohmann::json spriteJson;
+	spriteFile >> spriteJson;
+
+	//構造体が存在しない場合、作成する
+	if (spriteJson.find(structName) == spriteJson.end()) {
+		spriteJson[structName] = {
+			{"filePath", mTextureFilePath},
+			{"x", 0.0f},
+			{"y", 0.0f},
+			{"width", 100.0f},
+			{"height", 100.0f},
+			{"borderSize", 0.0f},
+			{"rotation", 0.0f}
+		};
+		std::ofstream outFile("assets\\data\\spriteData.json");
+		outFile << spriteJson.dump(4);
+	}
+
+	//スプライトの作成
+	create(spriteJson[structName].value("filePath", mTextureFilePath));
+	//スプライトのセッティング
+	setPosition(XMFLOAT3(spriteJson[structName].value("x", 0.0f), spriteJson[structName].value("y", 0.0f), mPosition.z));
+	setBordarSize(spriteJson[structName].value("borderSize", 0.0f));
+	setSpriteSize(XMFLOAT2(spriteJson[structName].value("width", 1.0f), spriteJson[structName].value("height", 1.0f)));
+	setRotation(spriteJson[structName].value("rotation", 0.0f));
 }
 
 void SpriteComponent::draw()

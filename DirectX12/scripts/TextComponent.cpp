@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "AssetManager.h"
 #include "MyUtility.h"
+#include "json.hpp"
+#include <fstream>
 
 TextComponent::TextComponent(Actor& owner, float zDepth) 
 	: Component(owner),
@@ -25,7 +27,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	mTextColor = D2D1::ColorF(D2D1::ColorF::White);
 	mText = L"";
 	isLineSpaceDefault = true;
-	mLineSpace = 0;
+	mLineSpace = 60.0f;
 	mBaseLineSpace = 0;
 
 	mOwner.getScene().addText(this);
@@ -54,6 +56,33 @@ TextComponent::~TextComponent()
 	if (wrap) mGraphic.delayRelease(wrap);
 	if (target) mGraphic.delayRelease(target);
 
+}
+
+void TextComponent::loadFileAndCreate(const std::string& structName)
+{
+	//テキストデータの取得
+	nlohmann::json textJson;
+	std::ifstream textfile("assets\\data\\textData.json");
+	textfile >> textJson;
+
+	//構造体が存在しない場合、作成する
+	if (!textJson.contains(structName)) {
+		textJson[structName] = {
+			{"x", mBaseLineX},
+			{"y", mBaseLineY},
+			{"fontSize", mFontSize},
+			{"lineSpace", mLineSpace},
+			{"text", Utility::wstringToString(mText)}
+		};
+		std::ofstream textfileOut("assets\\data\\textData.json");
+		textfileOut << textJson.dump(4);
+	}
+
+	mFontSize = textJson[structName].value("fontSize", mFontSize);
+	mLineSpace = textJson[structName].value("lineSpace", mLineSpace);
+	mBaseLineX = textJson[structName].value("x", mBaseLineX);
+	mBaseLineY = textJson[structName].value("y", mBaseLineY);
+	mText = Utility::stringToWString(textJson[structName].value("text", ""));
 }
 
 //要マルチスレッド化
@@ -198,10 +227,9 @@ bool TextComponent::getIsActive()
 	return isActive;
 }
 
-float TextComponent::getAscent()
+float TextComponent::getLineSpace()
 {
-
-	return 0.0f;
+	return mLineSpace;
 }
 
 

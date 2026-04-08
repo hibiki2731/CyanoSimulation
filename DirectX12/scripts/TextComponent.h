@@ -11,6 +11,7 @@ public:
 	TextComponent(Actor& owner, float zDepth = 100.0f);
 	~TextComponent();
 
+	void loadFileAndCreate(const std::string& structName);
 	void drawTextTexture();
 	void draw();
 
@@ -28,7 +29,7 @@ public:
 
 	//ゲッター
 	bool getIsActive();
-	float getAscent();
+	float getLineSpace();
 
 #ifdef _DEBUG
 	void activateControll(const std::string& structName);

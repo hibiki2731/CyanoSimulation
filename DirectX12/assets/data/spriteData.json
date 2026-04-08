@@ -2,10 +2,10 @@
     "EquipArmerMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
-        "height": 500.0,
+        "height": 430.0,
         "rotation": 0.0,
         "width": 800.0,
-        "x": 60.0,
+        "x": 390.0,
         "y": 100.0
     },
     "EquipArmerMenuArrow": {
@@ -14,16 +14,43 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 900.0,
+        "y": 180.0
+    },
+    "EquipArmerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 488.0
+    },
+    "EquipArmerMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 20.0,
+        "rotation": 1.5709999799728394,
+        "width": 275.0,
+        "x": 285.5,
+        "y": 338.0
+    },
+    "EquipArmerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 180.0
     },
     "EquipWeaponMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
-        "height": 500.0,
+        "height": 430.0,
         "rotation": 0.0,
         "width": 800.0,
-        "x": 60.0,
+        "x": 390.0,
         "y": 100.0
     },
     "EquipWeaponMenuArrow": {
@@ -32,8 +59,35 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 80.0
+        "x": 900.0,
+        "y": 180.0
+    },
+    "EquipWeaponMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 488.0
+    },
+    "EquipWeaponMenuScrollBar": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 20.0,
+        "rotation": 1.570796012878418,
+        "width": 275.0,
+        "x": 285.5,
+        "y": 338.0
+    },
+    "EquipWeaponMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 180.0
     },
     "ExplorerMenuDownArrow": {
         "borderSize": 0.0,
@@ -272,10 +326,10 @@
     "StatusMenu": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
-        "height": 500.0,
+        "height": 565.0,
         "rotation": 0.0,
-        "width": 800.0,
-        "x": 60.0,
+        "width": 340.0,
+        "x": 50.0,
         "y": 100.0
     },
     "StatusMenuArrow": {
@@ -284,7 +338,7 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 300.0,
-        "y": 85.0
+        "x": 320.0,
+        "y": 185.0
     }
 }
