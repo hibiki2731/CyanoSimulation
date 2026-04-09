@@ -103,7 +103,7 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 
 	//スクロールバー
 	structName = "ForgeArmerMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this);
+	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
 	scrollBar->loadFileAndCreate(structName);
 	float maxHeight = spriteJson[structName]["height"].get<float>();
 	float height = maxHeight * MaxShowArmerNum / mArmers.size();

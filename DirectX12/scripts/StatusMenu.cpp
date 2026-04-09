@@ -303,7 +303,7 @@ void EquipArmerMenu::refreshText()
 			float y = mTextComponent->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + mTextComponent->getLineSpace() * (i - mScrollOffset);
 			mEquipIcon->setPosY(y);
 		}
-		message += Utility::stringToWString(mItemManager.getItemData(inventory[i]).name) + L"\n";
+		message += Utility::stringToWString(mItemManager.getArmerData(inventory[i]).name) + L"\n";
 	}
 	mTextComponent->setText(message);
 	mTextComponent->showText();
