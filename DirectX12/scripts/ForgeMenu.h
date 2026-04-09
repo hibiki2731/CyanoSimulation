@@ -19,6 +19,9 @@ private:
 	void prepareCraftItems();
 	void craftArmer(int index);
 	void refreshText();
+	void showCraftCost();
+	void showResource();
+	void showArmerEffect();
 
 	std::vector<std::string> mArmers;
 
@@ -26,6 +29,9 @@ private:
 	ItemManager& mItemManager;
 	TextComponent* mArmerText;
 	SpriteComponent* mScrollBar;
+	TextComponent* mCostText;
+	TextComponent* mResourceText;
+	TextComponent* mArmerEffectText;
 
 	const int MaxShowArmerNum = 7;
 	float mScrollBarMoveLength;
@@ -43,6 +49,9 @@ private:
 	void prepareCraftItems();
 	void craftWeapon(int index);
 	void refreshText();
+	void showCraftCost();
+	void showResource();
+	void showWeaponEffect();
 
 	std::vector<std::string> mWeapons;
 
@@ -50,6 +59,9 @@ private:
 	ItemManager& mItemManager;
 	TextComponent* mWeaponText;
 	SpriteComponent* mScrollBar;
+	TextComponent* mCostText;
+	TextComponent* mResourceText;
+	TextComponent* mWeaponEffectText;
 
 	const int MaxShowWeaponNum = 7;
 	float mScrollBarMoveLength;

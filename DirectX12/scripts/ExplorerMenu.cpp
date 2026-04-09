@@ -82,6 +82,61 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 #endif
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
+
+	//所持リソース表示用のキャンバス
+	structName = "ResourceCanvas";
+	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
+	resourceCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	resourceCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(resourceCanvas));
+
+	//所持リソースのテキストを作成
+	structName = "ResourceText";
+	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	resourceText->loadFileAndCreate(structName);
+	resourceText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	resourceText->activateControll(structName);
+#endif
+	mResourceText = resourceText.get();
+	showResource();
+	addComponent(std::move(resourceText));
+
+	//装備の効果
+	structName = "EffectCanvas";
+	auto toolEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
+	toolEffectCanvas->loadFileAndCreate(structName);
+
+#ifdef _DEBUG
+	toolEffectCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(toolEffectCanvas));
+
+	//装備の効果　テキスト	
+	structName = "EffectText";
+	auto toolEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	toolEffectText->loadFileAndCreate(structName);
+	toolEffectText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	toolEffectText->activateControll(structName);
+#endif
+	mToolEffectText = toolEffectText.get();
+	showToolEffect();
+	addComponent(std::move(toolEffectText));
+
+	//装備作製にかかるコスト
+	structName = "CostText";
+	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	costText->loadFileAndCreate(structName);
+	costText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	costText->activateControll(structName);
+#endif
+	mCostText = costText.get();
+	showCraftCost();
+	addComponent(std::move(costText));
 }
 
 void ExplorerMenu::selectedAct()
@@ -109,6 +164,8 @@ void ExplorerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
+		showCraftCost();
+		showToolEffect();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
@@ -117,6 +174,8 @@ void ExplorerMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
+		showCraftCost();
+		showToolEffect();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowToolNum  - 1) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -161,6 +220,8 @@ void ExplorerMenu::craftExplorer(int index)
 	mPlayerManager.applyToolParamater();
 	//UIに反映
 	mScene.updateStatusWindow();
+	showCraftCost();
+	showToolEffect();
 
 }
 
@@ -187,6 +248,56 @@ void ExplorerMenu::refreshText()
 		}
 		else mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
+}
+
+void ExplorerMenu::showCraftCost()
+{
+	//道具のデータを取得
+	if (mTools.size() == 0) {
+		mCostText->setText(L" ");
+		mCostText->showText();
+		return;
+	}
+	const auto& toolData = mItemManager.getExplorerData(mTools[mSelectedIndex]);
+	//道具の製作コストを表示
+	std::wstring costText = L"消費リソース\n";
+	for (int i = 0; i < toolData.costResourceID.size(); i++) {
+		const auto& resourceData = mItemManager.getResourceData(toolData.costResourceID[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(toolData.price[i]);
+	}
+	costText += L"\n";
+	mCostText->setText(costText);
+	mCostText->showText();
+}
+
+void ExplorerMenu::showResource()
+{
+	//リソースデータの取得
+	auto resourceData = mItemManager.getResourceData();
+	//所持リソースの表示
+	std::wstring resourceText = L"所持リソース\n";
+	for (auto& data : resourceData) {
+		if (data.second.num <= 0) continue;
+		resourceText += Utility::stringToWString(data.second.name) + L" : " + std::to_wstring(mItemManager.getResourceNum(data.second.id)) + L"  ";
+	}
+	resourceText += L"\n";
+	mResourceText->setText(resourceText);
+	mResourceText->showText();
+}
+
+void ExplorerMenu::showToolEffect()
+{
+	//道具データを取得
+	if (mTools.size() == 0) {
+		mToolEffectText->setText(L" ");
+		mToolEffectText->showText();
+		return;
+	}
+	const auto& toolData = mItemManager.getExplorerData(mTools[mSelectedIndex]);
+	//道具の効果を表示
+	std::wstring description = Utility::stringToWString(toolData.description);
+	mToolEffectText->setText(description);
+	mToolEffectText->showText();
 }
 
 

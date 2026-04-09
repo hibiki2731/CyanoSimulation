@@ -9,7 +9,7 @@ struct ItemData {
 	std::vector<std::string> costResourceID;
 	std::vector<int> price;
 	int value;
-	std::string effectText;
+	std::string description;
 	std::string iconFilePath;
 };
 
@@ -20,6 +20,7 @@ struct WeaponData {
 	std::vector<int> price;
 	int power;
 	bool inPossession;
+	std::string description;
 };
 
 struct ArmerData {
@@ -30,6 +31,7 @@ struct ArmerData {
 	std::vector<int> price;
 	int defence;
 	bool inPossession;
+	std::string description;
 };
 
 struct ExplorerData {
@@ -40,6 +42,7 @@ struct ExplorerData {
 	std::string category;
 	int value;
 	bool inPossession;
+	std::string description;
 };
 
 struct ResourceData {

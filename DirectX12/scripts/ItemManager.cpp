@@ -9,7 +9,9 @@ const ItemData ItemManager::EmptyItem = {
 	"EMPTY",
 	{""},
 	{0},
-	0
+	0,
+	"",
+	""
 };
 
 const WeaponData ItemManager::EmptyWeapon = {
@@ -17,7 +19,9 @@ const WeaponData ItemManager::EmptyWeapon = {
 	"",
 	{""},
 	{0},
-	0
+	0,
+	false,
+	""
 };
 
 const ArmerData ItemManager::EmptyArmer{
@@ -26,14 +30,20 @@ const ArmerData ItemManager::EmptyArmer{
 	"",
 	{""},
 	{0},
-	0
+	0,
+	false,
+	""
 };
 
 const ExplorerData ItemManager::EmptyExplorer{
 	"",
 	"",
 	{""},
-	{0}
+	{0},
+	"",
+	0,
+	false,
+	""
 };
 
 const ResourceData ItemManager::EmptyResource{
@@ -70,7 +80,7 @@ void ItemManager::loadItemData()
 		item.costResourceID = itemJson["costResourceID"];
 		item.value = itemJson["value"];
 		item.price = itemJson["price"].get<std::vector<int>>();
-		item.effectText = itemJson["effectText"].get<std::string>();
+		item.description = itemJson["description"].get<std::string>();
 		item.iconFilePath = itemJson["iconFilePath"].get<std::string>();
 		mItemData[itemJson["id"]] = item;
 	}
@@ -83,6 +93,7 @@ void ItemManager::loadItemData()
 		weapon.price = weaponJson["price"].get<std::vector<int>>();
 		weapon.power = weaponJson["power"];
 		weapon.inPossession = weaponJson["inPossession"];
+		weapon.description = weaponJson["description"].get<std::string>();
 		mWeaponData[weaponJson["id"]] = weapon;
 	}
 	//防具データを読み込む
@@ -95,6 +106,7 @@ void ItemManager::loadItemData()
 		armer.price = armerJson["price"].get<std::vector<int>>();
 		armer.defence = armerJson["defence"];
 		armer.inPossession = armerJson["inPossession"];
+		armer.description = armerJson["description"].get<std::string>();
 		mArmerData[armerJson["id"]] = armer;
 	}
 	//探索道具データを読み込む
@@ -107,6 +119,7 @@ void ItemManager::loadItemData()
 		explorer.category = explorerJson["category"];
 		explorer.value = explorerJson.value("value", 0);
 		explorer.inPossession = explorerJson["inPossession"];
+		explorer.description = explorerJson["description"].get<std::string>();
 		mExplorerData[explorerJson["id"]] = explorer;
 	}
 }

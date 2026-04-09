@@ -84,7 +84,7 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(scrollBar));
 
 	//所持リソース表示用のキャンバス
-	structName = "ShopMenuResourceCanvas";
+	structName = "ResourceCanvas";
 	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
 	resourceCanvas->loadFileAndCreate(structName);
 #ifdef _DEBUG
@@ -93,7 +93,7 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(resourceCanvas));
 
 	//所持リソースのテキストを作成
-	structName = "ShopMenuResourceText";
+	structName = "ResourceText";
 	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	resourceText->loadFileAndCreate(structName);
 	resourceText->setTextColor(D2D1::ColorF::Black);
@@ -105,7 +105,7 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(resourceText));
 
 	//アイテムの効果
-	structName = "ShopMenuItemEffectCanvas";
+	structName = "EffectCanvas";
 	auto itemEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
 	itemEffectCanvas->loadFileAndCreate(structName);
 
@@ -115,7 +115,7 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(itemEffectCanvas));
 
 	//アイテムの効果　テキスト	
-	structName = "ShopMenuItemEffectText";
+	structName = "EffectText";
 	auto itemEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	itemEffectText->loadFileAndCreate(structName);
 	itemEffectText->setTextColor(D2D1::ColorF::Black);
@@ -127,7 +127,7 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	addComponent(std::move(itemEffectText));
 
 	//アイテム購入にかかるコスト
-	structName = "ShopMenuCostText";
+	structName = "CostText";
 	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
 	costText->loadFileAndCreate(structName);
 	costText->setTextColor(D2D1::ColorF::Black);
@@ -213,16 +213,28 @@ void ShopMenu::refreshText()
 void ShopMenu::showItemEffect()
 {
 	//アイテムデータを取得
+	if (mSaleItem.size() == 0) {
+		std::wstring description = L" ";
+		mItemEffectText->setText(description);
+		mItemEffectText->showText();
+		return;
+	}
 	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
 	//アイテムの効果を表示
-	std::wstring effectText = Utility::stringToWString(itemData.effectText);
-	mItemEffectText->setText(effectText);
+	std::wstring description = Utility::stringToWString(itemData.description);
+	mItemEffectText->setText(description);
 	mItemEffectText->showText();
 }
 
 void ShopMenu::showItemCost()
 {
 	//アイテムデータを取得
+	if (mSaleItem.size() == 0) {
+		std::wstring costText = L" ";
+		mCostText->setText(costText);
+		mCostText->showText();
+		return;
+	}
 	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
 	//アイテムのコストを表示
 	std::wstring costText = L"消費リソース\n";

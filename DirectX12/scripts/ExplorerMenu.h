@@ -3,6 +3,8 @@
 
 class PlayerManager;
 class ItemManager;
+class TextComponent;
+class SpriteComponent;
 
 class ExplorerMenu : public Menu {
 public:
@@ -15,13 +17,19 @@ private:
 	void prepareCraftExplorer();
 	void craftExplorer(int index);
 	void refreshText();
+	void showCraftCost();
+	void showResource();
+	void showToolEffect();
 
 	std::vector<std::string> mTools;
 
 	PlayerManager& mPlayerManager;
 	ItemManager& mItemManager;
-	class TextComponent* mToolText;
-	class SpriteComponent* mScrollBar;
+	TextComponent* mToolText;
+	SpriteComponent* mScrollBar;
+	TextComponent* mCostText;
+	TextComponent* mResourceText;
+	TextComponent* mToolEffectText;
 
 	int mScrollOffset;
 	const int MaxShowToolNum = 5;

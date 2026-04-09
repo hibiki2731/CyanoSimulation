@@ -142,7 +142,7 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 		position.x += i * (originItemIcon->getSpriteSize().x + 10.0f); //アイテムアイコンの間隔を10.0fとする
 		itemIcon->setPosition(position);
 		itemIcon->setSpriteSize(originItemIcon->getSpriteSize());
-		if (i > playerData.inventory.size() - 1)
+		if (i <= playerData.inventory.size() - 1)
 			itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
 		else 
 			itemIcon->create(mItemManager.getItemData(playerData.inventory[i]).iconFilePath);

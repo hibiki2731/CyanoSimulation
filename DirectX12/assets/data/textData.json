@@ -13,6 +13,20 @@
         "x": 40.0,
         "y": 25.0
     },
+    "CostText": {
+        "fontSize": 30.0,
+        "lineSpace": 40.0,
+        "text": "消費リソース\nGOLD : 10\n",
+        "x": 626.0,
+        "y": 555.0
+    },
+    "EffectText": {
+        "fontSize": 30.0,
+        "lineSpace": 50.0,
+        "text": "HPを20回復\n",
+        "x": 626.0,
+        "y": 325.0
+    },
     "EquipArmerMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,
@@ -60,7 +74,7 @@
         "lineSpace": 60.0,
         "text": "靴\nバックパック\n",
         "x": 310.0,
-        "y": 193.0
+        "y": 203.0
     },
     "ExplorerShopMenuText": {
         "fontSize": 50.0,
@@ -71,17 +85,17 @@
     },
     "ExplorerShopMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "ExplorerShop\n",
         "x": 280.0,
-        "y": 110.0
+        "y": 120.0
     },
     "ForgeArmerMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 60.0,
         "text": "服\n",
         "x": 310.0,
-        "y": 193.0
+        "y": 203.0
     },
     "ForgeArmerMenuText": {
         "fontSize": 50.0,
@@ -92,17 +106,17 @@
     },
     "ForgeArmerMenuTitle": {
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "Armer\n",
         "x": 280.0,
-        "y": 110.0
+        "y": 120.0
     },
     "ForgeMenuText": {
         "fontSize": 45.0,
         "lineSpace": 60.0,
         "text": "Weapon\nArmer\n",
         "x": 290.0,
-        "y": 230.0
+        "y": 240.0
     },
     "ForgeMenuTitle": {
         "fontSize": 50.0,
@@ -174,21 +188,7 @@
         "x": 0.0,
         "y": 0.0
     },
-    "ShopMenuCostText": {
-        "fontSize": 30.0,
-        "lineSpace": 40.0,
-        "text": "消費リソース\nGOLD : 10\n",
-        "x": 626.0,
-        "y": 555.0
-    },
-    "ShopMenuItemEffectText": {
-        "fontSize": 30.0,
-        "lineSpace": 50.0,
-        "text": "HPを20回復\n",
-        "x": 626.0,
-        "y": 325.0
-    },
-    "ShopMenuResourceText": {
+    "ResourceText": {
         "fontSize": 30.0,
         "lineSpace": 40.0,
         "text": "所持リソース\nGOLD : 920  草 : 14  \n",

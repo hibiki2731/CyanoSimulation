@@ -115,6 +115,61 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 #endif
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
+
+	//所持リソース表示用のキャンバス
+	structName = "ResourceCanvas";
+	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
+	resourceCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	resourceCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(resourceCanvas));
+
+	//所持リソースのテキストを作成
+	structName = "ResourceText";
+	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	resourceText->loadFileAndCreate(structName);
+	resourceText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	resourceText->activateControll(structName);
+#endif
+	mResourceText = resourceText.get();
+	showResource();
+	addComponent(std::move(resourceText));
+
+	//装備の効果
+	structName = "EffectCanvas";
+	auto armerEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
+	armerEffectCanvas->loadFileAndCreate(structName);
+
+#ifdef _DEBUG
+	armerEffectCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(armerEffectCanvas));
+
+	//装備の効果　テキスト	
+	structName = "EffectText";
+	auto armerEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	armerEffectText->loadFileAndCreate(structName);
+	armerEffectText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	armerEffectText->activateControll(structName);
+#endif
+	mArmerEffectText = armerEffectText.get();
+	showArmerEffect();
+	addComponent(std::move(armerEffectText));
+
+	//装備作製にかかるコスト
+	structName = "CostText";
+	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	costText->loadFileAndCreate(structName);
+	costText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	costText->activateControll(structName);
+#endif
+	mCostText = costText.get();
+	showCraftCost();
+	addComponent(std::move(costText));
 }
 
 void ArmerMenu::selectedAct()
@@ -143,6 +198,8 @@ void ArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
+		showCraftCost();
+		showArmerEffect();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
@@ -151,6 +208,8 @@ void ArmerMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
+		showCraftCost();
+		showArmerEffect();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -193,6 +252,8 @@ void ArmerMenu::craftArmer(int index)
 	//インベントリにアイテムを追加
 	mPlayerManager.addArmer(armerData.id);
 	refreshText();
+	showArmerEffect();
+	showCraftCost();
 }
 
 void ArmerMenu::refreshText()
@@ -218,6 +279,56 @@ void ArmerMenu::refreshText()
 		}
 		else mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
+}
+
+void ArmerMenu::showCraftCost()
+{
+	//防具のデータを取得
+	if (mArmers.size() == 0) {
+		mCostText->setText(L" ");
+		mCostText->showText();
+		return;
+	}
+	const auto& armerData = mItemManager.getArmerData(mArmers[mSelectedIndex]);
+	//防具の製作コストを表示
+	std::wstring costText = L"消費リソース\n";
+	for (int i = 0; i < armerData.costResourceID.size(); i++) {
+		const auto& resourceData = mItemManager.getResourceData(armerData.costResourceID[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(armerData.price[i]);
+	}
+	costText += L"\n";
+	mCostText->setText(costText);
+	mCostText->showText();
+}
+
+void ArmerMenu::showResource()
+{
+	//リソースデータの取得
+	auto resourceData = mItemManager.getResourceData();
+	//所持リソースの表示
+	std::wstring resourceText = L"所持リソース\n";
+	for (auto& data : resourceData) {
+		if (data.second.num <= 0) continue;
+		resourceText += Utility::stringToWString(data.second.name) + L" : " + std::to_wstring(mItemManager.getResourceNum(data.second.id)) + L"  ";
+	}
+	resourceText += L"\n";
+	mResourceText->setText(resourceText);
+	mResourceText->showText();
+}
+
+void ArmerMenu::showArmerEffect()
+{
+	//防具データを取得
+	if (mArmers.size() == 0) {
+		mArmerEffectText->setText(L" ");
+		mArmerEffectText->showText();
+		return;
+	}
+	const auto& armerData = mItemManager.getArmerData(mArmers[mSelectedIndex]);
+	//防具の効果を表示
+	std::wstring description = Utility::stringToWString(armerData.description);
+	mArmerEffectText->setText(description);
+	mArmerEffectText->showText();
 }
 
 WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
@@ -294,6 +405,61 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 #endif
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
+
+	//所持リソース表示用のキャンバス
+	structName = "ResourceCanvas";
+	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
+	resourceCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	resourceCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(resourceCanvas));
+
+	//所持リソースのテキストを作成
+	structName = "ResourceText";
+	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	resourceText->loadFileAndCreate(structName);
+	resourceText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	resourceText->activateControll(structName);
+#endif
+	mResourceText = resourceText.get();
+	showResource();
+	addComponent(std::move(resourceText));
+
+	//装備の効果
+	structName = "EffectCanvas";
+	auto weaponEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
+	weaponEffectCanvas->loadFileAndCreate(structName);
+
+#ifdef _DEBUG
+	weaponEffectCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(weaponEffectCanvas));
+
+	//装備の効果　テキスト	
+	structName = "EffectText";
+	auto weaponEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	weaponEffectText->loadFileAndCreate(structName);
+	weaponEffectText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	weaponEffectText->activateControll(structName);
+#endif
+	mWeaponEffectText = weaponEffectText.get();
+	showWeaponEffect();
+	addComponent(std::move(weaponEffectText));
+
+	//装備作製にかかるコスト
+	structName = "CostText";
+	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	costText->loadFileAndCreate(structName);
+	costText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	costText->activateControll(structName);
+#endif
+	mCostText = costText.get();
+	showCraftCost();
+	addComponent(std::move(costText));
 }
 
 void WeaponMenu::selectedAct()
@@ -322,6 +488,8 @@ void WeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
+		showWeaponEffect();
+		showCraftCost();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
@@ -330,6 +498,8 @@ void WeaponMenu::inputMenu()
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
+		showWeaponEffect();
+		showCraftCost();
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
@@ -372,6 +542,8 @@ void WeaponMenu::craftWeapon(int index)
 	//インベントリにアイテムを追加
 	mPlayerManager.addWeapon(weaponData.id);
 	refreshText();
+	showWeaponEffect();
+	showCraftCost();
 }
 
 void WeaponMenu::refreshText()
@@ -397,4 +569,57 @@ void WeaponMenu::refreshText()
 		}
 		else mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
+}
+
+void WeaponMenu::showCraftCost()
+{
+	//武器のデータを取得
+	if (mWeapons.size() == 0) {
+		std::wstring costText = L" ";
+		mCostText->setText(costText);
+		mCostText->showText();
+		return;
+	}
+	const auto& weaponData = mItemManager.getWeaponData(mWeapons[mSelectedIndex]);
+	//武器の製作コストを表示
+	std::wstring costText = L"消費リソース\n";
+	for (int i = 0; i < weaponData.costResourceID.size(); i++) {
+		const auto& resourceData = mItemManager.getResourceData(weaponData.costResourceID[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(weaponData.price[i]);
+	}
+	costText += L"\n";
+	mCostText->setText(costText);
+	mCostText->showText();
+}
+
+void WeaponMenu::showResource()
+{
+	//リソースデータの取得
+	auto resourceData = mItemManager.getResourceData();
+	//所持リソースの表示
+	std::wstring resourceText = L"所持リソース\n";
+	for (auto& data : resourceData) {
+		if (data.second.num <= 0) continue;
+		resourceText += Utility::stringToWString(data.second.name) + L" : " + std::to_wstring(mItemManager.getResourceNum(data.second.id)) + L"  ";
+	}
+	resourceText += L"\n";
+	mResourceText->setText(resourceText);
+	mResourceText->showText();
+}
+
+void WeaponMenu::showWeaponEffect()
+{
+	//武器データを取得
+	if (mWeapons.size() == 0) {
+		std::wstring description = L" ";
+		mWeaponEffectText->setText(description);
+		mWeaponEffectText->showText();
+		return;
+	}
+
+	const auto& weaponData = mItemManager.getWeaponData(mWeapons[mSelectedIndex]);
+	//武器の効果を表示
+	std::wstring description = Utility::stringToWString(weaponData.description);
+	mWeaponEffectText->setText(description);
+	mWeaponEffectText->showText();
 }
