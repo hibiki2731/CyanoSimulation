@@ -36,6 +36,12 @@ const ExplorerData ItemManager::EmptyExplorer{
 	{0}
 };
 
+const ResourceData ItemManager::EmptyResource{
+	"",
+	"",
+	0
+};
+
 ItemManager::ItemManager()
 {
 }
@@ -49,7 +55,11 @@ void ItemManager::loadItemData()
 	file >> json;
 	//保存してあるリソース数を読み込む
 	for (auto& resourceJson : json["Resource"]) {
-		mResourceData[resourceJson["id"]] = resourceJson["num"];
+		ResourceData resource;
+		resource.id = resourceJson["id"];
+		resource.name = resourceJson["name"];
+		resource.num = resourceJson["num"];
+		mResourceData[resourceJson["id"]] = std::move(resource);
 	}
 	//アイテムデータを読み込む
 	for (auto& itemJson : json["Item"]) {
@@ -60,6 +70,8 @@ void ItemManager::loadItemData()
 		item.costResourceID = itemJson["costResourceID"];
 		item.value = itemJson["value"];
 		item.price = itemJson["price"].get<std::vector<int>>();
+		item.effectText = itemJson["effectText"].get<std::string>();
+		item.iconFilePath = itemJson["iconFilePath"].get<std::string>();
 		mItemData[itemJson["id"]] = item;
 	}
 	//武器データを読み込む
@@ -105,7 +117,7 @@ void ItemManager::addResource(const std::string& id, int num)
 	//idが存在しない場合
 	if (iter == mResourceData.end()) return;
 	//存在する場合
-	iter->second += static_cast<size_t>(num);
+	iter->second.num += static_cast<size_t>(num);
 }
 
 void ItemManager::subResource(const std::string& id, int num)
@@ -114,24 +126,35 @@ void ItemManager::subResource(const std::string& id, int num)
 	//idが存在しない場合
 	if (iter == mResourceData.end()) return;
 	//存在する場合
-	int value = static_cast<int>(iter->second - num);
+	int value = static_cast<int>(iter->second.num - num);
 	if (value < 0) return; //数が負の数になる場合、0で止める
 
-	iter->second = static_cast<size_t>(value);
+	iter->second.num = static_cast<size_t>(value);
 }
 
 int ItemManager::getResourceNum(std::string id) {
 	auto iter = mResourceData.find(id);
 	if (iter != mResourceData.end())
 		//idが存在する場合
-		return static_cast<int>(iter->second);
+		return static_cast<int>(iter->second.num);
 	else
 		//idが存在しない場合
 		return 0;
 	
 }
 
-const std::unordered_map<std::string, size_t>& ItemManager::getResourceData()
+const ResourceData& ItemManager::getResourceData(const std::string& id)
+{
+	auto iter = mResourceData.find(id);
+	if (iter != mResourceData.end())
+		//idが存在する場合
+		return iter->second;
+	else
+		//idが存在しない場合、空データを渡す
+		return EmptyResource;
+}
+
+const std::unordered_map<std::string, ResourceData>& ItemManager::getResourceData()
 {
 	return mResourceData;
 }

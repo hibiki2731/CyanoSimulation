@@ -1,4 +1,18 @@
 {
+    "APText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "AP ",
+        "x": 10.0,
+        "y": 25.0
+    },
+    "APValueText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "10/10\n",
+        "x": 40.0,
+        "y": 25.0
+    },
     "EquipArmerMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,
@@ -118,6 +132,20 @@
         "x": 280.0,
         "y": 110.0
     },
+    "HPText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "HP ",
+        "x": 10.0,
+        "y": 5.0
+    },
+    "HPValueText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "75/100\n",
+        "x": 40.0,
+        "y": 6.0
+    },
     "InnMenuText": {
         "fontSize": 50.0,
         "lineSpace": 60.0,
@@ -137,7 +165,7 @@
         "lineSpace": 60.0,
         "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n",
         "x": 60.0,
-        "y": 140.0
+        "y": 200.0
     },
     "MainMenuTitle": {
         "fontSize": 0.0,
@@ -146,12 +174,33 @@
         "x": 0.0,
         "y": 0.0
     },
+    "ShopMenuCostText": {
+        "fontSize": 30.0,
+        "lineSpace": 40.0,
+        "text": "消費リソース\nGOLD : 10\n",
+        "x": 626.0,
+        "y": 555.0
+    },
+    "ShopMenuItemEffectText": {
+        "fontSize": 30.0,
+        "lineSpace": 50.0,
+        "text": "HPを20回復\n",
+        "x": 626.0,
+        "y": 325.0
+    },
+    "ShopMenuResourceText": {
+        "fontSize": 30.0,
+        "lineSpace": 40.0,
+        "text": "所持リソース\nGOLD : 920  草 : 14  \n",
+        "x": 626.0,
+        "y": 120.0
+    },
     "ShopMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 60.0,
         "text": "薬草\n塩昆布\n",
         "x": 320.0,
-        "y": 193.0
+        "y": 203.0
     },
     "ShopMenuText": {
         "fontSize": 50.0,

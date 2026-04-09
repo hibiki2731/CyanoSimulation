@@ -159,6 +159,8 @@ void ExplorerMenu::craftExplorer(int index)
 	refreshText();
 	//プレイヤーデータを更新
 	mPlayerManager.applyToolParamater();
+	//UIに反映
+	mScene.updateStatusWindow();
 
 }
 

@@ -82,6 +82,62 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 #endif
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
+
+	//所持リソース表示用のキャンバス
+	structName = "ShopMenuResourceCanvas";
+	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
+	resourceCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	resourceCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(resourceCanvas));
+
+	//所持リソースのテキストを作成
+	structName = "ShopMenuResourceText";
+	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	resourceText->loadFileAndCreate(structName);
+	resourceText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	resourceText->activateControll(structName);
+#endif
+	mResourceText = resourceText.get();
+	showResource();
+	addComponent(std::move(resourceText));
+
+	//アイテムの効果
+	structName = "ShopMenuItemEffectCanvas";
+	auto itemEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
+	itemEffectCanvas->loadFileAndCreate(structName);
+
+#ifdef _DEBUG
+	itemEffectCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(itemEffectCanvas));
+
+	//アイテムの効果　テキスト	
+	structName = "ShopMenuItemEffectText";
+	auto itemEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	itemEffectText->loadFileAndCreate(structName);
+	itemEffectText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	itemEffectText->activateControll(structName);
+#endif
+	mItemEffectText = itemEffectText.get();
+	showItemEffect();
+	addComponent(std::move(itemEffectText));
+
+	//アイテム購入にかかるコスト
+	structName = "ShopMenuCostText";
+	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
+	costText->loadFileAndCreate(structName);
+	costText->setTextColor(D2D1::ColorF::Black);
+#ifdef _DEBUG
+	costText->activateControll(structName);
+#endif
+	mCostText = costText.get();
+	showItemCost();
+	addComponent(std::move(costText));
+
 }
 
 void ShopMenu::selectedAct()
@@ -109,18 +165,26 @@ void ShopMenu::inputMenu()
 {
 	if (isKeyJustPressed(VK_UP)) {
 		if (mSelectedIndex <= 0) return;
-		mSelectedIndex--;
-		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+		mSelectedIndex--;													//選択アイテムのインデックスを減らす
+		showItemEffect();													//選択アイテムの効果を表示
+		showItemCost();														//選択アイテムのコストを表示
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");				//効果音を鳴らす
+
+		//カーソルが上端の場合、矢印は動かさない
 		if (mSelectedIndex < mScrollOffset) return;
-		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));			//矢印を上に移動
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
-		mSelectedIndex++;
-		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+		mSelectedIndex++;													//選択アイテムのインデックスを増やす
+		showItemEffect();													//選択アイテムの効果を表示
+		showItemCost();														//選択アイテムのコストを表示
+		mScene.getGame().getAudioManager().playSE("UI_MOVE1");				//効果音を鳴らす
+
+		//カーソルが下端の場合、矢印は動かさない
 		if (mSelectedIndex > mScrollOffset + MaxShowItemNum  - 1) return;
-		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
+		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));				//矢印を下に移動	
 	}		
 }
 
@@ -144,6 +208,46 @@ void ShopMenu::refreshText()
 	}
 	mShopText->setText(message);
 	mShopText->showText();
+}
+
+void ShopMenu::showItemEffect()
+{
+	//アイテムデータを取得
+	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
+	//アイテムの効果を表示
+	std::wstring effectText = Utility::stringToWString(itemData.effectText);
+	mItemEffectText->setText(effectText);
+	mItemEffectText->showText();
+}
+
+void ShopMenu::showItemCost()
+{
+	//アイテムデータを取得
+	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
+	//アイテムのコストを表示
+	std::wstring costText = L"消費リソース\n";
+	for (int i = 0; i < itemData.costResourceID.size(); i++) {
+		const auto& resourceData = mItemManager.getResourceData(itemData.costResourceID[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(itemData.price[i]);
+	}
+	costText += L"\n";
+	mCostText->setText(costText);
+	mCostText->showText();
+}
+
+void ShopMenu::showResource()
+{
+	//リソースデータの取得
+	auto resourceData = mItemManager.getResourceData();
+	//所持リソースの表示
+	std::wstring resourceText = L"所持リソース\n";
+	for (auto& data : resourceData) {
+		if (data.second.num <= 0) continue;
+		resourceText += Utility::stringToWString(data.second.name) + L" : " + std::to_wstring(mItemManager.getResourceNum(data.second.id)) + L"  ";
+	}
+	resourceText += L"\n";
+	mResourceText->setText(resourceText);
+	mResourceText->showText();
 }
 
 void ShopMenu::buyItem(int index) {
@@ -170,6 +274,10 @@ void ShopMenu::buyItem(int index) {
 	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	//インベントリにアイテムを追加
 	mPlayerManager.addInventory(itemData.id);
+
+	//UI
+	showResource();	//所持リソースの反映
+	mScene.updateStatusWindow();	//所持アイテムの反映
 }
 
 

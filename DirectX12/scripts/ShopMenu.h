@@ -6,6 +6,8 @@
 class ItemManager;
 class PlayerManager;
 struct ItemData;
+class TextComponent;
+class SpriteComponent;
 
 class ShopMenu : public Menu {
 public:
@@ -18,12 +20,18 @@ private:
 	void buyItem(int indes);
 	void prepareSaleItem();
 	void refreshText();
+	void showItemEffect();
+	void showItemCost();
+	void showResource();
 
 	std::vector<std::string> mSaleItem;
 	ItemManager& mItemManager;
 	PlayerManager& mPlayerManager;
-	class TextComponent* mShopText;
-	class SpriteComponent* mScrollBar;
+	TextComponent* mShopText;
+	SpriteComponent* mScrollBar;
+	TextComponent* mItemEffectText;
+	TextComponent* mCostText;
+	TextComponent* mResourceText;
 
 	int mScrollOffset;
 	const int MaxShowItemNum = 7;

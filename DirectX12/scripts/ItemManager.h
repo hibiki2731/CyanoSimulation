@@ -9,6 +9,8 @@ struct ItemData {
 	std::vector<std::string> costResourceID;
 	std::vector<int> price;
 	int value;
+	std::string effectText;
+	std::string iconFilePath;
 };
 
 struct WeaponData {
@@ -40,6 +42,12 @@ struct ExplorerData {
 	bool inPossession;
 };
 
+struct ResourceData {
+	std::string id;
+	std::string name;
+	size_t num;
+};
+
 class ItemManager
 {
 public:
@@ -52,7 +60,8 @@ public:
 
 	//getter
 	int getResourceNum(std::string id);
-	const std::unordered_map<std::string, size_t>& getResourceData();
+	const ResourceData& getResourceData(const std::string& id);
+	const std::unordered_map<std::string, ResourceData>& getResourceData();
 	const ItemData& getItemData(const std::string& id);
 	const std::unordered_map<std::string, ItemData>& getItemData();
 	const WeaponData& getWeaponData(const std::string& id);
@@ -71,8 +80,9 @@ public:
 	static const WeaponData EmptyWeapon;
 	static const ArmerData EmptyArmer;
 	static const ExplorerData EmptyExplorer;
+	static const ResourceData EmptyResource;
 private:
-	std::unordered_map<std::string, size_t> mResourceData;
+	std::unordered_map<std::string, ResourceData> mResourceData;
 	std::unordered_map<std::string, ItemData> mItemData;
 	std::unordered_map<std::string, WeaponData> mWeaponData;
 	std::unordered_map<std::string, ArmerData> mArmerData;

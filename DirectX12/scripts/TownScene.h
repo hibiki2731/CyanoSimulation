@@ -28,6 +28,9 @@ public:
 
 	void exitStatusMenu();
 
+	//ステータスウィンドウの更新
+	void updateStatusWindow();
+
 	const std::string& getName() const override {
 		return "TOWN";
 	}
@@ -38,5 +41,6 @@ private:
 	bool isSelecetdStatus;
 	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
+	class StatusWindow* mStatusWindow;
 };
 

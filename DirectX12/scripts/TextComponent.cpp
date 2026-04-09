@@ -25,7 +25,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 		mFontSize
 	);
 	mTextColor = D2D1::ColorF(D2D1::ColorF::White);
-	mText = L"";
+	mText = L"empty";
 	isLineSpaceDefault = true;
 	mLineSpace = 60.0f;
 	mBaseLineSpace = 0;
@@ -82,7 +82,7 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));
 	mPosX = textJson[structName].value("x", mPosX);
 	mPosY = textJson[structName].value("y", mPosY);
-	mText = Utility::stringToWString(textJson[structName].value("text", ""));
+	mText = Utility::stringToWString(textJson[structName].value("text", "empty"));
 }
 
 //要マルチスレッド化

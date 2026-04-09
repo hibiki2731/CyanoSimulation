@@ -58,32 +58,42 @@
         {
             "category": "HP_RECOVER",
             "costResourceID": [
-                "GRASS"
+                "GOLD"
             ],
             "id": "HERB",
             "name": "薬草",
             "price": [
                 10
             ],
-            "value": 20
+            "value": 20,
+            "effectText": "HPを20回復\n",
+            "iconFilePath":"assets/picture/HerbIcon.png"
         },
         {
             "category": "AP_RECOVER",
             "costResourceID": [
-                "GRASS"
+                "GOLD"
             ],
             "id":"SALTED_KELP",
             "name":"塩昆布",
             "price":[
                 40
             ],
-            "value": 20
+            "value": 20,
+            "effectText": "APを20回復\nAPの最大値を越えて回復はしない。",
+            "iconFilePath":"assets/picture/SaltedKerp.png"
         }
     ],
     "Resource": [
         {
-            "id": "GRASS",
+            "id": "GOLD",
+            "name": "GOLD",
             "num": 1000
+        },
+        {
+            "id": "GRASS",
+            "name": "草",
+            "num": 0
         }
     ],
     "Weapon": [

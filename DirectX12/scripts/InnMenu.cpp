@@ -29,7 +29,10 @@ void InnMenu::selectedAct()
 
 void InnMenu::stay()
 {
+	//HPを全回復
 	mScene.getGame().getPlayerManager().setHP(mScene.getGame().getPlayerManager().getPlayerData().maxHp);
+	//UIに反映
+	mScene.updateStatusWindow();
 }
 
 void InnMenu::save()
