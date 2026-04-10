@@ -218,6 +218,11 @@ int Player::getSelectItemIndex()
 	return mSelectItemIndex;
 }
 
+bool Player::getIsActing()
+{
+	return isActing;
+}
+
 const std::string& Player::getSelectItemID()
 {
 	return mPlayerManager.getInventoryItem(mSelectItemIndex);
@@ -292,7 +297,7 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 
 	float DTHalfSize = mScene.getDamageTextNum() * 0.5f;
 	//数値が画面中心に来るよう調整
-	textPos = textPos + (right * DTHalfSize * 0.5 * (digit - 1));
+	textPos = textPos + (right * DTHalfSize * 0.5f * (digit - 1));
 	//桁ごとの表示位置の調整
 	for (int i = 0; i < digit; i++) {
 		mScene.createDamageText(textPos, num[i]);

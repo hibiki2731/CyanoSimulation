@@ -4,6 +4,9 @@
 #include "Definition.h"
 #include "EnemyComponent.h"
 #include "Player.h"
+#include "SpriteComponent.h"
+#include "TextComponent.h"
+#include "input.h"
 
 TurnObserver::TurnObserver(DungeonScene& scene)
 	: mScene(scene)
@@ -30,7 +33,7 @@ void TurnObserver::updateTurn()
 	if (mNextTurn == TurnType::PLAYER && mTurnType == TurnType::ENEMY) {
 		//プレイヤーの残り行動回数が0ならば街に帰らせる
 		if (mScene.getPlayerActLimit() == 0) {
-			mScene.returnToTown();
+			endProcess();
 		}
 
 
@@ -44,6 +47,12 @@ void TurnObserver::updateTurn()
 
 
 	mTurnType = mNextTurn;
+}
+
+void TurnObserver::begin()
+{
+	mTurnType = TurnType::PLAYER;
+	mNextTurn = TurnType::PLAYER;
 }
 
 TurnType TurnObserver::getTurnType()
@@ -74,6 +83,7 @@ void TurnObserver::startEnemyTurn()
 	mScene.updateMiniMapPos();
 }
 
+
 void TurnObserver::spawnEnemy()
 {
 	int playerIndex[2];
@@ -102,4 +112,69 @@ void TurnObserver::spawnEnemy()
 
 		i++;
 	}
+}
+
+void TurnObserver::endProcess()
+{
+	mTurnType = TurnType::END;
+	mNextTurn = TurnType::END;
+
+	//エンドウィンドウの生成
+	auto endWindow = std::make_unique<EndWindow>(mScene, *this);
+	mScene.addActor(std::move(endWindow));
+}
+
+EndWindow::EndWindow(DungeonScene& scene, TurnObserver& observer)
+	:Actor(scene),
+	mDungeon(scene),
+	mObserver(observer)
+{
+	isActive = false;
+	mTimer = 0;
+
+}
+
+void EndWindow::updateActor()
+{
+	if (mDungeon.getPlayer()->getIsActing()) return;
+
+	if (mTimer == 0) showWindow();
+
+	mTimer++;
+
+}
+
+void EndWindow::inputActor()
+{
+	if (mTimer > 10 && isKeyJustPressed(VK_RETURN)) {
+		mDungeon.returnToTown();
+	}
+}
+
+void EndWindow::showWindow()
+{
+	std::string structName = "EndWindow";
+	auto window = std::make_unique<SpriteComponent>(*this, 30.0f);
+	window->loadFileAndCreate(structName);
+	window->create("assets/picture/UI2/PNG/Default/panel_brown_damaged.png");
+#ifdef _DEBUG
+	window->activateControll(structName);
+#endif
+	addComponent(std::move(window));
+
+	structName = "EndWindowText";
+	auto text = std::make_unique<TextComponent>(*this, 29.0f);
+	text->loadFileAndCreate(structName);
+	text->setTextColor(D2D1::ColorF::Red);
+	std::wstring message = L" ";
+	if (mObserver.getTurnType() == TurnType::END) {
+		message = L"体力が尽きました\n";
+	}
+	text->setText(message);
+	text->showText();
+#ifdef _DEBUG
+	text->activateControll(structName);
+#endif
+	addComponent(std::move(text));
+
 }

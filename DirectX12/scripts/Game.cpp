@@ -139,13 +139,12 @@ AudioManager& Game::getAudioManager()
 void Game::input()
 {
 	updateInput();
+
+	//フェード中は入力を受け付けない
+	if (mGraphic->isFading()) return;
+
 	//アクターの入力処理
 	mSceneManager->inputScene();
-
-
-#ifdef _DEBUG
-#endif
-
 }
 
 void Game::update()
@@ -169,6 +168,9 @@ void Game::update()
 
 	//遅いシーン更新
 	mSceneManager->lateUpdateScene();
+
+	//フェードの更新
+	mGraphic->updateFade();
 }
 
 void Game::draw()
@@ -188,11 +190,15 @@ void Game::draw()
 	//シーン独自の描画
 	mSceneManager->drawScene();
 
+	//フェード処理
+	mGraphic->renderFade();
+
 #ifdef _DEBUG
 	mGUIDebugger->begin();
 	mSceneManager->drawDebugGUI();
-	mGUIDebugger->end();
+	mGUIDebugger->end();	
 #endif
+
 
 	mGraphic->end3DRender();
 

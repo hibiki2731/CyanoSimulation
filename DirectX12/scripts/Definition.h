@@ -22,6 +22,7 @@ enum LightStat {
 enum class TurnType {
 	PLAYER,
 	ENEMY,
+	END,
 };
 
 struct PointLightData {

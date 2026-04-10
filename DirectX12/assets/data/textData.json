@@ -27,6 +27,20 @@
         "x": 626.0,
         "y": 325.0
     },
+    "EndWindow": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "EndWindowText": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "体力が尽きました\n",
+        "x": 465.0,
+        "y": 325.0
+    },
     "EquipArmerMenuScrollText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,

@@ -409,12 +409,21 @@
     <FxCompile Include="scripts\DTGeometryShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
+    <FxCompile Include="scripts\FadePixelShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\FadeVertexShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\Header.hlsli">
       <Filter>hlsl</Filter>
     </None>
     <None Include="scripts\DTHeader.hlsli">
+      <Filter>hlsl</Filter>
+    </None>
+    <None Include="scripts\FadeHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
   </ItemGroup>

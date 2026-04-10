@@ -49,6 +49,7 @@ void DungeonScene::drawScene()
 void DungeonScene::onEnter()
 {
 	mMapGenerator->begin();
+	mTurnObserver->begin();
 
 	//ミニマップの作成
 	auto minimap = std::make_unique<MiniMap>(*this);
@@ -311,7 +312,7 @@ TurnType DungeonScene::getTurnType() const
 	return mTurnObserver->getTurnType();
 }
 
-int DungeonScene::getDamageTextNum() const
+float DungeonScene::getDamageTextNum() const
 {
 	return mDamageTextManaager->getSize();
 }

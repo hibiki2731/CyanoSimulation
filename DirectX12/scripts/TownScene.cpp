@@ -44,6 +44,9 @@ void TownScene::onEnter() {
 	mStatusWindow = statusWindow.get();
 	addActor(std::move(statusWindow));
 
+	//フェードイン
+	mGame.getGraphic().startFadeIn(1.0f);
+
 	mGame.getAudioManager().playBGM("BGM_TOWN");
 }
 

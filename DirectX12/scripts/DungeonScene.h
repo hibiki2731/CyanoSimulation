@@ -106,7 +106,7 @@ public:
 	//ターン情報
 	TurnType getTurnType() const;
 	//ダメージテキスト
-	int getDamageTextNum() const;
+	float getDamageTextNum() const;
 	void createDamageText(const XMFLOAT3& pos, int digit);
 
 private:

@@ -98,4 +98,5 @@ void TitleUI::startTransit()
 	isStarting = true;
 	mScene.getGame().getAudioManager().pauseBGM();
 	mStartSEVoice = mScene.getGame().getAudioManager().playSE("TITLE_FOOTSTEP");
+	mScene.getGame().getGraphic().startFadeOut(2.0f);
 }

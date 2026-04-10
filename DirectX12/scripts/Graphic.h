@@ -70,6 +70,12 @@ public:
 	void waitGPU();
 	void delayRelease(ComPtr<IUnknown>& resource);
 
+	//フェードイン、フェードアウト
+	void startFadeIn(float duration);
+	void startFadeOut(float duration);
+	void renderFade();
+
+
 	//getter
 	HWND getWindowHandle();
 	float getAspect();
@@ -87,6 +93,7 @@ public:
 	UINT8* getConstantData(int frame);
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
+	bool isFading();
 
 	//Setter
 	void setRenderType(STATE state);
@@ -98,6 +105,7 @@ public:
 	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
 	void updateCameraPos(XMFLOAT4& cameraPos);
 	void updateDamageFlashIntensity(float intensity);
+	void updateFade();
 
 	//ウィンドウ
 	static constexpr LPCWSTR WindowTitle = L"DirectX12 Sample";
@@ -135,6 +143,10 @@ private:
 	HWND hWnd = nullptr;
 	MSG Msg;
 
+	struct RenderStruct {
+		ComPtr<ID3D12PipelineState> pipelineState;
+		ComPtr<ID3D12RootSignature> rootSignature;
+	};
 	//デバイス
 	ComPtr<ID3D12Device> Device;
 	ComPtr<ID2D1Device> mD2DDevice;
@@ -175,6 +187,7 @@ private:
 	ComPtr<ID3D12PipelineState> PipelineState;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	ComPtr<ID3D12PipelineState> PipelineStateDT;
+	RenderStruct RenderStructFade;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
 
@@ -200,6 +213,12 @@ private:
 	//参照
 	Game& mGame;
 
+	float currentFadeAlpha;
+	float fadeTimer;
+	float fadeOutDuration;
+	float fadeInDuration;
+	bool isFadingIn;
+	bool isFadingOut;
 	
 };
 

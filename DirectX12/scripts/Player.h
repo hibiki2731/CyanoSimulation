@@ -30,6 +30,7 @@ public:
 	int getMaxAP();
 	int getStorageSize();
 	int getSelectItemIndex();
+	bool getIsActing();
 	const std::string& getSelectItemID();
 
 	//プレイヤーにダメージを与える
