@@ -53,7 +53,6 @@ void TownScene::onEnter() {
 void TownScene::onExit() {
 	//スタックを空にする
 	for (int i = 0; i < mMenuStack.size(); i++) popMenu();
-	refreshActors();
 	mStatusWindow = nullptr;
 
 }

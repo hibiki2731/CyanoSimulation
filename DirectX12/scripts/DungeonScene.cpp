@@ -71,7 +71,6 @@ void DungeonScene::onExit()
 {
 	mMapGenerator->end();
 	mResourceIDs.clear();
-	refreshActors();	//シーン中のアクターをすべてDeadにする
 }
 
 void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
