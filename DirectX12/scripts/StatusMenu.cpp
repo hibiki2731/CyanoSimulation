@@ -49,7 +49,6 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	}
 	weaponText->setText(message);
 	weaponText->setTextColor(D2D1::ColorF::Black);
-	weaponText->showText();
 #ifdef _DEBUG
 	weaponText->activateControll(structName);
 #endif
@@ -161,7 +160,6 @@ void EquipWeaponMenu::refreshText()
 		message += Utility::stringToWString(mItemManager.getWeaponData(inventory[i]).name) + L"\n";
 	}
 	mTextComponent->setText(message);
-	mTextComponent->showText();
 
 }
 
@@ -202,7 +200,6 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	}
 	armerText->setText(message);
 	armerText->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	armerText->showText();
 #ifdef _DEBUG
 	armerText->activateControll(structName);
 #endif
@@ -306,7 +303,6 @@ void EquipArmerMenu::refreshText()
 		message += Utility::stringToWString(mItemManager.getArmerData(inventory[i]).name) + L"\n";
 	}
 	mTextComponent->setText(message);
-	mTextComponent->showText();
 }
 
 StatusMenu::StatusMenu(TownScene& scene, float zDepth) : Menu(scene, "StatusMenu", zDepth)

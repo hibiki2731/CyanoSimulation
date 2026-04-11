@@ -169,17 +169,28 @@ void GUIDebugger::drawTextDebugGUI(TextComponent& text)
 
 	if (ImGui::Begin(text.mStructName.c_str())) {
         if (ImGui::SliderFloat("X", &text.mPosX, 0.0f, Graphic::ClientWidth)) {
-            text.showText();
+            text.applyTextTexture();
         }
         if (ImGui::SliderFloat("Y", &text.mPosY, 0.0f, Graphic::ClientHeight)) {
-			text.showText();
+			text.applyTextTexture();
         }
+        if (ImGui::Button("Center")) {
+            text.setPosition(text.mPosX - text.mTextWidth / 2.0f,text.mPosY);
+        }
+        if (ImGui::ColorEdit4("Color", text.mColorFloat.data())) {
+			text.mTextColor = D2D1::ColorF(text.mColorFloat[0], text.mColorFloat[1], text.mColorFloat[2], text.mColorFloat[3]);
+			//ブラシを更新
+			HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(text.mTextColor, &text.mTextBrush);
+			assert(SUCCEEDED(hr));
+			text.applyTextTexture();
+		}
+            ;
         if (ImGui::SliderFloat("FontSize", &text.mFontSize, 0.01f, Graphic::ClientWidth)) {
-            text.showText();
+            text.applyTextFormat();
         }
         if (ImGui::SliderFloat("LineSpace", &text.mLineSpace, 0.0f, 100.0f)) {
 			text.mBaseLineSpace = text.mLineSpace * 0.8f;
-			text.showText();
+			text.applyTextFormat();
         }
 
         //テキストの変更
@@ -187,7 +198,7 @@ void GUIDebugger::drawTextDebugGUI(TextComponent& text)
 
 		if (ImGui::Button("Apply")) {
 			text.mText = Utility::stringToWString(text.mTextBuffer);
-            text.showText();
+            text.applyTextTexture();
 		}
 
         if (ImGui::Button("Save to Json")) {

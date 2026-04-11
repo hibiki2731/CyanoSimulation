@@ -70,7 +70,6 @@ void Menu::initComponent(std::string windowName, float zDepth)
 		title->setPosition(textJson[windowName + "Title"]["x"].get<float>(), textJson[windowName + "Title"]["y"].get<float>());
 		title->setFontSize(textJson[windowName + "Title"]["fontSize"].get<float>());
 		title->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-		title->showText();
 #ifdef _DEBUG
 		title->activateControll(windowName + "Title");
 #endif 
@@ -88,7 +87,6 @@ void Menu::initComponent(std::string windowName, float zDepth)
 		text->setFontSize(fontSize);
 		text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
 		text->setLineSpace(lineSpace);
-		text->showText();
 #ifdef _DEBUG
 		text->activateControll(windowName + "Text");
 #endif

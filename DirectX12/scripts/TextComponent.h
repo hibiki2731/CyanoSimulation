@@ -12,12 +12,11 @@ public:
 	~TextComponent();
 
 	void loadFileAndCreate(const std::string& structName);
-	void drawTextTexture();
+	void applyTextTexture();
 	void draw();
 
 	void endProcess() override;
 	//テキストの表示、非表示
-	void showText();
 	void closeText();
 
 	//セッター
@@ -62,14 +61,20 @@ private:
 	std::wstring mText;
 	bool isActive;
 
-	float mPosX;
-	float mPosY;
-	FLOAT mFontSize;
-	const WCHAR* mFontName;
-	D2D1_RECT_F mTextRect;
-	bool isLineSpaceDefault;
-	float mLineSpace; //行の高さ
-	float mBaseLineSpace; //行の上端からベースラインまでの距離
+	//テキストの位置、サイズ、行間など
+	float			mPosX;
+	float			mPosY;
+	FLOAT			mFontSize;
+	const WCHAR*	mFontName;
+	bool			isLineSpaceDefault;
+	float			mLineSpace;				//行の高さ
+	float			mBaseLineSpace;			//行の上端からベースラインまでの距離
+	float			mTextWidth;				//テキストの幅
+	float			mTextHeight;			//テキストの高さ
+
+	ComPtr<IDWriteFactory>		mDWriteFactory;		//DWriteファクトリー
+	ComPtr<IDWriteTextLayout>	mTextLayout;		//テキストレイアウト
+
 
 	int mMaxRow;
 
@@ -78,11 +83,16 @@ private:
 	void wrapTexture();
 	void createSprite(float zDepth);
 
+	//テキストのフォーマットの初期化
+	void applyTextFormat();
+	void initDWriteFactory();
+
 #ifdef _DEBUG
 	friend class GUIDebugger;
 	bool mActiveControll = false;
 	std::string mStructName;
 	std::string mTextBuffer;
+	std::vector<float> mColorFloat;
 #endif
 
 };

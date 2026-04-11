@@ -7,6 +7,7 @@
 #include "input.h"
 #include "SceneManager.h"
 #include "AudioManager.h"
+#include "GUIDebugger.h"
 
 TitleScene::TitleScene(Game& game)
 	: Scene(game),
@@ -34,22 +35,23 @@ TitleUI::TitleUI(TitleScene& scene)
 	: Actor(scene)
 {
 	//タイトルテキスト
+	std::string structName = "TitleText";
 	auto titleText = std::make_unique<TextComponent>(*this, 0.0f);
-	titleText->setFontSize(80.0f);
-	titleText->setPosition(Graphic::ClientWidth * 0.4f, Graphic::ClientHeight * 0.3f);
-	std::wstring titleStr = L"TITLE\n";
-	titleText->setText(titleStr);
-	titleText->showText();
+	titleText->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	titleText->activateControll(structName);
+#endif
 	addComponent(std::move(titleText));
 
 	//開始する方法
+	structName = "StartText";
 	auto startText = std::make_unique<TextComponent>(*this, 0.0f);
-	startText->setFontSize(40.0f);
-	startText->setPosition(Graphic::ClientWidth * 0.35f, Graphic::ClientHeight * 0.7f);
-	std::wstring startStr = L"PRESS ENTER TO START\n";
-	startText->setText(startStr);
-	startText->showText();
+	startText->loadFileAndCreate(structName);
 	mStartText = startText.get();
+#ifdef _DEBUG
+	startText->activateControll(structName);
+#endif
+
 	addComponent(std::move(startText));
 
 	auto background = std::make_unique<SpriteComponent>(*this, 100.0f);
@@ -76,11 +78,9 @@ void TitleUI::updateActor()
 			if ((mTimer / 5 ) % 2 == 0) {
 				//透明
 				mStartText->setTextColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
-				mStartText->showText();
 			}
 			else {
 				mStartText->setTextColor(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f));
-				mStartText->showText();
 			}
 		}
 	

@@ -39,7 +39,6 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 	}
 	if (toolText.size() == 0) toolText = L"なし\n";
 	textComponent->setText(toolText);
-	textComponent->showText();
 #ifdef _DEBUG
 	textComponent->activateControll(structName);
 #endif
@@ -236,7 +235,6 @@ void ExplorerMenu::refreshText()
 	}
 	if (toolText.size() == 0) toolText = L"なし\n";
 	mToolText->setText(toolText);
-	mToolText->showText();
 
 	//インデックスの更新
 	mMaxIndex--;
@@ -255,7 +253,6 @@ void ExplorerMenu::showCraftCost()
 	//道具のデータを取得
 	if (mTools.size() == 0) {
 		mCostText->setText(L" ");
-		mCostText->showText();
 		return;
 	}
 	const auto& toolData = mItemManager.getExplorerData(mTools[mSelectedIndex]);
@@ -267,7 +264,6 @@ void ExplorerMenu::showCraftCost()
 	}
 	costText += L"\n";
 	mCostText->setText(costText);
-	mCostText->showText();
 }
 
 void ExplorerMenu::showResource()
@@ -282,7 +278,6 @@ void ExplorerMenu::showResource()
 	}
 	resourceText += L"\n";
 	mResourceText->setText(resourceText);
-	mResourceText->showText();
 }
 
 void ExplorerMenu::showToolEffect()
@@ -290,14 +285,12 @@ void ExplorerMenu::showToolEffect()
 	//道具データを取得
 	if (mTools.size() == 0) {
 		mToolEffectText->setText(L" ");
-		mToolEffectText->showText();
 		return;
 	}
 	const auto& toolData = mItemManager.getExplorerData(mTools[mSelectedIndex]);
 	//道具の効果を表示
 	std::wstring description = Utility::stringToWString(toolData.description);
 	mToolEffectText->setText(description);
-	mToolEffectText->showText();
 }
 
 

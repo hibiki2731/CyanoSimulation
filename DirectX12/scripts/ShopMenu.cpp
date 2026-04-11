@@ -39,7 +39,6 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	}
 	if (shopText.size() == 0) shopText = L"なし\n";
 	textComponent->setText(shopText);
-	textComponent->showText();
 #ifdef _DEBUG
 	textComponent->activateControll("ShopMenuScrollText");
 #endif
@@ -207,7 +206,6 @@ void ShopMenu::refreshText()
 		message += Utility::stringToWString(itemData.name) + L"\n";
 	}
 	mShopText->setText(message);
-	mShopText->showText();
 }
 
 void ShopMenu::showItemEffect()
@@ -216,14 +214,12 @@ void ShopMenu::showItemEffect()
 	if (mSaleItem.size() == 0) {
 		std::wstring description = L" ";
 		mItemEffectText->setText(description);
-		mItemEffectText->showText();
 		return;
 	}
 	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
 	//アイテムの効果を表示
 	std::wstring description = Utility::stringToWString(itemData.description);
 	mItemEffectText->setText(description);
-	mItemEffectText->showText();
 }
 
 void ShopMenu::showItemCost()
@@ -232,7 +228,6 @@ void ShopMenu::showItemCost()
 	if (mSaleItem.size() == 0) {
 		std::wstring costText = L" ";
 		mCostText->setText(costText);
-		mCostText->showText();
 		return;
 	}
 	const auto& itemData = mItemManager.getItemData(mSaleItem[mSelectedIndex]);
@@ -244,7 +239,6 @@ void ShopMenu::showItemCost()
 	}
 	costText += L"\n";
 	mCostText->setText(costText);
-	mCostText->showText();
 }
 
 void ShopMenu::showResource()
@@ -259,7 +253,6 @@ void ShopMenu::showResource()
 	}
 	resourceText += L"\n";
 	mResourceText->setText(resourceText);
-	mResourceText->showText();
 }
 
 void ShopMenu::buyItem(int index) {

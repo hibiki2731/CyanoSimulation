@@ -230,6 +230,13 @@
         "x": 280.0,
         "y": 110.0
     },
+    "StartText": {
+        "fontSize": 40.0,
+        "lineSpace": 60.0,
+        "text": "PRESS ENTER TO START\n",
+        "x": 432.587890625,
+        "y": 504.0
+    },
     "StatusMenuText": {
         "fontSize": 45.0,
         "lineSpace": 50.0,
@@ -243,5 +250,12 @@
         "text": "STATUS\n",
         "x": 70.0,
         "y": 110.0
+    },
+    "TitleText": {
+        "fontSize": 80.0,
+        "lineSpace": 60.0,
+        "text": "TITLE\n",
+        "x": 548.37890625,
+        "y": 200.0
     }
 }

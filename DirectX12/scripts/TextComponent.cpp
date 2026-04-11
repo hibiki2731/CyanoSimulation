@@ -12,29 +12,40 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	mGraphic(owner.getScene().getGame().getGraphic()),
 	mAssetManager(owner.getScene().getGame().getAssetManager())
 {
-	isActive = false;
+	mOwner.getScene().addText(this);
+
+	//各種パラメータの初期化
+	isActive = true;
 	mPosX = 0.0f;
 	mPosY = 0.0f;
 	mFontSize = 32;
 	mFontName = L"MS P明朝";
 	mMaxRow = 20;
-	mTextRect = D2D1::RectF(
-		mPosX,
-		mPosY,
-		mMaxRow * mFontSize,
-		mFontSize
-	);
 	mTextColor = D2D1::ColorF(D2D1::ColorF::White);
 	mText = L"empty";
 	isLineSpaceDefault = true;
 	mLineSpace = 60.0f;
 	mBaseLineSpace = 0;
 
-	mOwner.getScene().addText(this);
+	//ブラシの初期化
+    HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
+	assert(SUCCEEDED(hr));
 
+	//テクスチャの初期化
 	createEmptyTexture();
 	wrapTexture();
 	createSprite(zDepth);
+
+	//テキストフォーマットの初期化
+	initDWriteFactory();
+	applyTextFormat();
+
+#ifdef _DEBUG
+	mColorFloat.push_back(mTextColor.r);
+	mColorFloat.push_back(mTextColor.g);
+	mColorFloat.push_back(mTextColor.b);
+	mColorFloat.push_back(mTextColor.a);
+#endif
 
 }
 
@@ -79,14 +90,15 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	}
 
 	mFontSize = textJson[structName].value("fontSize", mFontSize);
-	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));
+	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));	//ここでテキストフォーマットが更新される
 	mPosX = textJson[structName].value("x", mPosX);
 	mPosY = textJson[structName].value("y", mPosY);
 	mText = Utility::stringToWString(textJson[structName].value("text", "empty"));
+	applyTextTexture();
 }
 
 //要マルチスレッド化
-void TextComponent::drawTextTexture()  
+void TextComponent::applyTextTexture()  
 {  
 	//テクスチャの状態をshader resourceに遷移
 	D3D12_RESOURCE_BARRIER barrier;
@@ -98,6 +110,23 @@ void TextComponent::drawTextTexture()
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	mGraphic.getCommandList()->ResourceBarrier(1, &barrier);
 
+	//テキストレイアウトの更新	
+	HRESULT hr = mDWriteFactory->CreateTextLayout(
+    mText.c_str(),								//描画する文字列
+    (UINT32)mText.length(),						//文字列の長さ
+    mTextFormat.Get(),							//使用するテキストフォーマット
+    10000.0f,									//最大幅
+    10000.0f,									//最大高さ
+    mTextLayout.ReleaseAndGetAddressOf()		//出力先
+	);
+	assert(SUCCEEDED(hr));
+
+	//テキストレイアウトからテキストの実際のサイズを取得
+	DWRITE_TEXT_METRICS textMetrics;
+	hr = mTextLayout->GetMetrics(&textMetrics);
+	assert(SUCCEEDED(hr));
+	mTextWidth = textMetrics.width;
+	mTextHeight = textMetrics.height;
 
 	mGraphic.getD3D11On12Device()->AcquireWrappedResources(mWrappedTexture.GetAddressOf(), 1);
 	mGraphic.getD2DDeviceContext()->SetTarget(mD2DTarget.Get());
@@ -106,13 +135,11 @@ void TextComponent::drawTextTexture()
 	mGraphic.getD2DDeviceContext()->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
 
 	mGraphic.getD2DDeviceContext()->SetTransform(D2D1::Matrix3x2F::Identity());  
-	mGraphic.getD2DDeviceContext()->DrawTextW(  
-	   mText.c_str(), 
-       static_cast<UINT32>(mText.size() - 1), 
-       mTextFormat.Get(),  
-       &mTextRect,
-       mTextBrush.Get()  
-   );  
+	mGraphic.getD2DDeviceContext()->DrawTextLayout(
+		D2D1::Point2F(mPosX, mPosY),
+		mTextLayout.Get(),
+		mTextBrush.Get()
+	);
 
 	mGraphic.getD2DDeviceContext()->EndDraw();
 	//バックバッファを表示用に切り替えてくれる
@@ -148,47 +175,6 @@ void TextComponent::endProcess()
 	mOwner.getScene().removeText(this);
 }
 
-void TextComponent::showText()
-{
-	mTextRect = D2D1::RectF(
-		mPosX,
-		mPosY,
-		mPosX + mMaxRow * mFontSize,
-		mPosY + mFontSize * (mText.size() / mMaxRow + 1)
-	);
-
-    HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
-	assert(SUCCEEDED(hr));
-    hr = mGraphic.getDWriteFactory()->CreateTextFormat(
-        mFontName,
-        NULL,
-        DWRITE_FONT_WEIGHT_NORMAL,
-        DWRITE_FONT_STYLE_NORMAL,
-        DWRITE_FONT_STRETCH_NORMAL,
-        mFontSize,
-        L"en-us",
-        &mTextFormat
-    );
-    assert(SUCCEEDED(hr));
-
-    hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); //左揃え
-	assert(SUCCEEDED(hr));
-
-	hr = mTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); //上揃え
-	assert(SUCCEEDED(hr));
-	
-	if(!isLineSpaceDefault)
-	hr = mTextFormat->SetLineSpacing(
-		DWRITE_LINE_SPACING_METHOD_UNIFORM,
-		mLineSpace,
-		mBaseLineSpace
-	);
-
-	isActive = true;
-
-	drawTextTexture();
-}
-
 void TextComponent::closeText()
 {
 	isActive = false;
@@ -197,22 +183,36 @@ void TextComponent::closeText()
 void TextComponent::setText(const std::wstring& text)
 {
 	mText = text;
+	applyTextTexture();
 }
 
 void TextComponent::setPosition(float x, float y)
 {
 	mPosX = x;
 	mPosY = y;
+	applyTextTexture();
 }
 
 void TextComponent::setFontSize(FLOAT size)
 {
 	mFontSize = size;
+	applyTextFormat();
 }
 
 void TextComponent::setTextColor(const D2D1::ColorF& color)
 {
 	mTextColor = color;
+#ifdef _DEBUG
+	mColorFloat[0] = mTextColor.r;
+	mColorFloat[1] = mTextColor.g;
+	mColorFloat[2] = mTextColor.b;
+	mColorFloat[3] = mTextColor.a;
+#endif
+
+	//ブラシを更新
+    HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
+	assert(SUCCEEDED(hr));
+	applyTextTexture();
 }
 
 void TextComponent::setLineSpace(float space)
@@ -220,6 +220,7 @@ void TextComponent::setLineSpace(float space)
 	isLineSpaceDefault = false;
 	mLineSpace = space; //行間の大きさ
 	mBaseLineSpace = mLineSpace * 0.8f; //文字のベースライン
+	applyTextFormat();
 }
 
 bool TextComponent::getIsActive()
@@ -341,6 +342,48 @@ void TextComponent::createSprite(float zDepth)
 	int heapIndex = mHeapIndex;
 	mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
 	mGraphic.createShaderResourceView(mTexture.Get(), heapIndex);
+}
+
+void TextComponent::applyTextFormat()
+{
+	//テキストフォーマットの初期化
+    HRESULT hr = mGraphic.getDWriteFactory()->CreateTextFormat(
+        mFontName,
+        NULL,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        mFontSize,
+        L"en-us",
+        &mTextFormat
+    );
+    assert(SUCCEEDED(hr));
+
+	//テキストの配置を左上に設定
+    hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); //左揃え
+	assert(SUCCEEDED(hr));
+	hr = mTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); //上揃え
+	assert(SUCCEEDED(hr));
+	
+	//行間の設定
+	if(!isLineSpaceDefault)
+	hr = mTextFormat->SetLineSpacing(
+		DWRITE_LINE_SPACING_METHOD_UNIFORM,
+		mLineSpace,
+		mBaseLineSpace
+	);
+
+	applyTextTexture();
+}
+
+void TextComponent::initDWriteFactory()
+{
+	HRESULT hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED, //ファクトリのタイプ
+        __uuidof(IDWriteFactory),   //取得したいインターフェースのIID
+        reinterpret_cast<IUnknown**>(mDWriteFactory.ReleaseAndGetAddressOf()) //出力先のポインタ
+    );
+	assert(SUCCEEDED(hr));
 }
 
 #ifdef _DEBUG

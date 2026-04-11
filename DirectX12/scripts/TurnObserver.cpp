@@ -171,7 +171,6 @@ void EndWindow::showWindow()
 		message = L"体力が尽きました\n";
 	}
 	text->setText(message);
-	text->showText();
 #ifdef _DEBUG
 	text->activateControll(structName);
 #endif

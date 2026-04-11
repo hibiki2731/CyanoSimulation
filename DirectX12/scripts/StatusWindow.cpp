@@ -34,7 +34,6 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 		structName = "HPText";
 		auto hpText = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
 		hpText->loadFileAndCreate(structName);
-		hpText->showText();
 #ifdef _DEBUG
 		hpText->activateControll(structName);
 #endif
@@ -48,7 +47,6 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 		int maxHp = playerData.maxHp;
 		text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 		hpValueText->setText(text);
-		hpValueText->showText();
 		mHPValueText = hpValueText.get();
 #ifdef _DEBUG
 		hpValueText->activateControll(structName);
@@ -85,7 +83,6 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 		auto apText = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
 		apText->loadFileAndCreate(structName);
 		std::wstring text = L"AP\n";
-		apText->showText();
 #ifdef _DEBUG
 		apText->activateControll(structName);
 #endif
@@ -97,7 +94,6 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 		apValueText->loadFileAndCreate(structName);
 		text = std::to_wstring(playerData.actionLimit) + L"/" + std::to_wstring(playerData.actionLimit) + L"\n";
 		apValueText->setText(text);
-		apValueText->showText();
 		mAPValueText = apValueText.get();
 #ifdef _DEBUG
 		apValueText->activateControll(structName);
@@ -163,7 +159,6 @@ void StatusWindow::updateStatus()
 	int maxHp = playerData.maxHp;
 	std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 	mHPValueText->setText(text);
-	mHPValueText->showText();
 
 	//HPバーのサイズを更新
 	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x * static_cast<float>(hp) / static_cast<float>(maxHp), mHPBarOriginalSize.y);
@@ -174,7 +169,6 @@ void StatusWindow::updateStatus()
 	int ap = playerData.actionLimit;
 	std::wstring apText = std::to_wstring(ap) + L"/" + std::to_wstring(ap) + L"\n";
 	mAPValueText->setText(apText);
-	mAPValueText->showText();
 
 	//アイテムアイコンを更新
 	//ストレージサイズが変更されていた場合

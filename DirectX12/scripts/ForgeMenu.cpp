@@ -65,7 +65,6 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 	}
 	if (armerText.size() == 0) armerText = L"なし\n";
 	textComponent->setText(armerText);
-	textComponent->showText();
 #ifdef _DEBUG
 	textComponent->activateControll(structName);
 #endif
@@ -267,7 +266,6 @@ void ArmerMenu::refreshText()
 	}
 	if (armerText.size() == 0) armerText = L"なし\n";
 	mArmerText->setText(armerText);
-	mArmerText->showText();
 
 	//インデックスの更新
 	mMaxIndex--;
@@ -286,7 +284,6 @@ void ArmerMenu::showCraftCost()
 	//防具のデータを取得
 	if (mArmers.size() == 0) {
 		mCostText->setText(L" ");
-		mCostText->showText();
 		return;
 	}
 	const auto& armerData = mItemManager.getArmerData(mArmers[mSelectedIndex]);
@@ -298,7 +295,6 @@ void ArmerMenu::showCraftCost()
 	}
 	costText += L"\n";
 	mCostText->setText(costText);
-	mCostText->showText();
 }
 
 void ArmerMenu::showResource()
@@ -313,7 +309,6 @@ void ArmerMenu::showResource()
 	}
 	resourceText += L"\n";
 	mResourceText->setText(resourceText);
-	mResourceText->showText();
 }
 
 void ArmerMenu::showArmerEffect()
@@ -321,14 +316,12 @@ void ArmerMenu::showArmerEffect()
 	//防具データを取得
 	if (mArmers.size() == 0) {
 		mArmerEffectText->setText(L" ");
-		mArmerEffectText->showText();
 		return;
 	}
 	const auto& armerData = mItemManager.getArmerData(mArmers[mSelectedIndex]);
 	//防具の効果を表示
 	std::wstring description = Utility::stringToWString(armerData.description);
 	mArmerEffectText->setText(description);
-	mArmerEffectText->showText();
 }
 
 WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
@@ -362,7 +355,6 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 	}
 	if (weaponText.size() == 0) weaponText = L"なし\n";
 	textComponent->setText(weaponText);
-	textComponent->showText();
 #ifdef _DEBUG
 	textComponent->activateControll(structName);
 #endif
@@ -557,7 +549,6 @@ void WeaponMenu::refreshText()
 	}
 	if (weaponText.size() == 0) weaponText = L"なし\n";
 	mWeaponText->setText(weaponText);
-	mWeaponText->showText();
 
 	//インデックスの更新
 	mMaxIndex--;
@@ -577,7 +568,6 @@ void WeaponMenu::showCraftCost()
 	if (mWeapons.size() == 0) {
 		std::wstring costText = L" ";
 		mCostText->setText(costText);
-		mCostText->showText();
 		return;
 	}
 	const auto& weaponData = mItemManager.getWeaponData(mWeapons[mSelectedIndex]);
@@ -589,7 +579,6 @@ void WeaponMenu::showCraftCost()
 	}
 	costText += L"\n";
 	mCostText->setText(costText);
-	mCostText->showText();
 }
 
 void WeaponMenu::showResource()
@@ -604,7 +593,6 @@ void WeaponMenu::showResource()
 	}
 	resourceText += L"\n";
 	mResourceText->setText(resourceText);
-	mResourceText->showText();
 }
 
 void WeaponMenu::showWeaponEffect()
@@ -613,7 +601,6 @@ void WeaponMenu::showWeaponEffect()
 	if (mWeapons.size() == 0) {
 		std::wstring description = L" ";
 		mWeaponEffectText->setText(description);
-		mWeaponEffectText->showText();
 		return;
 	}
 
@@ -621,5 +608,4 @@ void WeaponMenu::showWeaponEffect()
 	//武器の効果を表示
 	std::wstring description = Utility::stringToWString(weaponData.description);
 	mWeaponEffectText->setText(description);
-	mWeaponEffectText->showText();
 }

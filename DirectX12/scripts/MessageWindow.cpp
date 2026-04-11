@@ -17,7 +17,6 @@ MessageWindow::MessageWindow(Scene& scene) : Actor(scene)
 	text->setPosition(100.0f, 10.0f);
 	text->setFontSize(24.0f);
 	text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	text->showText();
 	mText = text.get();
 	addComponent(std::move(text));
 
@@ -55,5 +54,4 @@ void MessageWindow::updateActor()
 	message += L"G:" + std::to_wstring(mScene.getGame().getItemManager().getResourceNum("GOLD")) + L"\n";
 	mMessage = message;
 	mText->setText(mMessage);
-	mText->showText();  //マルチスレッド化したい
 }

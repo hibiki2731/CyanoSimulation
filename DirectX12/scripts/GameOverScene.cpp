@@ -41,7 +41,6 @@ GameOverUI::GameOverUI(GameOverScene& scene)
 	std::wstring message = L"GAME OVER\n";
 	text->setText(message);
 	text->setTextColor(D2D1::ColorF::Red);
-	text->showText();
 	addComponent(std::move(text));
 }
 

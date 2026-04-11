@@ -47,7 +47,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		std::vector<float> hpTextPosition = uiData["hp"]["textPosition"].get<std::vector<float>>();
 		hpText->setPosition(hpTextPosition[0], hpTextPosition[1]);
 		hpText->setText(text);
-		hpText->showText();
 		addComponent(std::move(hpText));
 
 		//HP値のテキスト
@@ -58,7 +57,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		int maxHp = mPlayer.getMaxHP();
 		text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 		hpValueText->setText(text);
-		hpValueText->showText();
 		mHPValueText = hpValueText.get();
 		addComponent(std::move(hpValueText));
 
@@ -96,7 +94,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		std::vector<float> apTextPosition = uiData["ap"]["textPosition"].get<std::vector<float>>();
 		apText->setPosition(apTextPosition[0], apTextPosition[1]);
 		apText->setText(text);
-		apText->showText();
 		addComponent(std::move(apText));
 
 		//AP値のテキスト
@@ -105,7 +102,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		apValueText->setPosition(apTextPosition[0] + uiData["ap"]["textSpace"].get<float>(), apTextPosition[1]);
 		text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
 		apValueText->setText(text);
-		apValueText->showText();
 		mAPValueText = apValueText.get();
 		addComponent(std::move(apValueText));
 
@@ -158,7 +154,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		selectItemText->setPosition(selectItemTextPosition[0], selectItemTextPosition[1]);
 		std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
 		selectItemText->setText(selectItemTextStr);
-		selectItemText->showText();
 		mSelectItemText = selectItemText.get();
 		addComponent(std::move(selectItemText));
 	}
@@ -179,7 +174,6 @@ void DungeonUI::updateHP()
 	//HP値のテキストを更新
 	std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 	mHPValueText->setText(text);
-	mHPValueText->showText();
 	//HPバーのサイズを更新
 	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * static_cast<float>(hp) / static_cast<float>(maxHp));
 	if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
@@ -195,7 +189,6 @@ void DungeonUI::updateAP()
 	//AP値のテキストを更新
 	std::wstring text = std::to_wstring(ap) + L"/" + std::to_wstring(maxAp) + L"\n";
 	mAPValueText->setText(text);
-	mAPValueText->showText();
 	//APバーのサイズを更新
 	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x, mAPBarOriginalSize.y * static_cast<float>(ap) / static_cast<float>(maxAp));
 	if (apBarSize.y < 10.0f) apBarSize.y = 10.0f; //HPバーの最小サイズ
@@ -236,5 +229,4 @@ void DungeonUI::updateItemFrame()
 	//選択アイテムの名前を更新
 	std::wstring selectItemText = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
 	mSelectItemText->setText(selectItemText);
-	mSelectItemText->showText();
 }
