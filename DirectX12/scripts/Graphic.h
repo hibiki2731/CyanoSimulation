@@ -94,6 +94,7 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
 	bool isFading();
+	bool isFinishedFade();
 
 	//Setter
 	void setRenderType(STATE state);

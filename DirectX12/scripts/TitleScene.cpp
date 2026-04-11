@@ -19,10 +19,14 @@ TitleScene::TitleScene(Game& game)
 
 void TitleScene::onEnter()
 {
+
+	mGame.getGraphic().startFadeIn(1.0f);
+
 	auto titleUI = std::make_unique<TitleUI>(*this);
 	addActor(std::move(titleUI));
 
 	mAudioManager.playBGM("BGM_TITLE");
+	
 }
 
 void TitleScene::onExit()
@@ -60,6 +64,7 @@ TitleUI::TitleUI(TitleScene& scene)
 	addComponent(std::move(background));
 
 	mTimer = 0;
+	isStarting = false;
 	mStartSEVoice = nullptr;
 }
 
@@ -72,8 +77,8 @@ void TitleUI::inputActor()
 
 void TitleUI::updateActor()
 {
+	mTimer++;
 	if (isStarting) {
-		mTimer++;
 		if (mTimer % 5 == 0) {
 			if ((mTimer / 5 ) % 2 == 0) {
 				//透明
@@ -99,4 +104,5 @@ void TitleUI::startTransit()
 	mScene.getGame().getAudioManager().pauseBGM();
 	mStartSEVoice = mScene.getGame().getAudioManager().playSE("TITLE_FOOTSTEP");
 	mScene.getGame().getGraphic().startFadeOut(2.0f);
+	mTimer = 0;
 }

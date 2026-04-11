@@ -7,6 +7,10 @@
 #include "SpriteComponent.h"
 #include "TextComponent.h"
 #include "input.h"
+#include "Game.h"
+#include "Graphic.h"
+#include "AudioManager.h"
+#include "EndWindow.h"
 
 TurnObserver::TurnObserver(DungeonScene& scene)
 	: mScene(scene)
@@ -55,7 +59,7 @@ void TurnObserver::begin()
 	mNextTurn = TurnType::PLAYER;
 }
 
-TurnType TurnObserver::getTurnType()
+TurnType TurnObserver::getTurnType() const
 {
 	return mTurnType;
 }
@@ -120,60 +124,7 @@ void TurnObserver::endProcess()
 	mNextTurn = TurnType::END;
 
 	//エンドウィンドウの生成
-	auto endWindow = std::make_unique<EndWindow>(mScene, *this);
+	auto endWindow = std::make_unique<EndWindow>(mScene);
 	mScene.addActor(std::move(endWindow));
 }
 
-EndWindow::EndWindow(DungeonScene& scene, TurnObserver& observer)
-	:Actor(scene),
-	mDungeon(scene),
-	mObserver(observer)
-{
-	isActive = false;
-	mTimer = 0;
-
-}
-
-void EndWindow::updateActor()
-{
-	if (mDungeon.getPlayer()->getIsActing()) return;
-
-	if (mTimer == 0) showWindow();
-
-	mTimer++;
-
-}
-
-void EndWindow::inputActor()
-{
-	if (mTimer > 10 && isKeyJustPressed(VK_RETURN)) {
-		mDungeon.returnToTown();
-	}
-}
-
-void EndWindow::showWindow()
-{
-	std::string structName = "EndWindow";
-	auto window = std::make_unique<SpriteComponent>(*this, 30.0f);
-	window->loadFileAndCreate(structName);
-	window->create("assets/picture/UI2/PNG/Default/panel_brown_damaged.png");
-#ifdef _DEBUG
-	window->activateControll(structName);
-#endif
-	addComponent(std::move(window));
-
-	structName = "EndWindowText";
-	auto text = std::make_unique<TextComponent>(*this, 29.0f);
-	text->loadFileAndCreate(structName);
-	text->setTextColor(D2D1::ColorF::Red);
-	std::wstring message = L" ";
-	if (mObserver.getTurnType() == TurnType::END) {
-		message = L"体力が尽きました\n";
-	}
-	text->setText(message);
-#ifdef _DEBUG
-	text->activateControll(structName);
-#endif
-	addComponent(std::move(text));
-
-}

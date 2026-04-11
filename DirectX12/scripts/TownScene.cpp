@@ -55,6 +55,7 @@ void TownScene::onExit() {
 	for (int i = 0; i < mMenuStack.size(); i++) popMenu();
 	refreshActors();
 	mStatusWindow = nullptr;
+
 }
 
 void TownScene::inputScene()

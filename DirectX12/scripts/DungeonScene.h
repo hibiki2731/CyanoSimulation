@@ -104,10 +104,12 @@ public:
     const std::string& getResourceID(int index);
     const std::string& getResourceID(int x, int y);
 	//ターン情報
-	TurnType getTurnType() const;
+	enum struct TurnType getTurnType() const;
 	//ダメージテキスト
 	float getDamageTextNum() const;
 	void createDamageText(const XMFLOAT3& pos, int digit);
+	//ターンオブザーバー
+	const class TurnObserver& getTurnObserver();
 
 private:
 	//マップ情報

@@ -1673,6 +1673,11 @@ bool Graphic::isFading()
 	return isFadingIn || isFadingOut;
 }
 
+bool Graphic::isFinishedFade()
+{
+	return (!isFadingIn && !isFadingOut) || (isFadingOut && currentFadeAlpha >= 1.0f);
+}
+
 void Graphic::setRenderType(STATE state)
 {
 	//mStateに応じて3Dと2Dを切換え

@@ -73,8 +73,9 @@ void SceneManager::joinSceneActors()
 
 void SceneManager::removeSceneActors()
 {
-	if (mCurrentScene)
+	if (mCurrentScene) {
 		mCurrentScene->removeActors();
+	}
 }
 
 const std::string& SceneManager::getCurrentSceneType()
@@ -108,6 +109,7 @@ void SceneManager::transitScene()
 		//シーンから出る処理
 		if (mCurrentScene) {
 			mCurrentScene->onExit();
+			mCurrentScene->refreshActors();
 			removeSceneActors();
 		}
 		

@@ -62,6 +62,8 @@ void DungeonScene::onEnter()
 	mUI = dungeonUI.get();
 	addActor(std::move(dungeonUI));
 
+	mGame.getGraphic().startFadeIn(1.0f);
+
 	mGame.getAudioManager().playBGM("BGM_DUNGEON");
 }
 
@@ -320,5 +322,10 @@ float DungeonScene::getDamageTextNum() const
 void DungeonScene::createDamageText(const XMFLOAT3& pos, int digit)
 {
 	mDamageTextManaager->createDamageText(pos, digit);
+}
+
+const TurnObserver& DungeonScene::getTurnObserver()
+{
+	return *mTurnObserver.get();
 }
 

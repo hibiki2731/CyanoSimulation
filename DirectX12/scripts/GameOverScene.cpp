@@ -18,6 +18,7 @@ void GameOverScene::onEnter()
 	addActor(std::move(gameOverUI));
 
 	//BGM再生
+	mGame.getGraphic().startFadeIn(1.0f);
 	mGame.getAudioManager().playBGM("BGM_GAMEOVER");
 }
 
@@ -28,6 +29,8 @@ void GameOverScene::onExit()
 GameOverUI::GameOverUI(GameOverScene& scene)
 	:Actor(scene)
 {
+	movingToTitle = false;
+
 	//背景
 	auto background = std::make_unique<SpriteComponent>(*this);
 	background->create("assets/picture/GameOverBackground.png");
@@ -47,6 +50,19 @@ GameOverUI::GameOverUI(GameOverScene& scene)
 void GameOverUI::inputActor()
 {
 	if (isKeyJustPressed(VK_RETURN)) {
+		startTransit();
+	}
+}
+
+void GameOverUI::updateActor()
+{
+	if (movingToTitle && mScene.getGame().getGraphic().isFinishedFade()) {
 		getScene().getGame().getSceneManager().transitToTitle();
 	}
+}
+
+void GameOverUI::startTransit()
+{
+	movingToTitle = true;
+	mScene.getGame().getGraphic().startFadeOut(1.5f);
 }

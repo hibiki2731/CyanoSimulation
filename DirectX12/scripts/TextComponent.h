@@ -25,6 +25,7 @@ public:
 	void setFontSize(FLOAT size);
 	void setTextColor(const D2D1::ColorF& color);
 	void setLineSpace(float space);
+	void alignCenter(float width);
 
 	//ゲッター
 	bool getIsActive();
@@ -71,6 +72,9 @@ private:
 	float			mBaseLineSpace;			//行の上端からベースラインまでの距離
 	float			mTextWidth;				//テキストの幅
 	float			mTextHeight;			//テキストの高さ
+	bool			isCenter;				//中央ぞろえか？
+	float			mTextMaxWidth;
+	std::vector<float> mColorFloat;
 
 	ComPtr<IDWriteFactory>		mDWriteFactory;		//DWriteファクトリー
 	ComPtr<IDWriteTextLayout>	mTextLayout;		//テキストレイアウト
@@ -92,7 +96,6 @@ private:
 	bool mActiveControll = false;
 	std::string mStructName;
 	std::string mTextBuffer;
-	std::vector<float> mColorFloat;
 #endif
 
 };

@@ -13,7 +13,7 @@ public:
 	void begin();
 
 	//getter
-	TurnType getTurnType();
+	TurnType getTurnType() const;
 
 	//ターン制御
 	void moveToPlayerTurn();
@@ -33,17 +33,3 @@ private:
 	void spawnEnemy();
 };
 
-class EndWindow :public Actor{
-public:
-	EndWindow(DungeonScene& scene, TurnObserver& observer);
-	void updateActor() override;
-	void inputActor() override;
-
-private:
-	void showWindow();
-
-	int mTimer;
-	bool isActive;
-	DungeonScene& mDungeon;
-	TurnObserver& mObserver;
-};

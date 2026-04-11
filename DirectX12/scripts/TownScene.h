@@ -38,7 +38,6 @@ public:
 private:
 	BackGround* mBg;
 	bool isSelected;
-	bool isSelecetdStatus;
 	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
 	class StatusWindow* mStatusWindow;

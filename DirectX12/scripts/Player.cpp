@@ -18,6 +18,7 @@
 #include "AudioManager.h"
 #include "MiniMap.h"
 #include "DungeonScene.h"
+#include "EndWindow.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
@@ -84,6 +85,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 
 void Player::inputActor()
 {
+	if (mScene.getTurnType() == TurnType::END || mCharacter->getHP() <= 0) return;
 
 	if (GetAsyncKeyState('A')) {
 		move(Direction::LEFT);
@@ -270,6 +272,7 @@ void Player::attack()
 	//ダメージエフェクト
 	target->startFlash(); //敵を点滅させる
 	calcDamageText(target->getPosition(), damage);
+	mScene.getGame().getAudioManager().playSE("DAMAGE1");
 
 	//ターン経過
 	turnEnd();
@@ -419,18 +422,21 @@ void Player::damagedProcess()
 	mCharacter->setHP(hp);
 	mPendingDamage = 0;
 
+	//UIの更新
+	mScene.updateHPUI();
+
 	//死亡処理
 	if (hp <= 0) {
-		mScene.transitToGameOver();
+		auto endWindow = std::make_unique<EndWindow>(mScene);
+		mScene.addActor(std::move(endWindow));
 		return;
 	}
 
-	//ダメージの点滅処理
+	//被ダメージ時の演出
 	mFlashTimer = mFlashDuration;
 	mCamera->startShake();
+	mScene.getGame().getAudioManager().playSE("DAMAGE2");
 
-	//UIの更新
-	if(hp > 0)mScene.updateHPUI();
 	
 }
 
@@ -490,7 +496,7 @@ void Player::turnEnd()
 	//残り行動回数を減らす
 	mAP--;
 	//UIの更新
-	if(mAP > 0) mScene.updateAPUI();
+	if(mAP >= 0) mScene.updateAPUI();
 	//行動中フラグをtureにする
 	isActing = true;
 }

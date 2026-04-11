@@ -7,7 +7,13 @@ class TextComponent;
 class MainMenu : public Menu {
 public:
 	MainMenu(TownScene& scene, float zDepth);
-	void selectedAct() override;
 
+	void updateMenu() override;
+
+	void selectedAct() override;
+private:
+	void startTransit();
+
+	bool movingToDungeon;
 };
 

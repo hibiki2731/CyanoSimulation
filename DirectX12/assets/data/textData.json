@@ -35,11 +35,17 @@
         "y": 0.0
     },
     "EndWindowText": {
-        "fontSize": 50.0,
-        "lineSpace": 60.0,
-        "text": "体力が尽きました\n",
-        "x": 465.0,
-        "y": 325.0
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 45.0,
+        "lineSpace": 55.0,
+        "text": "体力が尽きました\n街へ帰還します\n",
+        "x": 415.0,
+        "y": 310.0
     },
     "EquipArmerMenuScrollText": {
         "fontSize": 45.0,
@@ -231,6 +237,12 @@
         "y": 110.0
     },
     "StartText": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
         "fontSize": 40.0,
         "lineSpace": 60.0,
         "text": "PRESS ENTER TO START\n",
@@ -252,6 +264,12 @@
         "y": 110.0
     },
     "TitleText": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
         "fontSize": 80.0,
         "lineSpace": 60.0,
         "text": "TITLE\n",

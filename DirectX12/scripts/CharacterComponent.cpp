@@ -85,7 +85,7 @@ void CharacterComponent::setMaxHP(int maxHP)
 
 void CharacterComponent::setHP(int hp)
 {
-	mHP = hp;
+	mHP = max(hp, 0);
 }
 
 void CharacterComponent::setPower(int power)

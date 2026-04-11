@@ -17,6 +17,8 @@ public:
 	IXAudio2SourceVoice* playSE(const std::string& soundID);
 	void pauseBGM();
 	void pauseAllSounds();
+	void finishBGM();
+	void finishAllSounds();
 
 private:
 
@@ -40,8 +42,6 @@ private:
 
 	void initXAudio();
 	void loadSoundFiles();
-	void finishBGM();
-	void finishAllSounds();
 	void clearFinishedSounds();
 	HRESULT findChunk(HANDLE hFile, DWORD targetFourcc, DWORD& chunkSize, DWORD& chunkDataPosition); //FOURCCからそのチャンクのデータサイズとデータの位置を探す。
 	HRESULT readChunkData(HANDLE hFile, void* buffer, DWORD bufferSize, DWORD bufferOffset);

@@ -15,17 +15,17 @@
         "CLOTHES",
         "CLOTHES"
     ],
-    "defense": 3,
+    "defense": 1,
     "equippedArmerIndex": 0,
     "equippedWeaponIndex": 0,
     "explorer": [],
     "flashDuration": 0.5,
-    "hp": 80,
+    "hp": 20,
     "inventory": [
     ],
-    "maxhp": 100,
+    "maxhp": 20,
     "moveSpeed": 5.0,
-    "power": 10,
+    "power": 3,
     "rotSpeed": 4.5,
     "weapons": [
         "NONE",

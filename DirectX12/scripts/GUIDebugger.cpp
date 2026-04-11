@@ -210,6 +210,7 @@ void GUIDebugger::drawTextDebugGUI(TextComponent& text)
 			j[text.mStructName]["fontSize"] = text.mFontSize;
             j[text.mStructName]["lineSpace"] = text.mLineSpace;
 			j[text.mStructName]["text"] = Utility::wstringToString(text.mText);
+            j[text.mStructName]["color"] = text.mColorFloat;
             
 			std::ofstream outfile("assets/data/textData.json");
 			outfile << j.dump(4); // 4はインデントスペースの数			

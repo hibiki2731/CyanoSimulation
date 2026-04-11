@@ -23,5 +23,10 @@ public:
 	GameOverUI(GameOverScene& scene);
 
 	void inputActor() override;
+	void updateActor() override;
+
+private:
+	void startTransit();
+	bool movingToTitle;
 };
 

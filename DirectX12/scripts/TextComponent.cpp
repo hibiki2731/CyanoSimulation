@@ -26,6 +26,8 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	isLineSpaceDefault = true;
 	mLineSpace = 60.0f;
 	mBaseLineSpace = 0;
+	isCenter = false;
+	mTextMaxWidth = 10000.0f;
 
 	//ブラシの初期化
     HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
@@ -40,13 +42,10 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	initDWriteFactory();
 	applyTextFormat();
 
-#ifdef _DEBUG
 	mColorFloat.push_back(mTextColor.r);
 	mColorFloat.push_back(mTextColor.g);
 	mColorFloat.push_back(mTextColor.b);
 	mColorFloat.push_back(mTextColor.a);
-#endif
-
 }
 
 TextComponent::~TextComponent()
@@ -94,6 +93,10 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	mPosX = textJson[structName].value("x", mPosX);
 	mPosY = textJson[structName].value("y", mPosY);
 	mText = Utility::stringToWString(textJson[structName].value("text", "empty"));
+	std::vector<float> defaultColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	mColorFloat = textJson[structName].value("color", defaultColor);
+	setTextColor(D2D1::ColorF(mColorFloat[0], mColorFloat[1], mColorFloat[2], mColorFloat[3]));
+
 	applyTextTexture();
 }
 
@@ -115,8 +118,8 @@ void TextComponent::applyTextTexture()
     mText.c_str(),								//描画する文字列
     (UINT32)mText.length(),						//文字列の長さ
     mTextFormat.Get(),							//使用するテキストフォーマット
+    mTextMaxWidth,									//最大高さ
     10000.0f,									//最大幅
-    10000.0f,									//最大高さ
     mTextLayout.ReleaseAndGetAddressOf()		//出力先
 	);
 	assert(SUCCEEDED(hr));
@@ -223,6 +226,13 @@ void TextComponent::setLineSpace(float space)
 	applyTextFormat();
 }
 
+void TextComponent::alignCenter(float width)
+{
+	isCenter = true;
+	mTextMaxWidth = width;
+	applyTextFormat();
+}
+
 bool TextComponent::getIsActive()
 {
 	return isActive;
@@ -273,8 +283,6 @@ void TextComponent::createEmptyTexture()
 		IID_PPV_ARGS(mTexture.ReleaseAndGetAddressOf())
 	);
 	
-	mTexture->SetName(L"TextComponent_Texture");
-
 }
 
 void TextComponent::wrapTexture()
@@ -359,12 +367,16 @@ void TextComponent::applyTextFormat()
     );
     assert(SUCCEEDED(hr));
 
-	//テキストの配置を左上に設定
-    hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); //左揃え
+	//テキストの配置を設定
+	if (!isCenter)
+		hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); //左揃え
+	else
+		hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER); //中央ぞろえ
 	assert(SUCCEEDED(hr));
 	hr = mTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); //上揃え
 	assert(SUCCEEDED(hr));
 	
+
 	//行間の設定
 	if(!isLineSpaceDefault)
 	hr = mTextFormat->SetLineSpacing(
