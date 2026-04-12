@@ -111,7 +111,7 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, StatusMenu& menu,float zDepth
 
 void EquipWeaponMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("SORD");
 	mPlayerManager.equipWeapon(mSelectedIndex);
 	mStatusMenu.applyStatus();
 	refreshText();
@@ -282,7 +282,7 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, StatusMenu& menu, float zDepth)
 
 void EquipArmerMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("ARMER");
 	mPlayerManager.equipArmer(mSelectedIndex);
 	mStatusMenu.applyStatus();
 	refreshText();

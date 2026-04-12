@@ -217,7 +217,7 @@ void ExplorerMenu::craftExplorer(int index)
 		mItemManager.subResource(explorerData.costResourceID[i], explorerData.price[i]);
 	}
 
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("FORGE");
 	//陳列からアイテムを削除
 	mTools.erase(mTools.begin() + index);
 	mItemManager.setToolPossession(explorerData.id, true);

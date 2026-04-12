@@ -282,7 +282,7 @@ void ShopMenu::buyItem(int index) {
 		mItemManager.subResource(itemData.costResourceID[i], itemData.price[i]);
 	}
 
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("PURCHASE");
 	//インベントリにアイテムを追加
 	mPlayerManager.addInventory(itemData.id);
 

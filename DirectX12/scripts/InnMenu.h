@@ -5,9 +5,13 @@ class InnMenu : public Menu {
 public:
 	InnMenu(TownScene& scene, float zDepth);
 	void selectedAct() override;
+	void updateMenu() override;
 
 private:
 	void stay();
 	void save();
+
+	struct IXAudio2SourceVoice* mSleepVoice;
+	bool isFading;
 };
 

@@ -253,7 +253,7 @@ void ArmerMenu::craftArmer(int index)
 		mItemManager.subResource(armerData.costResourceID[i], armerData.price[i]);
 	}
 
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("FORGE");
 
 	//陳列からアイテムを削除
 	mArmers.erase(mArmers.begin() + index);
@@ -545,7 +545,7 @@ void WeaponMenu::craftWeapon(int index)
 		mItemManager.subResource(weaponData.costResourceID[i], weaponData.price[i]);
 	}
 
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
+	mScene.getGame().getAudioManager().playSE("FORGE");
 
 	//陳列からアイテムを削除
 	mWeapons.erase(mWeapons.begin() + index);

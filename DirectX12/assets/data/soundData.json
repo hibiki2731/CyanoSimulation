@@ -96,6 +96,42 @@
          "fileType": "mp3",
          "filePath": "assets/sounds/SEs/recover1.mp3",
          "poolSize": 1
+      },
+      {
+         "id":"PURCHASE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/purchase.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"FORGE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/forge.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"PICKAXE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/pickaxe.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"SORD",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/sord.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"ARMER",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/armer.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"SLEEP",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/sleep.mp3",
+         "poolSize": 1
       }
    ]
 }

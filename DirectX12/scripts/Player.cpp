@@ -400,6 +400,8 @@ void Player::collect()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
+	mScene.getGame().getAudioManager().playSE("PICKAXE");
+
 	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
 
 	//今いるマスが通常の床ならば何も行わない

@@ -8,15 +8,17 @@
 #include <filesystem>
 #include "json.hpp"
 #include "AudioManager.h"
+#include "Graphic.h"
 
 InnMenu::InnMenu(TownScene& scene, float zDepth) : Menu(scene, "InnMenu", zDepth)
 {
 	mMaxIndex = 2;
+	isFading = false;
+	mSleepVoice = nullptr;
 }
 
 void InnMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	switch (mSelectedIndex) {
 	case 0:
 		stay();
@@ -27,12 +29,30 @@ void InnMenu::selectedAct()
 	}
 }
 
+void InnMenu::updateMenu()
+{
+	if (mSleepVoice) {
+
+		XAUDIO2_VOICE_STATE state;
+		mSleepVoice->GetState(&state);
+		if (state.BuffersQueued == 0) {
+			mScene.getGame().getGraphic().startFadeIn(1.0f);
+			mScene.getGame().getAudioManager().playBGM("BGM_TOWN");
+			mSleepVoice = nullptr;
+		}
+	}
+}
+
 void InnMenu::stay()
 {
 	//HPを全回復
 	mScene.getGame().getPlayerManager().setHP(mScene.getGame().getPlayerManager().getPlayerData().maxHp);
 	//UIに反映
 	mScene.updateStatusWindow();
+	//SE
+	mScene.getGame().getAudioManager().finishAllSounds();
+	mSleepVoice = mScene.getGame().getAudioManager().playSE("SLEEP");
+	mScene.getGame().getGraphic().startFadeOut(2.0f);
 }
 
 void InnMenu::save()
