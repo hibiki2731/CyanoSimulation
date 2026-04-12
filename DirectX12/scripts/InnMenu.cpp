@@ -9,6 +9,9 @@
 #include "json.hpp"
 #include "AudioManager.h"
 #include "Graphic.h"
+#include "SpriteComponent.h"
+#include "TextComponent.h"
+#include "input.h"
 
 InnMenu::InnMenu(TownScene& scene, float zDepth) : Menu(scene, "InnMenu", zDepth)
 {
@@ -24,7 +27,8 @@ void InnMenu::selectedAct()
 		stay();
 		break;
 	case 1:
-		save();
+		auto saveWindow = std::make_unique<ConfirmWindow>(mScene, *this);
+		mScene.addActor(std::move(saveWindow));
 		break;
 	}
 }
@@ -139,3 +143,23 @@ void InnMenu::save()
 
 }
 
+ConfirmWindow::ConfirmWindow(TownScene& scene, InnMenu& menu)
+	:Menu(scene, "ConfirmMenu", 10.0f)
+{
+	mMaxIndex = 2;
+	mArrowMoveLength = 181.0f;
+}
+
+void ConfirmWindow::inputMenu()
+{
+	if (isKeyJustPressed(VK_RIGHT)) {
+		if (mSelectedIndex >= mMaxIndex - 1) return;
+		mSelectedIndex++;
+		mArrow->movePosition(XMFLOAT2(mArrowMoveLength, 0.0f));
+	}
+	else if (isKeyJustPressed(VK_LEFT)) {
+		if (mSelectedIndex <= 0) return;
+		mSelectedIndex--;
+		mArrow->movePosition(XMFLOAT2(-mArrowMoveLength, 0.0f));
+	}
+}

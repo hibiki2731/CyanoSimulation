@@ -15,3 +15,9 @@ private:
 	bool isFading;
 };
 
+class ConfirmWindow : public Menu{
+public:
+	ConfirmWindow(TownScene& scene, InnMenu& menu);
+
+	void inputMenu() override;
+};

@@ -17,6 +17,24 @@
         "x": 158.0,
         "y": 34.0
     },
+    "ConfirmMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 150.0,
+        "rotation": 0.0,
+        "width": 450.0,
+        "x": 400.0,
+        "y": 100.0
+    },
+    "ConfirmMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": 4.71238374710083,
+        "width": 40.0,
+        "x": 584.0,
+        "y": 180.0
+    },
     "EffectCanvas": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
@@ -320,7 +338,7 @@
         "height": 40.0,
         "rotation": -1.5707963705062866,
         "width": 40.0,
-        "x": 428.20098876953125,
+        "x": 440.0,
         "y": 210.0
     },
     "ItemIconOrigin": {
@@ -448,6 +466,24 @@
         "width": 420.0,
         "x": 770.0,
         "y": 100.0
+    },
+    "saveArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 100.0,
+        "rotation": 0.0,
+        "width": 100.0,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "saveCanvas": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 100.0,
+        "rotation": 0.0,
+        "width": 100.0,
+        "x": 0.0,
+        "y": 0.0
     },
     "statusCanvas": {
         "borderSize": 24.0,

@@ -13,6 +13,32 @@
         "x": 40.0,
         "y": 25.0
     },
+    "ConfirmMenuText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 40.0,
+        "lineSpace": 40.0,
+        "text": "はい   いいえ\n",
+        "x": 500.0,
+        "y": 180.0
+    },
+    "ConfirmMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 40.0,
+        "lineSpace": 40.0,
+        "text": "セーブしますか？\n",
+        "x": 420.0,
+        "y": 120.0
+    },
     "CostText": {
         "fontSize": 30.0,
         "lineSpace": 40.0,
@@ -336,6 +362,20 @@
         "text": "TITLE\n",
         "x": 540.0,
         "y": 200.0
+    },
+    "saveText": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "selectText": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
     },
     "statusText": {
         "color": [

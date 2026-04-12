@@ -33,6 +33,19 @@
         "x": 60.0,
         "y": 100.0
     },
+    "ConfirmMenu": {
+        "arrowFileName": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "arrowHeight": 40.0,
+        "arrowOffsetX": 300.0,
+        "arrowOffsetY": 80.0,
+        "arrowWidth": 40.0,
+        "borderSize": 24.0,
+        "height": 368.7239990234375,
+        "spriteFileName": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "width": 800.0,
+        "x": 60.0,
+        "y": 100.0
+    },
     "ExplorerShopMenu": {
         "arrowFileName": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
         "arrowHeight": 40.0,
