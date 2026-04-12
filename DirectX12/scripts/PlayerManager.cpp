@@ -50,6 +50,7 @@ void PlayerManager::equipWeapon(int index)
 	//配列の範囲内におさまっているか確認
 	if (index < 0 || index >= mPlayerData.weaponInventory.size()) return;
 	mPlayerData.equippedWeaponIndex = index;
+	mPlayerData.power = mDefaultPlayerData.power + mGame.getItemManager().getWeaponData(mPlayerData.weaponInventory[index]).power;
 }
 
 void PlayerManager::equipArmer(int index)
@@ -57,6 +58,7 @@ void PlayerManager::equipArmer(int index)
 	//配列の範囲内におさまっているか確認
 	if (index < 0 || index >= mPlayerData.armerInventory.size()) return;
 	mPlayerData.equippedArmerIndex = index;
+	mPlayerData.defence = mDefaultPlayerData.defence + mGame.getItemManager().getArmerData(mPlayerData.armerInventory[index]).defence;
 }
 
 void PlayerManager::addInventory(std::string id) {
@@ -124,6 +126,20 @@ void PlayerManager::removeExplorer(std::string id) {
 		std::iter_swap(iter, mPlayerData.explorerInventory.end() - 1);
 		mPlayerData.explorerInventory.pop_back();
 	}
+}
+
+void PlayerManager::applyEquipmentParamater()
+{
+	//防具の適用
+	int defence = mDefaultPlayerData.defence;
+	defence += mGame.getItemManager().getArmerData(mPlayerData.armerInventory[mPlayerData.equippedArmerIndex]).defence;
+	mPlayerData.defence = defence;
+
+	//武器の適用
+	int power = mDefaultPlayerData.power;
+	power += mGame.getItemManager().getWeaponData(mPlayerData.weaponInventory[mPlayerData.equippedWeaponIndex]).power;
+	mPlayerData.power = power;
+
 }
 
 void PlayerManager::applyToolParamater()

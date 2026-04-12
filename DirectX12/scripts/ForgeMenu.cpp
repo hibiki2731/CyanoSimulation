@@ -20,6 +20,7 @@ ForgeMenu::ForgeMenu(TownScene& scene, float zDepth)
 
 void ForgeMenu::selectedAct()
 {
+	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
 	switch (mSelectedIndex) {
 	case 0: {
 		auto weaponMenu = std::make_unique<WeaponMenu>(mScene, 80.0f);
@@ -195,7 +196,10 @@ void ArmerMenu::updateMenu()
 void ArmerMenu::inputMenu()
 {
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex <= 0) return;
+		if (mSelectedIndex <= 0) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex--;
 		showCraftCost();
 		showArmerEffect();
@@ -205,7 +209,10 @@ void ArmerMenu::inputMenu()
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex >= mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex++;
 		showCraftCost();
 		showArmerEffect();
@@ -227,7 +234,10 @@ void ArmerMenu::prepareCraftItems()
 
 void ArmerMenu::craftArmer(int index)
 {
-	if (mArmers.size() == 0)return;
+	if (mArmers.size() == 0) {
+		mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+		return;
+	}
 
 	//リソースを消費
 	const auto& armerData = mItemManager.getArmerData(mArmers[index]);
@@ -478,7 +488,10 @@ void WeaponMenu::updateMenu()
 void WeaponMenu::inputMenu()
 {
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex <= 0) return;
+		if (mSelectedIndex <= 0) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex--;
 		showWeaponEffect();
 		showCraftCost();
@@ -488,7 +501,10 @@ void WeaponMenu::inputMenu()
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex >= mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex++;
 		showWeaponEffect();
 		showCraftCost();
@@ -510,7 +526,10 @@ void WeaponMenu::prepareCraftItems()
 
 void WeaponMenu::craftWeapon(int index)
 {
-	if (mWeapons.size() == 0) return;
+	if (mWeapons.size() == 0) {
+		mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+		return;
+	}
 
 	//リソースを消費
 	const auto& weaponData = mItemManager.getWeaponData(mWeapons[index]);

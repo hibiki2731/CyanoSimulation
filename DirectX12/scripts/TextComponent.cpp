@@ -19,7 +19,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	mPosX = 0.0f;
 	mPosY = 0.0f;
 	mFontSize = 32;
-	mFontName = L"MS P明朝";
+	mFontName = L"MS Gothic";
 	mMaxRow = 20;
 	mTextColor = D2D1::ColorF(D2D1::ColorF::White);
 	mText = L"empty";

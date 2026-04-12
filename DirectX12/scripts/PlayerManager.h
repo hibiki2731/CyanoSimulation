@@ -49,6 +49,7 @@ public:
 	void removeArmer(std::string id);
 	void removeExplorer(std::string id);
 
+	void applyEquipmentParamater();
 	void applyToolParamater();
 
 	void loadPlayerData();

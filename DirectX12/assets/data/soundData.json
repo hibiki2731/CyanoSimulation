@@ -90,6 +90,12 @@
          "fileType": "mp3",
          "filePath": "assets/sounds/SEs/jump.mp3",
          "poolSize": 1
+      },
+      {
+         "id":"RECOVER1",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/recover1.mp3",
+         "poolSize": 1
       }
    ]
 }

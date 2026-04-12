@@ -11,10 +11,11 @@
 #include "AudioManager.h"
 #include "ItemManager.h"
 
-EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
+EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, StatusMenu& menu,float zDepth)
 	: Menu(scene, "EquipWeaponMenu", zDepth),
 	mPlayerManager(scene.getGame().getPlayerManager()),
-	mItemManager(scene.getGame().getItemManager())
+	mItemManager(scene.getGame().getItemManager()),
+	mStatusMenu(menu)
 {
 	mMaxIndex = mPlayerManager.getPlayerData().weaponInventory.size();
 	mScrollOffset = 0;
@@ -95,12 +96,24 @@ EquipWeaponMenu::EquipWeaponMenu(TownScene& scene, float zDepth)
 	mScrollBar = scrollBar.get();
 	addComponent(std::move(scrollBar));
 
+	//説明文
+	structName = "Descriptor";
+	auto descriptor = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
+	descriptor->loadFileAndCreate(structName);
+	mDescriptor = descriptor.get();
+	updateDescriptor();
+#ifdef _DEBUG
+	descriptor->activateControll(structName);
+#endif
+	addComponent(std::move(descriptor));
+
 }
 
 void EquipWeaponMenu::selectedAct()
 {
 	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	mPlayerManager.equipWeapon(mSelectedIndex);
+	mStatusMenu.applyStatus();
 	refreshText();
 }
 
@@ -128,6 +141,7 @@ void EquipWeaponMenu::inputMenu()
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+		updateDescriptor();
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -136,6 +150,7 @@ void EquipWeaponMenu::inputMenu()
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+		updateDescriptor();
 		if (mSelectedIndex > mScrollOffset + MaxShowWeaponNum  - 1) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -163,10 +178,18 @@ void EquipWeaponMenu::refreshText()
 
 }
 
-EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
+void EquipWeaponMenu::updateDescriptor()
+{
+	auto playerData = mPlayerManager.getPlayerData();
+	std::wstring text = Utility::stringToWString(mItemManager.getWeaponData(playerData.weaponInventory[mSelectedIndex]).description);
+	mDescriptor->setText(text);
+}
+
+EquipArmerMenu::EquipArmerMenu(TownScene& scene, StatusMenu& menu, float zDepth)
 	: Menu(scene, "EquipArmerMenu", zDepth),
 	mPlayerManager(scene.getGame().getPlayerManager()),
-	mItemManager(scene.getGame().getItemManager())
+	mItemManager(scene.getGame().getItemManager()),
+	mStatusMenu(menu)
 {
 	mMaxIndex = mPlayerManager.getPlayerData().armerInventory.size();
 	mScrollOffset = 0;
@@ -244,12 +267,24 @@ EquipArmerMenu::EquipArmerMenu(TownScene& scene, float zDepth)
 	scrollBar->activateControll(structName);
 #endif
 	addComponent(std::move(scrollBar));
+
+	//説明文
+	structName = "Descriptor";
+	auto descriptor = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
+	descriptor->loadFileAndCreate(structName);
+	mDescriptor = descriptor.get();
+	updateDescriptor();
+#ifdef _DEBUG
+	descriptor->activateControll(structName);
+#endif
+	addComponent(std::move(descriptor));
 }
 
 void EquipArmerMenu::selectedAct()
 {
 	mScene.getGame().getAudioManager().playSE("UI_ENTER");
 	mPlayerManager.equipArmer(mSelectedIndex);
+	mStatusMenu.applyStatus();
 	refreshText();
 }
 
@@ -276,6 +311,7 @@ void EquipArmerMenu::inputMenu()
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+		updateDescriptor();
 		if (mSelectedIndex < mScrollOffset) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
@@ -284,6 +320,7 @@ void EquipArmerMenu::inputMenu()
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		mSelectedIndex++;
+		updateDescriptor();
 		if (mSelectedIndex > mScrollOffset + MaxShowArmerNum  - 1) return;
 		mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
 	}		
@@ -305,9 +342,52 @@ void EquipArmerMenu::refreshText()
 	mTextComponent->setText(message);
 }
 
-StatusMenu::StatusMenu(TownScene& scene, float zDepth) : Menu(scene, "StatusMenu", zDepth)
+void EquipArmerMenu::updateDescriptor()
+{
+	auto playerData = mPlayerManager.getPlayerData();
+	std::wstring text = Utility::stringToWString(mItemManager.getArmerData(playerData.armerInventory[mSelectedIndex]).description);
+	mDescriptor->setText(text);
+}
+
+StatusMenu::StatusMenu(TownScene& scene, float zDepth)
+	: Menu(scene, "StatusMenu", zDepth),
+	mPlayerManager(scene.getGame().getPlayerManager())
 {
 	mMaxIndex = 2;
+
+	std::string	structName = "statusCanvas";
+	auto statusCanvas = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
+	statusCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	statusCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(statusCanvas));
+
+	structName = "statusText";
+	auto statusText = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
+	statusText->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	statusText->activateControll(structName);
+#endif
+	mStatusText = statusText.get();
+	applyStatus();
+	addComponent(std::move(statusText));
+
+	structName = "leftWindow";
+	auto lCanvas = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
+	lCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	lCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(lCanvas));
+
+	structName = "rightWindow";
+	auto rCanvas = std::make_unique<SpriteComponent>(*this, zDepth - 0.5f);
+	rCanvas->loadFileAndCreate(structName);
+#ifdef _DEBUG
+	rCanvas->activateControll(structName);
+#endif
+	addComponent(std::move(rCanvas));
 }
 
 StatusMenu::~StatusMenu()
@@ -317,18 +397,40 @@ StatusMenu::~StatusMenu()
 
 void StatusMenu::selectedAct()
 {
-	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
+	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");	
 	switch(mSelectedIndex) {
 	case 0: {
-		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, 48.0f);
+		auto weaponMenu = std::make_unique<EquipWeaponMenu>(mScene, *this, 40.0f);
 		mScene.addActor(std::move(weaponMenu));
 		break;
 	}
 	case 1: {
-		auto armerMenu = std::make_unique<EquipArmerMenu>(mScene, 48.0f);
+		auto armerMenu = std::make_unique<EquipArmerMenu>(mScene, *this, 40.0f);
 		mScene.addActor(std::move(armerMenu));
 		break;
 	}
 	}
+}
+
+static int textSpaceSize = 5;
+void StatusMenu::applyStatus()
+{
+	auto playerData = mPlayerManager.getPlayerData();
+	std::wstring text;
+	text = L"MAXHP " + std::to_wstring(playerData.maxHp);
+
+	//指定した感覚になるよう空白の数を調節
+	int numSpace = static_cast<int>(std::to_string(playerData.maxHp).length());
+	for (int i = 0; i < textSpaceSize - numSpace; i++) text += L" ";
+	text += L"POWER   " + std::to_wstring(playerData.power) + L"\n";
+
+	text += L"MAXAP " + std::to_wstring(playerData.actionLimit);
+
+	//指定した感覚になるよう空白の数を調節
+	numSpace = static_cast<int>(std::to_string(playerData.actionLimit).length());
+	for (int i = 0; i < textSpaceSize - numSpace; i++) text += L" ";
+	text += L"DEFENCE " + std::to_wstring(playerData.defence) + L"\n";
+
+	mStatusText->setText(text);
 }
 

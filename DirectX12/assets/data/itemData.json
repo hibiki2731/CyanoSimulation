@@ -6,13 +6,13 @@
                 "GRASS"
             ],
             "defence": 0,
+            "description": "なにも着ていない。\n早く服を着よう\n",
             "id": "NONE",
             "inPossession": true,
             "name": "裸",
             "price": [
                 0
-            ],
-            "description":"なにも着ていない。\n早く服を着よう\n"
+            ]
         },
         {
             "category": "CHEST",
@@ -20,13 +20,13 @@
                 "GRASS"
             ],
             "defence": 10,
+            "description": "防御力 10",
             "id": "CLOTHES",
             "inPossession": false,
             "name": "服",
             "price": [
                 20
-            ],
-            "description":"防御力 10"
+            ]
         }
     ],
     "Explorer": [
@@ -35,27 +35,27 @@
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "APの最大値が10増加\n",
             "id": "BOOTS",
             "inPossession": false,
             "name": "靴",
             "price": [
                 25
             ],
-            "value": 10,
-            "description": "APの最大値が10増加\n"
+            "value": 10
         },
         {
             "category": "STORAGE_SIZE",
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "所持アイテム数が1増加\n",
             "id": "BACKPACK",
             "inPossession": false,
             "name": "バックパック",
             "price": [
                 25
-            ],
-            "description":"所持アイテム数が1増加\n"
+            ]
         }
     ],
     "Item": [
@@ -64,28 +64,28 @@
             "costResourceID": [
                 "GOLD"
             ],
+            "description": "HPを20回復\n",
+            "iconFilePath": "assets/picture/HerbIcon.png",
             "id": "HERB",
             "name": "薬草",
             "price": [
                 10
             ],
-            "value": 20,
-            "description": "HPを20回復\n",
-            "iconFilePath":"assets/picture/HerbIcon.png"
+            "value": 20
         },
         {
             "category": "AP_RECOVER",
             "costResourceID": [
                 "GOLD"
             ],
-            "id":"SALTED_KELP",
-            "name":"塩昆布",
-            "price":[
+            "description": "APを20回復\nAPの最大値を越えて回復はしない。\n",
+            "iconFilePath": "assets/picture/SaltedKerp.png",
+            "id": "SALTED_KELP",
+            "name": "塩昆布",
+            "price": [
                 40
             ],
-            "value": 20,
-            "description": "APを20回復\nAPの最大値を越えて回復はしない。\n",
-            "iconFilePath":"assets/picture/SaltedKerp.png"
+            "value": 20
         }
     ],
     "Resource": [
@@ -97,7 +97,7 @@
         {
             "id": "GRASS",
             "name": "草",
-            "num": 0
+            "num": 1000
         }
     ],
     "Weapon": [
@@ -105,27 +105,27 @@
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "なにも持っていない!!\n",
             "id": "NONE",
             "inPossession": true,
             "name": "素手",
             "power": 0,
             "price": [
                 0
-            ],
-            "description": "なにも持っていない!!\n"
+            ]
         },
         {
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "攻撃力 10\n",
             "id": "WOODEN_SORD",
             "inPossession": true,
             "name": "木の剣",
             "power": 10,
             "price": [
                 50
-            ],
-            "description": "攻撃力 10\n"
+            ]
         }
     ]
 }

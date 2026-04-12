@@ -20,6 +20,19 @@
         "x": 626.0,
         "y": 555.0
     },
+    "Descriptor": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 30.0,
+        "lineSpace": 30.0,
+        "text": "防御力 10",
+        "x": 790.0,
+        "y": 130.0
+    },
     "EffectText": {
         "fontSize": 30.0,
         "lineSpace": 50.0,
@@ -48,9 +61,15 @@
         "y": 310.0
     },
     "EquipArmerMenuScrollText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 45.0,
         "lineSpace": 50.0,
-        "text": "NONE\nCLOTHES\nCLOTHES\nCLOTHES\nCLOTHES\nCLOTHES\n",
+        "text": "裸\n服\n服\n服\n服\n服\n",
         "x": 470.0,
         "y": 200.0
     },
@@ -69,9 +88,15 @@
         "y": 110.0
     },
     "EquipWeaponMenuScrollText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 45.0,
         "lineSpace": 50.0,
-        "text": "WOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\nWOODEN_SORD\n",
+        "text": "木の剣\n木の剣\n木の剣\n木の剣\n木の剣\n木の剣\n",
         "x": 470.0,
         "y": 200.0
     },
@@ -104,11 +129,17 @@
         "y": 100.0
     },
     "ExplorerShopMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 50.0,
         "lineSpace": 60.0,
         "text": "ExplorerShop\n",
-        "x": 280.0,
-        "y": 120.0
+        "x": 270.0,
+        "y": 130.0
     },
     "ForgeArmerMenuScrollText": {
         "fontSize": 45.0,
@@ -139,11 +170,17 @@
         "y": 240.0
     },
     "ForgeMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "Forge\n",
-        "x": 280.0,
-        "y": 170.0
+        "x": 270.0,
+        "y": 190.0
     },
     "ForgeWeaponMenuScrollText": {
         "fontSize": 45.0,
@@ -160,11 +197,17 @@
         "y": 100.0
     },
     "ForgeWeaponMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "WEAPON\n",
         "x": 280.0,
-        "y": 110.0
+        "y": 120.0
     },
     "HPText": {
         "fontSize": 20.0,
@@ -174,11 +217,17 @@
         "y": 5.0
     },
     "HPValueText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 20.0,
         "lineSpace": 30.0,
-        "text": "75/100\n",
+        "text": "20/20\n",
         "x": 40.0,
-        "y": 6.0
+        "y": 5.0
     },
     "InnMenuText": {
         "fontSize": 50.0,
@@ -188,11 +237,17 @@
         "y": 200.0
     },
     "InnMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 50.0,
-        "lineSpace": -50.0,
+        "lineSpace": 60.0,
         "text": "Inn\n",
         "x": 280.0,
-        "y": 140.0
+        "y": 150.0
     },
     "MainMenuText": {
         "fontSize": 50.0,
@@ -230,11 +285,17 @@
         "y": 100.0
     },
     "ShopMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
         "fontSize": 50.0,
-        "lineSpace": 0.0,
+        "lineSpace": 60.0,
         "text": "Shop\n",
         "x": 280.0,
-        "y": 110.0
+        "y": 120.0
     },
     "StartText": {
         "color": [
@@ -246,7 +307,7 @@
         "fontSize": 40.0,
         "lineSpace": 60.0,
         "text": "PRESS ENTER TO START\n",
-        "x": 432.587890625,
+        "x": 440.0,
         "y": 504.0
     },
     "StatusMenuText": {
@@ -273,7 +334,20 @@
         "fontSize": 80.0,
         "lineSpace": 60.0,
         "text": "TITLE\n",
-        "x": 548.37890625,
+        "x": 540.0,
         "y": 200.0
+    },
+    "statusText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 32.0,
+        "lineSpace": 40.0,
+        "text": "MAXHP : 20 POWER : 3\nMAXAP : 10 DEFENCE : 1\n",
+        "x": 420.0,
+        "y": 557.0
     }
 }

@@ -21,8 +21,7 @@
     "explorer": [],
     "flashDuration": 0.5,
     "hp": 20,
-    "inventory": [
-    ],
+    "inventory": [],
     "maxhp": 20,
     "moveSpeed": 5.0,
     "power": 3,

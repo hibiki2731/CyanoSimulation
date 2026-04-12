@@ -9,6 +9,7 @@
 #include "json.hpp"
 #include "MyUtility.h"
 #include "Player.h"
+#include "AudioManager.h"
 #include <fstream>
 #include <string>
 

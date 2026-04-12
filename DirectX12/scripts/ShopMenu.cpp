@@ -163,7 +163,10 @@ void ShopMenu::updateMenu()
 void ShopMenu::inputMenu()
 {
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex <= 0) return;
+		if (mSelectedIndex <= 0) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex--;													//選択アイテムのインデックスを減らす
 		showItemEffect();													//選択アイテムの効果を表示
 		showItemCost();														//選択アイテムのコストを表示
@@ -175,7 +178,10 @@ void ShopMenu::inputMenu()
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex >= mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex++;													//選択アイテムのインデックスを増やす
 		showItemEffect();													//選択アイテムの効果を表示
 		showItemCost();														//選択アイテムのコストを表示

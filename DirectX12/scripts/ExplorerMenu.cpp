@@ -161,7 +161,10 @@ void ExplorerMenu::updateMenu(){
 void ExplorerMenu::inputMenu()
 {
 	if (isKeyJustPressed(VK_UP)) {
-		if (mSelectedIndex <= 0) return;
+		if (mSelectedIndex <= 0) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex--;
 		showCraftCost();
 		showToolEffect();
@@ -171,7 +174,10 @@ void ExplorerMenu::inputMenu()
 	}
 
 	if (isKeyJustPressed(VK_DOWN)) {
-		if (mSelectedIndex >= mMaxIndex - 1) return;
+		if (mSelectedIndex >= mMaxIndex - 1) {
+			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+			return;
+		}
 		mSelectedIndex++;
 		showCraftCost();
 		showToolEffect();
@@ -192,7 +198,10 @@ void ExplorerMenu::prepareCraftExplorer()
 
 void ExplorerMenu::craftExplorer(int index)
 {
-	if (mTools.size() == 0) return;
+	if (mTools.size() == 0) {
+		mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+		return;
+	}
 
 	//リソースを消費
 	const auto& explorerData = mItemManager.getExplorerData(mTools[index]);

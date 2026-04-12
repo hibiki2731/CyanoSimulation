@@ -472,10 +472,12 @@ void Player::useItem()
 	if (itemData.category == "HP_RECOVER") {
 		mCharacter->addHP(itemData.value);
 		mScene.updateHPUI();
+		mScene.getGame().getAudioManager().playSE("RECOVER1");
 	}
 	else if (itemData.category == "AP_RECOVER") {
 		mAP += itemData.value;
 		if (mAP > mMaxAP) mAP = mMaxAP + 1;
+		mScene.getGame().getAudioManager().playSE("RECOVER1");
 	}
 
 	//インベントリーから削除
@@ -506,6 +508,7 @@ void Player::selectNextItem()
 	if (mSelectItemIndex >= mStorageSize - 1) return;
 	mSelectItemIndex++;
 	mScene.updateItemFrame();
+	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 }
 
 void Player::selectPreviousItem()
@@ -513,4 +516,5 @@ void Player::selectPreviousItem()
 	if (mSelectItemIndex <= 0) return;
 	mSelectItemIndex--;
 	mScene.updateItemFrame();
+	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 }
