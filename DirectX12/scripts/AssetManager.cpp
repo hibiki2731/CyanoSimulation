@@ -220,20 +220,27 @@ UINT AssetManager::getSpriteIndicesSize() {
 int AssetManager::getCBEndIndex(int size)
 {
 	int index = 0;
+	
 	//解放されたメモリがあれば優先して使う
-	for (auto iter = mClearedMemory.begin(); iter != mClearedMemory.end(); iter++) {
-		//要求サイズより、空いているサイズが大きければ使用する
-		if (iter->size >= size) {
-			iter->size -= size;	//要求サイズ分メモリを使用
-			index = iter->index;
-			iter->index += size;//インデックスもそれに応じて移動
+	if (!mClearedMemory.empty()) {
+		for (auto& [key, value] : mClearedMemory) {
+			//要求サイズより、空いているサイズが大きければ使用する
+			if (value >= size) {
+				index = key;
+				int newSize = value - size;			//要求サイズ分空いているメモリを減らす
 
-			//空いているメモリがなくなれば、配列から除去
-			if (iter->size == 0) {
-				std::swap(*iter, mClearedMemory.back());
-				mClearedMemory.pop_back();
+				//空いているメモリが0になった場合
+				if (newSize == 0) {
+					mClearedMemory.erase(key);
+				}
+				//空いているメモリが0より大きい場合
+				else {
+					mClearedMemory[index + size] = newSize;
+					mClearedMemory.erase(key);
+				}
+
+				return index;
 			}
-			return index;
 		}
 	}
 	
@@ -247,19 +254,25 @@ int AssetManager::getHeapEndIndex(int size)
 {
 	int index = 0;
 	//解放されたヒープがあれば優先して使う
-	for (auto iter = mClearedHeap.begin(); iter != mClearedHeap.end(); iter++) {
-		//要求サイズより、空いているサイズが大きければ使用する
-		if (iter->size >= size) {
-			iter->size -= size; //要求サイズ分ヒープを使用
-			index = iter->index;
-			iter->index += size;//インデックスもそれに応じて移動
+	if (!mClearedHeap.empty()) {
+		for (auto& [key, value] : mClearedHeap) {
+			//要求サイズより、空いているサイズが大きければ使用する
+			if (value >= size) {
+				index = key;
+				int newSize = value - size;			//要求サイズ分空いているヒープを減らす
 
-			//空いているヒープがなくなれば、配列から除去
-			if (iter->size == 0) {
-				std::swap(*iter, mClearedHeap.back());
-				mClearedHeap.pop_back();
+				//空いているヒープが0になった場合
+				if (newSize == 0) {
+					mClearedHeap.erase(key);
+				}
+				//空いているヒープが0より大きい場合
+				else {
+					mClearedHeap[index + size] = newSize;
+					mClearedHeap.erase(key);
+				}
+
+				return index;
 			}
-			return index;
 		}
 	}
 
@@ -307,14 +320,84 @@ SpriteData AssetManager::getSpriteData()
 
 void AssetManager::deleteMemory(int index, int size)
 {
-	ClearedMemory memory = { index, size };
-	mClearedMemory.emplace_back(memory);
+	int resultIndex = index;
+	int resultSize = size;
+
+	auto iter = mClearedMemory.lower_bound(index);
+	auto preIter = iter;
+
+	//解放するメモリの直前に連続する解放されたメモリがあるか確認
+	if (preIter != mClearedMemory.begin()) {
+		preIter--;
+		int preEndIndex = preIter->first + preIter->second;
+
+		//連続していた場合
+		if (preEndIndex == index) {
+			resultIndex = preIter->first;
+			resultSize += preIter->second;
+			preIter->second = resultSize;
+		}
+		//連続していない場合
+		else {
+			mClearedMemory[resultIndex] = resultSize;
+			preIter++;
+		}
+	}
+	else {
+		mClearedMemory[resultIndex] = resultSize;
+		preIter--;
+	}
+
+	//解放するメモリの直後に連続する解放されたメモリがあるか確認
+	if (iter != mClearedMemory.end()) {
+		if (iter->first == resultIndex + resultSize) {
+			//連続していた場合
+			preIter->second += iter->second;
+			mClearedMemory.erase(iter);
+		}
+	}
+	
 }
 
 void AssetManager::deleteHeap(int index, int size)
 {
-	ClearedHeap heap = { index, size };
-	mClearedHeap.emplace_back(heap);
+	int resultIndex = index;
+	int resultSize = size;
+
+	auto iter = mClearedHeap.lower_bound(index);
+	auto preIter = iter;
+
+	//解放するヒープの直前に連続する解放されたヒープがあるか確認
+	if (preIter != mClearedHeap.begin()) {
+		preIter--;
+		int preEndIndex = preIter->first + preIter->second;
+
+		//連続していた場合
+		if (preEndIndex == index) {
+			resultIndex = preIter->first;
+			resultSize += preIter->second;
+			preIter->second = resultSize;
+		}
+		//連続していない場合
+		else {
+			mClearedHeap[resultIndex] = resultSize;
+			preIter++;
+		}
+	}
+	else {
+		mClearedHeap[resultIndex] = resultSize;
+		preIter--;
+	}
+
+	//解放するヒープの直後に連続する解放されたヒープがあるか確認
+	if (iter != mClearedHeap.end()) {
+		if (iter->first == resultIndex + resultSize) {
+			//連続していた場合
+			preIter->second += iter->second;
+			mClearedHeap.erase(iter);
+		}
+	}
+	
 }
 
 void AssetManager::createSpriteBuffers()

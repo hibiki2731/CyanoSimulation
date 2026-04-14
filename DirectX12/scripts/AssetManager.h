@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -78,17 +79,17 @@ private:
 	int mHeapEndIndex; //ディスクリプタヒープの最後尾インデックス
 
 	Graphic& mGraphic;
-	std::map<std::string, std::unique_ptr<MeshData>> mLoadData;
-	std::map<std::string, ComPtr<ID3D12Resource>> mTextureData; //テクスチャデータのキャッシュ
-	std::vector<ClearedMemory> mClearedMemory; //解放されたメモリ
-	std::vector<ClearedHeap> mClearedHeap; //解放されたメモリ
+	std::unordered_map<std::string, std::unique_ptr<MeshData>> mLoadData;
+	std::unordered_map<std::string, ComPtr<ID3D12Resource>> mTextureData; //テクスチャデータのキャッシュ
+	std::map<int, int> mClearedMemory; //解放されたメモリ
+	std::map<int, int> mClearedHeap; //解放されたメモリ
 
 	//スプライト用
 	ComPtr<ID3D12Resource> mSpriteVertexBuf;
 	D3D12_VERTEX_BUFFER_VIEW mSpriteVertexBufView;
 	ComPtr<ID3D12Resource> mSpriteIndexBuf;
 	D3D12_INDEX_BUFFER_VIEW mSpriteIndexBufView;
-	std::map<std::string, XMFLOAT2> mTextureSizeData;
+	std::unordered_map<std::string, XMFLOAT2> mTextureSizeData;
 
 	void createMesh(const std::string& objectName, const MeshFileData& meshFileData);
 	void createSpriteBuffers();

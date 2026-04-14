@@ -163,3 +163,98 @@ void ConfirmWindow::inputMenu()
 		mArrow->movePosition(XMFLOAT2(-mArrowMoveLength, 0.0f));
 	}
 }
+
+void ConfirmWindow::selectedAct()
+{
+	switch (mSelectedIndex) {
+	case 0:
+		save();
+		mScene.popMenu();
+		break;
+	case 1:
+		mScene.popMenu();
+		break;
+	}
+}
+
+void ConfirmWindow::save()
+{
+	//アイテムデータの更新
+	{
+		nlohmann::json itemJson;
+		std::ifstream itemFile("assets/data/itemData.json");
+		itemFile >> itemJson;
+		itemFile.close();
+
+		//リソースの所持数を更新
+		for (auto& resource : itemJson["Resource"]) {
+			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
+		}
+		//武器の所有を更新
+		for (auto& weapon : itemJson["Weapon"]) {
+			weapon["inPossession"] = mScene.getGame().getItemManager().getWeaponData(weapon["id"]).inPossession;
+		}
+		//防具の所有を更新
+		for (auto& armer : itemJson["Armer"]) {
+			armer["inPossession"] = mScene.getGame().getItemManager().getArmerData(armer["id"]).inPossession;
+		}
+		//探索道具の所有を更新
+		for (auto& tool : itemJson["Explorer"]) {
+			tool["inPossession"] = mScene.getGame().getItemManager().getExplorerData(tool["id"]).inPossession;
+		}
+
+
+		//一時ファイルへの書き出し
+		try {
+			std::ofstream os("assets/data/itemData.json.tmp");
+			if (!os) throw std::runtime_error("ファイルが開けません");
+
+			os << itemJson.dump(4);
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
+		//書き込みが成功したら、一時ファイルを正式な名前にリネームする
+		try {
+			// すでに正式なファイルが存在する場合は上書きされる
+			std::filesystem::rename("assets/data/itemData.json.tmp", "assets/data/itemData.json");
+		}
+		catch (const std::filesystem::filesystem_error& e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	//プレイヤーデータの保存
+	{
+		nlohmann::json playerJson;
+		std::ifstream playerFile("assets/data/playerData.json");
+		playerFile >> playerJson;
+		playerFile.close();
+		const PlayerData& playerData = mScene.getGame().getPlayerManager().getPlayerData();
+		playerJson["hp"] = playerData.hp;
+		playerJson["inventory"] = playerData.inventory;
+		playerJson["weapons"] = playerData.weaponInventory;
+		playerJson["armers"] = playerData.armerInventory;
+		playerJson["explorer"] = playerData.explorerInventory;
+		playerJson["equippedWeaponIndex"] = playerData.equippedWeaponIndex;
+		playerJson["equippedArmerIndex"] = playerData.equippedArmerIndex;
+
+		//一時ファイルへの書き出し
+		try {
+			std::ofstream os("assets/data/playerData.json.tmp");
+			if (!os) throw std::runtime_error("ファイルが開けません");
+
+			os << playerJson.dump(4);
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
+		//書き込みが成功したら、一時ファイルを正式な名前にリネームする
+		try {
+			// すでに正式なファイルが存在する場合は上書きされる
+			std::filesystem::rename("assets/data/playerData.json.tmp", "assets/data/playerData.json");
+		}
+		catch (const std::filesystem::filesystem_error& e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+}

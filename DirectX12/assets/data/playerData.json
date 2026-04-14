@@ -1,19 +1,7 @@
 {
-    "actionLimit": 10,
+    "actionLimit": 1000,
     "armers": [
-        "NONE",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES",
-        "CLOTHES"
+        "NONE"
     ],
     "defense": 1,
     "equippedArmerIndex": 0,
@@ -27,19 +15,6 @@
     "power": 3,
     "rotSpeed": 4.5,
     "weapons": [
-        "NONE",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD",
-        "WOODEN_SORD"
+        "NONE"
     ]
 }

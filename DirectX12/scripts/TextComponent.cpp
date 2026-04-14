@@ -48,26 +48,6 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	mColorFloat.push_back(mTextColor.a);
 }
 
-TextComponent::~TextComponent()
-{
-
-	if (mGraphic.getD2DDeviceContext()) {
-        mGraphic.getD2DDeviceContext()->SetTarget(nullptr);
-        mGraphic.getD3D11DeviceContext()->Flush();
-	}
-
-	//GPUの処理が終わってから削除する
-	ComPtr<IUnknown> tex, wrap, target;
-	if (mTexture) mTexture.As(&tex);
-	if (mWrappedTexture) mWrappedTexture.As(&wrap);
-	if (mD2DTarget) mD2DTarget.As(&target);
-
-	if (tex) mGraphic.delayRelease(tex);
-	if (wrap) mGraphic.delayRelease(wrap);
-	if (target) mGraphic.delayRelease(target);
-
-}
-
 void TextComponent::loadFileAndCreate(const std::string& structName)
 {
 	//テキストデータの取得
@@ -176,6 +156,24 @@ void TextComponent::draw()
 void TextComponent::endProcess()
 {
 	mOwner.getScene().removeText(this);
+	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
+	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize);
+
+	if (mGraphic.getD2DDeviceContext()) {
+        mGraphic.getD2DDeviceContext()->SetTarget(nullptr);
+        mGraphic.getD3D11DeviceContext()->Flush();
+	}
+
+	//GPUの処理が終わってから削除する
+	ComPtr<IUnknown> tex, wrap, target;
+	if (mTexture) mTexture.As(&tex);
+	if (mWrappedTexture) mWrappedTexture.As(&wrap);
+	if (mD2DTarget) mD2DTarget.As(&target);
+
+	if (tex) mGraphic.delayRelease(tex);
+	if (wrap) mGraphic.delayRelease(wrap);
+	if (target) mGraphic.delayRelease(target);
+
 }
 
 void TextComponent::closeText()

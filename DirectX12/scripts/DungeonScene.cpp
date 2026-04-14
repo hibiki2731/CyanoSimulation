@@ -83,7 +83,7 @@ void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
 void DungeonScene::createPlayer(float x, float y)
 {
 	//プレイヤー生成
-	std::unique_ptr player = std::make_unique<Player>(*this, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+	std::unique_ptr player = std::make_unique<Player>(*this, x, y);
 	mPlayer = player.get();
 	addActor(std::move(player)); //所有権をSceneへ渡す
 }

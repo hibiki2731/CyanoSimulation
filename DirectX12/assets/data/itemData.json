@@ -92,7 +92,7 @@
         {
             "id": "GOLD",
             "name": "GOLD",
-            "num": 1000
+            "num": 990
         },
         {
             "id": "GRASS",
@@ -120,7 +120,7 @@
             ],
             "description": "攻撃力 10\n",
             "id": "WOODEN_SORD",
-            "inPossession": true,
+            "inPossession": false,
             "name": "木の剣",
             "power": 10,
             "price": [

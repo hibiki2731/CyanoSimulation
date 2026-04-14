@@ -40,6 +40,8 @@ void SpriteComponent::endProcess()
 {
 	//Gameからスプライトを削除
 	mOwner.getScene().removeSprite(this);
+	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
+	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize);
 }
 
 void SpriteComponent::create(const std::string filename)

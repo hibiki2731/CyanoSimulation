@@ -20,4 +20,8 @@ public:
 	ConfirmWindow(TownScene& scene, InnMenu& menu);
 
 	void inputMenu() override;
+	void selectedAct() override;
+
+private:
+	void save();
 };
