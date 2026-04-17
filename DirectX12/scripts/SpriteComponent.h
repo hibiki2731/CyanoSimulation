@@ -4,20 +4,22 @@
 #include <DirectXMath.h>
 #include "Component.h"
 #include "Graphic.h"
+#include <execution>
 
 class AssetManager;
 struct SpriteData;
+class GUIDebugger;
 
 class SpriteComponent :
     public Component
 {
 public:
 	SpriteComponent(Actor& owner, float zDepth = 100.0f);
-    ~SpriteComponent();
 
-	void endProccess() override;
+	void endProcess() override;
 
     void create(const std::string filename);
+    void loadFileAndCreate(const std::string& structName);
     virtual void draw();
 
 	//描画範囲のセッター
@@ -26,10 +28,26 @@ public:
 	void setRotation(const float rotation);
     void setSpriteSize(const XMFLOAT2& size);
 	void setBordarSize(const float size);
-	void movePositon(const XMFLOAT2& diff);
-    void setZPos(float zPos);
+	void movePosition(const XMFLOAT2& diff);
+	void setPosX(float xPos);
+	void setPosY(float yPos);
+    void setPosZ(float zPos);
 
-protected:
+	//ゲッター
+	const XMFLOAT3& getPosition() const { return mPosition; }
+	const XMFLOAT2& getSpriteSize() const { return mSpriteSize; }
+	const XMFLOAT2& getTextureSize() const { return mTextureSize; }
+	const float getBordarSize() const { return mBordarSize; }
+	const float getRotation() const { return mRotation; }
+
+    //デバッグ用
+#ifdef _DEBUG
+    void activateControll(const std::string& structName);
+	bool getActiveControll() const { return mActiveControll; }
+
+#endif
+
+private:
     //描画範囲
     XMFLOAT3 mPosition;
 	XMFLOAT2 mScale;
@@ -37,6 +55,7 @@ protected:
     XMFLOAT2 mSpriteSize;
 	XMFLOAT2 mTextureSize;
 	float mBordarSize;
+	std::string mTextureFilePath;
 
     //デバック用
     HRESULT Hr;
@@ -63,6 +82,13 @@ protected:
     D3D12_INDEX_BUFFER_VIEW mIndexBufView;
     //テクスチャバッファ
     ID3D12Resource* mTextureBuf;
+
+    //デバッグ用
+#ifdef _DEBUG
+	friend class GUIDebugger;
+	bool mActiveControll = false;
+	std::string mStructName;
+#endif
 
 };
 

@@ -1,6 +1,7 @@
 ﻿#include "Definition.h"
 #include "DungeonScene.h"
-#include "MapManager.h"
+#include "MapGenerator.h"
+#include "TurnObserver.h"
 #include "Game.h"
 #include "SceneManager.h"
 #include "Enemy.h"
@@ -11,18 +12,21 @@
 #include "DamageText.h"
 #include "MiniMap.h"
 #include "Graphic.h"
+#include "DungeonUI.h"
+#include "AudioManager.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
 {
-	mMapManager = std::make_unique<MapManager>(*this);
-	mDamageTextManaager = std::make_unique<DamageTextManager>(game);
+	mMapGenerator = std::make_unique<MapGenerator>(*this);
+	mTurnObserver = std::make_unique<TurnObserver>(*this);
+	mDamageTextManaager = std::make_unique<DamageTextGenerator>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
 }
 
 void DungeonScene::fastUpdateScene() {
-	mMapManager->updateTurn();
+	mTurnObserver->updateTurn();
 }
 
 void DungeonScene::updateScene()
@@ -44,24 +48,29 @@ void DungeonScene::drawScene()
 
 void DungeonScene::onEnter()
 {
-	mMapManager->begin();
-
-	std::unique_ptr<MessageWindow> messageWindow = std::make_unique<MessageWindow>(*this);
-	messageWindow->setPlayer(mPlayer);
-	addActor(std::move(messageWindow)); 
+	mMapGenerator->begin();
+	mTurnObserver->begin();
 
 	//ミニマップの作成
 	auto minimap = std::make_unique<MiniMap>(*this);
 	mMiniMap = minimap.get();
 	addActor(std::move(minimap));
 	mMiniMap->updatePosition();
+
+	//UIの作成
+	auto dungeonUI = std::make_unique<DungeonUI>(*this);
+	mUI = dungeonUI.get();
+	addActor(std::move(dungeonUI));
+
+	mGame.getGraphic().startFadeIn(1.0f);
+
+	mGame.getAudioManager().playBGM("BGM_DUNGEON");
 }
 
 void DungeonScene::onExit()
 {
-	mMapManager->end();
+	mMapGenerator->end();
 	mResourceIDs.clear();
-	refreshActors();	//シーン中のアクターをすべてDeadにする
 }
 
 void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
@@ -74,7 +83,7 @@ void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
 void DungeonScene::createPlayer(float x, float y)
 {
 	//プレイヤー生成
-	std::unique_ptr player = std::make_unique<Player>(*this, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+	std::unique_ptr player = std::make_unique<Player>(*this, x, y);
 	mPlayer = player.get();
 	addActor(std::move(player)); //所有権をSceneへ渡す
 }
@@ -91,6 +100,11 @@ void DungeonScene::createResource(const std::string& resourceID, const std::stri
 void DungeonScene::returnToTown()
 {
 	mGame.getSceneManager().transitToTown();
+}
+
+void DungeonScene::transitToGameOver()
+{
+	mGame.getSceneManager().transitToGameOver();
 }
 
 void DungeonScene::setTileDataAt(int x, int y, int data)
@@ -213,6 +227,26 @@ void DungeonScene::updateMiniMapDirection()
 	mMiniMap->updateDirection();
 }
 
+void DungeonScene::updateHPUI()
+{
+	mUI->updateHP();
+}
+
+void DungeonScene::updateAPUI()
+{
+	mUI->updateAP();
+}
+
+void DungeonScene::updateItemUI()
+{
+	mUI->updateItemIcon();
+}
+
+void DungeonScene::updateItemFrame()
+{
+	mUI->updateItemFrame();
+}
+
 void DungeonScene::updateDTView(XMMATRIX& view)
 {
 	mDamageTextManaager->updateView(view);
@@ -220,12 +254,12 @@ void DungeonScene::updateDTView(XMMATRIX& view)
 
 void DungeonScene::moveToEnemyTurn()
 {
-	mMapManager->moveToEnemyTurn();
+	mTurnObserver->moveToEnemyTurn();
 }
 
 void DungeonScene::moveToPlayerTurn()
 {
-	mMapManager->moveToPlayerTurn();
+	mTurnObserver->moveToPlayerTurn();
 }
 
 EnemyComponent* DungeonScene::getEnemyFromIndexPos(int index)
@@ -254,7 +288,7 @@ EnemyComponent* DungeonScene::getEnemyFromIndexPos(int x, int y)
 
 int DungeonScene::getPlayerActLimit()
 {
-	return (mPlayer) ? mPlayer->getActionLimit() : 0;
+	return (mPlayer) ? mPlayer->getAP() : 0;
 }
 
 const std::string& DungeonScene::getResourceID(int index)
@@ -276,10 +310,10 @@ const std::string& DungeonScene::getResourceID(int x, int y)
 
 TurnType DungeonScene::getTurnType() const
 {
-	return mMapManager->getTurnType();
+	return mTurnObserver->getTurnType();
 }
 
-int DungeonScene::getDamageTextNum() const
+float DungeonScene::getDamageTextNum() const
 {
 	return mDamageTextManaager->getSize();
 }
@@ -287,5 +321,10 @@ int DungeonScene::getDamageTextNum() const
 void DungeonScene::createDamageText(const XMFLOAT3& pos, int digit)
 {
 	mDamageTextManaager->createDamageText(pos, digit);
+}
+
+const TurnObserver& DungeonScene::getTurnObserver()
+{
+	return *mTurnObserver.get();
 }
 

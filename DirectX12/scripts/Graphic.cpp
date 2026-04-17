@@ -4,6 +4,7 @@
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
 #include "Game.h"
+#include "Imgui/imgui_impl_win32.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -17,6 +18,15 @@ Graphic::Graphic(Game& game)
 
 	Base3DData.playerFlashColor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	Base3DData.playerFlashIntensity = 0.0f;
+
+	currentFadeAlpha = 0.0f;
+	fadeTimer = 1.0f;
+	fadeOutDuration = 1.0f;
+	isFadingIn = false;
+	isFadingOut = false;
+	fadeInDuration = 1.0f;
+	fadeOutDuration = 1.0f;
+
 }
 
 Graphic::~Graphic()
@@ -68,6 +78,15 @@ void Graphic::init() {
 
 	ShowWindow(hWnd, SW_SHOW);
 }
+
+#ifdef _DEBUG
+void Graphic::setShareDescriptor()
+{
+	//ディスクリプタヒープをＧＰＵにセット
+	UINT numDescriptorHeaps = 1;
+	mCommandList->SetDescriptorHeaps(numDescriptorHeaps, mCbvTbvHeap.GetAddressOf());
+}
+#endif
 
 HRESULT Graphic::createDevice() {
 	{
@@ -679,6 +698,99 @@ HRESULT Graphic::createPipeline()
 		}
 	} {}
 
+
+	//フェード用パイプラインステート
+	{
+		//ダメージエフェクト用ルートシグネチャ
+		//ディスクリプタレンジ、ディスクリプタヒープとシェーダを紐づける役割を持つ
+		D3D12_ROOT_PARAMETER rootParam[1] = {};
+		rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+		rootParam[0].Constants.ShaderRegister = 0;
+		rootParam[0].Constants.RegisterSpace = 0;
+		rootParam[0].Constants.Num32BitValues = 1; //float
+		rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全てのシェーダから見える
+
+
+		//ルートシグネチャ
+		D3D12_ROOT_SIGNATURE_DESC desc = {};
+		desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; //入力アセンブラの入力レイアウトを許可
+		desc.pParameters = rootParam;
+		desc.NumParameters = _countof(rootParam);
+		desc.pStaticSamplers = nullptr;  //サンプラーの先頭アドレス
+		desc.NumStaticSamplers = 0; //サンプラーの数
+		desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; //入力アセンブラの入力レイアウトを許可
+
+		//ルートシグネチャをシリアライズ(コンパイルするようなもの)
+		ComPtr<ID3DBlob> blob;
+		HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, blob.GetAddressOf(), nullptr);
+		assert(SUCCEEDED(hr));
+
+		//ルートシグネチャの作成
+		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
+			IID_PPV_ARGS(RenderStructFade.rootSignature.GetAddressOf()));
+		assert(SUCCEEDED(hr));
+
+		{
+			//シェーダの読み込み
+			BIN_FILE12 vsFade("assets\\FadeVertexShader.cso");
+			assert(vsFade.succeeded());
+			BIN_FILE12 psFade("assets\\FadePixelShader.cso");
+			assert(psFade.succeeded());
+
+			//各種記述
+			D3D12_INPUT_ELEMENT_DESC inputElementDescs2D = {};
+
+			D3D12_RASTERIZER_DESC rasterDesc = {};
+			rasterDesc.FrontCounterClockwise = true; 
+			rasterDesc.CullMode = D3D12_CULL_MODE_NONE;
+			rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
+			rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+			rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+			rasterDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+			rasterDesc.DepthClipEnable = TRUE;
+			rasterDesc.MultisampleEnable = FALSE;
+			rasterDesc.AntialiasedLineEnable = FALSE;
+			rasterDesc.ForcedSampleCount = 0;
+			rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+			D3D12_RENDER_TARGET_BLEND_DESC blendDesc = {};
+			blendDesc.BlendEnable = true;
+			blendDesc.LogicOpEnable = FALSE;
+			blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+			blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+			blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+			blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+			blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+			blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+			blendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
+			blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+			D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
+			depthStencilDesc.DepthEnable = false;
+			depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //書き込み許可
+			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; //小さいほうが手前
+			depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
+			//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
+			D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc = {};
+			pipelineDesc.pRootSignature = RenderStructFade.rootSignature.Get();
+			pipelineDesc.VS = { vsFade.code(), vsFade.size() };
+			pipelineDesc.PS = { psFade.code(), psFade.size() };
+			pipelineDesc.InputLayout = { nullptr, 0 };
+			pipelineDesc.RasterizerState = rasterDesc;
+			pipelineDesc.BlendState.RenderTarget[0] = blendDesc;
+			pipelineDesc.DepthStencilState = depthStencilDesc;
+			pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+			pipelineDesc.SampleMask = UINT_MAX;
+			pipelineDesc.SampleDesc.Count = 1;
+			pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+			pipelineDesc.NumRenderTargets = 1;
+			pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+			HRESULT hr = Device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(RenderStructFade.pipelineState.GetAddressOf()));
+			assert(SUCCEEDED(hr));
+		}
+	} {}
+
+
 	//出力領域を設定
 	Viewport.TopLeftX = 0.0f;
 	Viewport.TopLeftY = 0.0f;
@@ -1281,6 +1393,24 @@ void Graphic::updateDamageFlashIntensity(float intensity)
 	Base3DData.playerFlashIntensity = intensity;
 }
 
+void Graphic::updateFade()
+{
+	if (isFadingOut) {
+		fadeTimer += deltaTime;
+		currentFadeAlpha = min(fadeTimer / fadeOutDuration, 1.0f);
+	}
+	else if (isFadingIn) {
+		fadeTimer += deltaTime;
+		currentFadeAlpha = 1.0f - min(fadeTimer / fadeInDuration , 1.0f);
+
+		if (currentFadeAlpha <= 0.0f) {
+			fadeTimer = 0.0f;
+			isFadingIn = false;
+		}
+
+	}
+}
+
 void Graphic::clearColor(float r, float g, float b)
 {
 	ClearColor[0] = r, ClearColor[1] = g, ClearColor[2] = b;
@@ -1431,6 +1561,38 @@ void Graphic::delayRelease(ComPtr<IUnknown>& resource)
 	resource.Reset();
 }
 
+void Graphic::startFadeIn(float duration)
+{
+	fadeTimer = 0.0f;
+	isFadingIn = true;
+	isFadingOut = false;
+	fadeInDuration = duration;
+}
+
+void Graphic::startFadeOut(float duration)
+{
+	fadeTimer = 0.0f;
+	isFadingOut = true;
+	fadeOutDuration = duration;
+}
+
+void Graphic::renderFade()
+{
+	if (isFadingIn || isFadingOut) {
+		mCommandList->SetPipelineState(RenderStructFade.pipelineState.Get());
+		mCommandList->SetGraphicsRootSignature(RenderStructFade.rootSignature.Get());
+
+		//ルートパラメータにフェードのアルファ値をセット
+		mCommandList->SetGraphicsRoot32BitConstants(0, 1, &currentFadeAlpha, 0);
+		mCommandList->DrawInstanced(3, 1, 0, 0);
+	}
+}
+
+HWND Graphic::getWindowHandle()
+{
+	return hWnd;
+}
+
 float Graphic::getAspect()
 {
 	return Aspect;
@@ -1506,6 +1668,16 @@ int Graphic::getBackBufIdx()
 	return BackBufIdx;
 }
 
+bool Graphic::isFading()
+{
+	return isFadingIn || isFadingOut;
+}
+
+bool Graphic::isFinishedFade()
+{
+	return (!isFadingIn && !isFadingOut) || (isFadingOut && currentFadeAlpha >= 1.0f);
+}
+
 void Graphic::setRenderType(STATE state)
 {
 	//mStateに応じて3Dと2Dを切換え
@@ -1529,7 +1701,17 @@ void Graphic::setRenderType(STATE state)
 	}
 }
 
+#ifdef _DEBUG
+    extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+
+#if _DEBUG
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+#endif 
+
 
 	switch (message) {
 	case WM_DESTROY:

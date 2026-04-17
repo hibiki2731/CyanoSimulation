@@ -2,8 +2,6 @@
 #include "SceneManager.h"
 #include "Actor.h"
 #include "Player.h"
-#include "UI.h"
-#include "Player.h"
 #include "MessageWindow.h"
 #include "MeshComponent.h"
 #include "SpriteComponent.h"
@@ -20,6 +18,7 @@
 #include "PlayerManager.h"
 #include "AudioManager.h"
 #include "Scene.h"
+#include "GUIDebugger.h"
 
 Game::Game(){
 	mUpdatingActors = false;
@@ -79,6 +78,9 @@ void Game::init() {
 		fbxConverter.fbxToTxt(fbx[i], text[i], 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
 		
 	}
+
+	//GUIControllerの初期化
+	mGUIDebugger = std::make_unique<GUIDebugger>(*mGraphic.get());
 #endif
 
 
@@ -93,7 +95,7 @@ void Game::init() {
 	mItemManager = std::make_unique<ItemManager>();
 
 	//PlayerManager
-	mPlayerManager = std::make_unique<PlayerManager>();
+	mPlayerManager = std::make_unique<PlayerManager>(*this);
 
 	//AudioManager
 	mAudioManager = std::make_unique<AudioManager>();
@@ -133,27 +135,16 @@ AudioManager& Game::getAudioManager()
 	return *mAudioManager.get();
 }
 
+
 void Game::input()
 {
 	updateInput();
+
+	//フェード中は入力を受け付けない
+	if (mGraphic->isFading()) return;
+
 	//アクターの入力処理
 	mSceneManager->inputScene();
-
-
-#ifdef _DEBUG
-	//デバック用	}
-	if (GetAsyncKeyState('T')) {
-		mSceneManager->transitToTitle();
-	}
-	if (GetAsyncKeyState('H')) {
-		mSceneManager->transitToTown();
-	}
-
-	if (GetAsyncKeyState('P')) {
-		mAudioManager->playBGM("UI_MOVE");
-	}
-#endif
-
 }
 
 void Game::update()
@@ -177,6 +168,9 @@ void Game::update()
 
 	//遅いシーン更新
 	mSceneManager->lateUpdateScene();
+
+	//フェードの更新
+	mGraphic->updateFade();
 }
 
 void Game::draw()
@@ -184,6 +178,8 @@ void Game::draw()
 
 	//3D描画
 	mGraphic->begin3DRender();
+
+
 	mGraphic->setRenderType(Graphic::RENDER_3D);
 	mSceneManager->drawScene3D();
 
@@ -194,9 +190,27 @@ void Game::draw()
 	//シーン独自の描画
 	mSceneManager->drawScene();
 
+	//フェード処理
+	mGraphic->renderFade();
+
+#ifdef _DEBUG
+	mGUIDebugger->begin();
+	mSceneManager->drawDebugGUI();
+	mGUIDebugger->end();	
+#endif
+
+
 	mGraphic->end3DRender();
 
 	mGraphic->moveToNextFrame();
 
 
 }
+
+#ifdef _DEBUG
+
+GUIDebugger& Game::getGUIDebugger()
+{
+	return *mGUIDebugger.get();
+}
+#endif

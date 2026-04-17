@@ -5,11 +5,13 @@
 //空のアイテムデータ
 const ItemData ItemManager::EmptyItem = {
 	"",
-	"",
-	"",
+	"なし",
+	"EMPTY",
 	{""},
 	{0},
-	0
+	0,
+	"",
+	""
 };
 
 const WeaponData ItemManager::EmptyWeapon = {
@@ -17,7 +19,9 @@ const WeaponData ItemManager::EmptyWeapon = {
 	"",
 	{""},
 	{0},
-	0
+	0,
+	false,
+	""
 };
 
 const ArmerData ItemManager::EmptyArmer{
@@ -26,20 +30,34 @@ const ArmerData ItemManager::EmptyArmer{
 	"",
 	{""},
 	{0},
-	0
+	0,
+	false,
+	""
 };
 
 const ExplorerData ItemManager::EmptyExplorer{
 	"",
 	"",
 	{""},
-	{0}
+	{0},
+	"",
+	0,
+	false,
+	""
+};
+
+const ResourceData ItemManager::EmptyResource{
+	"",
+	"",
+	0
 };
 
 ItemManager::ItemManager()
 {
+}
 
-
+void ItemManager::loadItemData()
+{
 	std::fstream file("assets/data/ItemData.json");
 	assert(!file.fail());
 
@@ -47,7 +65,11 @@ ItemManager::ItemManager()
 	file >> json;
 	//保存してあるリソース数を読み込む
 	for (auto& resourceJson : json["Resource"]) {
-		mResourceData[resourceJson["id"]] = resourceJson["num"];
+		ResourceData resource;
+		resource.id = resourceJson["id"];
+		resource.name = resourceJson["name"];
+		resource.num = resourceJson["num"];
+		mResourceData[resourceJson["id"]] = std::move(resource);
 	}
 	//アイテムデータを読み込む
 	for (auto& itemJson : json["Item"]) {
@@ -58,6 +80,8 @@ ItemManager::ItemManager()
 		item.costResourceID = itemJson["costResourceID"];
 		item.value = itemJson["value"];
 		item.price = itemJson["price"].get<std::vector<int>>();
+		item.description = itemJson["description"].get<std::string>();
+		item.iconFilePath = itemJson["iconFilePath"].get<std::string>();
 		mItemData[itemJson["id"]] = item;
 	}
 	//武器データを読み込む
@@ -68,6 +92,8 @@ ItemManager::ItemManager()
 		weapon.costResourceID = weaponJson["costResourceID"];
 		weapon.price = weaponJson["price"].get<std::vector<int>>();
 		weapon.power = weaponJson["power"];
+		weapon.inPossession = weaponJson["inPossession"];
+		weapon.description = weaponJson["description"].get<std::string>();
 		mWeaponData[weaponJson["id"]] = weapon;
 	}
 	//防具データを読み込む
@@ -79,6 +105,8 @@ ItemManager::ItemManager()
 		armer.costResourceID = armerJson["costResourceID"];
 		armer.price = armerJson["price"].get<std::vector<int>>();
 		armer.defence = armerJson["defence"];
+		armer.inPossession = armerJson["inPossession"];
+		armer.description = armerJson["description"].get<std::string>();
 		mArmerData[armerJson["id"]] = armer;
 	}
 	//探索道具データを読み込む
@@ -89,7 +117,9 @@ ItemManager::ItemManager()
 		explorer.costResourceID = explorerJson["costResourceID"];
 		explorer.price = explorerJson["price"].get<std::vector<int>>();
 		explorer.category = explorerJson["category"];
-		explorer.value = explorerJson["value"];
+		explorer.value = explorerJson.value("value", 0);
+		explorer.inPossession = explorerJson["inPossession"];
+		explorer.description = explorerJson["description"].get<std::string>();
 		mExplorerData[explorerJson["id"]] = explorer;
 	}
 }
@@ -100,7 +130,7 @@ void ItemManager::addResource(const std::string& id, int num)
 	//idが存在しない場合
 	if (iter == mResourceData.end()) return;
 	//存在する場合
-	iter->second += static_cast<size_t>(num);
+	iter->second.num += static_cast<size_t>(num);
 }
 
 void ItemManager::subResource(const std::string& id, int num)
@@ -109,29 +139,40 @@ void ItemManager::subResource(const std::string& id, int num)
 	//idが存在しない場合
 	if (iter == mResourceData.end()) return;
 	//存在する場合
-	int value = static_cast<int>(iter->second - num);
+	int value = static_cast<int>(iter->second.num - num);
 	if (value < 0) return; //数が負の数になる場合、0で止める
 
-	iter->second = static_cast<size_t>(value);
+	iter->second.num = static_cast<size_t>(value);
 }
 
 int ItemManager::getResourceNum(std::string id) {
 	auto iter = mResourceData.find(id);
 	if (iter != mResourceData.end())
 		//idが存在する場合
-		return static_cast<int>(iter->second);
+		return static_cast<int>(iter->second.num);
 	else
 		//idが存在しない場合
 		return 0;
 	
 }
 
-const std::unordered_map<std::string, size_t>& ItemManager::getResourceData()
+const ResourceData& ItemManager::getResourceData(const std::string& id)
+{
+	auto iter = mResourceData.find(id);
+	if (iter != mResourceData.end())
+		//idが存在する場合
+		return iter->second;
+	else
+		//idが存在しない場合、空データを渡す
+		return EmptyResource;
+}
+
+const std::unordered_map<std::string, ResourceData>& ItemManager::getResourceData()
 {
 	return mResourceData;
 }
 
-const ItemData& ItemManager::getItemData(std::string id)
+const ItemData& ItemManager::getItemData(const std::string& id)
 {
 	auto iter = mItemData.find(id);
 	if (iter != mItemData.end())
@@ -142,7 +183,12 @@ const ItemData& ItemManager::getItemData(std::string id)
 		return EmptyItem;
 }
 
-const WeaponData& ItemManager::getWeaponData(std::string id)
+const std::unordered_map<std::string, ItemData>& ItemManager::getItemData()
+{
+	return mItemData;
+}
+
+const WeaponData& ItemManager::getWeaponData(const std::string& id)
 {
 	auto iter = mWeaponData.find(id);
 	if (iter != mWeaponData.end())
@@ -151,6 +197,11 @@ const WeaponData& ItemManager::getWeaponData(std::string id)
 	else
 		//idが存在しない場合、空データを渡す
 		return EmptyWeapon;
+}
+
+const std::unordered_map<std::string, WeaponData>& ItemManager::getWeaponData()
+{
+	return mWeaponData;
 }
 
 const ArmerData& ItemManager::getArmerData(std::string id)
@@ -165,7 +216,12 @@ const ArmerData& ItemManager::getArmerData(std::string id)
 
 }
 
-const ExplorerData& ItemManager::getExplorerData(std::string id)
+const std::unordered_map<std::string, ArmerData>& ItemManager::getArmerData()
+{
+	return mArmerData;
+}
+
+const ExplorerData& ItemManager::getExplorerData(const std::string& id)
 {
 	auto iter = mExplorerData.find(id);
 	if (iter != mExplorerData.end())
@@ -175,4 +231,30 @@ const ExplorerData& ItemManager::getExplorerData(std::string id)
 		//idが存在しない場合、空データを渡す
 		return EmptyExplorer;
 
+}
+
+const std::unordered_map<std::string, ExplorerData>& ItemManager::getExplorerData()
+{
+	return mExplorerData;
+}
+
+void ItemManager::setWeaopnPossession(std::string id, bool possession)
+{
+	auto iter = mWeaponData.find(id);
+	if (iter != mWeaponData.end())
+		iter->second.inPossession = possession;
+}
+
+void ItemManager::setArmerPossession(std::string id, bool possession)
+{
+	auto iter = mArmerData.find(id);
+	if (iter != mArmerData.end())
+		iter->second.inPossession = possession;
+}
+
+void ItemManager::setToolPossession(std::string id, bool possession)
+{
+	auto iter = mExplorerData.find(id);
+	if (iter != mExplorerData.end())
+		iter->second.inPossession = possession;
 }

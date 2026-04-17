@@ -10,6 +10,7 @@
 #include "StatusMenu.h"
 #include "AudioManager.h"
 #include "MainMenu.h"
+#include "StatusWindow.h"
 
 //BackGround
 BackGround::BackGround(Scene& scene) : Actor(scene)
@@ -30,15 +31,21 @@ TownScene::TownScene(Game& game)
 
 void TownScene::onEnter() {
 
+	//背景
 	auto bg = std::make_unique<BackGround>(*this);
 	addActor(std::move(bg));
 
+	//メインメニュー
 	auto mainMenu = std::make_unique<MainMenu>(*this, 99.0f);
 	addActor(std::move(mainMenu));
 
-	auto playerWindow = std::make_unique<MessageWindow>(*this);
-	playerWindow->setPlayerManager(&mGame.getPlayerManager());
-	addActor(std::move(playerWindow));
+	//ステータスウィンドウ
+	auto statusWindow = std::make_unique<StatusWindow>(*this, 99.0f);
+	mStatusWindow = statusWindow.get();
+	addActor(std::move(statusWindow));
+
+	//フェードイン
+	mGame.getGraphic().startFadeIn(1.0f);
 
 	mGame.getAudioManager().playBGM("BGM_TOWN");
 }
@@ -46,7 +53,8 @@ void TownScene::onEnter() {
 void TownScene::onExit() {
 	//スタックを空にする
 	for (int i = 0; i < mMenuStack.size(); i++) popMenu();
-	refreshActors();
+	mStatusWindow = nullptr;
+
 }
 
 void TownScene::inputScene()
@@ -97,5 +105,10 @@ void TownScene::popMenu()
 void TownScene::exitStatusMenu()
 {
 	isStatusMenu = false;
+}
+
+void TownScene::updateStatusWindow()
+{
+	mStatusWindow->updateStatus();
 }
 

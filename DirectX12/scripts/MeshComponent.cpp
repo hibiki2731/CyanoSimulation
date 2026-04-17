@@ -21,12 +21,12 @@ MeshComponent::~MeshComponent()
 {
 }
 
-void MeshComponent::endProccess()
+void MeshComponent::endProcess()
 {
 	//Gameからメッシュを削除
 	mOwner.getScene().removeMesh(this);
 	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
-	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize);
+	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize * 2);
 }
 
 void MeshComponent::create(const std::string& objectName)

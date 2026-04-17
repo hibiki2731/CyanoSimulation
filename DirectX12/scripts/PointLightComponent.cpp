@@ -29,7 +29,7 @@ void PointLightComponent::updateComponent()
 	}
 }
 
-void PointLightComponent::endProccess()
+void PointLightComponent::endProcess()
 {
 	//Gameからライトを削除
 	mOwner.getScene().removePointLight(this);

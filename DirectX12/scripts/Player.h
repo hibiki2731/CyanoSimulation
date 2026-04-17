@@ -6,7 +6,7 @@
 
 class CameraComponent;
 class CharacterComponent;
-class MapManager;
+class MapGenerator;
 class PlayerManager;
 class ItemManager;
 class DungeonScene;
@@ -15,10 +15,10 @@ class Player : public Actor
 {
 public:
 	Player(DungeonScene& scene, float x, float y);
-	~Player();
 
 	void inputActor() override;
 	void updateActor() override;
+	void endProcessActor() override;
 
 	int getDirection();
 	void getIndexPos(int(&pos)[2]);
@@ -26,7 +26,12 @@ public:
 	int getHP();
 	int getPower();
 	int getDefense();
-	int getActionLimit();
+	int getAP();
+	int getMaxAP();
+	int getStorageSize();
+	int getSelectItemIndex();
+	bool getIsActing();
+	const std::string& getSelectItemID();
 
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
@@ -40,10 +45,12 @@ private:
 	void rotate(Direction direction);
 	void calcMoveDirectionToIndexPos(Direction moveDirection, int (& indexPos)[2]);
 	void collect();
-	void damageEffect();
+	void damagedProcess();
 	void updateFlash();
 	void useItem();
 	void turnEnd();
+	void selectNextItem();
+	void selectPreviousItem();
 
 	float mMoveSpeed;
 	float mRotSpeed;
@@ -61,9 +68,12 @@ private:
 
 	//アイテム
 	int mSelectItemIndex;
+	int mStorageSize;
 
 	//行動回数制限
-	int mActionLimit;
+	int mAP;
+	int mMaxAP;
+
 
 	CameraComponent* mCamera;
 	CharacterComponent* mCharacter;

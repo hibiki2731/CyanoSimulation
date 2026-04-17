@@ -76,6 +76,11 @@ public:
 
 	//アクターの全消去
 	void refreshActors();
+
+#ifdef _DEBUG
+	void drawDebugGUI();
+#endif
+
 protected:
 	Game& mGame;
 

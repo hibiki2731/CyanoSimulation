@@ -1,5 +1,4 @@
 ﻿#include "MiniMap.h"
-#include "MapManager.h"
 #include "Game.h"
 #include "SpriteComponent.h"
 #include "Graphic.h"
@@ -97,31 +96,31 @@ void MiniMap::updatePosition()
 
 		//マップの範囲外
 		if (x < 0 || x >= mDungeonScene.getMapSize()) {
-			mTileIcon[i]->setZPos(100.0f);
-			mEnemyIcon[i]->setZPos(100.0f);
-			mResourceIcon[i]->setZPos(100.0f);
+			mTileIcon[i]->setPosZ(100.0f);
+			mEnemyIcon[i]->setPosZ(100.0f);
+			mResourceIcon[i]->setPosZ(100.0f);
 			continue;
 		}
 		if (y < 0 || y >= mDungeonScene.getMapSize()) {
-			mTileIcon[i]->setZPos(100.0f);
-			mEnemyIcon[i]->setZPos(100.0f);
-			mResourceIcon[i]->setZPos(100.0f);
+			mTileIcon[i]->setPosZ(100.0f);
+			mEnemyIcon[i]->setPosZ(100.0f);
+			mResourceIcon[i]->setPosZ(100.0f);
 			continue;
 		}
 
 		//タイル情報
 		int tileType = mDungeonScene.getTileDataAt(x, y);
-		if (tileType != TileType::WALL) mTileIcon[i]->setZPos(19.0f);
-		else mTileIcon[i]->setZPos(100.0f);
+		if (tileType != TileType::WALL) mTileIcon[i]->setPosZ(19.0f);
+		else mTileIcon[i]->setPosZ(100.0f);
 
 		//敵情報
 		int objectType = mDungeonScene.getCharacterDataAt(x, y);
-		if (objectType == CharacterType::ENEMY) mEnemyIcon[i]->setZPos(18.0f);
-		else mEnemyIcon[i]->setZPos(100.0f);
+		if (objectType == CharacterType::ENEMY) mEnemyIcon[i]->setPosZ(18.0f);
+		else mEnemyIcon[i]->setPosZ(100.0f);
 
 		//リソース情報
-		if (tileType >= TileType::RESOURCE) mResourceIcon[i]->setZPos(18.5f);
-		else mResourceIcon[i]->setZPos(100.0f);
+		if (tileType >= TileType::RESOURCE) mResourceIcon[i]->setPosZ(18.5f);
+		else mResourceIcon[i]->setPosZ(100.0f);
 	}
 }
 

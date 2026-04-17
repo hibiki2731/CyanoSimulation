@@ -70,7 +70,14 @@ public:
 	void waitGPU();
 	void delayRelease(ComPtr<IUnknown>& resource);
 
-	//Getter
+	//フェードイン、フェードアウト
+	void startFadeIn(float duration);
+	void startFadeOut(float duration);
+	void renderFade();
+
+
+	//getter
+	HWND getWindowHandle();
 	float getAspect();
 	UINT getCbvTbvIncSize();
 	ID3D12GraphicsCommandList* getCommandList();
@@ -86,6 +93,8 @@ public:
 	UINT8* getConstantData(int frame);
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
+	bool isFading();
+	bool isFinishedFade();
 
 	//Setter
 	void setRenderType(STATE state);
@@ -97,6 +106,7 @@ public:
 	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
 	void updateCameraPos(XMFLOAT4& cameraPos);
 	void updateDamageFlashIntensity(float intensity);
+	void updateFade();
 
 	//ウィンドウ
 	static constexpr LPCWSTR WindowTitle = L"DirectX12 Sample";
@@ -104,7 +114,12 @@ public:
 	static constexpr int ClientHeight = 720;
 	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 	static constexpr int FrameCount = 2;
+
+#ifdef _DEBUG
+	void setShareDescriptor();
+#endif
 private:
+	//初期化関数
 	HRESULT createDevice();
 	HRESULT createCommand();
 	HRESULT createFence();
@@ -117,7 +132,6 @@ private:
 	HRESULT createD2D();
 	HRESULT createCbvAndHeap();
 
-	
 	//ウィンドウ
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
 	const int ClientPosY = (GetSystemMetrics(SM_CYSCREEN) - ClientHeight) / 2;
@@ -130,6 +144,10 @@ private:
 	HWND hWnd = nullptr;
 	MSG Msg;
 
+	struct RenderStruct {
+		ComPtr<ID3D12PipelineState> pipelineState;
+		ComPtr<ID3D12RootSignature> rootSignature;
+	};
 	//デバイス
 	ComPtr<ID3D12Device> Device;
 	ComPtr<ID2D1Device> mD2DDevice;
@@ -170,6 +188,7 @@ private:
 	ComPtr<ID3D12PipelineState> PipelineState;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	ComPtr<ID3D12PipelineState> PipelineStateDT;
+	RenderStruct RenderStructFade;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
 
@@ -188,11 +207,20 @@ private:
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
 
-	Game& mGame;
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
 
+	//参照
+	Game& mGame;
+
+	float currentFadeAlpha;
+	float fadeTimer;
+	float fadeOutDuration;
+	float fadeInDuration;
+	bool isFadingIn;
+	bool isFadingOut;
+	
 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

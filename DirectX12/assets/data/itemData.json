@@ -6,7 +6,9 @@
                 "GRASS"
             ],
             "defence": 0,
+            "description": "なにも着ていない。\n早く服を着よう\n",
             "id": "NONE",
+            "inPossession": true,
             "name": "裸",
             "price": [
                 0
@@ -18,7 +20,9 @@
                 "GRASS"
             ],
             "defence": 10,
+            "description": "防御力 10",
             "id": "CLOTHES",
+            "inPossession": false,
             "name": "服",
             "price": [
                 20
@@ -31,33 +35,69 @@
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "APの最大値が10増加\n",
             "id": "BOOTS",
+            "inPossession": false,
             "name": "靴",
             "price": [
                 25
             ],
             "value": 10
+        },
+        {
+            "category": "STORAGE_SIZE",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "description": "所持アイテム数が1増加\n",
+            "id": "BACKPACK",
+            "inPossession": false,
+            "name": "バックパック",
+            "price": [
+                25
+            ]
         }
     ],
     "Item": [
         {
             "category": "HP_RECOVER",
             "costResourceID": [
-                "GRASS"
+                "GOLD"
             ],
-            "id": "POSION",
-            "name": "ポーション",
+            "description": "HPを20回復\n",
+            "iconFilePath": "assets/picture/HerbIcon.png",
+            "id": "HERB",
+            "name": "薬草",
             "price": [
                 10
+            ],
+            "value": 20
+        },
+        {
+            "category": "AP_RECOVER",
+            "costResourceID": [
+                "GOLD"
+            ],
+            "description": "APを20回復\nAPの最大値を越えて回復はしない。\n",
+            "iconFilePath": "assets/picture/SaltedKerp.png",
+            "id": "SALTED_KELP",
+            "name": "塩昆布",
+            "price": [
+                40
             ],
             "value": 20
         }
     ],
     "Resource": [
         {
+            "id": "GOLD",
+            "name": "GOLD",
+            "num": 990
+        },
+        {
             "id": "GRASS",
-            "mapTipID": "2",
-            "num": 190
+            "name": "草",
+            "num": 1000
         }
     ],
     "Weapon": [
@@ -65,7 +105,9 @@
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "なにも持っていない!!\n",
             "id": "NONE",
+            "inPossession": true,
             "name": "素手",
             "power": 0,
             "price": [
@@ -76,7 +118,9 @@
             "costResourceID": [
                 "GRASS"
             ],
+            "description": "攻撃力 10\n",
             "id": "WOODEN_SORD",
+            "inPossession": false,
             "name": "木の剣",
             "power": 10,
             "price": [

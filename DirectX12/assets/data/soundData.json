@@ -1,19 +1,24 @@
 {
    "BGM": [
       {
+         "id" : "BGM_TITLE",
+         "fileType" : "ogg",
+         "filePath" : "assets/sounds/BGMs/titleBGM2.ogg"
+      },
+      {
          "id": "BGM_TOWN",
          "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/townBGM.ogg"
+         "filePath": "assets/sounds/BGMs/townBGM2.ogg"
       },
       {
-         "id": "BGM_DUNGEON1",
+         "id": "BGM_DUNGEON",
          "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/dungeon_prepare.ogg"
+         "filePath": "assets/sounds/BGMs/dungeonBGM4.ogg"
       },
       {
-         "id": "BGM_DUNGEON2",
-         "fileType": "ogg",
-         "filePath": "assets/sounds/BGMs/dungeon_dangerous.ogg"
+      "id": "BGM_GAMEOVER",
+      "fileType": "ogg",
+      "filePath": "assets/sounds/BGMs/gameoverBGM.ogg"
       }
    ],
    "SE": [
@@ -46,9 +51,87 @@
          "filePath": "assets/sounds/SEs/btn12.mp3"
       },
       {
-         "id": "MAP_FOOTSTEP1",
+         "id": "TITLE_FOOTSTEP",
          "fileType": "wav",
          "filePath": "assets/sounds/SEs/maou_se_sound_footstep01.wav"
+      },
+      {
+         "id":"DUNGEON_FOOTSTEP",
+         "fileType" :"wav",
+         "filePath" :"assets/sounds/SEs/footstep1.wav",
+         "poolSize" : 1
+      },
+      {
+         "id":"DAMAGE1",
+         "fileType" : "mp3",
+         "filePath" : "assets/sounds/SEs/damage1.mp3",
+         "poolSize" : 1
+      },
+      {
+         "id":"DAMAGE2",
+         "fileType" : "mp3",
+         "filePath" : "assets/sounds/SEs/damage2.mp3",
+         "poolSize" : 1
+      },
+      {
+         "id":"ESCAPE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/jump.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"DUNGEON_END",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/scream.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"MOVE_TO_DUNGEON",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/jump.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"RECOVER1",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/recover1.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"PURCHASE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/purchase.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"FORGE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/forge.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"PICKAXE",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/pickaxe.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"SORD",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/sord.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"ARMER",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/armer.mp3",
+         "poolSize": 1
+      },
+      {
+         "id":"SLEEP",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/sleep.mp3",
+         "poolSize": 1
       }
    ]
 }

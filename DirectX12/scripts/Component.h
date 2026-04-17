@@ -23,7 +23,7 @@ public:
 	int getUpdateOrder() const { return mUpdateOrder; }
 
 	//終了処理
-	virtual void endProccess() {};
+	virtual void endProcess() {};
 
 protected:
 	//所有アクター

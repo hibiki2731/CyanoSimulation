@@ -1,0 +1,497 @@
+{
+    "APBar": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/progress_red.png",
+        "height": 14.0,
+        "rotation": 0.0,
+        "width": 192.0,
+        "x": 158.0,
+        "y": 34.0
+    },
+    "APBarBack": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/progress_red_black.png",
+        "height": 14.0,
+        "rotation": 0.0,
+        "width": 192.0,
+        "x": 158.0,
+        "y": 34.0
+    },
+    "ConfirmMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 150.0,
+        "rotation": 0.0,
+        "width": 450.0,
+        "x": 400.0,
+        "y": 100.0
+    },
+    "ConfirmMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": 4.71238374710083,
+        "width": 40.0,
+        "x": 584.0,
+        "y": 180.0
+    },
+    "EffectCanvas": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 360.0,
+        "rotation": 0.0,
+        "width": 500.0,
+        "x": 606.0,
+        "y": 315.0
+    },
+    "EndWindow": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown_damaged.png",
+        "height": 130.0,
+        "rotation": 0.0,
+        "width": 450.0,
+        "x": 415.0,
+        "y": 300.0
+    },
+    "EquipArmerMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 430.0,
+        "rotation": 0.0,
+        "width": 380.0,
+        "x": 390.0,
+        "y": 100.0
+    },
+    "EquipArmerMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 700.0,
+        "y": 200.0
+    },
+    "EquipArmerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 488.0
+    },
+    "EquipArmerMenuScrollBar": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 275.0,
+        "rotation": 0.0,
+        "width": 20.0,
+        "x": 412.5400085449219,
+        "y": 210.0
+    },
+    "EquipArmerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 180.0
+    },
+    "EquipWeaponMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 430.0,
+        "rotation": 0.0,
+        "width": 380.0,
+        "x": 390.0,
+        "y": 100.0
+    },
+    "EquipWeaponMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 700.0,
+        "y": 200.0
+    },
+    "EquipWeaponMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 488.0
+    },
+    "EquipWeaponMenuEquipIcon": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_compass_future_e.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 439.0,
+        "y": 562.5
+    },
+    "EquipWeaponMenuScrollBar": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 275.0,
+        "rotation": 0.0,
+        "width": 20.0,
+        "x": 412.5400085449219,
+        "y": 210.0
+    },
+    "EquipWeaponMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 410.0,
+        "y": 180.0
+    },
+    "ExplorerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 630.0
+    },
+    "ExplorerMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 213.0
+    },
+    "ExplorerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 185.0
+    },
+    "ExplorerShopMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 565.0,
+        "rotation": 0.0,
+        "width": 350.0,
+        "x": 256.0,
+        "y": 110.0
+    },
+    "ExplorerShopMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 536.0,
+        "y": 213.0
+    },
+    "ForgeArmerMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 565.0,
+        "rotation": 0.0,
+        "width": 350.0,
+        "x": 256.0,
+        "y": 110.0
+    },
+    "ForgeArmerMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 536.0,
+        "y": 213.0
+    },
+    "ForgeArmerMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 630.0
+    },
+    "ForgeArmerMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 213.0
+    },
+    "ForgeArmerMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 185.0
+    },
+    "ForgeMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 229.1439971923828,
+        "rotation": 0.0,
+        "width": 278.9179992675781,
+        "x": 256.0,
+        "y": 170.0
+    },
+    "ForgeMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 472.9110107421875,
+        "y": 255.0
+    },
+    "ForgeWeaponMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 565.0,
+        "rotation": 0.0,
+        "width": 350.0,
+        "x": 256.0,
+        "y": 110.0
+    },
+    "ForgeWeaponMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 536.0,
+        "y": 205.0
+    },
+    "ForgeWeaponMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 620.0
+    },
+    "ForgeWeaponMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 202.0
+    },
+    "ForgeWeaponMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 175.0
+    },
+    "HPBar": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/progress_green.png",
+        "height": 14.0,
+        "rotation": 0.0,
+        "width": 192.0,
+        "x": 158.0,
+        "y": 15.0
+    },
+    "HPBarBack": {
+        "borderSize": 9.0,
+        "filePath": "assets/picture/UI2/PNG/Default/progress_green_black.png",
+        "height": 14.0,
+        "rotation": 0.0,
+        "width": 192.0,
+        "x": 158.0,
+        "y": 15.0
+    },
+    "InnMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 220.01100158691406,
+        "rotation": 0.0,
+        "width": 240.94900512695313,
+        "x": 256.0,
+        "y": 135.5290069580078
+    },
+    "InnMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 440.0,
+        "y": 210.0
+    },
+    "ItemIconOrigin": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts.png",
+        "height": 60.0,
+        "rotation": 0.0,
+        "width": 60.0,
+        "x": 10.0,
+        "y": 52.0
+    },
+    "MainMenu": {
+        "borderSize": 39.0,
+        "filePath": "assets/picture/UI2/PNG/Default/hexagon_brown.png",
+        "height": 366.5610046386719,
+        "rotation": 0.0,
+        "width": 374.3999938964844,
+        "x": 30.0,
+        "y": 170.0
+    },
+    "MainMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 50.0,
+        "rotation": -1.5707963705062866,
+        "width": 50.0,
+        "x": 320.0,
+        "y": 205.0
+    },
+    "ResourceCanvas": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 205.0,
+        "rotation": 0.0,
+        "width": 500.0,
+        "x": 606.0,
+        "y": 110.0
+    },
+    "ShopMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 565.0,
+        "rotation": 0.0,
+        "width": 350.0,
+        "x": 256.0,
+        "y": 110.0
+    },
+    "ShopMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 536.0,
+        "y": 213.0
+    },
+    "ShopMenuDownArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 3.1415927410125732,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 630.0
+    },
+    "ShopMenuScrollBar": {
+        "borderSize": 10.0,
+        "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+        "height": 415.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 212.0
+    },
+    "ShopMenuUpArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 25.0,
+        "rotation": 0.0,
+        "width": 25.0,
+        "x": 280.0,
+        "y": 185.0
+    },
+    "StatusCanvas": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey.png",
+        "height": 144.0,
+        "rotation": 0.0,
+        "width": 384.0,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "StatusMenu": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 565.0,
+        "rotation": 0.0,
+        "width": 340.0,
+        "x": 50.0,
+        "y": 100.0
+    },
+    "StatusMenuArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 40.0,
+        "rotation": -1.5707963705062866,
+        "width": 40.0,
+        "x": 320.0,
+        "y": 185.0
+    },
+    "leftWindow": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 430.0,
+        "rotation": 0.0,
+        "width": 380.0,
+        "x": 390.0,
+        "y": 100.0
+    },
+    "rightWindow": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 430.0,
+        "rotation": 0.0,
+        "width": 420.0,
+        "x": 770.0,
+        "y": 100.0
+    },
+    "saveArrow": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+        "height": 100.0,
+        "rotation": 0.0,
+        "width": 100.0,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "saveCanvas": {
+        "borderSize": 0.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+        "height": 100.0,
+        "rotation": 0.0,
+        "width": 100.0,
+        "x": 0.0,
+        "y": 0.0
+    },
+    "statusCanvas": {
+        "borderSize": 24.0,
+        "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+        "height": 135.0,
+        "rotation": 0.0,
+        "width": 800.0,
+        "x": 390.0,
+        "y": 530.0
+    }
+}

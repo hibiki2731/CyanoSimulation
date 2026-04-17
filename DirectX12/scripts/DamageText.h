@@ -28,10 +28,10 @@ private:
 	float mLifeTime;	//表示時間
 };
 
-class DamageTextManager {
+class DamageTextGenerator {
 public:
-	DamageTextManager(Game& game);
-	~DamageTextManager();
+	DamageTextGenerator(Game& game);
+	~DamageTextGenerator();
 
 	void update();
 	void draw();

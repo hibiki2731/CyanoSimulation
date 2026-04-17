@@ -9,25 +9,33 @@ class TextComponent : public Component
 {
 public:
 	TextComponent(Actor& owner, float zDepth = 100.0f);
-	~TextComponent();
 
-	void drawTextTexture();
+	void loadFileAndCreate(const std::string& structName);
+	void applyTextTexture();
 	void draw();
 
-	void endProccess() override;
+	void endProcess() override;
 	//テキストの表示、非表示
-	void showText();
 	void closeText();
 
 	//セッター
 	void setText(const std::wstring& text);
-	void setBaseLine(float x, float y);
+	void setPosition(float x, float y);
 	void setFontSize(FLOAT size);
 	void setTextColor(const D2D1::ColorF& color);
 	void setLineSpace(float space);
+	void alignCenter(float width);
 
 	//ゲッター
 	bool getIsActive();
+	float getLineSpace();
+	const float getPosX() const { return mPosX; }
+	const float getPosY() const { return mPosY; }
+
+#ifdef _DEBUG
+	void activateControll(const std::string& structName);
+	bool getActiveControll() const { return mActiveControll; }
+#endif
 
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
@@ -53,14 +61,23 @@ private:
 	std::wstring mText;
 	bool isActive;
 
-	float mBaseLineX;
-	float mBaseLineY;
-	FLOAT mFontSize;
-	const WCHAR* mFontName;
-	D2D1_RECT_F mTextRect;
-	bool isLineSpaceDefault;
-	float mLineSpace; //行の高さ
-	float mBaseLineSpace; //行の上端からベースラインまでの距離
+	//テキストの位置、サイズ、行間など
+	float			mPosX;
+	float			mPosY;
+	FLOAT			mFontSize;
+	const WCHAR*	mFontName;
+	bool			isLineSpaceDefault;
+	float			mLineSpace;				//行の高さ
+	float			mBaseLineSpace;			//行の上端からベースラインまでの距離
+	float			mTextWidth;				//テキストの幅
+	float			mTextHeight;			//テキストの高さ
+	bool			isCenter;				//中央ぞろえか？
+	float			mTextMaxWidth;
+	std::vector<float> mColorFloat;
+
+	ComPtr<IDWriteFactory>		mDWriteFactory;		//DWriteファクトリー
+	ComPtr<IDWriteTextLayout>	mTextLayout;		//テキストレイアウト
+
 
 	int mMaxRow;
 
@@ -68,6 +85,17 @@ private:
 	void createEmptyTexture();
 	void wrapTexture();
 	void createSprite(float zDepth);
+
+	//テキストのフォーマットの初期化
+	void applyTextFormat();
+	void initDWriteFactory();
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+	bool mActiveControll = false;
+	std::string mStructName;
+	std::string mTextBuffer;
+#endif
 
 };
 

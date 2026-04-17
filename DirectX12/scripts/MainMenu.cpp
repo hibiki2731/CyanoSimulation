@@ -7,11 +7,22 @@
 #include "ForgeMenu.h"
 #include "ExplorerMenu.h"
 #include "SceneManager.h"
+#include "Graphic.h"
 
 //各種メニューのコンストラクタ
-MainMenu::MainMenu(TownScene& scene, float zDepth) : Menu(scene, "MainMenu", zDepth)
+MainMenu::MainMenu(TownScene& scene, float zDepth) 
+	: Menu(scene, "MainMenu", zDepth)
 {
 	mMaxIndex = 5;
+	movingToDungeon = false;
+
+}
+
+void MainMenu::updateMenu()
+{
+	if (movingToDungeon && mScene.getGame().getGraphic().isFinishedFade()) {
+		mScene.getGame().getSceneManager().transitToMap();
+	}
 }
 
 //各種メニューのupdate
@@ -39,8 +50,17 @@ void MainMenu::selectedAct() {
 		break;
 	}
 	case 4: {
-		mScene.getGame().getSceneManager().transitToMap();
+		startTransit();
+		break;
 	}
 	}
+}
+
+void MainMenu::startTransit()
+{
+	movingToDungeon = true;
+	mScene.getGame().getAudioManager().finishAllSounds();
+	mScene.getGame().getAudioManager().playSE("MOVE_TO_DUNGEON");
+	mScene.getGame().getGraphic().startFadeOut(1.0f);
 }
 

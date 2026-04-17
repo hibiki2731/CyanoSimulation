@@ -14,10 +14,9 @@ MessageWindow::MessageWindow(Scene& scene) : Actor(scene)
 	mMessage = message;
 	auto text = std::make_unique<TextComponent>(*this, 0.9f);
 	text->setText(mMessage);
-	text->setBaseLine(100.0f, 10.0f);
+	text->setPosition(100.0f, 10.0f);
 	text->setFontSize(24.0f);
 	text->setTextColor(D2D1::ColorF(D2D1::ColorF::Black));
-	text->showText();
 	mText = text.get();
 	addComponent(std::move(text));
 
@@ -49,11 +48,10 @@ void MessageWindow::updateActor()
 	}
 	else if (mPlayer) {
 		message += L"HP: " + std::to_wstring(mPlayer->getHP()) + L" STR: " + std::to_wstring(mPlayer->getPower())
-			+ L" DEF: " + std::to_wstring(mPlayer->getDefense()) + L" ACTION_LIMIT" + std::to_wstring(mPlayer->getActionLimit()) + L"\n";
+			+ L" DEF: " + std::to_wstring(mPlayer->getDefense()) + L" ACTION_LIMIT" + std::to_wstring(mPlayer->getAP()) + L"\n";
 	}
 
-	message += L"G:" + std::to_wstring(mScene.getGame().getItemManager().getResourceNum("GRASS")) + L"\n";
+	message += L"G:" + std::to_wstring(mScene.getGame().getItemManager().getResourceNum("GOLD")) + L"\n";
 	mMessage = message;
 	mText->setText(mMessage);
-	mText->showText();  //マルチスレッド化したい
 }

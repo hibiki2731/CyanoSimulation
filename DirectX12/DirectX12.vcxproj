@@ -190,6 +190,24 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="scripts\FadePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="scripts\FadeVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="scripts\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -213,15 +231,28 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scripts\Actor.cpp" />
-    <ClCompile Include="scripts\Anime2DComponent.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
     <ClCompile Include="scripts\DungeonScene.cpp" />
+    <ClCompile Include="scripts\DungeonUI.cpp" />
+    <ClCompile Include="scripts\EndWindow.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
+    <ClCompile Include="scripts\GameOverScene.cpp" />
+    <ClCompile Include="scripts\GUIDebugger.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_demo.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_draw.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
+    <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
@@ -238,7 +269,7 @@
     <ClCompile Include="scripts\Game.cpp" />
     <ClCompile Include="scripts\Graphic.cpp" />
     <ClCompile Include="scripts\input.cpp" />
-    <ClCompile Include="scripts\MapManager.cpp" />
+    <ClCompile Include="scripts\MapGenerator.cpp" />
     <ClCompile Include="scripts\MessageWindow.cpp" />
     <ClCompile Include="scripts\PlayerManager.cpp" />
     <ClCompile Include="scripts\PointLight.cpp" />
@@ -253,24 +284,41 @@
     <ClCompile Include="scripts\SpotLightComponent.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
     <ClCompile Include="scripts\StatusMenu.cpp" />
+    <ClCompile Include="scripts\StatusWindow.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
+    <ClCompile Include="scripts\TitleScene.cpp" />
     <ClCompile Include="scripts\TownScene.cpp" />
-    <ClCompile Include="scripts\UI.cpp" />
+    <ClCompile Include="scripts\TurnObserver.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scripts\Actor.h" />
-    <ClInclude Include="scripts\Anime2DComponent.h" />
     <ClInclude Include="scripts\AssetManager.h" />
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DungeonScene.h" />
+    <ClInclude Include="scripts\DungeonUI.h" />
+    <ClInclude Include="scripts\EndWindow.h" />
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
+    <ClInclude Include="scripts\GameOverScene.h" />
+    <ClInclude Include="scripts\GUIDebugger.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imconfig.h" />
+    <ClInclude Include="scripts\Imgui\imgui.h" />
+    <ClInclude Include="scripts\Imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="scripts\Imgui\imgui_impl_win32.h" />
+    <ClInclude Include="scripts\Imgui\imgui_internal.h" />
+    <ClInclude Include="scripts\Imgui\imgui_stdlib.h" />
+    <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
+    <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
+    <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
+    <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />
@@ -289,7 +337,7 @@
     <ClInclude Include="scripts\Game.h" />
     <ClInclude Include="scripts\Graphic.h" />
     <ClInclude Include="scripts\input.h" />
-    <ClInclude Include="scripts\MapManager.h" />
+    <ClInclude Include="scripts\MapGenerator.h" />
     <ClInclude Include="scripts\MessageWindow.h" />
     <ClInclude Include="scripts\PlayerManager.h" />
     <ClInclude Include="scripts\PointLight.h" />
@@ -304,14 +352,18 @@
     <ClInclude Include="scripts\SpotLightComponent.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\StatusMenu.h" />
+    <ClInclude Include="scripts\StatusWindow.h" />
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
+    <ClInclude Include="scripts\TitleScene.h" />
     <ClInclude Include="scripts\TownScene.h" />
+    <ClInclude Include="scripts\TurnObserver.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\DTHeader.hlsli" />
+    <None Include="scripts\FadeHeader.hlsli" />
     <None Include="scripts\Header.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <cmath>
 #include "Game.h"
-#include "MapManager.h"
 #include "Graphic.h"
 #include "ItemManager.h"
 #include "input.h"
@@ -19,6 +18,7 @@
 #include "AudioManager.h"
 #include "MiniMap.h"
 #include "DungeonScene.h"
+#include "EndWindow.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
@@ -35,6 +35,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mSelectItemIndex = 0;
 
 	//プレイヤーデータの取得
+	mPlayerManager.applyToolParamater();
 	const PlayerData& data = mPlayerManager.getPlayerData();
 
 	//移動速度、回転速度、点滅時間の設定
@@ -74,27 +75,17 @@ Player::Player(DungeonScene& scene, float x, float y)
 	addComponent(std::move(character));
 
 	//行動回数制限の取得
-	mActionLimit = data.actionLimit;
+	mMaxAP = data.actionLimit;
+	mAP = mMaxAP;
 
-	//探索道具の効果を取得
-	for (const std::string toolID : data.explorerInventory) {
-		auto toolData = mItemManager.getExplorerData(toolID);
+	//最大所持アイテム数
+	mStorageSize = data.storageSize;
 
-		std::string category = toolData.category;
-		if (category == "ACTION_LIMIT") {
-			mActionLimit += toolData.value;
-		}
-	}
-}
-
-Player::~Player()
-{
-	PlayerManager& player = mScene.getGame().getPlayerManager();
-	player.setHP(mCharacter->getHP());
 }
 
 void Player::inputActor()
 {
+	if (mScene.getTurnType() == TurnType::END || mCharacter->getHP() <= 0) return;
 
 	if (GetAsyncKeyState('A')) {
 		move(Direction::LEFT);
@@ -108,18 +99,24 @@ void Player::inputActor()
 	if (GetAsyncKeyState('S')) {
 		move(Direction::DOWN);
 	}
-	if (GetAsyncKeyState(VK_RIGHT)) {
+	if (GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState('L')) {
 		rotate(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState(VK_LEFT)) {
+	if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState('J')) {
 		rotate(Direction::LEFT);
 	}
-	if (isKeyJustPressed(VK_RETURN)) {
+	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		attack();
 	    collect();
 	}
 	if (isKeyJustPressed('I')) {
 		useItem();
+	}
+	if (isKeyJustPressed('U')) {
+		selectPreviousItem();
+	}
+	if (isKeyJustPressed('O')) {
+		selectNextItem();
 	}
 	
 }
@@ -161,8 +158,15 @@ void Player::updateActor()
 		}
 	}
 
-	if (!isActing) damageEffect();
+	if (!isActing) damagedProcess();
 	updateFlash();
+}
+
+void Player::endProcessActor()
+{
+	PlayerManager& player = mScene.getGame().getPlayerManager();
+	player.setHP(mCharacter->getHP());
+	mScene.getGame().getGraphic().updateDamageFlashIntensity(0.0f);
 }
 
 int Player::getDirection()
@@ -196,9 +200,34 @@ int Player::getDefense()
 	return mCharacter->getDefense();
 }
 
-int Player::getActionLimit()
+int Player::getAP()
 {
-	return mActionLimit;
+	return mAP;
+}
+
+int Player::getMaxAP()
+{
+	return mMaxAP;
+}
+
+int Player::getStorageSize()
+{
+	return mStorageSize;
+}
+
+int Player::getSelectItemIndex()
+{
+	return mSelectItemIndex;
+}
+
+bool Player::getIsActing()
+{
+	return isActing;
+}
+
+const std::string& Player::getSelectItemID()
+{
+	return mPlayerManager.getInventoryItem(mSelectItemIndex);
 }
 
 void Player::giveDamage(int damage)
@@ -213,7 +242,7 @@ void Player::attack()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0)return;
+	if (mAP == 0)return;
 
 	//前方のエネミーを取得
 	EnemyComponent* target = nullptr;
@@ -243,6 +272,7 @@ void Player::attack()
 	//ダメージエフェクト
 	target->startFlash(); //敵を点滅させる
 	calcDamageText(target->getPosition(), damage);
+	mScene.getGame().getAudioManager().playSE("DAMAGE1");
 
 	//ターン経過
 	turnEnd();
@@ -270,7 +300,7 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 
 	float DTHalfSize = mScene.getDamageTextNum() * 0.5f;
 	//数値が画面中心に来るよう調整
-	textPos = textPos + (right * DTHalfSize * 0.5 * (digit - 1));
+	textPos = textPos + (right * DTHalfSize * 0.5f * (digit - 1));
 	//桁ごとの表示位置の調整
 	for (int i = 0; i < digit; i++) {
 		mScene.createDamageText(textPos, num[i]);
@@ -285,7 +315,7 @@ void Player::move(Direction direction)
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
 
 	int targetIndexPos[2] = {mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1]};
 	//進行する差分のインデックスを取得
@@ -304,7 +334,7 @@ void Player::move(Direction direction)
 
 	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
 	
-	mScene.getGame().getAudioManager().playSE("MAP_FOOTSTEP1");
+	mScene.getGame().getAudioManager().playSE("DUNGEON_FOOTSTEP");
 	turnEnd();
 
 }	
@@ -368,7 +398,9 @@ void Player::collect()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
+
+	mScene.getGame().getAudioManager().playSE("PICKAXE");
 
 	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
 
@@ -384,12 +416,30 @@ void Player::collect()
 	turnEnd();
 }
 
-void Player::damageEffect()
+void Player::damagedProcess()
 {
+	//ダメージの反映
 	if (mPendingDamage <= 0) return;
-	mCharacter->setHP(mCharacter->getHP() - mPendingDamage); //ダメージの反映
+	int hp = mCharacter->getHP() - mPendingDamage;
+	mCharacter->setHP(hp);
 	mPendingDamage = 0;
-	mFlashTimer = mFlashDuration; //点滅の開始
+
+	//UIの更新
+	mScene.updateHPUI();
+
+	//死亡処理
+	if (hp <= 0) {
+		auto endWindow = std::make_unique<EndWindow>(mScene);
+		mScene.addActor(std::move(endWindow));
+		return;
+	}
+
+	//被ダメージ時の演出
+	mFlashTimer = mFlashDuration;
+	mCamera->startShake();
+	mScene.getGame().getAudioManager().playSE("DAMAGE2");
+
+	
 }
 
 void Player::updateFlash()
@@ -409,11 +459,11 @@ void Player::useItem()
 	//移動、回転中は実行不可
 	if (isActing || isRotating) return;
 	//残り行動回数が0の場合実行不可
-	if (mActionLimit == 0) return;
+	if (mAP == 0) return;
 
 	//アイテムのIDを取得
 	const auto& itemID = mPlayerManager.getInventoryItem(mSelectItemIndex);
-	if (itemID == "NONE") {
+	if (itemID == "") {
 		return;
 	}
 	
@@ -423,10 +473,21 @@ void Player::useItem()
 	//アイテムのカテゴリーから効果を発揮
 	if (itemData.category == "HP_RECOVER") {
 		mCharacter->addHP(itemData.value);
+		mScene.updateHPUI();
+		mScene.getGame().getAudioManager().playSE("RECOVER1");
+	}
+	else if (itemData.category == "AP_RECOVER") {
+		mAP += itemData.value;
+		if (mAP > mMaxAP) mAP = mMaxAP + 1;
+		mScene.getGame().getAudioManager().playSE("RECOVER1");
 	}
 
 	//インベントリーから削除
 	mPlayerManager.removeInventory(mSelectItemIndex);
+
+	//UIの更新
+	mScene.updateItemUI();
+	mScene.updateItemFrame();
 
 	//ターン経過
 	turnEnd();
@@ -437,7 +498,25 @@ void Player::turnEnd()
 	//ターンをエネミーターンに変更
 	mScene.moveToEnemyTurn();
 	//残り行動回数を減らす
-	mActionLimit--;
+	mAP--;
+	//UIの更新
+	if(mAP >= 0) mScene.updateAPUI();
 	//行動中フラグをtureにする
 	isActing = true;
+}
+
+void Player::selectNextItem()
+{
+	if (mSelectItemIndex >= mStorageSize - 1) return;
+	mSelectItemIndex++;
+	mScene.updateItemFrame();
+	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+}
+
+void Player::selectPreviousItem()
+{
+	if (mSelectItemIndex <= 0) return;
+	mSelectItemIndex--;
+	mScene.updateItemFrame();
+	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 }

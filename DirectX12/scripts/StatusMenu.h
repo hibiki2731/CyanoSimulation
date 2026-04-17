@@ -6,7 +6,7 @@ class TextComponent;
 
 class EquipWeaponMenu : public Menu {
 public:
-	EquipWeaponMenu(TownScene& scene, float zDepth);
+	EquipWeaponMenu(TownScene& scene, class StatusMenu& menu, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -14,35 +14,43 @@ public:
 	int getScrollOffset();
 private:
 	void refreshText();
+	void updateDescriptor();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
-	SpriteComponent* mUpArrow;
-	SpriteComponent* mDownArrow;
 	SpriteComponent* mScrollBar;
+	SpriteComponent* mEquipIcon;
+	TextComponent* mDescriptor;
 	float mScrollBarMoveLength;
 
 	int mScrollOffset;
-	const int MaxShowWeaponNum = 5;
+	const int MaxShowWeaponNum = 6;
+
+	class ItemManager& mItemManager;
+	class StatusMenu& mStatusMenu;
 };
 
 class EquipArmerMenu : public Menu {
 public:
-	EquipArmerMenu(TownScene& scene, float zDepth);
+	EquipArmerMenu(TownScene& scene, class StatusMenu& menu, float zDepth);
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
 
 private:
 	void refreshText();
+	void updateDescriptor();
 	PlayerManager& mPlayerManager;
 	TextComponent* mTextComponent;
-	SpriteComponent* mUpArrow;
-	SpriteComponent* mDownArrow;
 	SpriteComponent* mScrollBar;
+	SpriteComponent* mEquipIcon;
+	TextComponent* mDescriptor;
 	float mScrollBarMoveLength;
 
 	int mScrollOffset;
 	const int MaxShowArmerNum = 6;
+	
+	class ItemManager& mItemManager;
+	class StatusMenu& mStatusMenu;
 };
 class StatusMenu : public Menu
 {
@@ -50,6 +58,10 @@ public:
 	StatusMenu(TownScene& scene, float zDepth);
 	~StatusMenu();
 	void selectedAct() override;
+	void applyStatus();
 
+private:
+	PlayerManager& mPlayerManager;
+	TextComponent* mStatusText;
 };
 

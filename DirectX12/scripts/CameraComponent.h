@@ -15,6 +15,9 @@ public:
 
     void setActive(bool state);
 
+    //エフェクト
+    void startShake();
+
     //getter
     const float& getRot();
     const XMFLOAT3& getFront();
@@ -23,6 +26,16 @@ public:
     void setRot(float rot);
 
 private:
+    XMFLOAT3 applyShake();
+
+	//画面揺れ用構造体
+	struct Shake {
+		float time = 0.0f;
+		float duration = 0.5f;
+		float intensity = 0.1f;
+		float frequency = 10.0f;
+	} mShake;
+
     XMFLOAT3 mFocus;
     XMFLOAT3 mFront;
     XMFLOAT3 mUp;
@@ -30,6 +43,11 @@ private:
 
     bool isActive;
 	DungeonScene& mDungeonScene;
+
+    //画面揺れ
+	static float AccumulatedTime;
+
+	std::unique_ptr<class PerlinNoise1D> mPerlinNoise;
 
 };
 

@@ -9,6 +9,8 @@ struct ItemData {
 	std::vector<std::string> costResourceID;
 	std::vector<int> price;
 	int value;
+	std::string description;
+	std::string iconFilePath;
 };
 
 struct WeaponData {
@@ -17,6 +19,8 @@ struct WeaponData {
 	std::vector<std::string> costResourceID;
 	std::vector<int> price;
 	int power;
+	bool inPossession;
+	std::string description;
 };
 
 struct ArmerData {
@@ -26,6 +30,8 @@ struct ArmerData {
 	std::vector<std::string> costResourceID;
 	std::vector<int> price;
 	int defence;
+	bool inPossession;
+	std::string description;
 };
 
 struct ExplorerData {
@@ -35,6 +41,14 @@ struct ExplorerData {
 	std::vector<int> price;
 	std::string category;
 	int value;
+	bool inPossession;
+	std::string description;
+};
+
+struct ResourceData {
+	std::string id;
+	std::string name;
+	size_t num;
 };
 
 class ItemManager
@@ -42,22 +56,36 @@ class ItemManager
 public:
 	ItemManager();
 
+	void loadItemData();
+
 	void addResource(const std::string& id, int num);
 	void subResource(const std::string& id, int num);
 
+	//getter
 	int getResourceNum(std::string id);
-	const std::unordered_map<std::string, size_t>& getResourceData();
-	const ItemData& getItemData(std::string id);
-	const WeaponData& getWeaponData(std::string id);
+	const ResourceData& getResourceData(const std::string& id);
+	const std::unordered_map<std::string, ResourceData>& getResourceData();
+	const ItemData& getItemData(const std::string& id);
+	const std::unordered_map<std::string, ItemData>& getItemData();
+	const WeaponData& getWeaponData(const std::string& id);
+	const std::unordered_map<std::string, WeaponData>& getWeaponData();
 	const ArmerData& getArmerData(std::string id);
-	const ExplorerData& getExplorerData(std::string id);
+	const std::unordered_map<std::string, ArmerData>& getArmerData();
+	const ExplorerData& getExplorerData(const std::string& id);
+	const std::unordered_map<std::string, ExplorerData>& getExplorerData();
+
+	//setter
+	void setWeaopnPossession(std::string id, bool possession);
+	void setArmerPossession(std::string id, bool possession);
+	void setToolPossession(std::string id, bool possession);
 
 	static const ItemData EmptyItem;
 	static const WeaponData EmptyWeapon;
 	static const ArmerData EmptyArmer;
 	static const ExplorerData EmptyExplorer;
+	static const ResourceData EmptyResource;
 private:
-	std::unordered_map<std::string, size_t> mResourceData;
+	std::unordered_map<std::string, ResourceData> mResourceData;
 	std::unordered_map<std::string, ItemData> mItemData;
 	std::unordered_map<std::string, WeaponData> mWeaponData;
 	std::unordered_map<std::string, ArmerData> mArmerData;

@@ -1,0 +1,393 @@
+{
+    "APText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "AP ",
+        "x": 10.0,
+        "y": 25.0
+    },
+    "APValueText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "10/10\n",
+        "x": 40.0,
+        "y": 25.0
+    },
+    "ConfirmMenuText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 40.0,
+        "lineSpace": 40.0,
+        "text": "はい   いいえ\n",
+        "x": 500.0,
+        "y": 180.0
+    },
+    "ConfirmMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 40.0,
+        "lineSpace": 40.0,
+        "text": "セーブしますか？\n",
+        "x": 420.0,
+        "y": 120.0
+    },
+    "CostText": {
+        "fontSize": 30.0,
+        "lineSpace": 40.0,
+        "text": "消費リソース\nGOLD : 10\n",
+        "x": 626.0,
+        "y": 555.0
+    },
+    "Descriptor": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 30.0,
+        "lineSpace": 30.0,
+        "text": "防御力 10",
+        "x": 790.0,
+        "y": 130.0
+    },
+    "EffectText": {
+        "fontSize": 30.0,
+        "lineSpace": 50.0,
+        "text": "HPを20回復\n",
+        "x": 626.0,
+        "y": 325.0
+    },
+    "EndWindow": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "EndWindowText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 45.0,
+        "lineSpace": 55.0,
+        "text": "体力が尽きました\n街へ帰還します\n",
+        "x": 415.0,
+        "y": 310.0
+    },
+    "EquipArmerMenuScrollText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
+        "text": "裸\n服\n服\n服\n服\n服\n",
+        "x": 470.0,
+        "y": 200.0
+    },
+    "EquipArmerMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "EquipArmerMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "ARMER\n",
+        "x": 410.0,
+        "y": 110.0
+    },
+    "EquipWeaponMenuScrollText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
+        "text": "木の剣\n木の剣\n木の剣\n木の剣\n木の剣\n木の剣\n",
+        "x": 470.0,
+        "y": 200.0
+    },
+    "EquipWeaponMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "EquipWeaponMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "WEAPON\n",
+        "x": 410.0,
+        "y": 110.0
+    },
+    "ExplorerMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "靴\nバックパック\n",
+        "x": 310.0,
+        "y": 203.0
+    },
+    "ExplorerShopMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ExplorerShopMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "ExplorerShop\n",
+        "x": 270.0,
+        "y": 130.0
+    },
+    "ForgeArmerMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "服\n",
+        "x": 310.0,
+        "y": 203.0
+    },
+    "ForgeArmerMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ForgeArmerMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "Armer\n",
+        "x": 280.0,
+        "y": 120.0
+    },
+    "ForgeMenuText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "Weapon\nArmer\n",
+        "x": 290.0,
+        "y": 240.0
+    },
+    "ForgeMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "Forge\n",
+        "x": 270.0,
+        "y": 190.0
+    },
+    "ForgeWeaponMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 8.0,
+        "text": "なし\n",
+        "x": 320.0,
+        "y": 235.0
+    },
+    "ForgeWeaponMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ForgeWeaponMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "WEAPON\n",
+        "x": 280.0,
+        "y": 120.0
+    },
+    "HPText": {
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "HP ",
+        "x": 10.0,
+        "y": 5.0
+    },
+    "HPValueText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 20.0,
+        "lineSpace": 30.0,
+        "text": "20/20\n",
+        "x": 40.0,
+        "y": 5.0
+    },
+    "InnMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "泊る\nセーブ\n",
+        "x": 290.0,
+        "y": 200.0
+    },
+    "InnMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "Inn\n",
+        "x": 280.0,
+        "y": 150.0
+    },
+    "MainMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n",
+        "x": 60.0,
+        "y": 200.0
+    },
+    "MainMenuTitle": {
+        "fontSize": 0.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "ResourceText": {
+        "fontSize": 30.0,
+        "lineSpace": 40.0,
+        "text": "所持リソース\nGOLD : 920  草 : 14  \n",
+        "x": 626.0,
+        "y": 120.0
+    },
+    "ShopMenuScrollText": {
+        "fontSize": 45.0,
+        "lineSpace": 60.0,
+        "text": "薬草\n塩昆布\n",
+        "x": 320.0,
+        "y": 203.0
+    },
+    "ShopMenuText": {
+        "fontSize": 50.0,
+        "lineSpace": 0.0,
+        "text": "",
+        "x": 60.0,
+        "y": 100.0
+    },
+    "ShopMenuTitle": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "Shop\n",
+        "x": 280.0,
+        "y": 120.0
+    },
+    "StartText": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "fontSize": 40.0,
+        "lineSpace": 60.0,
+        "text": "PRESS ENTER TO START\n",
+        "x": 440.0,
+        "y": 504.0
+    },
+    "StatusMenuText": {
+        "fontSize": 45.0,
+        "lineSpace": 50.0,
+        "text": "WEAPON\nARMER\n",
+        "x": 100.0,
+        "y": 180.0
+    },
+    "StatusMenuTitle": {
+        "fontSize": 50.0,
+        "lineSpace": 60.0,
+        "text": "STATUS\n",
+        "x": 70.0,
+        "y": 110.0
+    },
+    "TitleText": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ],
+        "fontSize": 80.0,
+        "lineSpace": 60.0,
+        "text": "TITLE\n",
+        "x": 540.0,
+        "y": 200.0
+    },
+    "saveText": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "selectText": {
+        "fontSize": 32.0,
+        "lineSpace": 60.0,
+        "text": "empty",
+        "x": 0.0,
+        "y": 0.0
+    },
+    "statusText": {
+        "color": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "fontSize": 32.0,
+        "lineSpace": 40.0,
+        "text": "MAXHP : 20 POWER : 3\nMAXAP : 10 DEFENCE : 1\n",
+        "x": 420.0,
+        "y": 557.0
+    }
+}

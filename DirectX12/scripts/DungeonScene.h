@@ -52,6 +52,7 @@ public:
 
     //シーン遷移
     void returnToTown();
+	void transitToGameOver();
 
     //エネミー配列の制御
 	void addEnemy(EnemyComponent* enemy);
@@ -61,6 +62,11 @@ public:
 	//ミニマップの更新
 	void updateMiniMapPos();
 	void updateMiniMapDirection();
+	//UIの更新
+	void updateHPUI();
+	void updateAPUI();
+	void updateItemUI();
+	void updateItemFrame();
 
 	//ダメージテキストの公人
 	void updateDTView(XMMATRIX& view);
@@ -98,22 +104,32 @@ public:
     const std::string& getResourceID(int index);
     const std::string& getResourceID(int x, int y);
 	//ターン情報
-	TurnType getTurnType() const;
+	enum struct TurnType getTurnType() const;
 	//ダメージテキスト
-	int getDamageTextNum() const;
+	float getDamageTextNum() const;
 	void createDamageText(const XMFLOAT3& pos, int digit);
+	//ターンオブザーバー
+	const class TurnObserver& getTurnObserver();
 
 private:
+	//マップ情報
     int mMapSize;
 	std::vector<std::vector<int>> mTileData; //[x][y]
 	std::vector<std::vector<int>> mCharacterData; //[x][y]
 
+	//キャラクター
 	std::vector<EnemyComponent*> mEnemies;
-    std::unique_ptr<class MapManager> mMapManager;
-	std::unique_ptr<class DamageTextManager> mDamageTextManaager;
 	Player* mPlayer;
+	//リソースID
 	std::unordered_map<int, std::string> mResourceIDs;
 
+	//UIアクター
 	class MiniMap* mMiniMap;
+	class DungeonUI* mUI;
+	
+	//管理クラス
+	std::unique_ptr<class MapGenerator> mMapGenerator;	//マップ生成
+	std::unique_ptr<class TurnObserver > mTurnObserver;	//ターン管理
+	std::unique_ptr<class DamageTextGenerator> mDamageTextManaager;	//ダメージテキスト管理
 };
 

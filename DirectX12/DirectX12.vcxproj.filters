@@ -54,9 +54,6 @@
     <ClCompile Include="scripts\Math.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Anime2DComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="scripts\CameraComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -64,9 +61,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\SpriteComponent.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\UI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\PointLightComponent.cpp">
@@ -81,9 +75,6 @@
     <ClCompile Include="scripts\MessageWindow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MapManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="scripts\CharacterComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -94,9 +85,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\AssetManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\Grass.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\ItemManager.cpp">
@@ -112,9 +100,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\Object.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="scripts\TownManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\MyUtility.cpp">
@@ -136,6 +121,78 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\StatusMenu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\AudioManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\DungeonScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\DungeonUI.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\GameOverScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Resource.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\MainMenu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Menu.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\MiniMap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\MapGenerator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Scene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\TitleScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\TownScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\TurnObserver.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\GUIDebugger.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_demo.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_draw.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_impl_dx12.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_impl_win32.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_widgets.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_tables.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\StatusWindow.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\EndWindow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,9 +239,6 @@
     <ClInclude Include="scripts\Math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Anime2DComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\CameraComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -206,9 +260,6 @@
     <ClInclude Include="scripts\MessageWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MapManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\CharacterComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -219,9 +270,6 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scripts\AssetManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Grass.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scripts\ItemManager.h">
@@ -245,9 +293,6 @@
     <ClInclude Include="scripts\Object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\TownManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="scripts\MyUtility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -267,6 +312,84 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scripts\StatusMenu.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\AudioManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\DungeonScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\DungeonUI.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\GameOverScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\PerlinNoise1D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MainMenu.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Menu.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MiniMap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\MapGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\TitleScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\TownScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\TurnObserver.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\GUIDebugger.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imconfig.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imgui.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imgui_impl_dx12.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imgui_impl_win32.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imgui_internal.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imstb_rectpack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imstb_textedit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imstb_truetype.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Imgui\imgui_stdlib.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\StatusWindow.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\EndWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -292,12 +415,21 @@
     <FxCompile Include="scripts\DTGeometryShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
+    <FxCompile Include="scripts\FadePixelShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\FadeVertexShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\Header.hlsli">
       <Filter>hlsl</Filter>
     </None>
     <None Include="scripts\DTHeader.hlsli">
+      <Filter>hlsl</Filter>
+    </None>
+    <None Include="scripts\FadeHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
   </ItemGroup>

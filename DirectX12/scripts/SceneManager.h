@@ -38,8 +38,12 @@ public:
 	void transitToTitle();
 	void transitToTown();
 	void transitToMap();
+	void transitToGameOver();
 	void transitScene();
 
+#ifdef _DEBUG
+	void drawDebugGUI();
+#endif
 private:
 	std::string mNextSceneType;
 	std::string mCurrentSceneType;

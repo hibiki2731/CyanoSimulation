@@ -4,6 +4,7 @@
 #include "MeshComponent.h"
 #include "SpriteComponent.h"
 #include "TextComponent.h"
+#include "GUIDebugger.h"
 #include <algorithm>
 
 Scene::Scene(Game& game)
@@ -31,7 +32,7 @@ void Scene::removeActors()
 	std::erase_if(mActors, [](const std::unique_ptr<Actor>& actor) {
 		if (!actor || actor->getState() == Actor::State::Dead) {
 			//アクターの終了処理
-			actor->endProccess();
+			actor->endProcess();
 			return true;
 		}
 		});
@@ -175,4 +176,21 @@ void Scene::inputActors()
 		actor->input();
 	}
 }
+
+#ifdef _DEBUG
+void Scene::drawDebugGUI()
+{
+	for (auto sprite : mSprites) {
+		if (sprite->getActiveControll()) {
+			mGame.getGUIDebugger().drawSpriteDebugGUI(*sprite);
+		}
+	}
+
+	for (auto text : mTexts) {
+		if (text->getActiveControll()) {
+			mGame.getGUIDebugger().drawTextDebugGUI(*text);
+		}
+	}
+}
+#endif
 

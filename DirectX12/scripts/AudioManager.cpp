@@ -11,6 +11,8 @@
 #include "MyUtility.h"
 #include "json.hpp"
 #include "stb_vorbis.c"
+#include <thread>
+#include <chrono>
 
 #define MINIMP3_IMPLEMENTATION
 #include "minimp3_ex.h"
@@ -46,6 +48,9 @@ AudioManager::~AudioManager()
 	//SoundData内のデストラクタで、ソースボイスが破棄される
 	mSoundDataList.clear();
 
+	//すでにハードウェアに送られた音声が再生されるのを待つ(マスタリングボイスを破棄する前に行う)
+	std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 	//マスタリングボイスを止める
 	if (mMasteringVoice) {
 		mMasteringVoice->DestroyVoice();
@@ -56,8 +61,6 @@ AudioManager::~AudioManager()
 		mXAudio->StopEngine();
 	}
 
-	//すでにハードウェアに送られた音声が再生されるのを待つ
-	Sleep(50);
 }
 
 void AudioManager::initXAudio()
@@ -141,14 +144,14 @@ void AudioManager::playBGM(const std::string& soundID)
 	mCurrentBGM = soundData.sourceVoices[0];
 }
 
-void AudioManager::playSE(const std::string& soundID)
+IXAudio2SourceVoice* AudioManager::playSE(const std::string& soundID)
 {
 	//再生が終了したボイスを再生中配列から除去する
 	clearFinishedSounds();
 
 	//サウンドデータを取得
 	auto iter = mSoundDataList.find(soundID);
-	if (iter == mSoundDataList.end()) return;
+	if (iter == mSoundDataList.end()) return nullptr;
 	SoundData& soundData = *iter->second;
 	
 	for (auto voice : soundData.sourceVoices) {
@@ -164,7 +167,7 @@ void AudioManager::playSE(const std::string& soundID)
 
 		//再生中ボイス配列に追加
 		mNowPlayingVoicess.emplace_back(voice);
-		break;
+		return voice;
 	}
 
 	//全てのボイスが再生中の場合
@@ -172,6 +175,7 @@ void AudioManager::playSE(const std::string& soundID)
 	soundData.sourceVoices[0]->FlushSourceBuffers();
 	soundData.sourceVoices[0]->SubmitSourceBuffer(&soundData.buffer);
 	soundData.sourceVoices[0]->Start(0);
+	return soundData.sourceVoices[0];
 
 }
 
@@ -193,7 +197,7 @@ void AudioManager::pauseAllSounds()
 void AudioManager::finishBGM()
 {
 	if (mCurrentBGM) {
-		mCurrentBGM->Stop();
+		mCurrentBGM->Stop(0);
 		mCurrentBGM->FlushSourceBuffers();
 		mCurrentBGM = nullptr;
 	}
@@ -202,7 +206,7 @@ void AudioManager::finishBGM()
 void AudioManager::finishAllSounds()
 {
 	for (auto voice : mNowPlayingVoicess) {
-		voice->Stop();
+		voice->Stop(0);
 		voice->FlushSourceBuffers();
 	}
 	mNowPlayingVoicess.clear();

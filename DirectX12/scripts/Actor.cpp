@@ -79,11 +79,12 @@ void Actor::lateUpdateComponents() {
 	}
 }
 
-void Actor::endProccess()
+void Actor::endProcess()
 {
 	for (auto& component : mComponents) {
-		component->endProccess();
+		component->endProcess();
 	}
+	endProcessActor();
 }
 
 void Actor::setState(State state)
@@ -106,17 +107,17 @@ void Actor::setRotation(const XMFLOAT3& rotation)
 	mRotation = rotation;
 }
 
-void Actor::setXPos(float x)
+void Actor::setPosX(float x)
 {
 	mPosition.x = x;
 }
 
-void Actor::setYPos(float y)
+void Actor::setPosY(float y)
 {
 	mPosition.y = y;
 }
 
-void Actor::setZPos(float z)
+void Actor::setPosZ(float z)
 {
 	mPosition.z = z;
 }
@@ -136,7 +137,7 @@ void Actor::setZRot(float z)
 	mRotation.z = z;
 }
 
-void Actor::movePositon(const XMFLOAT3& diff)
+void Actor::movePosition(const XMFLOAT3& diff)
 {
 	mPosition = mPosition + diff;
 }
@@ -179,6 +180,18 @@ void Actor::removeComponent(std::unique_ptr<Component>& component)
 {
 	auto iter = std::find(mComponents.begin(), mComponents.end(), component);
 	if (iter != mComponents.end()) {
+		iter->get()->endProcess();
+		mComponents.erase(iter);
+	}
+}
+
+void Actor::removeComponent(Component* component)
+{
+	auto iter = std::find_if(mComponents.begin(), mComponents.end(),
+		[component](const std::unique_ptr<Component>& c) { return c.get() == component; }
+	);
+	if (iter != mComponents.end()) {
+		iter->get()->endProcess();
 		mComponents.erase(iter);
 	}
 }
