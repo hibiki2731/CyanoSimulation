@@ -1,6 +1,7 @@
 ﻿#include "DamageText.h"
 #include "Game.h"
 #include "AssetManager.h"
+#include "Math.h"
 
 
 DamageText::DamageText(XMFLOAT3& position, int digit, float maxLifeTime, XMFLOAT3 velocity)

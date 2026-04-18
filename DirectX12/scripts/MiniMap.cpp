@@ -4,6 +4,7 @@
 #include "Graphic.h"
 #include "Player.h"
 #include "DungeonScene.h"
+#include "Math.h"
 
 constexpr int DisplayRange = 2;
 constexpr int TileNum = (DisplayRange * 2 + 1) * (DisplayRange * 2 + 1);

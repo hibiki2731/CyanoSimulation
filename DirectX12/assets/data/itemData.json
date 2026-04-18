@@ -27,6 +27,20 @@
             "price": [
                 20
             ]
+        },
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GOLD"
+            ],
+            "defence": 1000,
+            "description": "きかん",
+            "id": "INFINIT_ARMER",
+            "inPossession": true,
+            "name": "チート服",
+            "price": [
+                0
+            ]
         }
     ],
     "Explorer": [
@@ -125,6 +139,19 @@
             "power": 10,
             "price": [
                 50
+            ]
+        },
+        {
+            "costResourceID": [
+                "GOLD"
+            ],
+            "description": "瞬殺マン\n",
+            "id": "INFINIT_BLADE",
+            "inPossession": true,
+            "name": "チート県",
+            "power": 9999,
+            "price": [
+                0
             ]
         }
     ]

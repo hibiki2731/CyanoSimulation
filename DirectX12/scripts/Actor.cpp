@@ -1,6 +1,7 @@
 ﻿#include "Actor.h"
 #include "Component.h"
 #include "Game.h"
+#include "Math.h"
 
 Actor::Actor(Scene& scene)
 : mScene(scene)

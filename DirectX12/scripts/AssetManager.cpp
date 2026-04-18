@@ -1,6 +1,7 @@
 ﻿#include "AssetManager.h"
 #include <string>
 #include <fstream>
+#include "FBXConverter.h"
 
 static float spriteVertices[] = {
 	0.0f, 0.0f, 0.0f, 0.0f,
@@ -54,11 +55,24 @@ AssetManager::AssetManager(Graphic& graphic)
 	nlohmann::json json;
 	file >> json;
 
+#ifdef _DEBUG
+	FBXConverter fbxConverter;
+#endif
+
 	//全メッシュの読み込みを最初に行う
 	for (const auto& [key, value] : json.items()) {
 		MeshFileData meshFileData;
-		meshFileData.filePath = value["filePath"].get<std::string>();
+
+		meshFileData.filePath = value["txtPath"].get<std::string>();
 		meshFileData.scale = value.value("scale", std::vector<float>{1.0f, 1.0f, 1.0f});
+
+#ifdef _DEBUG
+		//FBXファイルの変換
+		fbxConverter.fbxToTxt(value["fbxPath"].get<std::string>().c_str(), meshFileData.filePath.c_str() , 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
+#endif
+
+
+
 
 		createMesh(key, meshFileData);
 	}
@@ -432,7 +446,6 @@ void AssetManager::createSpriteBuffers()
 		mSpriteIndexBufView.SizeInBytes = sizeInByte;//全バイト数
 		mSpriteIndexBufView.Format = DXGI_FORMAT_R16_UINT;//UINT16
 	}
-
 }
 
 

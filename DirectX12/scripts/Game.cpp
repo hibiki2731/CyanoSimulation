@@ -51,42 +51,13 @@ void Game::init() {
 	mGraphic->init();
 	mGraphic->clearColor(0.25f, 0.5f, 0.9f);
 
-	//FBXファイルとテキストファイルのパス
-	const char* fbx[] = { 
-		"assets/3DModels/rockObj/rockWall.fbx",
-		"assets/3DModels/rockObj/rockFloor.fbx",
-		"assets/3DModels/Grass/grass.fbx",
-		"assets/3DModels/Slime/slime.fbx",
-		"assets/3DModels/Nurikabe/nurikabe.fbx"
-	};
-
-	const char* text[] = { 
-		"assets/3DModels/rockObj/rockWall.txt",
-		"assets/3DModels/rockObj/rockFloor.txt",
-		"assets/3DModels/Grass/grass.txt",
-		"assets/3DModels/Slime/slime.txt",
-		"assets/3DModels/Nurikabe/nurikabe.txt"
-	};
-
 #ifdef _DEBUG
-	//FBX→テキスト変換
-	FBXConverter fbxConverter;
-	const int fbxNum = _countof(fbx);
-	int i;
-	//フリー素材
-	for (i = 0; i < fbxNum; i++) {
-		fbxConverter.fbxToTxt(fbx[i], text[i], 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
-		
-	}
-
 	//GUIControllerの初期化
 	mGUIDebugger = std::make_unique<GUIDebugger>(*mGraphic.get());
 #endif
 
-
 	//タイマー初期化
 	initDeltaTime();
-
 
 	//assetManagerの初期化 meshComponentを作成する前に初期化
 	mAssetManager = std::make_unique<AssetManager>(*mGraphic.get());

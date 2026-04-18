@@ -1,22 +1,31 @@
 {
     "ROCK_WALL" : {
-        "filePath" : "assets/3DModels/rockObj/rockWall.txt"
+        "fbxPath" : "assets/3DModels/rockObj/rockWall.fbx",
+        "txtPath" : "assets/3DModels/rockObj/rockWall.txt"
     },
 
     "ROCK_FLOOR" : {
-        "filePath" : "assets/3DModels/rockObj/rockFloor.txt"
+        "fbxPath" : "assets/3DModels/rockObj/rockFloor.fbx",
+        "txtPath" : "assets/3DModels/rockObj/rockFloor.txt"
+    },
+    "ROCK_ROOF" : {
+        "fbxPath" : "assets/3DModels/rockObj/rockRoof.fbx",
+        "txtPath" : "assets/3DModels/rockObj/rockRoof.txt"
     },
 
     "GRASS" : {
-        "filePath" : "assets/3DModels/Grass/grass.txt"
+        "fbxPath" : "assets/3DModels/Grass/grass.fbx",
+        "txtPath" : "assets/3DModels/Grass/grass.txt"
     },
 
     "SLIME" : {
-        "filePath" : "assets/3DModels/Slime/slime.txt",
+        "fbxPath" : "assets/3DModels/Slime/slime.fbx",
+        "txtPath" : "assets/3DModels/Slime/slime.txt",
         "scale" : [0.3, 0.3, 0.3]
     },
 
     "NURIKABE" : {
-        "filePath" : "assets/3DModels/Nurikabe/nurikabe.txt"
+        "fbxPath" : "assets/3DModels/Nurikabe/nurikabe.fbx",
+        "txtPath" : "assets/3DModels/Nurikabe/nurikabe.txt"
     }
 }

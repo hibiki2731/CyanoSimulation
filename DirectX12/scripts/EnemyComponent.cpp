@@ -3,7 +3,9 @@
 #include "Game.h"
 #include "Player.h"
 #include "Random.h"
+#include "Math.h"
 #include "DungeonScene.h"
+#include "Math.h"
 
 EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
 	: CharacterComponent(owner, scene),

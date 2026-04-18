@@ -37,6 +37,12 @@ void MapGenerator::createMap()
 	createWall();	//マップの壁、床の生成
 	createObject(); //オブジェクトの生成
 
+	//天井の作成
+	int mapSize = mScene.getMapSize();
+	auto roof = std::make_unique<Object>(mScene, "ROCK_ROOF", MAPTIPSIZE * (static_cast<float>(mapSize) / 2.0f), MAPTIPSIZE * (static_cast<float>(mapSize) / 2.0f));
+	roof->setScale(XMFLOAT3(static_cast<float>(mapSize) * 1.2f, 1, static_cast<float>(mapSize) * 1.2f));
+	roof->setPosY(MAPTIPSIZE);
+	mScene.addActor(std::move(roof));
 }
 
 void MapGenerator::loadMap(Stage stage)
