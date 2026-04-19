@@ -18,6 +18,7 @@
 #include "AudioManager.h"
 #include "MiniMap.h"
 #include "DungeonScene.h"
+#include "Resource.h"
 #include "EndWindow.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
@@ -402,15 +403,9 @@ void Player::collect()
 
 	mScene.getGame().getAudioManager().playSE("PICKAXE");
 
-	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
-
-	//今いるマスが通常の床ならば何も行わない
-	if (tileData == TileType::FLOOR) return;
-
-	if (tileData >= TileType::RESOURCE){
-		std::string resourceID = mScene.getResourceID(mCharacter->getIndexPosInt());
-		mScene.getGame().getItemManager().addResource(resourceID, 1);
-	}
+	auto resource = mScene.getResource(mCharacter->getIndexPosInt());
+	if (resource) resource->collect();
+	else return;
 
 	//ターン経過
 	turnEnd();

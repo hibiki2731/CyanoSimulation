@@ -102,18 +102,6 @@
             "value": 20
         }
     ],
-    "Resource": [
-        {
-            "id": "GOLD",
-            "name": "GOLD",
-            "num": 990
-        },
-        {
-            "id": "GRASS",
-            "name": "草",
-            "num": 1000
-        }
-    ],
     "Weapon": [
         {
             "costResourceID": [

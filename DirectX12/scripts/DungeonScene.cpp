@@ -23,6 +23,8 @@ DungeonScene::DungeonScene(Game& game)
 	mDamageTextManaager = std::make_unique<DamageTextGenerator>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
+	mMaxResourcePoint = 5;
+	mStage = Stage::MAP1;
 }
 
 void DungeonScene::fastUpdateScene() {
@@ -70,7 +72,7 @@ void DungeonScene::onEnter()
 void DungeonScene::onExit()
 {
 	mMapGenerator->end();
-	mResourceIDs.clear();
+	mResources.clear();
 }
 
 void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
@@ -92,9 +94,66 @@ void DungeonScene::createPlayer(float x, float y)
 void DungeonScene::createResource(const std::string& resourceID, const std::string& meshID, float x, float y, int index)
 {
 	//草の生成
-	std::unique_ptr<Resource> resource = std::make_unique<Resource>(*this, resourceID, meshID, x, y);
-	mResourceIDs[index] = resourceID;
+	std::unique_ptr<Resource> resource = std::make_unique<Resource>(*this, resourceID, meshID, x, y, index);
+	mResources[index] = resource.get();
 	addActor(std::move(resource)); //所有権をGameへ渡す
+}
+
+void DungeonScene::spawnResource()
+{
+	if (mResources.size() >= mMaxResourcePoint) return;
+
+	int playerIndex[2];
+	mPlayer->getIndexPos(playerIndex);
+
+	int i = 0;
+	//障害物がない　かつ　プレイヤーから4マス以上9マス以下の範囲でスポーン
+	while (i < 50) {
+		//スポーンするマスを乱数で決定
+		int x = Random::dist(-9, 9);
+		int y = Random::dist(-9, 9);
+
+		//障害物がある場合、もう一度乱数を振りなおす
+		if (playerIndex[0] + x < 0 || playerIndex[0] + x >= mMapSize || playerIndex[1] + y < 0 || playerIndex[1] + y >= mMapSize) {
+			i++;
+			continue;
+		}
+		if (mTileData[playerIndex[0] + x][playerIndex[1] + y] != TileType::FLOOR
+			|| mCharacterData[playerIndex[0] + x][playerIndex[1] + y] != CharacterType::EMPTY) {
+			i++;
+			continue;
+		}
+		
+		//プレイヤーから3マスいないならば、もう一度乱数を振りなおす
+		int distance = abs(playerIndex[0] - x) + abs(playerIndex[1] - y);
+		if (distance <= 3) {
+			i++;
+			continue;
+		}
+
+		//リソースの生成
+		std::string resourceID;
+		std::string meshID;
+
+		switch (mStage) {
+		case Stage::MAP1:
+			resourceID = "GRASS";
+			meshID = "GRASS";
+			break;
+		default:
+			resourceID = "GRASS";
+			meshID = "GRASS";
+			break;
+		}
+
+		createResource(resourceID, meshID, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y), y * mMapSize + x);
+		break;
+	}
+}
+
+void DungeonScene::deleteResourceFromIndex(int index)
+{
+	mResources.erase(index);
 }
 
 void DungeonScene::returnToTown()
@@ -199,6 +258,10 @@ int DungeonScene::getCharacterDataAt(int index)
 
 	return mCharacterData[x][y];
 }
+const Stage& DungeonScene::getStage()
+{
+	return mStage;
+}
 void DungeonScene::addEnemy(EnemyComponent* enemy)
 {
 	mEnemies.emplace_back(enemy);
@@ -291,21 +354,21 @@ int DungeonScene::getPlayerActLimit()
 	return (mPlayer) ? mPlayer->getAP() : 0;
 }
 
-const std::string& DungeonScene::getResourceID(int index)
+class Resource* DungeonScene::getResource(int index)
 {
-	auto iter = mResourceIDs.find(index);
-	if (iter != mResourceIDs.end()) {
+	auto iter = mResources.find(index);
+	if (iter != mResources.end()) {
 		return iter->second;
 	}
 	else {
-		return "";
+		return nullptr;
 	}
 }
 
-const std::string& DungeonScene::getResourceID(int x, int y)
+class Resource* DungeonScene::getResource(int x, int y)
 {
 	int index = y * mMapSize + x;
-	return getResourceID(index);
+	return getResource(index);
 }
 
 TurnType DungeonScene::getTurnType() const

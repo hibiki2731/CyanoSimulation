@@ -49,6 +49,8 @@ const ExplorerData ItemManager::EmptyExplorer{
 const ResourceData ItemManager::EmptyResource{
 	"",
 	"",
+	0,
+	0,
 	0
 };
 
@@ -58,19 +60,29 @@ ItemManager::ItemManager()
 
 void ItemManager::loadItemData()
 {
-	std::fstream file("assets/data/ItemData.json");
-	assert(!file.fail());
+	//リソースデータの読み込み
+	std::ifstream resourceFile("assets/data/resourceData.json");
+	assert(!resourceFile.fail());
 
 	nlohmann::json json;
-	file >> json;
+	resourceFile >> json;
+
 	//保存してあるリソース数を読み込む
 	for (auto& resourceJson : json["Resource"]) {
 		ResourceData resource;
 		resource.id = resourceJson["id"];
 		resource.name = resourceJson["name"];
 		resource.num = resourceJson["num"];
+		resource.life = resourceJson["life"];
+		resource.acquiredAmount = resourceJson["acquiredAmount"].get<int>();
 		mResourceData[resourceJson["id"]] = std::move(resource);
 	}
+
+	//アイテムデータの読み込み
+	std::fstream file("assets/data/itemData.json");
+	assert(!file.fail());
+
+	file >> json;
 	//アイテムデータを読み込む
 	for (auto& itemJson : json["Item"]) {
 		ItemData item;

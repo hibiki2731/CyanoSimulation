@@ -15,8 +15,6 @@
 MapGenerator::MapGenerator(DungeonScene& scene)
 	: mScene(scene)
 {
-	mStage = Stage::MAP1;
-
 }
 
 void MapGenerator::begin()
@@ -33,7 +31,7 @@ void MapGenerator::end()
 void MapGenerator::createMap()
 {
 
-	loadMap(mStage);	//マップデータの読み込み
+	loadMap(mScene.getStage());	//マップデータの読み込み
 	createWall();	//マップの壁、床の生成
 	createObject(); //オブジェクトの生成
 
@@ -125,6 +123,9 @@ void MapGenerator::createWall()
 			else if(category == "RESOURCE"){
 				//草の生成
 				mScene.createResource(tileJson[tileID]["meshID"].get<std::string>(), tileJson[tileID]["resourceID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y), y * mScene.getMapSize() + x);
+				//床の生成
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
 			}
 
 			//壁の生成

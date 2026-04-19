@@ -1,0 +1,17 @@
+{
+    "Resource": [ {
+            "id": "GOLD",
+            "name": "GOLD",
+            "num": 990,
+            "life": 0,
+            "acquiredAmount": 1
+        },
+        {
+            "id": "GRASS",
+            "name": "草",
+            "num": 1000,
+            "life": 3,
+            "acquiredAmount": 1
+        }
+    ]
+}

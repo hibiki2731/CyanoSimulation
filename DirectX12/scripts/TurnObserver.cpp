@@ -44,7 +44,8 @@ void TurnObserver::updateTurn()
 		//敵のランダム湧き
 		int random = Random::dist(1, 100);
 		if (random <= 10) spawnEnemy();
-
+		random = Random::dist(1, 100);
+		if (random <= 10) mScene.spawnResource();
 		//ミニマップの更新
 		mScene.updateMiniMapPos();
 	}
@@ -95,26 +96,30 @@ void TurnObserver::spawnEnemy()
 
 	int i = 0; //湧き場がない場合、一定回数のループ後にループを抜ける
 
-	//障害物がない　かつ　プレイヤーから3マス離れているところにスポーン
+	//障害物がない　かつ　プレイヤーから4マス以上9マス以下の範囲でスポーン
 	int mapSize = mScene.getMapSize();
-	while (i < 10) {
+	while (i < 50) {
 		//スポーンするマスを乱数で決定
-		int x = Random::dist(0, mapSize - 1);
-		int y = Random::dist(0, mapSize - 1);
+		int x = Random::dist(-9, 9);
+		int y = Random::dist(-9, 9);
 
 		//障害物がある場合、もう一度乱数を振りなおす
-		if (mScene.getTileDataAt(x, y) == TileType::WALL) continue;
-		if (mScene.getCharacterDataAt(x, y) != CharacterType::EMPTY) continue;
+		if (mScene.getTileDataAt(playerIndex[0] + x, playerIndex[1] + y) == TileType::WALL ||
+			mScene.getCharacterDataAt(playerIndex[0] + x, playerIndex[1] + y) != CharacterType::EMPTY) {
+			i++;
+			continue;
+		}
 		
 		//プレイヤーから3マスいないならば、もう一度乱数を振りなおす
 		int distance = abs(playerIndex[0] - x) + abs(playerIndex[1] - y);
-		if (distance <= 3) continue;
+		if (distance <= 3) {
+			i++;
+			continue;
+		}
 
 		//敵の生成
 		mScene.createEnemy("SLIME", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 		break;
-
-		i++;
 	}
 }
 

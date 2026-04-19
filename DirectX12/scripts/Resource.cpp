@@ -6,15 +6,39 @@
 #include "DungeonScene.h"
 #include <fstream>
 
-Resource::Resource(DungeonScene& scene, const std::string& meshID, const std::string& resourceID, float x, float y) : 
-	Actor(scene, x, y), mResourceID(resourceID)
+Resource::Resource(DungeonScene& scene, const std::string& resourceID, const std::string& meshID, float x, float y, int index) : 
+	Actor(scene, x, y), mDungeonScene(scene), mItemManager(mScene.getGame().getItemManager())
 {
 	auto mesh = std::make_unique<MeshComponent>(*this);
 	mesh->create(meshID);
 	addComponent(std::move(mesh));
+
+	//リソースデータの読み込み
+	auto& resourceData = mItemManager.getResourceData(resourceID);
+	mLife = resourceData.life;
+	mAcquiredAmount = resourceData.acquiredAmount;
+	mIndex = index;
+	mResourceID = resourceID;
+	mMeshID = meshID;
+	//リソース
+	mDungeonScene.setTileDataAt(mIndex, TileType::RESOURCE);
 }
 
-void Resource::updateActor() {
-}
+void Resource::collect()
+{
+	mScene.getGame().getItemManager().addResource(mResourceID, mAcquiredAmount);
 
-void Resource::inputActor(){}
+	mLife--;
+	if (mLife <= 0) {
+		//リソースの除去
+		mDungeonScene.deleteResourceFromIndex(mIndex);
+		mState = Actor::State::Dead;
+		//マップデータの更新
+		mDungeonScene.setTileDataAt(mIndex, TileType::FLOOR);
+
+		//新たなリソースを出現させる
+		mDungeonScene.spawnResource();
+
+		mDungeonScene.updateMiniMapPos();
+	}
+}

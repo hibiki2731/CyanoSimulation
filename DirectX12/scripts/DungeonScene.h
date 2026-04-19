@@ -49,6 +49,8 @@ public:
 	void createPlayer(float x, float y);
     //リソースの作成
 	void createResource(const std::string& resourceID, const std::string& meshID, float x, float y, int index);
+	void spawnResource();
+	void deleteResourceFromIndex(int index);
 
     //シーン遷移
     void returnToTown();
@@ -92,6 +94,7 @@ public:
 	int getTileDataAt(int index);   
 	int getCharacterDataAt(int x, int y);
 	int getCharacterDataAt(int index);
+	const Stage& getStage();
     //エネミー
 	const std::vector<EnemyComponent*>& getEnemies() const { return mEnemies; }
 	const int getEnemyCount() const { return mEnemies.size(); }
@@ -101,8 +104,8 @@ public:
 	Player* getPlayer() const { return mPlayer; }
     int getPlayerActLimit();
     //リソース
-    const std::string& getResourceID(int index);
-    const std::string& getResourceID(int x, int y);
+    class Resource* getResource(int index);
+    class Resource* getResource(int x, int y);
 	//ターン情報
 	enum struct TurnType getTurnType() const;
 	//ダメージテキスト
@@ -116,12 +119,14 @@ private:
     int mMapSize;
 	std::vector<std::vector<int>> mTileData; //[x][y]
 	std::vector<std::vector<int>> mCharacterData; //[x][y]
+	Stage mStage;
 
 	//キャラクター
 	std::vector<EnemyComponent*> mEnemies;
 	Player* mPlayer;
-	//リソースID
-	std::unordered_map<int, std::string> mResourceIDs;
+	//リソース
+	std::unordered_map<int, class Resource*> mResources;
+	int mMaxResourcePoint;
 
 	//UIアクター
 	class MiniMap* mMiniMap;

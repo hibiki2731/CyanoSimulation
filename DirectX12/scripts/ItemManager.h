@@ -49,6 +49,8 @@ struct ResourceData {
 	std::string id;
 	std::string name;
 	size_t num;
+	int life;
+	int acquiredAmount;
 };
 
 class ItemManager

@@ -32,7 +32,5 @@ private:
 
 	//ダンジョンシーン	
 	DungeonScene& mScene;
-
-	Stage mStage;
 };
 
