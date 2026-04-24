@@ -150,12 +150,8 @@ void EnemyComponent::updateFlash()
 }
 
 void EnemyComponent::move()
-{
-	//移動時は実行できない
-	//if (isMoving) return;
-	//エネミーターン時のみ実行
-	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
-	//行動済みならスキップ
+{	
+//行動済みならスキップ
 	if (!isActive) return;
 
 	isMoving = true;
@@ -191,10 +187,6 @@ void EnemyComponent::move()
 
 void EnemyComponent::attack()
 {
-	//移動時は実行できない
-	//if (isMoving) return;
-	//エネミーターン時のみ実行
-	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 

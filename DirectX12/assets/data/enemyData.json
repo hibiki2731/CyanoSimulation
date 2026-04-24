@@ -2,8 +2,8 @@
     "SLIME": {
         "name": "SLIME",
         "hp": 10,
-        "power": 5,
-        "defense": 3,
+        "power": 2,
+        "defense": 1,
         "meshName": "SLIME",
         "movePattern": "SENSE",
         "senseRange": 4

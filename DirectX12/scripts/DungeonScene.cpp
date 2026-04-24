@@ -124,9 +124,9 @@ void DungeonScene::spawnResource()
 			continue;
 		}
 		
-		//プレイヤーから3マスいないならば、もう一度乱数を振りなおす
+		//プレイヤーから2マスいないならば、もう一度乱数を振りなおす
 		int distance = abs(playerIndex[0] - x) + abs(playerIndex[1] - y);
-		if (distance <= 3) {
+		if (distance <= 2) {
 			i++;
 			continue;
 		}

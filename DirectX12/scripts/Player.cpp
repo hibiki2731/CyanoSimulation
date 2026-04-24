@@ -293,6 +293,10 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 	std::vector<int> num;	//各桁の値
 
 	//桁数と各桁の値を取得
+	if (value == 0) {
+		num.push_back(value);
+		digit = 1;
+	}
 	while (value > 0) {
 		digit++;
 		num.push_back(value % 10);
