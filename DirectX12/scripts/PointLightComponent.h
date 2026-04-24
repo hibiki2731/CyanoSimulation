@@ -20,7 +20,7 @@ public:
 	float getRange();
 	float getIntensity();
 	//セッター
-	void setColor(const XMFLOAT4 color);
+	void setColor(const XMFLOAT4& color);
 	void setActive(const bool state);
 	void setIntensity(const float intensity);
 	void setRange(const float range);

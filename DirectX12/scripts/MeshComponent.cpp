@@ -30,11 +30,13 @@ void MeshComponent::endProcess()
 }
 
 void MeshComponent::create(const std::string& objectName)
-{	
-
-	//メッシュデータの取得
+{
 	MeshData* meshData = mOwner.getScene().getGame().getAssetManager().getMeshData(objectName);
-	
+	create(meshData);
+}
+
+void MeshComponent::create(const MeshData * meshData)
+{	
 	//コンスタントバッファのインデックスを取得
 	mCBSize = (meshData->NumParts + 1) * 256;
 	mCBIndex = mOwner.getScene().getGame().getAssetManager().getCBEndIndex(mCBSize);

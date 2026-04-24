@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "ItemManager.h"
 #include "DungeonScene.h"
+#include "AssetManager.h"
 #include <fstream>
 
 Resource::Resource(DungeonScene& scene, const std::string& resourceID, const std::string& meshID, float x, float y, int index) : 

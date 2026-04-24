@@ -41,6 +41,14 @@ void MapGenerator::createMap()
 	roof->setScale(XMFLOAT3(static_cast<float>(mapSize) * 1.2f, 1, static_cast<float>(mapSize) * 1.2f));
 	roof->setPosY(MAPTIPSIZE);
 	mScene.addActor(std::move(roof));
+
+	auto light = std::make_unique<Object>(mScene, "GRASS", MAPTIPSIZE * 16.0f, MAPTIPSIZE * 2.0f);
+	Object::PointLightDescription desc;
+	desc.intensity = 20.0f;
+	desc.range = 20.0f;
+	desc.color = { 1.0f, 0.0f, 0.0f, 1.0f };
+	light->setPointLight(desc);
+	mScene.addActor(std::move(light));
 }
 
 void MapGenerator::loadMap(Stage stage)
@@ -183,13 +191,13 @@ void MapGenerator::createObject()
 	file >> json;
 	auto objectJson = json["object"];
 
-	std::string objectID = "";
+	std::string meshID = "";
 	std::string category = "";
 	int mapSize = mScene.getMapSize();
 	for (int y = 0; y < mapSize; y++){
 		for (int x = 0; x < mapSize; x++) {
-			objectID = std::to_string(mScene.getCharacterDataAt(x, y));
-			category = objectJson[objectID]["category"].get<std::string>();
+			meshID = std::to_string(mScene.getCharacterDataAt(x, y));
+			category = objectJson[meshID]["category"].get<std::string>();
 
 			if (category == "EMPTY") continue;
 			else if (category == "PLAYER") {
@@ -198,7 +206,7 @@ void MapGenerator::createObject()
 			}
 			else if (category == "ENEMY") {
 				//敵の生成
-				mScene.createEnemy(objectJson[objectID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.createEnemy(objectJson[meshID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 			}
 
 		}

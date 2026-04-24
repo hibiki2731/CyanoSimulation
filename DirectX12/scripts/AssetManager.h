@@ -46,7 +46,7 @@ public:
 	//getter
 	int getCBEndIndex(int size);//必要なサイズを引数に取る
 	int getHeapEndIndex(int size); //必要なサイズを引数に取る
-	MeshData* getMeshData(const std::string& objectName); 
+	MeshData* getMeshData(const std::string& meshID); 
 	SpriteData getSpriteData();
 	XMFLOAT2 createTextureAndGetSize(const std::string& filePath);
 	ID3D12Resource* getShaderResource(const std::string& textureName);
@@ -91,7 +91,7 @@ private:
 	D3D12_INDEX_BUFFER_VIEW mSpriteIndexBufView;
 	std::unordered_map<std::string, XMFLOAT2> mTextureSizeData;
 
-	void createMesh(const std::string& objectName, const MeshFileData& meshFileData);
+	void createMeshData(const std::string& meshID, const MeshFileData& meshFileData);
 	void createSpriteBuffers();
 };
 

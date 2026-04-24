@@ -9,6 +9,9 @@
 PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
 {
 	isActive = false;
+	mPosition.x = mOwner.getPosition().x;
+	mPosition.y = mOwner.getPosition().y;
+	mPosition.z = mOwner.getPosition().z;
 	mPosition.w = 1.0f;
 	mIntensity = 1.0f;
 	mRange = 1.0f;
@@ -60,7 +63,7 @@ float PointLightComponent::getIntensity()
 	return mIntensity;
 }
 
-void PointLightComponent::setColor(const XMFLOAT4 color)
+void PointLightComponent::setColor(const XMFLOAT4& color)
 {
 	mColor = color;
 }

@@ -51,7 +51,7 @@ AssetManager::AssetManager(Graphic& graphic)
 	mCBEndIndex = mGraphic.alignedSize(sizeof(Base3DData));
 	mHeapEndIndex = 0;
 	createSpriteBuffers();
-	std::fstream file("assets/data/meshData.json");
+	std::fstream file("assets/data/MeshData.json");
 	nlohmann::json json;
 	file >> json;
 
@@ -65,16 +65,12 @@ AssetManager::AssetManager(Graphic& graphic)
 
 		meshFileData.filePath = value["txtPath"].get<std::string>();
 		meshFileData.scale = value.value("scale", std::vector<float>{1.0f, 1.0f, 1.0f});
-
 #ifdef _DEBUG
 		//FBXファイルの変換
 		fbxConverter.fbxToTxt(value["fbxPath"].get<std::string>().c_str(), meshFileData.filePath.c_str() , 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
 #endif
 
-
-
-
-		createMesh(key, meshFileData);
+		createMeshData(key, meshFileData);
 	}
 }
 
@@ -82,9 +78,9 @@ AssetManager::~AssetManager()
 {
 }
 
-void AssetManager::createMesh(const std::string& objectName, const MeshFileData& meshFileData)
+void AssetManager::createMeshData(const std::string& meshID, const MeshFileData& meshFileData)
 {
-	if (mLoadData.contains(objectName)) return; //すでに読み込まれたオブジェクトはスルー
+	if (mLoadData.contains(meshID)) return; //すでに読み込まれたオブジェクトはスルー
 
 	//ファイルを読み込む
 	std::ifstream meshFile(meshFileData.filePath);
@@ -181,7 +177,7 @@ void AssetManager::createMesh(const std::string& objectName, const MeshFileData&
 		}
 	}
 
-	mLoadData[objectName] = std::move(meshData);
+	mLoadData[meshID] = std::move(meshData);
 }
 
 XMFLOAT2 AssetManager::createTextureAndGetSize(const std::string& filePath)
@@ -296,26 +292,26 @@ int AssetManager::getHeapEndIndex(int size)
 	return index;
 }
 
-MeshData* AssetManager::getMeshData(const std::string& objectName)
+MeshData* AssetManager::getMeshData(const std::string& meshID)
 {
-	auto iter = mLoadData.find(objectName);
+	auto iter = mLoadData.find(meshID);
 	if (iter != mLoadData.end()) {
 		return iter->second.get();
 	}
 	else {
-		std::fstream file("assets/data/meshData.json");
+		std::fstream file("assets/data/MeshData.json");
 		nlohmann::json json;
 		file >> json;
 
 		//メッシュデータに目的のIDが存在するか調べる
 		for (const auto& [key, value] : json.items()) {
-			if (objectName != key) continue;
+			if (meshID != key) continue;
 
 			MeshFileData meshFileData;
 			meshFileData.filePath = value["filePath"].get<std::string>();
 			meshFileData.scale = value.value("scale", std::vector<float>{ 1.0f, 1.0f, 1.0f });
-			createMesh(objectName, meshFileData);
-			return mLoadData[objectName].get();
+			createMeshData(meshID, meshFileData);
+			return mLoadData[meshID].get();
 		}
 	}
 

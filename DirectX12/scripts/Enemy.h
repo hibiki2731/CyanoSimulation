@@ -22,7 +22,7 @@ private:
 		int hp;
 		int power;
 		int defense;
-		std::string meshName;
+		std::string meshID;
 		MovePattern movePattern;
 		int senseRange;
 	};

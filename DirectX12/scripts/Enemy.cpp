@@ -27,14 +27,14 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 		param.hp = enemyData[enemyID]["hp"].get<int>();
 		param.power = enemyData[enemyID]["power"].get<int>();
 		param.defense = enemyData[enemyID]["defense"].get<int>();
-		param.meshName = enemyData[enemyID]["meshName"].get<std::string>();
+		param.meshID = enemyData[enemyID]["meshID"].get<std::string>();
 		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
 		param.senseRange = enemyData[enemyID].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
 	}
 
 	//コンポーネントの作成
 	auto mesh = std::make_unique<MeshComponent>(*this);
-	mesh->create(param.meshName);
+	mesh->create(param.meshID);
 
 	auto enemy = std::make_unique<EnemyComponent>(*this, scene);
 	mEnemy = enemy.get();
