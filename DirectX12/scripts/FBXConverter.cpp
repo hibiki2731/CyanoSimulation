@@ -2,6 +2,7 @@
 #include <cassert>
 #include <algorithm>
 #include <fstream>
+#include "json.hpp"
 
 FBXConverter::FBXConverter() {
 	//初期化
@@ -10,10 +11,9 @@ FBXConverter::FBXConverter() {
 	Idx2 = 2;
 
 	NumParts = 0;
-	Parts = nullptr;
 }
 
-void FBXConverter::fbxToTxt(const char* fbxFilename, const char* txtFilename, float fx, float fy, float fz, int idx0, int idx1, int idx2)
+void FBXConverter::fbxToJson(const char* fbxFilename, const char* jsonFilename, float fx, float fy, float fz, int idx0, int idx1, int idx2)
 {
 	//FbxManager作成
 	FbxManager* fbx_manager = fbxsdk::FbxManager::Create();
@@ -50,27 +50,28 @@ void FBXConverter::fbxToTxt(const char* fbxFilename, const char* txtFilename, fl
 	//分割したメッシュをパーツごとに読み込む
 	Idx0 = idx0; Idx1 = idx1; Idx2 = idx2;
 	NumParts = fbx_scene->GetSrcObjectCount<FbxMesh>();
-	Parts = new PARTS[NumParts];
+	mParts.resize(NumParts);
 	for (int k = 0; k < NumParts; k++) {
 		auto* mesh = fbx_scene->GetSrcObject<FbxMesh>(k);
 		LoadPosAndNorm(mesh, k);
 		LoadTexcoods(mesh, k);
 		LoadIndices(mesh, k);
-		LoadMaterialName(mesh, k);
+		LoadPartsMaterial(mesh, jsonFilename, k);
 	}
 	//ポインターの破棄
 	fbx_scene->Destroy();
 	fbx_manager->Destroy();
 
 	//テキスト情報として出力
-	CreateTextConbineVertex(txtFilename, fx, fy, fz);
-	delete[] Parts;
+	CreateJson(jsonFilename, fx, fy, fz);
+
+	mParts.clear();
 }
+
 
 //マテリアル読み込み
 void FBXConverter::LoadMaterial(FbxSurfaceMaterial* material) {
 	MATERIAL tmpMaterial;
-
 	FbxDouble3 colors;
 	FbxProperty prop;
 
@@ -186,7 +187,7 @@ void FBXConverter::LoadPosAndNorm(FbxMesh* mesh, int k) {
 	//頂点数の取得
 	int polygonVertexCount = mesh->GetPolygonVertexCount();
 	//メンバのfloat配列確保
-	Parts[k].Positions.reserve(polygonVertexCount * 3);
+	mParts[k].Positions.reserve(polygonVertexCount * 3);
 
 	//頂点座標をメンバに保存
 	for (int i = 0; i < polygonVertexCount; i++) {
@@ -196,22 +197,22 @@ void FBXConverter::LoadPosAndNorm(FbxMesh* mesh, int k) {
 		//座標変換
 		position = Math::translate(Math::rotateZ(Math::rotateY(Math::rotateX(Math::scale(positions[index], scale), rotation[0]), rotation[1]), rotation[2]), translation);
 
-		Parts[k].Positions.emplace_back((float)(position[Idx0]));
-		Parts[k].Positions.emplace_back((float)(position[Idx1]));
-		Parts[k].Positions.emplace_back((float)(-1 * position[Idx2]));	//左手系に変換
+		mParts[k].Positions.emplace_back((float)(position[Idx0]));
+		mParts[k].Positions.emplace_back((float)(position[Idx1]));
+		mParts[k].Positions.emplace_back((float)(-1 * position[Idx2]));	//左手系に変換
 	}
 
 
 	FbxArray<FbxVector4> normals;
 	mesh->GetPolygonVertexNormals(normals);
-	Parts[k].Normals.reserve(normals.Size() * 3);
+	mParts[k].Normals.reserve(normals.Size() * 3);
 	for (int i = 0; i < normals.Size(); i++) {
 		//座標変換
 		normals[i] = Math::normalize(Math::translate(Math::rotateZ(Math::rotateY(Math::rotateX(Math::scale(normals[i], scale), rotation[0]), rotation[1]), rotation[2]), translation));
 
-		Parts[k].Normals.emplace_back((float)(normals[i][Idx0]));
-		Parts[k].Normals.emplace_back((float)(normals[i][Idx1]));
-		Parts[k].Normals.emplace_back((float)(-1 * normals[i][Idx2]));	//左手系に変換
+		mParts[k].Normals.emplace_back((float)(normals[i][Idx0]));
+		mParts[k].Normals.emplace_back((float)(normals[i][Idx1]));
+		mParts[k].Normals.emplace_back((float)(-1 * normals[i][Idx2]));	//左手系に変換
 	}
 
 }
@@ -219,11 +220,11 @@ void FBXConverter::LoadPosAndNorm(FbxMesh* mesh, int k) {
 void FBXConverter::LoadNormals(FbxMesh* mesh, int k) {
 	FbxArray<FbxVector4> normals;
 	mesh->GetPolygonVertexNormals(normals);
-	Parts[k].Normals.reserve(normals.Size() * 3);
+	mParts[k].Normals.reserve(normals.Size() * 3);
 	for (int i = 0; i < normals.Size(); i++) {
-		Parts[k].Normals.emplace_back((float)normals[i][Idx0]);
-		Parts[k].Normals.emplace_back((float)normals[i][Idx1]);
-		Parts[k].Normals.emplace_back((float)normals[i][Idx2]);
+		mParts[k].Normals.emplace_back((float)normals[i][Idx0]);
+		mParts[k].Normals.emplace_back((float)normals[i][Idx1]);
+		mParts[k].Normals.emplace_back((float)normals[i][Idx2]);
 	}
 }
 
@@ -236,10 +237,10 @@ void FBXConverter::LoadTexcoods(FbxMesh* mesh, int k) {
 	//マルチテクスチャ非対応のため、最初の名前を参照
 	FbxArray<FbxVector2> texcoords;
 	mesh->GetPolygonVertexUVs(uvset_names.GetStringAt(0), texcoords);
-	Parts[k].Texcoords.reserve(texcoords.Size() * 2);
+	mParts[k].Texcoords.reserve(texcoords.Size() * 2);
 	for (int i = 0; i < texcoords.Size(); i++) {
-		Parts[k].Texcoords.emplace_back((float)texcoords[i][0]);
-		Parts[k].Texcoords.emplace_back((float)(1.0 - texcoords[i][1]));
+		mParts[k].Texcoords.emplace_back((float)texcoords[i][0]);
+		mParts[k].Texcoords.emplace_back((float)(1.0 - texcoords[i][1]));
 	}
 }
 
@@ -248,20 +249,21 @@ void FBXConverter::LoadIndices(FbxMesh* mesh, int k)
 	//ポリゴン数の取得
 	int polygonCount = mesh->GetPolygonCount();
 	//配列確保
-	Parts[k].Indices.reserve(polygonCount * 3);
+	mParts[k].Indices.reserve(polygonCount * 3);
 	//ポリゴンの数だけ連番として保存する
 	for (int i = 0; i < polygonCount; i++)
 	{
-		Parts[k].Indices.emplace_back(i * 3 + 0);
-		Parts[k].Indices.emplace_back(i * 3 + 1);
-		Parts[k].Indices.emplace_back(i * 3 + 2);
+		mParts[k].Indices.emplace_back(i * 3 + 0);
+		mParts[k].Indices.emplace_back(i * 3 + 1);
+		mParts[k].Indices.emplace_back(i * 3 + 2);
 	}
 }
 
-void FBXConverter::LoadMaterialName(FbxMesh* mesh, int k) {
+void FBXConverter::LoadPartsMaterial(FbxMesh* mesh, const std::string& filePath, int k) {
 	//マテリアルが無ければ終了
 	if (mesh->GetElementMaterialCount() == 0) {
-		Parts[k].MaterialName = "";
+		mParts[k].materials.assign(12, 1.0f);
+		mParts[k].texturePath = "assets/picture/white.png";
 		return;
 	}
 
@@ -269,188 +271,253 @@ void FBXConverter::LoadMaterialName(FbxMesh* mesh, int k) {
 	FbxLayerElementMaterial* material = mesh->GetElementMaterial(0);
 	int index = material->GetIndexArray().GetAt(0);
 	FbxSurfaceMaterial* surface_material = mesh->GetNode()->GetSrcObject<FbxSurfaceMaterial>(index);
+	std::string materialName;
 	if (surface_material != nullptr) {
-		Parts[k].MaterialName = surface_material->GetName();
+		materialName = surface_material->GetName();
 	}
 	else {
-		Parts[k].MaterialName = "";
+		materialName = "";
+	}
+
+	//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
+	float* d = MaterialMap[materialName].materials.data();
+	if (d != nullptr) mParts[k].materials.assign(d, d + 12);
+	
+	//テクスチャファイルの読み込み
+	//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
+	std::string& textureFilename = MaterialMap[materialName].textureFilename;
+
+	//テクスチャ名がなかったら、white.pngにする
+	if (textureFilename == "") {
+		mParts[k].texturePath = "assets/picture/white.png";
+		return;
+	}
+
+	//最後の'/'の位置を検索
+	std::string path = filePath;
+	size_t lastSlashPos = path.rfind('/');
+	if (lastSlashPos != std::string::npos) {
+		//パス名のみにする
+		path.erase(lastSlashPos + 1);
+		//パス名とテクスチャファイル名をドッキングして出力
+		mParts[k].texturePath = path + textureFilename;
+	}
+	else {
+		mParts[k].texturePath = textureFilename;
 	}
 }
 
+void to_json(nlohmann::json& j, const PARTS& parts) {
 
-//③テキストデータとして出力-----------------------------------------------------------------
-//position,normal,texcoordまとめて１頂点として出力
-void FBXConverter::CreateTextConbineVertex(const char* txtFilename, float fx, float fy, float fz)
+	j = nlohmann::json{ {"position", parts.Positions}, {"normal", parts.Normals}, {"texcoord", parts.Texcoords},
+		{"indecis", parts.Indices}, {"material", parts.materials}, { "texturePath", parts.texturePath }};
+}
+
+
+void FBXConverter::CreateJson(const std::string& jsonFileName, float fx, float fy, float fz)
 {
-	std::ofstream ofs(txtFilename);
+	std::ofstream outputFile(jsonFileName);
+	nlohmann::json outputJson;
 
-	ofs << NumParts << '\n';
-
+	//頂点の調整
 	for (int k = 0; k < NumParts; k++) {
 		//頂点
 		{
-			size_t numVertices = Parts[k].Positions.size() / 3;
-			ofs << "vertices " << numVertices << "\n";
+			size_t numVertices = mParts[k].Positions.size() / 3;
 			size_t i = 0;
-			size_t j = 0;//Texcoordsのインデックス
-			while (i < Parts[k].Positions.size()) {
-				ofs << fx * Parts[k].Positions[i] << " ";
-				ofs << fy * Parts[k].Positions[i + 1] << " ";
-				ofs << fz * Parts[k].Positions[i + 2] << " ";
+			while (i < mParts[k].Positions.size()) {
+				mParts[k].Positions[i] *= fx;
+				mParts[k].Positions[i + 1] *= fy;
+				mParts[k].Positions[i + 2] *= fz;
 
-				if (fx >= 0)ofs << Parts[k].Normals[i] << " ";
-				else ofs << -Parts[k].Normals[i] << " ";
-				if (fy >= 0)ofs << Parts[k].Normals[i + 1] << " ";
-				else ofs << -Parts[k].Normals[i + 1] << " ";
-				if (fz >= 0)ofs << Parts[k].Normals[i + 2] << " ";
-				else ofs << -Parts[k].Normals[i + 2] << " ";
+				if (fx < 0) mParts[k].Normals[i] *= -1.0f;
+				if (fy < 0) mParts[k].Normals[i + 1] *= -1.0f;
+				if (fz < 0) mParts[k].Normals[i + 2] *= -1.0f;
 				i += 3;
-
-				ofs << Parts[k].Texcoords[j + 0] << " ";
-				ofs << Parts[k].Texcoords[j + 1] << "\n";
-				j += 2;
-			}
-		}
-#ifdef USE_INDEX
-		//インデックス
-		{
-			size_t numIndices = Parts[k].Indices.size();//要素数がインデックス数。頂点系とは違います。
-			ofs << "indices " << numIndices << "\n";
-			size_t i = 0;
-			while (i < numIndices) {
-				ofs << Parts[k].Indices[i++] << " ";
-				ofs << Parts[k].Indices[i++] << " ";
-				ofs << Parts[k].Indices[i++] << "\n";
-			}
-		}
-#endif
-		//マテリアル
-		{
-			ofs << "material\n";
-			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
-			float* d = MaterialMap[Parts[k].MaterialName].materials.data();
-			if (d != nullptr) {
-				ofs << d[0] << " " << d[1] << " " << d[2] << " " << d[3] << "\n";
-				ofs << d[4] << " " << d[5] << " " << d[6] << " " << d[7] << "\n";
-				ofs << d[8] << " " << d[9] << " " << d[10] << " " << d[11] << "\n";
-			}
-		}
-		//テクスチャ名
-		{
-			ofs << "texture ";
-
-			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
-			std::string& textureFilename
-				= MaterialMap[Parts[k].MaterialName].textureFilename;
-
-			//テクスチャ名がなかったら、white.pngにする
-			if (textureFilename == "") {
-				ofs << "assets/picture/white.png\n";
-				continue;
-			}
-
-			//これから引数のtxtFilenameからパス名だけ取り出します
-			std::string pathName = txtFilename;
-			//'/'を'\\'に置き換え
-			std::replace(pathName.begin(), pathName.end(), '/', '\\');
-			//最後の'\\'の位置を検索
-			size_t lastSlashPos = pathName.rfind('\\');
-			if (lastSlashPos != std::string::npos) {
-				//パス名のみにします。
-				pathName.erase(lastSlashPos + 1);
-				//パス名とテクスチャファイル名をドッキングして出力します
-				ofs << pathName + textureFilename << "\n";
-			}
-			else {
-				ofs << textureFilename << "\n";
 			}
 		}
 	}
+	//頂点情報の取得
+	outputJson["parts"] = mParts;
+	//パーツ数の取得
+	outputJson["numParts"] = mParts.size();
+
+	outputFile << outputJson.dump(4);
 }
 
-//posision,normal,texcoord別々に出力
-void FBXConverter::CreateText(const char* txtFilename, float fx, float fy, float fz)
-{
-	std::ofstream ofs(txtFilename);
-
-	ofs << NumParts << '\n';
-
-	for (int k = 0; k < NumParts; k++)
-	{
-		{
-			size_t numVertices = Parts[k].Positions.size() / 3;
-			ofs << "positions " << numVertices << "\n";
-			size_t i = 0;
-			while (i < Parts[k].Positions.size()) {
-				ofs << fx * Parts[k].Positions[i++] << " ";
-				ofs << fy * Parts[k].Positions[i++] << " ";
-				ofs << fz * Parts[k].Positions[i++] << "\n";//右手座標で表示。手前がマイナス。
-			}
-		}
-		{
-			size_t numNormals = Parts[k].Normals.size() / 3;
-			ofs << "normals " << numNormals << "\n";
-			size_t i = 0;
-			while (i < Parts[k].Normals.size()) {
-				if (fx >= 0)ofs << Parts[k].Normals[i++] << " ";
-				else ofs << -Parts[k].Normals[i++] << " ";
-				if (fy >= 0)ofs << Parts[k].Normals[i++] << " ";
-				else ofs << -Parts[k].Normals[i++] << " ";
-				if (fz >= 0)ofs << Parts[k].Normals[i++] << "\n";
-				else ofs << -Parts[k].Normals[i++] << "\n";
-			}
-		}
-		{
-			size_t numVertices = Parts[k].Texcoords.size() / 2;
-			ofs << "texcoords " << numVertices << "\n";
-			size_t i = 0;
-			while (i < Parts[k].Texcoords.size()) {
-				ofs << Parts[k].Texcoords[i++] << " ";
-				ofs << Parts[k].Texcoords[i++] << "\n";
-			}
-		}
-		{
-			size_t numIndices = Parts[k].Indices.size();//要素数がインデックス数。頂点系とは違います。
-			ofs << "indices " << numIndices << "\n";
-			size_t i = 0;
-			while (i < Parts[k].Indices.size()) {
-				ofs << Parts[k].Indices[i++] << " ";
-				ofs << Parts[k].Indices[i++] << " ";
-				ofs << Parts[k].Indices[i++] << "\n";
-			}
-		}
-		{
-			ofs << "material\n";
-			float* d = MaterialMap[Parts[k].MaterialName].materials.data();
-			ofs << d[0] << " " << d[1] << " " << d[2] << "\n";
-			ofs << d[3] << " " << d[4] << " " << d[5] << "\n";
-			ofs << d[6] << " " << d[7] << " " << d[8] << "\n";
-			ofs << d[9] << "\n";
-		}
-		{
-			ofs << "texture ";
-
-			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
-			if (MaterialMap[Parts[k].MaterialName].textureFilename == "") {
-				ofs << "assets/picture/white.png";
-				return;
-			}
-
-			//これからtxtFilenameからパス名だけ取り出します
-			std::string pathName = txtFilename;
-			//'/'を'\\'に置き換え
-			//std::replace(pathName.begin(), pathName.end(), '/', '\\');
-			//最後の'\\'の位置をを検索
-			size_t lastSlashPos = pathName.rfind('/');
-			if (lastSlashPos != std::string::npos) {
-				//パス名のみにします。
-				pathName.erase(lastSlashPos + 1);
-				//パス名とテクスチャファイル名をドッキングして出力します
-				ofs << pathName + MaterialMap[Parts[k].MaterialName].textureFilename << "\n";
-			}
-			else {
-				ofs << MaterialMap[Parts[k].MaterialName].textureFilename << "\n";
-			}
-		}
-	}
-}
+////③テキストデータとして出力-----------------------------------------------------------------
+////position,normal,texcoordまとめて１頂点として出力
+//void FBXConverter::CreateTextConbineVertex(const char* txtFilename, float fx, float fy, float fz)
+//{
+//	std::ofstream ofs(txtFilename);
+//
+//	ofs << NumParts << '\n';
+//
+//	for (int k = 0; k < NumParts; k++) {
+//		//頂点
+//		{
+//			size_t numVertices = mParts[k].Positions.size() / 3;
+//			ofs << "vertices " << numVertices << "\n";
+//			size_t i = 0;
+//			size_t j = 0;//Texcoordsのインデックス
+//			while (i < mParts[k].Positions.size()) {
+//				ofs << fx * mParts[k].Positions[i] << " ";
+//				ofs << fy * mParts[k].Positions[i + 1] << " ";
+//				ofs << fz * mParts[k].Positions[i + 2] << " ";
+//
+//				if (fx >= 0)ofs << mParts[k].Normals[i] << " ";
+//				else ofs << -mParts[k].Normals[i] << " ";
+//				if (fy >= 0)ofs << mParts[k].Normals[i + 1] << " ";
+//				else ofs << -mParts[k].Normals[i + 1] << " ";
+//				if (fz >= 0)ofs << mParts[k].Normals[i + 2] << " ";
+//				else ofs << -mParts[k].Normals[i + 2] << " ";
+//				i += 3;
+//
+//				ofs << mParts[k].Texcoords[j + 0] << " ";
+//				ofs << mParts[k].Texcoords[j + 1] << "\n";
+//				j += 2;
+//			}
+//		}
+//#ifdef USE_INDEX
+//		//インデックス
+//		{
+//			size_t numIndices = Parts[k].Indices.size();//要素数がインデックス数。頂点系とは違います。
+//			ofs << "indices " << numIndices << "\n";
+//			size_t i = 0;
+//			while (i < numIndices) {
+//				ofs << Parts[k].Indices[i++] << " ";
+//				ofs << Parts[k].Indices[i++] << " ";
+//				ofs << Parts[k].Indices[i++] << "\n";
+//			}
+//		}
+//#endif
+//		//マテリアル
+//		{
+//			ofs << "material\n";
+//			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
+//			float* d = MaterialMap[mParts[k].MaterialName].materials.data();
+//			if (d != nullptr) {
+//				ofs << d[0] << " " << d[1] << " " << d[2] << " " << d[3] << "\n";
+//				ofs << d[4] << " " << d[5] << " " << d[6] << " " << d[7] << "\n";
+//				ofs << d[8] << " " << d[9] << " " << d[10] << " " << d[11] << "\n";
+//			}
+//		}
+//		//テクスチャ名
+//		{
+//			ofs << "texture ";
+//
+//			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
+//			std::string& textureFilename
+//				= MaterialMap[mParts[k].MaterialName].textureFilename;
+//
+//			//テクスチャ名がなかったら、white.pngにする
+//			if (textureFilename == "") {
+//				ofs << "assets/picture/white.png\n";
+//				continue;
+//			}
+//
+//			//これから引数のtxtFilenameからパス名だけ取り出します
+//			std::string pathName = txtFilename;
+//			//'/'を'\\'に置き換え
+//			std::replace(pathName.begin(), pathName.end(), '/', '\\');
+//			//最後の'\\'の位置を検索
+//			size_t lastSlashPos = pathName.rfind('\\');
+//			if (lastSlashPos != std::string::npos) {
+//				//パス名のみにします。
+//				pathName.erase(lastSlashPos + 1);
+//				//パス名とテクスチャファイル名をドッキングして出力します
+//				ofs << pathName + textureFilename << "\n";
+//			}
+//			else {
+//				ofs << textureFilename << "\n";
+//			}
+//		}
+//	}
+//}
+//
+////posision,normal,texcoord別々に出力
+//void FBXConverter::CreateText(const char* txtFilename, float fx, float fy, float fz)
+//{
+//	std::ofstream ofs(txtFilename);
+//
+//	ofs << NumParts << '\n';
+//
+//	for (int k = 0; k < NumParts; k++)
+//	{
+//		{
+//			size_t numVertices = mParts[k].Positions.size() / 3;
+//			ofs << "positions " << numVertices << "\n";
+//			size_t i = 0;
+//			while (i < mParts[k].Positions.size()) {
+//				ofs << fx * mParts[k].Positions[i++] << " ";
+//				ofs << fy * mParts[k].Positions[i++] << " ";
+//				ofs << fz * mParts[k].Positions[i++] << "\n";//右手座標で表示。手前がマイナス。
+//			}
+//		}
+//		{
+//			size_t numNormals = mParts[k].Normals.size() / 3;
+//			ofs << "normals " << numNormals << "\n";
+//			size_t i = 0;
+//			while (i < mParts[k].Normals.size()) {
+//				if (fx >= 0)ofs << mParts[k].Normals[i++] << " ";
+//				else ofs << -mParts[k].Normals[i++] << " ";
+//				if (fy >= 0)ofs << mParts[k].Normals[i++] << " ";
+//				else ofs << -mParts[k].Normals[i++] << " ";
+//				if (fz >= 0)ofs << mParts[k].Normals[i++] << "\n";
+//				else ofs << -mParts[k].Normals[i++] << "\n";
+//			}
+//		}
+//		{
+//			size_t numVertices = mParts[k].Texcoords.size() / 2;
+//			ofs << "texcoords " << numVertices << "\n";
+//			size_t i = 0;
+//			while (i < mParts[k].Texcoords.size()) {
+//				ofs << mParts[k].Texcoords[i++] << " ";
+//				ofs << mParts[k].Texcoords[i++] << "\n";
+//			}
+//		}
+//		{
+//			size_t numIndices = mParts[k].Indices.size();//要素数がインデックス数。頂点系とは違います。
+//			ofs << "indices " << numIndices << "\n";
+//			size_t i = 0;
+//			while (i < mParts[k].Indices.size()) {
+//				ofs << mParts[k].Indices[i++] << " ";
+//				ofs << mParts[k].Indices[i++] << " ";
+//				ofs << mParts[k].Indices[i++] << "\n";
+//			}
+//		}
+//		{
+//			ofs << "material\n";
+//			float* d = MaterialMap[mParts[k].MaterialName].materials.data();
+//			ofs << d[0] << " " << d[1] << " " << d[2] << "\n";
+//			ofs << d[3] << " " << d[4] << " " << d[5] << "\n";
+//			ofs << d[6] << " " << d[7] << " " << d[8] << "\n";
+//			ofs << d[9] << "\n";
+//		}
+//		{
+//			ofs << "texture ";
+//
+//			//メッシュ側のマテリアル名でマテリアルマップから引っ張ってくる
+//			if (MaterialMap[mParts[k].MaterialName].textureFilename == "") {
+//				ofs << "assets/picture/white.png";
+//				return;
+//			}
+//
+//			//これからtxtFilenameからパス名だけ取り出します
+//			std::string pathName = txtFilename;
+//			//'/'を'\\'に置き換え
+//			//std::replace(pathName.begin(), pathName.end(), '/', '\\');
+//			//最後の'\\'の位置をを検索
+//			size_t lastSlashPos = pathName.rfind('/');
+//			if (lastSlashPos != std::string::npos) {
+//				//パス名のみにします。
+//				pathName.erase(lastSlashPos + 1);
+//				//パス名とテクスチャファイル名をドッキングして出力します
+//				ofs << pathName + MaterialMap[mParts[k].MaterialName].textureFilename << "\n";
+//			}
+//			else {
+//				ofs << MaterialMap[mParts[k].MaterialName].textureFilename << "\n";
+//			}
+//		}
+//	}
+//}

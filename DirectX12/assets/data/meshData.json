@@ -1,35 +1,35 @@
 {
     "ROCK_WALL" : {
         "fbxPath" : "assets/3DModels/rockObj/rockWall.fbx",
-        "txtPath" : "assets/3DModels/rockObj/rockWall.txt"
+        "jsonPath" : "assets/3DModels/rockObj/rockWall.json"
     },
 
     "ROCK_FLOOR" : {
         "fbxPath" : "assets/3DModels/rockObj/rockFloor.fbx",
-        "txtPath" : "assets/3DModels/rockObj/rockFloor.txt"
+        "jsonPath" : "assets/3DModels/rockObj/rockFloor.json"
     },
     "ROCK_ROOF" : {
         "fbxPath" : "assets/3DModels/rockObj/rockRoof.fbx",
-        "txtPath" : "assets/3DModels/rockObj/rockRoof.txt"
+        "jsonPath" : "assets/3DModels/rockObj/rockRoof.json"
     },
 
     "GRASS" : {
         "fbxPath" : "assets/3DModels/Grass/grass.fbx",
-        "txtPath" : "assets/3DModels/Grass/grass.txt"
+        "jsonPath" : "assets/3DModels/Grass/grass.json"
     },
 
     "SLIME" : {
         "fbxPath" : "assets/3DModels/Slime/slime.fbx",
-        "txtPath" : "assets/3DModels/Slime/slime.txt",
+        "jsonPath" : "assets/3DModels/Slime/slime.json",
         "scale" : [0.3, 0.3, 0.3]
     },
 
     "NURIKABE" : {
         "fbxPath" : "assets/3DModels/Nurikabe/nurikabe.fbx",
-        "txtPath" : "assets/3DModels/Nurikabe/nurikabe.txt"
+        "jsonPath" : "assets/3DModels/Nurikabe/nurikabe.json"
     },
     "TORCH" : {
         "fbxPath" : "assets/3DModels/Torch/torch.fbx",
-        "txtPath" : "assets/3DModels/Torch/torch.txt"
+        "jsonPath" : "assets/3DModels/Torch/torch.json"
     }
 }
