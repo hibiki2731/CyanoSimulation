@@ -2,6 +2,46 @@
 
 XMFLOAT3 normalZ = {0 ,0, 1};
 
+XMFLOAT4 operator+(const XMFLOAT4& v1, const XMFLOAT4& v2)
+{
+	auto vec1 = XMLoadFloat4(&v1);
+	auto vec2 = XMLoadFloat4(&v2);
+
+	auto vResult = vec1 + vec2;
+	XMFLOAT4 result;
+	XMStoreFloat4(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT4 operator-(const XMFLOAT4& v1, const XMFLOAT4& v2)
+{
+	auto vec1 = XMLoadFloat4(&v1);
+	auto vec2 = XMLoadFloat4(&v2);
+
+	auto vResult = vec1 - vec2;
+	XMFLOAT4 result;
+	XMStoreFloat4(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT4 operator*(const XMFLOAT4& v1, const float& val)
+{
+	auto vec1 = XMLoadFloat4(&v1);
+	auto vResult = vec1 * val;
+	XMFLOAT4 result;
+	XMStoreFloat4(&result, vResult);
+	return std::move(result);
+}
+
+XMFLOAT4 operator/(const XMFLOAT4& v1, const float& val)
+{
+	auto vec1 = XMLoadFloat4(&v1);
+	auto vResult = vec1 / val;
+	XMFLOAT4 result;
+	XMStoreFloat4(&result, vResult);
+	return std::move(result);
+}
+
 XMFLOAT3 operator+(const XMFLOAT3& v1, const XMFLOAT3& v2)
 {
 	auto vec1 = XMLoadFloat3(&v1);

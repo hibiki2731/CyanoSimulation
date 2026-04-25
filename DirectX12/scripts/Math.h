@@ -8,6 +8,11 @@ using namespace DirectX;
 
 extern XMFLOAT3 normalZ;
 
+XMFLOAT4 operator+(const XMFLOAT4& v1, const XMFLOAT4& v2);
+XMFLOAT4 operator-(const XMFLOAT4& v1, const XMFLOAT4& v2);
+XMFLOAT4 operator*(const XMFLOAT4& v1, const float& val);
+XMFLOAT4 operator/(const XMFLOAT4& v1, const float& val);
+
 XMFLOAT3 operator+(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator-(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator*(const XMFLOAT3& v1, const float& val);

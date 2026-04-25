@@ -8,6 +8,7 @@ public:
 	Object(Scene& scene, const std::string& meshID, float x, float y);
 
 	struct PointLightDescription {
+		XMFLOAT4 offsetPos = { 0.0f, 0.0f, 0.0f, 0.0f };
 		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float intensity = 1.0f;
 		float range = 1.0f;

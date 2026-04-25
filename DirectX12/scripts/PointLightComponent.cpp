@@ -9,6 +9,7 @@
 PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
 {
 	isActive = false;
+	mOffsetPos = { 0.0f, 0.0f, 0.0f, 0.0f };
 	mPosition.x = mOwner.getPosition().x;
 	mPosition.y = mOwner.getPosition().y;
 	mPosition.z = mOwner.getPosition().z;
@@ -19,23 +20,21 @@ PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Compon
 	mOwner.getScene().addPointLight(this);
 }
 
-void PointLightComponent::inputComponent()
+void PointLightComponent::endProcess()
 {
+	//Gameからライトを削除
+	mOwner.getScene().removePointLight(this);
 }
 
 void PointLightComponent::updateComponent()
 {
 	if (isActive) {
+		//位置の更新
 		mPosition.x = mOwner.getPosition().x;
 		mPosition.y = mOwner.getPosition().y;
 		mPosition.z = mOwner.getPosition().z;
+		mPosition = mPosition + mOffsetPos;
 	}
-}
-
-void PointLightComponent::endProcess()
-{
-	//Gameからライトを削除
-	mOwner.getScene().removePointLight(this);
 }
 
 XMFLOAT4 PointLightComponent::getPosition()
@@ -81,4 +80,9 @@ void PointLightComponent::setIntensity(const float intensity)
 void PointLightComponent::setRange(const float range)
 {
 	mRange = range;
+}
+
+void PointLightComponent::setOffsetPos(const XMFLOAT4& offset)
+{
+	mOffsetPos = offset;
 }

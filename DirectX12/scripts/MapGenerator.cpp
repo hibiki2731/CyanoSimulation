@@ -42,11 +42,12 @@ void MapGenerator::createMap()
 	roof->setPosY(MAPTIPSIZE);
 	mScene.addActor(std::move(roof));
 
-	auto light = std::make_unique<Object>(mScene, "GRASS", MAPTIPSIZE * 16.0f, MAPTIPSIZE * 2.0f);
+	auto light = std::make_unique<Object>(mScene, "TORCH", MAPTIPSIZE * 16.0f, MAPTIPSIZE * 2.0f);
 	Object::PointLightDescription desc;
+	desc.offsetPos = { 1.0f, 0.5f, 0.0f, 0.0f };
 	desc.intensity = 20.0f;
 	desc.range = 20.0f;
-	desc.color = { 1.0f, 0.0f, 0.0f, 1.0f };
+	desc.color = { 1.0f, 1.0f, 1.0f, 1.0f };
 	light->setPointLight(desc);
 	mScene.addActor(std::move(light));
 }

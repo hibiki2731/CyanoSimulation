@@ -439,9 +439,9 @@ void FBXConverter::CreateText(const char* txtFilename, float fx, float fy, float
 			//これからtxtFilenameからパス名だけ取り出します
 			std::string pathName = txtFilename;
 			//'/'を'\\'に置き換え
-			std::replace(pathName.begin(), pathName.end(), '/', '\\');
+			//std::replace(pathName.begin(), pathName.end(), '/', '\\');
 			//最後の'\\'の位置をを検索
-			size_t lastSlashPos = pathName.rfind('\\');
+			size_t lastSlashPos = pathName.rfind('/');
 			if (lastSlashPos != std::string::npos) {
 				//パス名のみにします。
 				pathName.erase(lastSlashPos + 1);

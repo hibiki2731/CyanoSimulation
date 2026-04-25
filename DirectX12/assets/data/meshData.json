@@ -27,5 +27,9 @@
     "NURIKABE" : {
         "fbxPath" : "assets/3DModels/Nurikabe/nurikabe.fbx",
         "txtPath" : "assets/3DModels/Nurikabe/nurikabe.txt"
+    },
+    "TORCH" : {
+        "fbxPath" : "assets/3DModels/Torch/torch.fbx",
+        "txtPath" : "assets/3DModels/Torch/torch.txt"
     }
 }

@@ -9,9 +9,8 @@ class PointLightComponent : public Component
 public:
 	PointLightComponent(Actor& owner, int updateOrder = 100);
 
-	void inputComponent() override;
-	void updateComponent() override;
 	void endProcess() override;
+	void updateComponent() override;
 
 	//ゲッター
 	XMFLOAT4 getPosition();
@@ -24,6 +23,7 @@ public:
 	void setActive(const bool state);
 	void setIntensity(const float intensity);
 	void setRange(const float range);
+	void setOffsetPos(const XMFLOAT4& offset);
 
 private:
 	bool isActive;
@@ -31,5 +31,6 @@ private:
 	float mIntensity;
 	XMFLOAT4 mColor;
 	XMFLOAT4 mPosition;
+	XMFLOAT4 mOffsetPos;
 };
 

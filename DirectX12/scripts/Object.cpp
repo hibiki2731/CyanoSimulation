@@ -21,6 +21,7 @@ Object::Object(Scene& scene, const std::string& meshID, float x, float y) : Acto
 void Object::setPointLight(const PointLightDescription& lightData)
 {
 	auto light = std::make_unique<PointLightComponent>(*this);
+	light->setOffsetPos(lightData.offsetPos);
 	light->setColor(lightData.color);
 	light->setIntensity(lightData.intensity);
 	light->setRange(lightData.range);
