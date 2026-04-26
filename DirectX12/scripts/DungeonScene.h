@@ -5,6 +5,7 @@
 
 class Player;
 class EnemyComponent;
+class FireParticleComponent;
 
 enum class Stage {
 	MAP1,
@@ -61,6 +62,10 @@ public:
 	void removeEnemy(EnemyComponent* enemy);
 	void sortEnemiesByDistanceToPlayer();
 
+	//パーティクル配列の制御
+	void addParticle(FireParticleComponent* particle);
+	void removeParticle(FireParticleComponent* particle);
+
 	//ミニマップの更新
 	void updateMiniMapPos();
 	void updateMiniMapDirection();
@@ -69,9 +74,6 @@ public:
 	void updateAPUI();
 	void updateItemUI();
 	void updateItemFrame();
-
-	//ダメージテキストの公人
-	void updateDTView(XMMATRIX& view);
 
 	//ターンの制御
 	void moveToPlayerTurn();
@@ -131,6 +133,9 @@ private:
 	//UIアクター
 	class MiniMap* mMiniMap;
 	class DungeonUI* mUI;
+
+	//エフェクト
+	std::vector<FireParticleComponent*> mParticles;
 	
 	//管理クラス
 	std::unique_ptr<class MapGenerator> mMapGenerator;	//マップ生成

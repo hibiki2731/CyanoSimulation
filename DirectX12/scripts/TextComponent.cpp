@@ -272,7 +272,7 @@ void TextComponent::createEmptyTexture()
 	prop.CreationNodeMask = 1;
 	prop.VisibleNodeMask = 1;
 
-	mGraphic.getDevice()->CreateCommittedResource(
+	HRESULT hr =mGraphic.getDevice()->CreateCommittedResource(
 		&prop,
 		D3D12_HEAP_FLAG_NONE,
 		&textDesc,
@@ -280,6 +280,7 @@ void TextComponent::createEmptyTexture()
 		&clearValue,
 		IID_PPV_ARGS(mTexture.ReleaseAndGetAddressOf())
 	);
+	assert(SUCCEEDED(hr));
 	
 }
 
@@ -287,13 +288,14 @@ void TextComponent::wrapTexture()
 {
 	//D3D11のリソースとしてラップ（変換）
 	D3D11_RESOURCE_FLAGS d3d11Flags = { D3D11_BIND_RENDER_TARGET };
-	mGraphic.getD3D11On12Device()->CreateWrappedResource(
+	HRESULT hr = mGraphic.getD3D11On12Device()->CreateWrappedResource(
 		mTexture.Get(),
 		&d3d11Flags,
 		D3D12_RESOURCE_STATE_RENDER_TARGET,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
 		IID_PPV_ARGS(mWrappedTexture.ReleaseAndGetAddressOf())
 	);
+	assert(SUCCEEDED(hr));
 
 	//ラップしたテクスチャをDirect2Dのレンダーターゲットにする
 	ComPtr<IDXGISurface> surface;
@@ -304,7 +306,7 @@ void TextComponent::wrapTexture()
 		D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
 	);
 
-	HRESULT hr = mGraphic.getD2DDeviceContext()->CreateBitmapFromDxgiSurface(
+	hr = mGraphic.getD2DDeviceContext()->CreateBitmapFromDxgiSurface(
 		surface.Get(),
 		&bitmapProps,
 		mD2DTarget.ReleaseAndGetAddressOf()

@@ -5,6 +5,7 @@
 #include "SpotLightComponent.h"
 #include "Game.h"
 #include "Imgui/imgui_impl_win32.h"
+#include "AssetManager.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -570,9 +571,9 @@ HRESULT Graphic::createPipeline()
 	} {}
 
 
-	//ダメージエフェクト用パイプラインステート
+	//ビルボード用パイプラインステート
 	{
-		//ダメージエフェクト用ルートシグネチャ
+		//ビルボード用ルートシグネチャ
 		//ディスクリプタレンジ、ディスクリプタヒープとシェーダを紐づける役割を持つ
 		D3D12_DESCRIPTOR_RANGE range[2] = {};
 		UINT b0 = 0;
@@ -622,7 +623,7 @@ HRESULT Graphic::createPipeline()
 
 		//ルートシグネチャの作成
 		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
-			IID_PPV_ARGS(RootSignatureDT.GetAddressOf()));
+			IID_PPV_ARGS(RootSignatureBB.GetAddressOf()));
 		assert(SUCCEEDED(hr));
 
 		{
@@ -633,6 +634,10 @@ HRESULT Graphic::createPipeline()
 			assert(gsDT.succeeded());
 			BIN_FILE12 psDT("assets\\DTPixelShader.cso");
 			assert(psDT.succeeded());
+			BIN_FILE12 psFire("assets\\FPPixelShader.cso");
+			assert(psFire.succeeded());
+			BIN_FILE12 gsFire("assets\\FPGeometryShader.cso");
+			assert(gsFire.succeeded());
 
 			//各種記述
 			UINT slot0 = 0; //IAsetVertexBuffersでバッファをセットするスロット番号
@@ -640,8 +645,8 @@ HRESULT Graphic::createPipeline()
 			D3D12_INPUT_ELEMENT_DESC inputElementDescsDT[] = {
 				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
 				{"SIZE", 0, DXGI_FORMAT_R32_FLOAT, slot0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
-				{"DIGIT", 0, DXGI_FORMAT_R32_FLOAT, slot0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
 				{"ALPHA", 0, DXGI_FORMAT_R32_FLOAT, slot0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
+				{"DIGIT", 0, DXGI_FORMAT_R32_FLOAT, slot0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA, 1},
 			};
 
 			D3D12_RASTERIZER_DESC rasterDesc = {};
@@ -658,12 +663,12 @@ HRESULT Graphic::createPipeline()
 			rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
 			D3D12_BLEND_DESC blendDesc = {};
-			blendDesc.AlphaToCoverageEnable = true;
+			blendDesc.AlphaToCoverageEnable = false;					//alpha値が低くても描画する
 			blendDesc.IndependentBlendEnable = FALSE;
-			blendDesc.RenderTarget[0].BlendEnable = false;
+			blendDesc.RenderTarget[0].BlendEnable = true;
 			blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
 			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;		//重なった部分を加算処理
 			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
 			blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
 			blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
@@ -673,13 +678,13 @@ HRESULT Graphic::createPipeline()
 
 			D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
 			depthStencilDesc.DepthEnable = true;
-			depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //書き込み許可
-			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; //小さいほうが手前
-			depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
+			depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO; //デプスに書き込まない
+			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS;		//小さいほうが手前
+			depthStencilDesc.StencilEnable = FALSE;							//ステンシルしない
 
 			//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDescDT = {};
-			pipelineDescDT.pRootSignature = RootSignatureDT.Get();
+			pipelineDescDT.pRootSignature = RootSignatureBB.Get();
 			pipelineDescDT.VS = { vsDT.code(), vsDT.size() };
 			pipelineDescDT.GS = { gsDT.code(), gsDT.size() };
 			pipelineDescDT.PS = { psDT.code(), psDT.size() };
@@ -694,6 +699,12 @@ HRESULT Graphic::createPipeline()
 			pipelineDescDT.NumRenderTargets = 1;
 			pipelineDescDT.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 			HRESULT hr = Device->CreateGraphicsPipelineState(&pipelineDescDT, IID_PPV_ARGS(PipelineStateDT.GetAddressOf()));
+			assert(SUCCEEDED(hr));
+
+			//炎エフェクト用のパイプラインステートも作成
+			pipelineDescDT.PS = { psFire.code(), psFire.size() };
+			pipelineDescDT.GS = { gsFire.code(), gsFire.size() };
+			hr = Device->CreateGraphicsPipelineState(&pipelineDescDT, IID_PPV_ARGS(PipelineStateFP.GetAddressOf()));
 			assert(SUCCEEDED(hr));
 		}
 	} {}
@@ -929,6 +940,26 @@ HRESULT Graphic::createCbvAndHeap()
 	return hr;
 }
 
+void Graphic::initBilbordBuffer()
+{
+    //ビルボード処理用のバッファを初期化
+    XMMATRIX proj = XMMatrixPerspectiveFovLH(
+        XM_PIDIV4,
+        Aspect,
+        0.01f, 50.0f
+    );
+    mBC.proj = proj;
+
+	//コンスタントバッファのアドレスを確保
+	mBCSize = 256;
+	mBCIndex = mGame.getAssetManager().getCBEndIndex(mBCSize);
+
+	//データをコピー
+	memcpy(mConstantData[0] + mBCIndex, &mBC, sizeof(BillboardConstBuf));
+	memcpy(mConstantData[1] + mBCIndex, &mBC, sizeof(BillboardConstBuf));
+
+}
+
 void Graphic::updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights)
 {
 	//光源の更新
@@ -938,6 +969,12 @@ void Graphic::updateBase3DData(const std::vector<PointLightComponent*>& pointLig
 	for(int i = 0; i < FrameCount; i++)
 	memcpy(mConstantData[i], &Base3DData, sizeof(Base3DData));
 
+}
+
+void Graphic::updateView(const XMMATRIX& view)
+{
+	mBC.view = view;
+	memcpy(mConstantData[BackBufIdx] + mBCIndex, &mBC, sizeof(BillboardConstBuf));
 }
 
 HRESULT Graphic::createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer)
@@ -1353,7 +1390,7 @@ void Graphic::createShaderResourceView(ID3D12Resource* shaderResource, int heapI
 	Device->CreateShaderResourceView(shaderResource, &desc, hCbvTbvHeap);
 }
 
-void Graphic::updateViewProj(XMMATRIX& viewProj)
+void Graphic::updateViewProj(const XMMATRIX& viewProj)
 {
 	Base3DData.viewProj = viewProj;
 }
@@ -1418,9 +1455,6 @@ void Graphic::clearColor(float r, float g, float b)
 
 void Graphic::begin3DRender()
 {
-	//現在のバックバッファのインデックスを取得。このプログラムの場合0 or 1になる。
-	//BackBufIdx = SwapChain->GetCurrentBackBufferIndex();
-
 	//バリアでバックバッファを描画ターゲットに切り替える
 	D3D12_RESOURCE_BARRIER barrier;
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;//このバリアは状態遷移タイプ
@@ -1581,6 +1615,7 @@ void Graphic::renderFade()
 	if (isFadingIn || isFadingOut) {
 		mCommandList->SetPipelineState(RenderStructFade.pipelineState.Get());
 		mCommandList->SetGraphicsRootSignature(RenderStructFade.rootSignature.Get());
+		mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//ルートパラメータにフェードのアルファ値をセット
 		mCommandList->SetGraphicsRoot32BitConstants(0, 1, &currentFadeAlpha, 0);
@@ -1694,10 +1729,21 @@ void Graphic::setRenderType(STATE state)
 		mCommandList->SetGraphicsRootSignature(RootSignature2D.Get());
 	}
 	else if (state == Graphic::RENDER_DT) {
+		
 		//パイプラインステートをセット
 		mCommandList->SetPipelineState(PipelineStateDT.Get());
 		//ルートシグニチャをセット
-		mCommandList->SetGraphicsRootSignature(RootSignatureDT.Get());
+		mCommandList->SetGraphicsRootSignature(RootSignatureBB.Get());
+		//プリミティブトポロジーを変更
+		mGame.getGraphic().getCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+	}
+	else if (state == Graphic::RENDER_FP) {
+		//パイプラインステートをセット
+		mCommandList->SetPipelineState(PipelineStateFP.Get());
+		//ルートシグニチャをセット
+		mCommandList->SetGraphicsRootSignature(RootSignatureBB.Get());
+		//プリミティブトポロジーを変更
+		mGame.getGraphic().getCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 	}
 }
 

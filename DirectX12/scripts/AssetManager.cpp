@@ -49,9 +49,11 @@ static const int NumElementsPerVertex = 8;
 AssetManager::AssetManager(Graphic& graphic)
 	: mGraphic(graphic)
 {
+	//Base3DDataが先頭のメモリを使用する
 	mCBEndIndex = mGraphic.alignedSize(sizeof(Base3DData));
 	mHeapEndIndex = 0;
 	createSpriteBuffers();
+
 	std::fstream file("assets/data/MeshData.json");
 	nlohmann::json json;
 	file >> json;

@@ -44,10 +44,10 @@ void MapGenerator::createMap()
 
 	auto light = std::make_unique<Object>(mScene, "TORCH", MAPTIPSIZE * 16.0f, MAPTIPSIZE * 2.0f);
 	Object::PointLightDescription desc;
-	desc.offsetPos = { 1.0f, 0.5f, 0.0f, 0.0f };
-	desc.intensity = 20.0f;
-	desc.range = 20.0f;
-	desc.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+	desc.offsetPos = { -0.2f, 0.4f, 0.0f, 0.0f };
+	desc.intensity = 2.0f;
+	desc.range = 1.0f;
+	desc.color = { 1.0f, 0.4f, 0.0f, 1.0f };
 	light->setPointLight(desc);
 	mScene.addActor(std::move(light));
 }

@@ -62,6 +62,9 @@ void Game::init() {
 	//assetManagerの初期化 meshComponentを作成する前に初期化
 	mAssetManager = std::make_unique<AssetManager>(*mGraphic.get());
 
+	//ビルボード処理用のバッファを初期化
+	mGraphic->initBilbordBuffer();
+
 	//itemManagerの初期化
 	mItemManager = std::make_unique<ItemManager>();
 
@@ -73,6 +76,7 @@ void Game::init() {
 
 	//シーンマネージャーの初期化	
 	mSceneManager = std::make_unique<SceneManager>(*this);
+
 
 }
 

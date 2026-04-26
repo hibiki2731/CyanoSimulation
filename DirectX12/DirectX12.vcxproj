@@ -208,6 +208,26 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="scripts\FPPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="scripts\FPGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="scripts\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -240,6 +260,7 @@
     <ClCompile Include="scripts\EndWindow.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
+    <ClCompile Include="scripts\FireParticleComponent.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
     <ClCompile Include="scripts\GameOverScene.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
@@ -304,6 +325,7 @@
     <ClInclude Include="scripts\EndWindow.h" />
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
+    <ClInclude Include="scripts\FireParticleComponent.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
     <ClInclude Include="scripts\GameOverScene.h" />
     <ClInclude Include="scripts\GUIDebugger.h">

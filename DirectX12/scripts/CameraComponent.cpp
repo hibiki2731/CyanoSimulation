@@ -41,7 +41,7 @@ void CameraComponent::updateComponent()
 		//プロジェクションマトリックス
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic().getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
-		mDungeonScene.updateDTView(view);
+		mOwner.getScene().getGame().getGraphic().updateView(view);
 		mOwner.getScene().getGame().getGraphic().updateViewProj(viewProj);
 
 		XMFLOAT4 cameraPos;

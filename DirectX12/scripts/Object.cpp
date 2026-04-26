@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
+#include "FireParticleComponent.h"
 
 Object::Object(Scene& scene, const std::string& meshID, float x, float y) : Actor(scene, x, y)
 {
@@ -20,6 +21,7 @@ Object::Object(Scene& scene, const std::string& meshID, float x, float y) : Acto
 
 void Object::setPointLight(const PointLightDescription& lightData)
 {
+	//光源
 	auto light = std::make_unique<PointLightComponent>(*this);
 	light->setOffsetPos(lightData.offsetPos);
 	light->setColor(lightData.color);
@@ -27,6 +29,11 @@ void Object::setPointLight(const PointLightDescription& lightData)
 	light->setRange(lightData.range);
 	light->setActive(true);
 	addComponent(std::move(light));
+
+	//エフェクト
+	auto fire = std::make_unique<FireParticleComponent>(*this);
+	fire->setEmitterPosition(mPosition + XMFLOAT3(-0.15f, 0.24f, 0.0f));
+	addComponent(std::move(fire));
 }
 
 void Object::setSpotLight(const SpotLightDescription& lightData)

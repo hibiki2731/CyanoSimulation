@@ -21,6 +21,6 @@ float Random::dist(float l, float r)
 	static std::mt19937 mt(seed);
 
 	//乱数生成
-	std::uniform_int_distribution<> dist(l, r);
+	std::uniform_real_distribution<> dist(l, r);
 	return dist(mt);
 }

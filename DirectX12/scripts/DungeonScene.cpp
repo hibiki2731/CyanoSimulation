@@ -14,6 +14,7 @@
 #include "Graphic.h"
 #include "DungeonUI.h"
 #include "AudioManager.h"
+#include "FireParticleComponent.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -44,8 +45,14 @@ void DungeonScene::lateUpdateScene()
 
 void DungeonScene::drawScene()
 {
+	//ダメージテキストの描画
 	mGame.getGraphic().setRenderType(Graphic::RENDER_DT);
 	mDamageTextManaager->draw();
+
+	//炎パーティクルの描画
+	mGame.getGraphic().setRenderType(Graphic::RENDER_FP);
+	for (auto p : mParticles) p->draw();
+
 }
 
 void DungeonScene::onEnter()
@@ -280,6 +287,16 @@ void DungeonScene::sortEnemiesByDistanceToPlayer()
 		});
 }
 
+void DungeonScene::addParticle(FireParticleComponent* particle)
+{
+	mParticles.push_back(particle);
+}
+
+void DungeonScene::removeParticle(FireParticleComponent* particle)
+{
+	mParticles.erase(std::remove(mParticles.begin(), mParticles.end(), particle), mParticles.end());
+}
+
 void DungeonScene::updateMiniMapPos()
 {
 	mMiniMap->updatePosition();
@@ -308,11 +325,6 @@ void DungeonScene::updateItemUI()
 void DungeonScene::updateItemFrame()
 {
 	mUI->updateItemFrame();
-}
-
-void DungeonScene::updateDTView(XMMATRIX& view)
-{
-	mDamageTextManaager->updateView(view);
 }
 
 void DungeonScene::moveToEnemyTurn()

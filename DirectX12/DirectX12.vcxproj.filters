@@ -195,6 +195,9 @@
     <ClCompile Include="scripts\EndWindow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="scripts\FireParticleComponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scripts\BIN_FILE12.h">
@@ -392,6 +395,9 @@
     <ClInclude Include="scripts\EndWindow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\FireParticleComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="scripts\PixelShader.hlsl">
@@ -419,6 +425,12 @@
       <Filter>hlsl</Filter>
     </FxCompile>
     <FxCompile Include="scripts\FadeVertexShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\FPPixelShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\FPGeometryShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
