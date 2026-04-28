@@ -32,8 +32,9 @@ public:
 	//シーン中のアクターの削除
 	void removeSceneActors();
 
-
+	//getter
 	const std::string& getCurrentSceneType();
+	class Scene& getCurrentScene();
 
 	void transitToTitle();
 	void transitToTown();

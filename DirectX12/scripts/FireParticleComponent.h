@@ -9,6 +9,7 @@ class FireParticleComponent :
 {
 public:
     FireParticleComponent(class Actor& owner);
+    DECLARE_COMPONENT_NAME(FireParticleComponent)
     
     void endProcess() override;
     void updateComponent() override;
@@ -81,4 +82,7 @@ private:
     class AssetManager& mAssetManager;
     class Graphic& mGraphic;
 
+#ifdef _DEBUG
+    friend class GUIDebugger;
+#endif
 };

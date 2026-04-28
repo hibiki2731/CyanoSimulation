@@ -15,6 +15,7 @@ class SpriteComponent :
 {
 public:
 	SpriteComponent(Actor& owner, float zDepth = 100.0f);
+    DECLARE_COMPONENT_NAME(SpriteComponent)
 
 	void endProcess() override;
 

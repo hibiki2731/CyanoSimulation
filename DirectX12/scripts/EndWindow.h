@@ -7,6 +7,7 @@ class TurnObserver;
 class EndWindow :public Actor{
 public:
 	EndWindow(DungeonScene& scene);
+	DECLARE_CLASS_NAME(EndWindow)
 	void updateActor() override;
 	void inputActor() override;
 

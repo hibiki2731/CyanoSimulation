@@ -23,9 +23,7 @@ Actor::Actor(Scene& scene, float x, float y)
 
 }
 
-Actor::~Actor()
-{
-}
+Actor::~Actor() = default;
 
 void Actor::input()
 {

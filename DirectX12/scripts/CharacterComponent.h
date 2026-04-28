@@ -10,11 +10,7 @@ class CharacterComponent : public Component
 {
 public:
 	CharacterComponent(Actor& owner, DungeonScene& scene);
-	~CharacterComponent();
-
-	void inputComponent() override;
-	void updateComponent() override;
-	void endProcess() override;
+	DECLARE_COMPONENT_NAME(CharacterComponent)
 
 	//getter
 	int getHP();

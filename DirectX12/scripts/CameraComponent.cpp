@@ -7,6 +7,7 @@
 #include "DungeonScene.h"
 #include "PerlinNoise1D.h"
 #include "Random.h"
+#include "GUIDebugger.h"
 #include <windows.h>
 
 float CameraComponent::AccumulatedTime = 0.0f;
@@ -50,6 +51,11 @@ void CameraComponent::updateComponent()
 		cameraPos.z = eye.z;
 		cameraPos.w = 1;
 		mOwner.getScene().getGame().getGraphic().updateCameraPos(cameraPos);
+
+#ifdef _DEBUG
+		//デバッグ画面のカメラ位置の更新
+		mOwner.getScene().getGame().getGUIDebugger().updateCameraPos(eye);
+#endif
 	}
 
 }

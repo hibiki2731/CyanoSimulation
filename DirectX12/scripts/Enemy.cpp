@@ -53,15 +53,3 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	addComponent(std::move(mesh));
 	addComponent(std::move(enemy));
 }
-
-Enemy::~Enemy()
-{
-}
-
-void Enemy::updateActor()
-{
-}
-
-void Enemy::inputActor()
-{
-}

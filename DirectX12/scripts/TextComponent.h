@@ -9,6 +9,7 @@ class TextComponent : public Component
 {
 public:
 	TextComponent(Actor& owner, float zDepth = 100.0f);
+	DECLARE_COMPONENT_NAME(TextComponent)
 
 	void loadFileAndCreate(const std::string& structName);
 	void applyTextTexture();

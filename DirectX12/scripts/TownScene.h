@@ -11,6 +11,7 @@ class BackGround : public Actor
 {
 public:
 	BackGround(Scene& scene);
+	DECLARE_CLASS_NAME(BackGround)
 };
 
 class TownScene :public Scene

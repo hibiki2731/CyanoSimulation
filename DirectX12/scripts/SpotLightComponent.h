@@ -7,6 +7,7 @@ class SpotLightComponent : public Component
 {
 public:
 	SpotLightComponent(Actor& owner, int updateOrder = 100);
+	DECLARE_COMPONENT_NAME(SpotLightComponent)
 
 	void inputComponent() override;
 	void updateComponent() override;

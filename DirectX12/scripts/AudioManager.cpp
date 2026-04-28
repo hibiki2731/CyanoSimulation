@@ -76,6 +76,7 @@ void AudioManager::initXAudio()
 	//マスタリングボイスの初期化
 	hr = mXAudio->CreateMasteringVoice(&mMasteringVoice);
 	if (FAILED(hr)) std::cerr << "マスタリングボイスの初期化失敗\n";
+	mMasteringVoice->SetVolume(0.2f);
 }
 
 void AudioManager::loadSoundFiles()

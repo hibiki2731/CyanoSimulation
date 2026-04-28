@@ -25,6 +25,8 @@ class TitleUI : public Actor
 {
 public:
 	TitleUI(TitleScene& scene);
+	DECLARE_CLASS_NAME(TitleUI)
+
 	void inputActor() override;
 	void updateActor() override;
 

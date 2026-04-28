@@ -20,23 +20,6 @@ CharacterComponent::CharacterComponent(Actor& owner, DungeonScene& scene)
 	};
 }
 
-CharacterComponent::~CharacterComponent()
-{
-}
-
-void CharacterComponent::inputComponent()
-{
-}
-
-void CharacterComponent::updateComponent()
-{
-
-}
-
-void CharacterComponent::endProcess()
-{
-}
-
 int CharacterComponent::getHP()
 {
 	return mHP;

@@ -17,6 +17,7 @@ class EnemyComponent : public CharacterComponent
 {
 public:
 	EnemyComponent(Actor& owner, DungeonScene& scene);
+	DECLARE_COMPONENT_NAME(EnemyComponent)
 
 	void inputComponent() override;
 	void updateComponent() override;

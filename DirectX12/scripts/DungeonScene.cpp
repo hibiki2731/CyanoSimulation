@@ -74,12 +74,20 @@ void DungeonScene::onEnter()
 	mGame.getGraphic().startFadeIn(1.0f);
 
 	mGame.getAudioManager().playBGM("BGM_DUNGEON");
+
+#ifdef _DEBUG
+	mDebugFlag = true;
+#endif
 }
 
 void DungeonScene::onExit()
 {
 	mMapGenerator->end();
 	mResources.clear();
+
+#ifdef _DEBUG
+	mDebugFlag = false;
+#endif
 }
 
 void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)

@@ -79,10 +79,17 @@ public:
 
 #ifdef _DEBUG
 	void drawDebugGUI();
+	void addDebugObject(class Object* object);
+	void removeDebugObject(class Object* object);
+	void clearDebugObject();
 #endif
 
 protected:
 	Game& mGame;
+#ifdef _DEBUG
+	std::vector<class Object*> mDebugObjects;
+	bool mDebugFlag = false;
+#endif
 
 private:
 	std::vector<std::unique_ptr<Actor>> mActors;
@@ -92,5 +99,10 @@ private:
 	std::vector<TextComponent*> mTexts;
 	std::vector<PointLightComponent*> mPointLights;
 	std::vector<SpotLightComponent*> mSpotLights;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
+
 };
 

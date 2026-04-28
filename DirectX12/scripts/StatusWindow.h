@@ -12,6 +12,7 @@ class StatusWindow :
 {
 public:
 	StatusWindow(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(StatusWindow)
 	void updateStatus();
 
 private:

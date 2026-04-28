@@ -5,24 +5,17 @@
 class Object : public Actor
 {
 public:
-	Object(Scene& scene, const std::string& meshID, float x, float y);
+	Object(Scene& scene, const std::string& name, const std::string& meshID, float x = 0.0f, float z = 0.0f);
+	Object(Scene& scene, const std::string& name);
 
-	struct PointLightDescription {
-		XMFLOAT4 offsetPos = { 0.0f, 0.0f, 0.0f, 0.0f };
-		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float intensity = 1.0f;
-		float range = 1.0f;
-	};
-
-	struct SpotLightDescription {
-		XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-		float intensity = 1.0f;
-		float range = 1.0f;
-		float attAngleRange = 0.0f;
-		float angleRange = 0.0f;
-	};
-	
-	void setPointLight(const PointLightDescription& lightData);
-	void setSpotLight(const SpotLightDescription& lightData);
+	//オブジェクトの名前を返す
+	const std::string getClassName() const override {
+		return mName;
+	}
+private:
+	std::string mName;
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
 };
 

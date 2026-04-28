@@ -105,6 +105,11 @@ void Scene::refreshActors()
 	for (auto& actor : mActors) {
 		actor->setState(Actor::State::Dead);
 	}
+
+	//デバッグ時、編集用のオブジェクト配列を空にする
+#ifdef _DEBUG
+	mDebugObjects.clear();
+#endif
 }
 
 
@@ -191,6 +196,30 @@ void Scene::drawDebugGUI()
 			mGame.getGUIDebugger().drawTextDebugGUI(*text);
 		}
 	}
+
+
+	if (mDebugFlag) {
+		//カメラ位置の表示
+		mGame.getGUIDebugger().drawCameraPos();
+		//オブジェクトの編集
+		mGame.getGUIDebugger().drawObjectDebugGUI(mDebugObjects);
+	}
+}
+void Scene::addDebugObject(Object* object)
+{
+	mDebugObjects.push_back(object);
+}
+
+void Scene::removeDebugObject(Object* object)
+{
+	std::erase_if(mDebugObjects, [object](const Object* o) {
+		return o == object;
+		});
+}
+
+void Scene::clearDebugObject()
+{
+	mDebugObjects.clear();
 }
 #endif
 

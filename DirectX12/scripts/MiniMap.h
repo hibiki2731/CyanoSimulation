@@ -9,6 +9,7 @@ class MiniMap :public Actor
 {
 public:
 	MiniMap(DungeonScene& scene);
+	DECLARE_CLASS_NAME(MiniMap)
 	void updatePosition();
 	void updateDirection();
 

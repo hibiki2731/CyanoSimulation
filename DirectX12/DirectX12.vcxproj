@@ -274,6 +274,7 @@
     <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="scripts\myJson.cpp" />
     <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
@@ -293,7 +294,6 @@
     <ClCompile Include="scripts\MapGenerator.cpp" />
     <ClCompile Include="scripts\MessageWindow.cpp" />
     <ClCompile Include="scripts\PlayerManager.cpp" />
-    <ClCompile Include="scripts\PointLight.cpp" />
     <ClCompile Include="scripts\PointLightComponent.cpp" />
     <ClCompile Include="scripts\Math.cpp" />
     <ClCompile Include="scripts\MeshComponent.cpp" />
@@ -340,6 +340,7 @@
     <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
     <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
+    <ClInclude Include="scripts\myJson.h" />
     <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
@@ -362,7 +363,6 @@
     <ClInclude Include="scripts\MapGenerator.h" />
     <ClInclude Include="scripts\MessageWindow.h" />
     <ClInclude Include="scripts\PlayerManager.h" />
-    <ClInclude Include="scripts\PointLight.h" />
     <ClInclude Include="scripts\PointLightComponent.h" />
     <ClInclude Include="scripts\Math.h" />
     <ClInclude Include="scripts\MeshComponent.h" />

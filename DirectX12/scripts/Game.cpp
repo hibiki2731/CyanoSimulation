@@ -6,7 +6,6 @@
 #include "MeshComponent.h"
 #include "SpriteComponent.h"
 #include "PointLightComponent.h"
-#include "PointLight.h"
 #include "TextComponent.h"
 #include "Enemy.h"
 #include "EnemyComponent.h"
@@ -24,9 +23,7 @@ Game::Game(){
 	mUpdatingActors = false;
 }
 
-Game::~Game()
-{
-}
+Game::~Game() = default;
 
 void Game::runLoop()
 {
@@ -53,7 +50,7 @@ void Game::init() {
 
 #ifdef _DEBUG
 	//GUIControllerの初期化
-	mGUIDebugger = std::make_unique<GUIDebugger>(*mGraphic.get());
+	mGUIDebugger = std::make_unique<GUIDebugger>(*this);
 #endif
 
 	//タイマー初期化

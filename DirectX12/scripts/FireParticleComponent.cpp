@@ -46,7 +46,7 @@ FireParticleComponent::FireParticleComponent(Actor& owner)
     static_cast<DungeonScene&>(mOwner.getScene()).addParticle(this);
 
     //エミッタの位置を初期化
-    mEmitterPosition = mOwner.getPosition();
+    mEmitterPosition = {0.0f, 0.0f, 0.0f};
 }
 
 void FireParticleComponent::endProcess()
@@ -128,12 +128,14 @@ void FireParticleComponent::spawnParticle()
     if ((int)mParticles.size() >= MaxParticles) return;
 
     ParticleData p;
-
+   
+    //アクターの位置と加算する
+    XMFLOAT3 emitPos = mEmitterPosition + mOwner.getPosition();
     //発生位置 エミッター中心から少しランダムにばらつかせる
     p.gpu.position = XMFLOAT3(
-        mEmitterPosition.x + Random::dist(-mConfig.spreadRadius, mConfig.spreadRadius),
-        mEmitterPosition.y,
-        mEmitterPosition.z + Random::dist(-mConfig.spreadRadius, mConfig.spreadRadius)
+        emitPos.x + Random::dist(-mConfig.spreadRadius, mConfig.spreadRadius),
+        emitPos.y,
+        emitPos.z + Random::dist(-mConfig.spreadRadius, mConfig.spreadRadius)
     );
 
     //速度 主に上方向、少し横に揺れる

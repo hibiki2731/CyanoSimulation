@@ -7,6 +7,7 @@ class TextComponent;
 class MainMenu : public Menu {
 public:
 	MainMenu(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(MainMenu)
 
 	void updateMenu() override;
 

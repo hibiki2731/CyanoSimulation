@@ -9,6 +9,7 @@ class CameraComponent :  public Component
 {
 public:
 	CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder = 100);
+    DECLARE_COMPONENT_NAME(CameraComponent)
 
     void inputComponent() override;
     void updateComponent() override;

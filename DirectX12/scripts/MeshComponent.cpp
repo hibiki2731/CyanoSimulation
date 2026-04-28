@@ -15,10 +15,7 @@ MeshComponent::MeshComponent(Actor& owner, int updateOrder)
 	mCommandList = mGraphic.getCommandList();
 	mOwner.getScene().addMesh(this);
 	CbvTbvSize = mGraphic.getCbvTbvIncSize();
-}
-
-MeshComponent::~MeshComponent()
-{
+	mMeshID = "NONE";
 }
 
 void MeshComponent::endProcess()
@@ -29,14 +26,19 @@ void MeshComponent::endProcess()
 	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize * 2);
 }
 
-void MeshComponent::create(const std::string& objectName)
+void MeshComponent::create(const std::string& meshID)
 {
-	MeshData* meshData = mOwner.getScene().getGame().getAssetManager().getMeshData(objectName);
+	MeshData* meshData = mOwner.getScene().getGame().getAssetManager().getMeshData(meshID);
+	if (meshData == nullptr) return;
+
+	mMeshID = meshID;
 	create(meshData);
 }
 
 void MeshComponent::create(const MeshData * meshData)
 {	
+	if (meshData == nullptr) return;
+
 	//コンスタントバッファのインデックスを取得
 	mCBSize = (meshData->NumParts + 1) * 256;
 	mCBIndex = mOwner.getScene().getGame().getAssetManager().getCBEndIndex(mCBSize);
@@ -130,4 +132,9 @@ void MeshComponent::draw()
 void MeshComponent::updateFlashIntensity(float intensity)
 {
 	Cb1.flashIntensity = intensity;
+}
+
+const std::string& MeshComponent::getMeshID()
+{
+	return mMeshID;
 }

@@ -11,6 +11,8 @@ class TextComponent;
 class ArmerMenu : public Menu {
 public:
 	ArmerMenu(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(ArmerForgeMenu)
+
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -41,6 +43,7 @@ private:
 class WeaponMenu : public Menu {
 public:
 	WeaponMenu(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(WeaponForgeMenu)
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -71,6 +74,7 @@ private:
 class ForgeMenu : public Menu {
 public:
 	ForgeMenu(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(ForgeMenu)
 	void selectedAct() override;
 };
 

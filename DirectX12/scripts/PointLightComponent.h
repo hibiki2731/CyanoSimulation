@@ -8,6 +8,7 @@ class PointLightComponent : public Component
 {
 public:
 	PointLightComponent(Actor& owner, int updateOrder = 100);
+	DECLARE_COMPONENT_NAME(PointLightComponent)
 
 	void endProcess() override;
 	void updateComponent() override;
@@ -32,5 +33,9 @@ private:
 	XMFLOAT4 mColor;
 	XMFLOAT4 mPosition;
 	XMFLOAT4 mOffsetPos;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
 };
 

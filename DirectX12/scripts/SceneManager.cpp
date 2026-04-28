@@ -83,6 +83,11 @@ const std::string& SceneManager::getCurrentSceneType()
 	return mCurrentSceneType;
 }
 
+Scene& SceneManager::getCurrentScene()
+{
+	return *mCurrentScene;
+}
+
 void SceneManager::transitToTitle()
 {
 	mNextSceneType = "TITLE";

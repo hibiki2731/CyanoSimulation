@@ -9,6 +9,7 @@ class DungeonUI : public Actor
 {
 public:
 	DungeonUI(DungeonScene& scene);
+	DECLARE_CLASS_NAME(DungeonUI)
 	void updateHP();
 	void updateAP();
 	void updateItemIcon();
