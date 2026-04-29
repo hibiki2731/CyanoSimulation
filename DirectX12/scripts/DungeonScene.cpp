@@ -15,6 +15,7 @@
 #include "DungeonUI.h"
 #include "AudioManager.h"
 #include "FireParticleComponent.h"
+#include "DebugCamera.h"
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -60,6 +61,23 @@ void DungeonScene::onEnter()
 	mMapGenerator->begin();
 	mTurnObserver->begin();
 
+	mGame.getGraphic().startFadeIn(1.0f); 
+	mGame.getAudioManager().playBGM("BGM_DUNGEON");
+
+#ifdef _DEBUG
+	mDebugFlag = true;
+
+	//プレイヤーを削除
+	mPlayer->setState(Actor::State::Dead);
+	mPlayer = nullptr;
+
+	//デバッグ用カメラの生成
+	auto camera = std::make_unique<DebugCamera>(*this);
+	addActor(std::move(camera));
+
+	return;
+#endif
+
 	//ミニマップの作成
 	auto minimap = std::make_unique<MiniMap>(*this);
 	mMiniMap = minimap.get();
@@ -71,13 +89,7 @@ void DungeonScene::onEnter()
 	mUI = dungeonUI.get();
 	addActor(std::move(dungeonUI));
 
-	mGame.getGraphic().startFadeIn(1.0f);
 
-	mGame.getAudioManager().playBGM("BGM_DUNGEON");
-
-#ifdef _DEBUG
-	mDebugFlag = true;
-#endif
 }
 
 void DungeonScene::onExit()

@@ -12,9 +12,8 @@
 
 float CameraComponent::AccumulatedTime = 0.0f;
 
-CameraComponent::CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder)
-	: Component(owner, updateOrder),
-	mDungeonScene(scene)
+CameraComponent::CameraComponent(Actor& owner, int updateOrder)
+	: Component(owner, updateOrder)
 {
 	mFront = { 0, 0, 1.0f };  mUp = { 0, 1, 0 };
 	mFocus = mOwner.getPosition() + mFront;
@@ -31,9 +30,7 @@ void CameraComponent::updateComponent()
 {
 	if (isActive) {
 		mFront = { 0.0f, 0.0f, 1.0f };
-		mFront = Math::rotateX(mFront, mOwner.getRotation().x);
-		mFront = Math::rotateY(mFront, mOwner.getRotation().y);
-		mFront = Math::rotateZ(mFront, mOwner.getRotation().z);
+		mFront = Math::rotate(mFront, mOwner.getRotation());
 		mFocus = mOwner.getPosition() + mFront;
 		XMFLOAT3 eye = mOwner.getPosition() + applyShake();
 

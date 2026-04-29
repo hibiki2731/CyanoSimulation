@@ -5,5 +5,7 @@ void updateInput();
 
 //キーが押された瞬間を判定
 bool isKeyJustPressed(int key);
+//キーが押され続けている間を判定
+bool isKeyPressed(int key);
 //キーが離された瞬間を判定
 bool isKeyJustReleased(int key);

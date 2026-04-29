@@ -19,8 +19,8 @@
             "costResourceID": [
                 "GRASS"
             ],
-            "defence": 10,
-            "description": "防御力 10",
+            "defence": 2,
+            "description": "防御力 2",
             "id": "CLOTHES",
             "inPossession": false,
             "name": "服",
@@ -120,11 +120,11 @@
             "costResourceID": [
                 "GRASS"
             ],
-            "description": "攻撃力 10\n",
+            "description": "攻撃力 2\n",
             "id": "WOODEN_SORD",
             "inPossession": false,
             "name": "木の剣",
-            "power": 10,
+            "power": 2,
             "price": [
                 50
             ]

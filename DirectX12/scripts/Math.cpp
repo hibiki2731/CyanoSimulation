@@ -129,23 +129,83 @@ float Math::length(const XMFLOAT3& v)
 
 XMFLOAT3 Math::rotateY(const XMFLOAT3& v1, const float& rot)
 {
-	return XMFLOAT3(v1.x * cosf(rot) - v1.z * sinf(rot), v1.y, v1.x * sinf(rot) + v1.z * cosf(rot));
+	//レジスタへロード
+	XMVECTOR vec = XMLoadFloat3(&v1);
+	//回転行列の生成
+	XMMATRIX rotate = XMMatrixRotationY(rot);
+
+	//行列の積を計算
+	XMVECTOR vResult = XMVector3TransformCoord(vec, rotate);
+
+	//XMFLOAT3へ戻す
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+
+	return result;
 }
 
 XMFLOAT3 Math::rotateX(const XMFLOAT3& v1, const float& rot)
 {
-	return XMFLOAT3(v1.x, v1.y * cosf(rot) - v1.z * sinf(rot), v1.y * sinf(rot) + v1.z * cosf(rot));
+	//レジスタへロード
+	XMVECTOR vec = XMLoadFloat3(&v1);
+	//回転行列の生成
+	XMMATRIX rotate = XMMatrixRotationX(rot);
+
+	//行列の積を計算
+	XMVECTOR vResult = XMVector3TransformCoord(vec, rotate);
+
+	//XMFLOAT3へ戻す
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+
+	return result;
 }
 
 XMFLOAT3 Math::rotateZ(const XMFLOAT3& v1, const float& rot)
 {
-	return XMFLOAT3(v1.x * cosf(rot) - v1.y * sinf(rot), v1.x * sinf(rot) + v1.y * cosf(rot),  v1.z);
+	//レジスタへロード
+	XMVECTOR vec = XMLoadFloat3(&v1);
+	//回転行列の生成
+	XMMATRIX rotate = XMMatrixRotationZ(rot);
+
+	//行列の積を計算
+	XMVECTOR vResult = XMVector3TransformCoord(vec, rotate);
+
+	//XMFLOAT3へ戻す
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+
+	return result;
+}
+
+XMFLOAT3 Math::rotate(const XMFLOAT3& v1, const XMFLOAT3& rot)
+{
+	//レジスタへロード
+	XMVECTOR vec = XMLoadFloat3(&v1);
+	//回転行列の生成
+	XMMATRIX rotate = XMMatrixRotationRollPitchYaw(rot.x, rot.y, rot.z);
+
+	//行列の積を計算
+	XMVECTOR vResult = XMVector3TransformCoord(vec, rotate);
+
+	//XMFLOAT3へ戻す
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, vResult);
+
+	return result;
 }
 
 XMFLOAT3 Math::normalize(const XMFLOAT3& v)
 {
-	double length = Math::length(v);
-	return XMFLOAT3(v.x / length, v.y / length, v.z / length);
+	//レジスタへロード
+	XMVECTOR vec = XMLoadFloat3(&v);
+	//正規化
+	XMVECTOR n = XMVector3Normalize(vec);
+	//XMFLOAT3に戻す
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, n);
+
+	return result;
 }
 
 XMFLOAT3 Math::lerp(const XMFLOAT3& start, const XMFLOAT3& end, const float& ratio)

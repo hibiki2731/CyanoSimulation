@@ -18,6 +18,13 @@ bool isKeyJustPressed(int key) {
 	return isPressedCurrent && !isPressedPrev; //現在押されていて、前は押されていなかった場合にtrue
 }
 
+bool isKeyPressed(int key)
+{
+	bool isPressedCurrent = (isKeyPressed_current[key] & 0x80) != 0; //現在の状態でキーが押されているか
+	bool isPressedPrev = (isKeyPressed_prev[key] & 0x80) != 0; //前の状態でキーが押されていたか
+	return isPressedCurrent && isPressedPrev; //現在も前も押されていた場合にtrue
+}
+
 bool isKeyJustReleased(int key) {
 	bool isPressedCurrent = (isKeyPressed_current[key] & 0x80) != 0; //現在の状態でキーが押されているか
 	bool isPressedPrev = (isKeyPressed_prev[key] & 0x80) != 0; //前の状態でキーが押されていたか

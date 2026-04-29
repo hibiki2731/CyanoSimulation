@@ -45,7 +45,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mFlashDuration = data.flushDuration;
 
 	//カメラの生成
-	std::unique_ptr camera = std::make_unique<CameraComponent>(*this, scene);
+	std::unique_ptr camera = std::make_unique<CameraComponent>(*this);
 	camera->setActive(true);
 	mCamera = camera.get();
 	addComponent(std::move(camera));
@@ -54,7 +54,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	std::unique_ptr<SpotLightComponent> spotLight = std::make_unique<SpotLightComponent>(*this);
 	spotLight->setActive(true);
 	spotLight->setColor(XMFLOAT4(1.0f, 0.9f, 0.8f, 1.0f));
-	spotLight->setIntensity(30.0f);
+	spotLight->setIntensity(20.0f);
 	spotLight->setRange(50.0f);
 	spotLight->setUAngle(XMConvertToRadians(10.0f));
 	spotLight->setPAngle(XMConvertToRadians(40.0f));
@@ -66,12 +66,8 @@ Player::Player(DungeonScene& scene, float x, float y)
 	character->setIndexPos(static_cast<int>(std::round(x / MAPTIPSIZE)), static_cast<int>(std::round(y / MAPTIPSIZE)));
 	character->setMaxHP(data.maxHp);
 	character->setHP(data.hp);
-	//力の計算
-	int power = data.power + mScene.getGame().getItemManager().getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
-	character->setPower(power);
-	//防御力の計算
-	int defence = data.defence + mScene.getGame().getItemManager().getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
-	character->setDefense(defence);
+	character->setPower(data.power);	
+	character->setDefense(data.defence);
 	mCharacter = character.get();
 	addComponent(std::move(character));
 
@@ -353,12 +349,12 @@ void Player::rotate(Direction direction)
 
 	switch (direction) {
 	case Direction::RIGHT:
-		mTargetRot = mRotation - XMFLOAT3(0, XM_PIDIV2, 0);
+		mTargetRot = mRotation + XMFLOAT3(0, XM_PIDIV2, 0);
 		mCharacter->turnRight(); //向きの更新
 
 		break;
 	case Direction::LEFT:
-		mTargetRot = mRotation + XMFLOAT3(0, XM_PIDIV2, 0);
+		mTargetRot = mRotation - XMFLOAT3(0, XM_PIDIV2, 0);
 		mCharacter->turnLeft(); //向きの更新
 		break;
 	}

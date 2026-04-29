@@ -255,6 +255,7 @@
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
+    <ClCompile Include="scripts\DebugCamera.cpp" />
     <ClCompile Include="scripts\DungeonScene.cpp" />
     <ClCompile Include="scripts\DungeonUI.cpp" />
     <ClCompile Include="scripts\EndWindow.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
+    <ClInclude Include="scripts\DebugCamera.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DungeonScene.h" />
     <ClInclude Include="scripts\DungeonUI.h" />
