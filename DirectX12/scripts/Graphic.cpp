@@ -534,7 +534,7 @@ HRESULT Graphic::createPipeline()
 			D3D12_BLEND_DESC blendDesc = {};
 			blendDesc.AlphaToCoverageEnable = true;
 			blendDesc.IndependentBlendEnable = FALSE;
-			blendDesc.RenderTarget[0].BlendEnable = false;
+			blendDesc.RenderTarget[0].BlendEnable = true;
 			blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
 			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;

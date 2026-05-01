@@ -84,22 +84,22 @@ void Player::inputActor()
 {
 	if (mScene.getTurnType() == TurnType::END || mCharacter->getHP() <= 0) return;
 
-	if (GetAsyncKeyState('A')) {
+	if (isKeyPressed('A')) {
 		move(Direction::LEFT);
 	}
-	if (GetAsyncKeyState('D')) {
+	if (isKeyPressed('D')) {
 		move(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState('W')) {
+	if (isKeyPressed('W')) {
 		move(Direction::UP);
 	}
-	if (GetAsyncKeyState('S')) {
+	if (isKeyPressed('S')) {
 		move(Direction::DOWN);
 	}
-	if (GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState('L')) {
+	if (isKeyPressed(VK_RIGHT) || isKeyPressed('L')) {
 		rotate(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState('J')) {
+	if (isKeyPressed(VK_LEFT) || isKeyPressed('J')) {
 		rotate(Direction::LEFT);
 	}
 	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
@@ -409,7 +409,7 @@ void Player::collect()
 	//SE
 	mScene.getGame().getAudioManager().playSE("PICKAXE");
 	//メッセージを追加 resourceをx取得した！(現在の総数)
-	std::string message = resource->getResourceName() + "を" + std::to_string(resource->getAmount()) + "取得した!("
+	std::string message = resource->getResourceName() + "を" + std::to_string(resource->getAmount()) + "取得した! (総数"
 						 + std::to_string(mItemManager.getResourceNum(resource->getResourceID())) + ")\n";
 	mScene.pushMessage(message);
 

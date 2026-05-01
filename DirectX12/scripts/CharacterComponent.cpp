@@ -19,10 +19,6 @@ CharacterComponent::CharacterComponent(Actor& owner, DungeonScene& scene)
 		static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE))
 	};
 
-	if (mIndexPos[0] < 0 || mIndexPos[0] >= scene.getMapSize() ||
-		mIndexPos[1] < 0 || mIndexPos[1] >= scene.getMapSize()) {
-		int i = 0;
-	}
 }
 
 int CharacterComponent::getHP()

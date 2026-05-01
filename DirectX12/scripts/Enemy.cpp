@@ -21,34 +21,24 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	nlohmann::json enemyData;
 	file >> enemyData;
 
-	EnemyParam param;
-	//敵のタイプがjsonファイルに存在するか確認
-	if (enemyData.contains(enemyID)) {
-		param.hp = enemyData[enemyID]["hp"].get<int>();
-		param.power = enemyData[enemyID]["power"].get<int>();
-		param.defense = enemyData[enemyID]["defense"].get<int>();
-		param.meshID = enemyData[enemyID]["meshID"].get<std::string>();
-		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
-		param.senseRange = enemyData[enemyID].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
-		param.dropMoney = enemyData[enemyID].value("dropMoney", 0);
-	}
-
 	//コンポーネントの作成
 	auto mesh = std::make_unique<MeshComponent>(*this);
-	mesh->create(param.meshID);
+	mesh->create(enemyData[enemyID]["meshID"].get<std::string>());
 
 	auto enemy = std::make_unique<EnemyComponent>(*this, scene);
 	mEnemy = enemy.get();
 	mEnemy->setMesh(mesh.get());
 	mEnemy->setDirection(Direction::UP); //上向き
-	mEnemy->setDefense(param.defense);
-	mEnemy->setPower(param.power);
-	mEnemy->setMaxHP(param.hp);
-	mEnemy->setDropMoney(param.dropMoney);
-	mEnemy->setMovePattern(param.movePattern);
+	mEnemy->setDefense(enemyData[enemyID]["defense"].get<int>());
+	mEnemy->setPower(enemyData[enemyID]["power"].get<int>());
+	mEnemy->setMaxHP(enemyData[enemyID]["hp"].get<int>());
+	mEnemy->setDropMoney(enemyData[enemyID].value("dropMoney", 0));
+	mEnemy->setName(enemyData[enemyID]["name"].get<std::string>());
+	MovePattern pattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
+	mEnemy->setMovePattern(pattern);
 	//移動パターンがSENSEのときは、senseRangeを設定する
-	if (param.movePattern == MovePattern::SENSE) {
-		mEnemy->setSenseRange(param.senseRange);
+	if (pattern == MovePattern::SENSE) {
+		mEnemy->setSenseRange(enemyData[enemyID].value("senseRange", 0));
 	}
 
 	//所有権をActorに渡す

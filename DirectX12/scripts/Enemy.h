@@ -15,16 +15,6 @@ public:
 
 private:
 
-	struct EnemyParam {
-		int hp;
-		int power;
-		int defense;
-		std::string meshID;
-		MovePattern movePattern;
-		int senseRange;
-		int dropMoney;
-	};
-
 	class EnemyComponent* mEnemy;
 };
 

@@ -1,6 +1,6 @@
 {
     "SLIME": {
-        "name": "SLIME",
+        "name": "スライム",
         "hp": 5,
         "power": 4,
         "dropMoney": 2,
@@ -10,7 +10,7 @@
         "senseRange": 4
     },
     "NURIKABE": {
-        "name": "NURIKABE",
+        "name": "ぬりかべ",
         "hp": 20,
         "power": 8,
         "dropMoney": 10,

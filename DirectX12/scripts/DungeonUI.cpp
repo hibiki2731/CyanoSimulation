@@ -30,16 +30,6 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 	std::fstream file("assets\\data\\dungeonUIData.json");
 	file >> uiData;
 
-	//キャンバス
-	auto canvas = std::make_unique<SpriteComponent>(*this);
-	canvas->create("assets/picture/UI2/PNG/Default/panel_grey.png");
-	std::vector<float> canvasPos = uiData["canvas"]["pos"].get<std::vector<float>>();
-	canvas->setPosition(XMFLOAT3(canvasPos[0], canvasPos[1], CanvasZ));
-	canvas->setSpriteSize(XMFLOAT2(CanvasWidth, CanvasHeight));
-	canvas->setBordarSize(24.0f);
-	mCanvas = canvas.get();
-	addComponent(std::move(canvas));
-
 	{
 		std::wstring text = L"HP\n";
 		//HPテキスト
@@ -162,6 +152,8 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 
 	//メッセージウィンドウ
 	{
+
+
 		//テキスト
 		std::string structName = "Dugeon_messageText";
 		auto messageText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
@@ -172,7 +164,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 
 		auto message = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
 		message->loadFileAndCreate(structName);
-		message->setPosition(message->getPosX()+10.0f, message->getPosY() + 38.0f);
+		message->setPosition(message->getPosX()+10.0f, message->getPosY() + 45.0f);
 		message->setFontSize(16.0f);
 		message->setLineSpace(10.0f);
 		static std::wstring firstMessage = L"";
@@ -182,6 +174,14 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		addComponent(std::move(message));
 		addComponent(std::move(messageText));
 
+		//メッセージ枠
+		structName = "Dungeon_messageFrame";
+		auto messageFrame = std::make_unique<SpriteComponent>(*this, CanvasZ);
+		messageFrame->loadFileAndCreate(structName);
+#ifdef _DEBUG
+		messageFrame->activateControll(structName);
+#endif
+		addComponent(std::move(messageFrame));
 	}
 
 }

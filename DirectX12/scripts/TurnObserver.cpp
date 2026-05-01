@@ -37,7 +37,10 @@ void TurnObserver::updateTurn()
 	if (mNextTurn == TurnType::PLAYER && mTurnType == TurnType::ENEMY) {
 		//プレイヤーの残り行動回数が0ならば街に帰らせる
 		if (mScene.getPlayerActLimit() == 0) {
-			endProcess();
+			auto player = mScene.getPlayer();
+
+			//死亡していたら処理を行わない
+			if (player->getHP() > 0) endProcess();
 		}
 
 

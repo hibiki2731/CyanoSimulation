@@ -77,9 +77,7 @@ void EnemyComponent::updateComponent()
 
 	//死亡したらActor配列から除去
 	if (!isAlive) {
-		mOwner.setState(Actor::State::Dead);
-		mScene.getGame().getItemManager().addResource("GOLD", mDropMoney);
-		finishAct();
+		deadProcess();
 	}
 
 }	
@@ -124,6 +122,11 @@ void EnemyComponent::setSenseRange(int range)
 void EnemyComponent::setDropMoney(int money)
 {
 	mDropMoney = money;
+}
+
+void EnemyComponent::setName(const std::string& name)
+{
+	mName = name;
 }
 
 void EnemyComponent::activate()
@@ -382,4 +385,18 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 
 	return;
 
+}
+
+void EnemyComponent::deadProcess()
+{
+	//ステートの変更
+	mOwner.setState(Actor::State::Dead);
+	//お金の取得
+	mScene.getGame().getItemManager().addResource("GOLD", mDropMoney);
+		
+	//メッセージの追加
+	std::string message = mName + "を倒した! " + std::to_string(mDropMoney) + "G取得\n";
+	mScene.pushMessage(message);
+
+	finishAct();
 }

@@ -44,6 +44,15 @@
         "x": 740.0,
         "y": 620.0
     },
+    "Dungeon_messageFrame": {
+        "borderSize": 5.1529998779296875,
+        "filePath": "assets/picture\\UI1/Divider Fade/divider-fade-002.png",
+        "height": 10.04699993133545,
+        "rotation": 3.141592025756836,
+        "width": 335.0,
+        "x": 917.0,
+        "y": 638.0
+    },
     "EffectCanvas": {
         "borderSize": 24.0,
         "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
