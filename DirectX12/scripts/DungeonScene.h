@@ -74,6 +74,7 @@ public:
 	void updateAPUI();
 	void updateItemUI();
 	void updateItemFrame();
+	void pushMessage(const std::string& message);
 
 	//ターンの制御
 	void moveToPlayerTurn();

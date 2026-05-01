@@ -21,7 +21,7 @@ std::wstring Utility::stringToWString(const std::string& str)
 	//マルチバイト文字列をワイド文字列に変換してwstringオブジェクトに格納
 	MultiByteToWideChar(CP_UTF8, 0, &str[0], static_cast<int>(str.size()), &wstr[0], wSize);
 
-	return wstr;
+	return std::move(wstr);
 }
 
 std::string Utility::wstringToString(const std::wstring& wstr)
@@ -43,5 +43,5 @@ std::string Utility::wstringToString(const std::wstring& wstr)
     //stringに書き込む
     WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), strTo.data(), sizeNeeded, NULL, NULL);
     
-    return strTo;
+    return std::move(strTo);
 }

@@ -19,8 +19,8 @@ Resource::Resource(DungeonScene& scene, const std::string& resourceID, const std
 	mLife = resourceData.life;
 	mAcquiredAmount = resourceData.acquiredAmount;
 	mIndex = index;
+	mName = resourceData.name;
 	mResourceID = resourceID;
-	mMeshID = meshID;
 	//リソース
 	mDungeonScene.setTileDataAt(mIndex, TileType::RESOURCE);
 }

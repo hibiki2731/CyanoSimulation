@@ -401,11 +401,17 @@ void Player::collect()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
-	mScene.getGame().getAudioManager().playSE("PICKAXE");
 
 	auto resource = mScene.getResource(mCharacter->getIndexPosInt());
 	if (resource) resource->collect();
 	else return;
+
+	//SE
+	mScene.getGame().getAudioManager().playSE("PICKAXE");
+	//メッセージを追加 resourceをx取得した！(現在の総数)
+	std::string message = resource->getResourceName() + "を" + std::to_string(resource->getAmount()) + "取得した!("
+						 + std::to_string(mItemManager.getResourceNum(resource->getResourceID())) + ")\n";
+	mScene.pushMessage(message);
 
 	//ターン経過
 	turnEnd();

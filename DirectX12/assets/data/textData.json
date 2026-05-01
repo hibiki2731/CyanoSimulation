@@ -59,6 +59,19 @@
         "x": 790.0,
         "y": 130.0
     },
+    "Dugeon_messageText": {
+        "color": [
+            1.0,
+            1.0,
+            1.0,
+            0.7411764860153198
+        ],
+        "fontSize": 32.0,
+        "lineSpace": 32.0,
+        "text": "message",
+        "x": 900.0,
+        "y": 625.0
+    },
     "EffectText": {
         "fontSize": 30.0,
         "lineSpace": 50.0,
@@ -278,7 +291,7 @@
     "MainMenuText": {
         "fontSize": 50.0,
         "lineSpace": 60.0,
-        "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョンへ\n",
+        "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョン\n",
         "x": 60.0,
         "y": 200.0
     },

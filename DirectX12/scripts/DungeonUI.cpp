@@ -23,7 +23,8 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 	:Actor(scene),
 	mItemManager(scene.getGame().getItemManager()),
 	mPlayerManager(scene.getGame().getPlayerManager()),
-	mPlayer(*scene.getPlayer())
+	mPlayer(*scene.getPlayer()),
+	mMaxMessageNum(3)
 {
 	nlohmann::json uiData;
 	std::fstream file("assets\\data\\dungeonUIData.json");
@@ -159,10 +160,28 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 		addComponent(std::move(selectItemText));
 	}
 
+	//メッセージウィンドウ
 	{
-		//所持金
-		//auto moneyText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		//moneyText->setFontSize
+		//テキスト
+		std::string structName = "Dugeon_messageText";
+		auto messageText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+		messageText->loadFileAndCreate(structName);
+#ifdef _DEBUG
+		messageText->activateControll(structName);
+#endif
+
+		auto message = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
+		message->loadFileAndCreate(structName);
+		message->setPosition(message->getPosX()+10.0f, message->getPosY() + 38.0f);
+		message->setFontSize(16.0f);
+		message->setLineSpace(10.0f);
+		static std::wstring firstMessage = L"";
+		message->setText(firstMessage);
+
+		mMessageText = message.get();
+		addComponent(std::move(message));
+		addComponent(std::move(messageText));
+
 	}
 
 }
@@ -230,4 +249,16 @@ void DungeonUI::updateItemFrame()
 	//選択アイテムの名前を更新
 	std::wstring selectItemText = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
 	mSelectItemText->setText(selectItemText);
+}
+
+void DungeonUI::pushMessage(const std::string& message)
+{
+	if (mMessages.size() >= mMaxMessageNum) mMessages.pop_front();
+	mMessages.push_back(message);
+
+	std::string text;
+	for (int i = mMessages.size() - 1; i >= 0; i--) {
+		text += mMessages[i] + "\n";
+	}
+	mMessageText->setText(Utility::stringToWString(text));
 }

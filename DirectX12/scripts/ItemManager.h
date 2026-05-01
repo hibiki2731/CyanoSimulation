@@ -64,7 +64,7 @@ public:
 	void subResource(const std::string& id, int num);
 
 	//getter
-	int getResourceNum(std::string id);
+	int getResourceNum(const std::string& id);
 	const ResourceData& getResourceData(const std::string& id);
 	const std::unordered_map<std::string, ResourceData>& getResourceData();
 	const ItemData& getItemData(const std::string& id);
@@ -77,9 +77,9 @@ public:
 	const std::unordered_map<std::string, ExplorerData>& getExplorerData();
 
 	//setter
-	void setWeaopnPossession(std::string id, bool possession);
-	void setArmerPossession(std::string id, bool possession);
-	void setToolPossession(std::string id, bool possession);
+	void setWeaopnPossession(const std::string& id, bool possession);
+	void setArmerPossession(const std::string& id, bool possession);
+	void setToolPossession(const std::string& id, bool possession);
 
 	static const ItemData EmptyItem;
 	static const WeaponData EmptyWeapon;

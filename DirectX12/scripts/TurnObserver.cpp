@@ -100,12 +100,13 @@ void TurnObserver::spawnEnemy()
 	int mapSize = mScene.getMapSize();
 	while (i < 50) {
 		//スポーンするマスを乱数で決定
-		int x = Random::dist(-9, 9);
-		int y = Random::dist(-9, 9);
+		int x = playerIndex[0] + Random::dist(-9, 9);
+		int y = playerIndex[1] + Random::dist(-9, 9);
+
 
 		//障害物がある場合、もう一度乱数を振りなおす
-		if (mScene.getTileDataAt(playerIndex[0] + x, playerIndex[1] + y) == TileType::WALL ||
-			mScene.getCharacterDataAt(playerIndex[0] + x, playerIndex[1] + y) != CharacterType::EMPTY) {
+		if (mScene.getTileDataAt(x, y) == TileType::WALL ||
+			mScene.getCharacterDataAt(x, y) != CharacterType::EMPTY) {
 			i++;
 			continue;
 		}

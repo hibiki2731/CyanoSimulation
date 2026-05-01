@@ -67,6 +67,7 @@ void DungeonScene::onEnter()
 #ifdef _DEBUG
 	mDebugFlag = true;
 
+#ifdef EDIT
 	//プレイヤーを削除
 	mPlayer->setState(Actor::State::Dead);
 	mPlayer = nullptr;
@@ -76,6 +77,8 @@ void DungeonScene::onEnter()
 	addActor(std::move(camera));
 
 	return;
+#endif
+
 #endif
 
 	//ミニマップの作成
@@ -137,16 +140,16 @@ void DungeonScene::spawnResource()
 	//障害物がない　かつ　プレイヤーから4マス以上9マス以下の範囲でスポーン
 	while (i < 50) {
 		//スポーンするマスを乱数で決定
-		int x = Random::dist(-9, 9);
-		int y = Random::dist(-9, 9);
+		int x = playerIndex[0] + Random::dist(-9, 9);
+		int y = playerIndex[1] + Random::dist(-9, 9);
 
 		//障害物がある場合、もう一度乱数を振りなおす
-		if (playerIndex[0] + x < 0 || playerIndex[0] + x >= mMapSize || playerIndex[1] + y < 0 || playerIndex[1] + y >= mMapSize) {
+		if (x < 0 || x >= mMapSize || y < 0 || y >= mMapSize) {
 			i++;
 			continue;
 		}
-		if (mTileData[playerIndex[0] + x][playerIndex[1] + y] != TileType::FLOOR
-			|| mCharacterData[playerIndex[0] + x][playerIndex[1] + y] != CharacterType::EMPTY) {
+		if (mTileData[x][y] != TileType::FLOOR
+			|| mCharacterData[x][y] != CharacterType::EMPTY) {
 			i++;
 			continue;
 		}
@@ -345,6 +348,11 @@ void DungeonScene::updateItemUI()
 void DungeonScene::updateItemFrame()
 {
 	mUI->updateItemFrame();
+}
+
+void DungeonScene::pushMessage(const std::string& message)
+{
+	mUI->pushMessage(message);
 }
 
 void DungeonScene::moveToEnemyTurn()

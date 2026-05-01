@@ -22,7 +22,9 @@ private:
 		std::string meshID;
 		MovePattern movePattern;
 		int senseRange;
+		int dropMoney;
 	};
+
 	class EnemyComponent* mEnemy;
 };
 

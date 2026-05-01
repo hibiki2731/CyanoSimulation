@@ -10,9 +10,14 @@ public:
 
 	void collect();
 
+	//getter
+	const std::string& getResourceID() { return mResourceID; }
+	const std::string& getResourceName() { return mName; }
+	int getAmount() { return mAcquiredAmount; }
+
 private:
 	std::string mResourceID;
-	std::string mMeshID;
+	std::string mName;
 	class DungeonScene& mDungeonScene;
 	class ItemManager& mItemManager;
 

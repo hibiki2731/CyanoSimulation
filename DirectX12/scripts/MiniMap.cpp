@@ -8,7 +8,7 @@
 
 constexpr int DisplayRange = 2;
 constexpr int TileNum = (DisplayRange * 2 + 1) * (DisplayRange * 2 + 1);
-constexpr XMFLOAT2 CanvasSize = { Graphic::ClientWidth * 0.2f, Graphic::ClientWidth * 0.2f};
+constexpr XMFLOAT2 CanvasSize = { Graphic::ClientWidth * 0.15f, Graphic::ClientWidth * 0.15f};
 constexpr XMFLOAT2 IconSize = { CanvasSize.x / (2 * DisplayRange + 1), CanvasSize.y / (2 * DisplayRange + 1) };
 
 MiniMap::MiniMap(DungeonScene& scene) 

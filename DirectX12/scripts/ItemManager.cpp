@@ -157,7 +157,7 @@ void ItemManager::subResource(const std::string& id, int num)
 	iter->second.num = static_cast<size_t>(value);
 }
 
-int ItemManager::getResourceNum(std::string id) {
+int ItemManager::getResourceNum(const std::string& id) {
 	auto iter = mResourceData.find(id);
 	if (iter != mResourceData.end())
 		//idが存在する場合
@@ -250,21 +250,21 @@ const std::unordered_map<std::string, ExplorerData>& ItemManager::getExplorerDat
 	return mExplorerData;
 }
 
-void ItemManager::setWeaopnPossession(std::string id, bool possession)
+void ItemManager::setWeaopnPossession(const std::string& id, bool possession)
 {
 	auto iter = mWeaponData.find(id);
 	if (iter != mWeaponData.end())
 		iter->second.inPossession = possession;
 }
 
-void ItemManager::setArmerPossession(std::string id, bool possession)
+void ItemManager::setArmerPossession(const std::string& id, bool possession)
 {
 	auto iter = mArmerData.find(id);
 	if (iter != mArmerData.end())
 		iter->second.inPossession = possession;
 }
 
-void ItemManager::setToolPossession(std::string id, bool possession)
+void ItemManager::setToolPossession(const std::string& id, bool possession)
 {
 	auto iter = mExplorerData.find(id);
 	if (iter != mExplorerData.end())

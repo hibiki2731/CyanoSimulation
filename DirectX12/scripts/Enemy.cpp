@@ -30,6 +30,7 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 		param.meshID = enemyData[enemyID]["meshID"].get<std::string>();
 		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
 		param.senseRange = enemyData[enemyID].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
+		param.dropMoney = enemyData[enemyID].value("dropMoney", 0);
 	}
 
 	//コンポーネントの作成
@@ -43,6 +44,7 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	mEnemy->setDefense(param.defense);
 	mEnemy->setPower(param.power);
 	mEnemy->setMaxHP(param.hp);
+	mEnemy->setDropMoney(param.dropMoney);
 	mEnemy->setMovePattern(param.movePattern);
 	//移動パターンがSENSEのときは、senseRangeを設定する
 	if (param.movePattern == MovePattern::SENSE) {
@@ -53,3 +55,4 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	addComponent(std::move(mesh));
 	addComponent(std::move(enemy));
 }
+

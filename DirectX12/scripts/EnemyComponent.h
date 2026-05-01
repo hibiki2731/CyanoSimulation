@@ -29,6 +29,7 @@ public:
 	void setMesh(MeshComponent* mesh);
 	void setMovePattern(MovePattern state);
 	void setSenseRange(int range);
+	void setDropMoney(int money);
 	void activate();
 
 	void startFlash();
@@ -86,10 +87,11 @@ private:
 
 	int mDistPlayer; //プレイヤーからの距離(マンハッタン距離)
 
-	//マップマネージャー
-	//class MapGenerator& mMapGenerator;
 	//シーン
 	DungeonScene& mScene;
+
+	//ドロップするお金
+	int mDropMoney;
 
 };
 

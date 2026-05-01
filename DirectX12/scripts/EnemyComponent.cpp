@@ -5,6 +5,8 @@
 #include "Random.h"
 #include "Math.h"
 #include "DungeonScene.h"
+#include "ItemManager.h"
+#include "Enemy.h"
 #include "Math.h"
 
 EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
@@ -24,6 +26,7 @@ EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene)
 	isActive = false;
 	mTargetPos = mOwner.getPosition();
 	mDistPlayer = 10000000;
+	mDropMoney = 0;
 
 	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
 	mIndexPos[1] = static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE));
@@ -75,6 +78,7 @@ void EnemyComponent::updateComponent()
 	//死亡したらActor配列から除去
 	if (!isAlive) {
 		mOwner.setState(Actor::State::Dead);
+		mScene.getGame().getItemManager().addResource("GOLD", mDropMoney);
 		finishAct();
 	}
 
@@ -115,6 +119,11 @@ void EnemyComponent::setMovePattern(MovePattern state)
 void EnemyComponent::setSenseRange(int range)
 {
 	mSenseRange = range;
+}
+
+void EnemyComponent::setDropMoney(int money)
+{
+	mDropMoney = money;
 }
 
 void EnemyComponent::activate()
@@ -247,6 +256,7 @@ void EnemyComponent::calcTargetIndex(int(&targetIndex)[2])
 		else {
 			randomWalk(targetIndex);
 		}
+		break;
 	}
 
 }
@@ -352,15 +362,19 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 	switch (direction) {
 		case Direction::UP:
 			targetIndex[1] += 1;
+			if (targetIndex[1] > mScene.getMapSize() - 1) targetIndex[1]--;
 			break;
 		case Direction::DOWN:
 			targetIndex[1] -= 1;
+			if (targetIndex[1] < 0) targetIndex[1]++;
 			break;
 		case Direction::RIGHT:
 			targetIndex[0] += 1;
+			if (targetIndex[0] > mScene.getMapSize() - 1) targetIndex[0]--;
 			break;
 		case Direction::LEFT:
 			targetIndex[0] -= 1;
+			if (targetIndex[0] < 0) targetIndex[0]++;
 			break;
 		case 1 << 4:
 			break;
