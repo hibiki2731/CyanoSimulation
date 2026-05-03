@@ -1,17 +1,18 @@
 {
-    "Resource": [ {
+    "Resource": [
+        {
+            "acquiredAmount": 1,
             "id": "GOLD",
-            "name": "G",
-            "num": 990,
             "life": 0,
-            "acquiredAmount": 1
+            "name": "G",
+            "num": 0
         },
         {
+            "acquiredAmount": 1,
             "id": "GRASS",
-            "name": "草",
-            "num": 1000,
             "life": 3,
-            "acquiredAmount": 1
+            "name": "草",
+            "num": 0
         }
     ]
 }

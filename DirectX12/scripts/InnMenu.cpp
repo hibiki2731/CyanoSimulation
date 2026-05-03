@@ -261,10 +261,6 @@ void ConfirmWindow::save()
 		itemFile >> itemJson;
 		itemFile.close();
 
-		//リソースの所持数を更新
-		for (auto& resource : itemJson["Resource"]) {
-			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
-		}
 		//武器の所有を更新
 		for (auto& weapon : itemJson["Weapon"]) {
 			weapon["inPossession"] = mScene.getGame().getItemManager().getWeaponData(weapon["id"]).inPossession;
@@ -277,7 +273,6 @@ void ConfirmWindow::save()
 		for (auto& tool : itemJson["Explorer"]) {
 			tool["inPossession"] = mScene.getGame().getItemManager().getExplorerData(tool["id"]).inPossession;
 		}
-
 
 		//一時ファイルへの書き出し
 		try {
@@ -293,6 +288,37 @@ void ConfirmWindow::save()
 		try {
 			// すでに正式なファイルが存在する場合は上書きされる
 			std::filesystem::rename("assets/data/itemData.json.tmp", "assets/data/itemData.json");
+		}
+		catch (const std::filesystem::filesystem_error& e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	//リソースデータの書き込み
+	{
+		nlohmann::json resourceJson;
+		std::ifstream resourceFile("assets/data/resourceData.json");
+		resourceFile >> resourceJson;
+		resourceFile.close();
+
+		//リソースの所持数を更新
+		for (auto& resource : resourceJson["Resource"]) {
+			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
+		}
+
+		//一時ファイルへの書き出し
+		try {
+			std::ofstream os("assets/data/resourceData.json.tmp");
+			if (!os) throw std::runtime_error("ファイルが開けません");
+
+			os << resourceJson.dump(4);
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
+		//書き込みが成功したら、一時ファイルを正式な名前にリネームする
+		try {
+			// すでに正式なファイルが存在する場合は上書きされる
+			std::filesystem::rename("assets/data/resourceData.json.tmp", "assets/data/resourceData.json");
 		}
 		catch (const std::filesystem::filesystem_error& e) {
 			std::cerr << e.what() << std::endl;

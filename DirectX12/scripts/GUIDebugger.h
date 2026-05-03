@@ -13,8 +13,6 @@ public:
 
 	void begin();
 	void end();
-	void drawSpriteDebugGUI(class SpriteComponent& sprite);
-	void drawTextDebugGUI(class TextComponent& text);
 	void drawCameraPos();
 	void drawObjectDebugGUI(std::vector<class Object*>& objects);
 

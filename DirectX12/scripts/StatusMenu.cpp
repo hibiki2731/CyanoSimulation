@@ -32,7 +32,6 @@ void EquipWeaponMenu::applyComponentLabel()
 {
 	//装備中アイコン
 	mEquipIcon = static_cast<SpriteComponent*>(mComponentLabels["equipIcon"].pComponent);
-	if (mEquipIcon) mEquipIcon->setPosY(-100.0f); //初期位置はテキストの外にしておく
 
 	//所持武器のテキストを作成
 	mTextComponent = static_cast<TextComponent*>(mComponentLabels["equipmentText"].pComponent);
@@ -164,7 +163,6 @@ void EquipArmerMenu::applyComponentLabel()
 {
 	//装備中アイコン
 	mEquipIcon = static_cast<SpriteComponent*>(mComponentLabels["equipIcon"].pComponent);
-	if (mEquipIcon) mEquipIcon->setPosY(-100.0f); //初期位置はテキストの外にしておく
 
 	//所持防具のテキストを作成
 	mTextComponent = static_cast<TextComponent*>(mComponentLabels["equipmentText"].pComponent);

@@ -171,7 +171,7 @@ void ShopMenu::showItemCost()
 	std::wstring costText = L"消費リソース\n";
 	for (int i = 0; i < itemData.costResourceID.size(); i++) {
 		const auto& resourceData = mItemManager.getResourceData(itemData.costResourceID[i]);
-		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(itemData.price[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" " + std::to_wstring(itemData.price[i]) + L"  ";
 	}
 	costText += L"\n";
 	mCostText->setText(costText);

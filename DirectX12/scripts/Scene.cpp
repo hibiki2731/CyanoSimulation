@@ -200,18 +200,6 @@ void Scene::inputActors()
 #ifdef _DEBUG
 void Scene::drawDebugGUI()
 {
-	for (auto sprite : mSprites) {
-		if (sprite->getActiveControll()) {
-			mGame.getGUIDebugger().drawSpriteDebugGUI(*sprite);
-		}
-	}
-
-	for (auto text : mTexts) {
-		if (text->getActiveControll()) {
-			mGame.getGUIDebugger().drawTextDebugGUI(*text);
-		}
-	}
-
 
 	if (mDebugFlag) {
 		//カメラ位置の表示

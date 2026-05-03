@@ -250,6 +250,8 @@ void ArmerMenu::craftArmer(int index)
 	mItemManager.setArmerPossession(armerData.id, true);
 	//インベントリにアイテムを追加
 	mPlayerManager.addArmer(armerData.id);
+	//防具を装備
+	mPlayerManager.equipArmer(mPlayerManager.getPlayerData().armerInventory.size() - 1);
 
 	//各テキストの更新
 	refreshText();
@@ -295,7 +297,7 @@ void ArmerMenu::showCraftCost()
 	std::wstring costText = L"消費リソース\n";
 	for (int i = 0; i < armerData.costResourceID.size(); i++) {
 		const auto& resourceData = mItemManager.getResourceData(armerData.costResourceID[i]);
-		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(armerData.price[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" " + std::to_wstring(armerData.price[i]) + L"  ";
 	}
 	costText += L"\n";
 	mCostText->setText(costText);
@@ -475,6 +477,8 @@ void WeaponMenu::craftWeapon(int index)
 	mPlayerManager.addWeapon(weaponData.id);
 	refreshText();
 
+	//武器の装備
+	mPlayerManager.equipWeapon(mPlayerManager.getPlayerData().weaponInventory.size() - 1);
 	//各テキストを更新
 	showWeaponEffect();
 	showCraftCost();
@@ -519,7 +523,7 @@ void WeaponMenu::showCraftCost()
 	std::wstring costText = L"消費リソース\n";
 	for (int i = 0; i < weaponData.costResourceID.size(); i++) {
 		const auto& resourceData = mItemManager.getResourceData(weaponData.costResourceID[i]);
-		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(weaponData.price[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" " + std::to_wstring(weaponData.price[i]) + L"  ";
 	}
 	costText += L"\n";
 	mCostText->setText(costText);

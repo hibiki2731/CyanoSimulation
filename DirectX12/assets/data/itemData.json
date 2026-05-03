@@ -25,7 +25,7 @@
             "inPossession": false,
             "name": "服",
             "price": [
-                20
+                3
             ]
         },
         {
@@ -47,6 +47,7 @@
         {
             "category": "ACTION_LIMIT",
             "costResourceID": [
+                "GOLD",
                 "GRASS"
             ],
             "description": "APの最大値が10増加\n",
@@ -54,13 +55,15 @@
             "inPossession": false,
             "name": "靴",
             "price": [
-                25
+                20,
+                10
             ],
             "value": 10
         },
         {
             "category": "STORAGE_SIZE",
             "costResourceID": [
+                "GOLD",
                 "GRASS"
             ],
             "description": "所持アイテム数が1増加\n",
@@ -68,7 +71,8 @@
             "inPossession": false,
             "name": "バックパック",
             "price": [
-                25
+                30,
+                15
             ]
         }
     ],
@@ -83,7 +87,7 @@
             "id": "HERB",
             "name": "薬草",
             "price": [
-                10
+                3
             ],
             "value": 20
         },
@@ -97,12 +101,11 @@
             "id": "SALTED_KELP",
             "name": "塩昆布",
             "price": [
-                40
+                5
             ],
             "value": 20
         }
     ],
-    "Resource": null,
     "Weapon": [
         {
             "costResourceID": [
@@ -127,7 +130,7 @@
             "name": "木の剣",
             "power": 2,
             "price": [
-                50
+                5
             ]
         },
         {
