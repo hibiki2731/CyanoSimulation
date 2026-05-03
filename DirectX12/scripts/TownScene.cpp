@@ -102,3 +102,8 @@ void TownScene::updateStatusWindow()
 	mStatusWindow->updateStatus();
 }
 
+Menu* TownScene::getCurrentMenu()
+{
+	return mMenuStack.top();
+}
+

@@ -161,6 +161,7 @@ void ExplorerMenu::craftExplorer(int index)
 	mScene.updateStatusWindow();
 	showCraftCost();
 	showToolEffect();
+	showResource();
 
 }
 

@@ -1,7 +1,7 @@
 {
     "Resource": [ {
             "id": "GOLD",
-            "name": "GOLD",
+            "name": "G",
             "num": 990,
             "life": 0,
             "acquiredAmount": 1

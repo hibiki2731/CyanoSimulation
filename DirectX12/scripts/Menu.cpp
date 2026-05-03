@@ -49,8 +49,23 @@ void Menu::inputMenu() {
 	}
 }
 
+void Menu::updateActor()
+{
+	if (mArrow) {
+		//メニューがアクティブでないとき
+		if (mScene.getCurrentMenu() != this) {
+			mArrow->setPosZ(200.0f);
+		}
+		else
+			mArrow->setPosZ(mArrowDefaultPosition);
+	}
+}
+
 void Menu::applyComponentLabel()
 {
 	mArrow = static_cast<SpriteComponent*>(mComponentLabels["selectArrow"].pComponent);
+	if (mArrow) {
+		mArrowDefaultPosition = mArrow->getPosition().z;
+	}
 }
 

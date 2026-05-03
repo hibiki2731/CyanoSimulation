@@ -181,9 +181,13 @@ void ArmerMenu::craftArmer(int index)
 	mItemManager.setArmerPossession(armerData.id, true);
 	//インベントリにアイテムを追加
 	mPlayerManager.addArmer(armerData.id);
+
+	//各テキストの更新
 	refreshText();
 	showArmerEffect();
 	showCraftCost();
+	showResource();
+	mScene.updateStatusWindow();
 }
 
 void ArmerMenu::refreshText()
@@ -401,8 +405,12 @@ void WeaponMenu::craftWeapon(int index)
 	//インベントリにアイテムを追加
 	mPlayerManager.addWeapon(weaponData.id);
 	refreshText();
+
+	//各テキストを更新
 	showWeaponEffect();
 	showCraftCost();
+	showResource();
+	mScene.updateStatusWindow();
 }
 
 void WeaponMenu::refreshText()

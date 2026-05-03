@@ -18,6 +18,7 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 	addComponentLabel("hpBar", "SpriteComponent");
 	addComponentLabel("apValueText", "TextComponent");
 	addComponentLabel("originItemIcon", "SpriteComponent");
+	addComponentLabel("goldText", "TextComponent");
 	
 	applyComponentLabel();
 }
@@ -67,6 +68,14 @@ void StatusWindow::applyComponentLabel()
 		updateStatus();
 
 	}
+
+	//所持金
+	mGoldText = static_cast<TextComponent*>(mComponentLabels["goldText"].pComponent);
+	if (mGoldText) {
+		int goldValue = mItemManager.getResourceNum("GOLD");
+		std::wstring text = std::to_wstring(goldValue) + L" G\n";
+		mGoldText->setText(text);
+	}
 }
 
 void StatusWindow::updateStatus()
@@ -91,28 +100,34 @@ void StatusWindow::updateStatus()
 	if(mAPValueText) mAPValueText->setText(apText);
 
 	//アイテムアイコンを更新
-	if (mItemIcons.size() == 0) return;
-	//ストレージサイズが変更されていた場合
-	if (mItemIcons.size() < playerData.storageSize) {
-		for (int i = mItemIcons.size(); i < playerData.storageSize; i++) {
-			auto itemIcon = std::make_unique<SpriteComponent>(*this);
-			XMFLOAT3 position = mItemIcons[0]->getPosition();
-			position.x += i * (mItemIcons[0]->getSpriteSize().x + 10.0f); //アイテムアイコンの間隔を10.0fとする
-			itemIcon->setPosition(position);
-			itemIcon->setSpriteSize(mItemIcons[0]->getSpriteSize());
-			itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
-			mItemIcons.push_back(itemIcon.get());
-			addComponent(std::move(itemIcon));
+	if (mItemIcons.size() != 0) {
+		//ストレージサイズが変更されていた場合
+		if (mItemIcons.size() < playerData.storageSize) {
+			for (int i = mItemIcons.size(); i < playerData.storageSize; i++) {
+				auto itemIcon = std::make_unique<SpriteComponent>(*this);
+				XMFLOAT3 position = mItemIcons[0]->getPosition();
+				position.x += i * (mItemIcons[0]->getSpriteSize().x + 10.0f); //アイテムアイコンの間隔を10.0fとする
+				itemIcon->setPosition(position);
+				itemIcon->setSpriteSize(mItemIcons[0]->getSpriteSize());
+				itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+				mItemIcons.push_back(itemIcon.get());
+				addComponent(std::move(itemIcon));
+			}
+		}
+
+		//アイテムの更新
+		for (int i = 0; i < playerData.storageSize; i++) {
+			if (i < playerData.inventory.size())
+				mItemIcons[i]->create(mItemManager.getItemData(playerData.inventory[i]).iconFilePath);
+			else
+				mItemIcons[i]->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
 		}
 	}
 
-	//アイテムの更新
-	for (int i = 0; i < playerData.storageSize; i++) {
-		if (i < playerData.inventory.size())
-			mItemIcons[i]->create(mItemManager.getItemData(playerData.inventory[i]).iconFilePath);
-		else
-			mItemIcons[i]->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
-	}
+	//所持金の更新
+	int goldValue = mItemManager.getResourceNum("GOLD");
+	text = std::to_wstring(goldValue) + L" G\n";
+	if(mGoldText) mGoldText->setText(text);
 
 
 }

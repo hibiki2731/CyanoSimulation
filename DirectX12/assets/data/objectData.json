@@ -489,9 +489,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 30.0,
@@ -646,9 +646,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 30.0,
@@ -727,6 +727,448 @@
             ]
         },
         "ExplorerShopMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        270.0,
+                        130.0,
+                        96.5
+                    ],
+                    "text": "ExplorerShop\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        310.0,
+                        203.0,
+                        96.0
+                    ],
+                    "text": "靴\nバックパック\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        630.0,
+                        96.0
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        185.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        96.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 930  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        96.5
+                    ],
+                    "text": "APの最大値が10増加\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        96.5
+                    ],
+                    "text": "消費リソース\n草 : 25\n"
+                }
+            ],
+            "label": {
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                },
+                "toolEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "toolText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                97.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ExplorerShopMenu_copy": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        270.0,
+                        130.0,
+                        96.5
+                    ],
+                    "text": "ExplorerShop\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        310.0,
+                        203.0,
+                        96.0
+                    ],
+                    "text": "靴\nバックパック\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        630.0,
+                        96.0
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        185.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        96.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 930  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        96.5
+                    ],
+                    "text": "APの最大値が10増加\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        96.5
+                    ],
+                    "text": "消費リソース\n草 : 25\n"
+                }
+            ],
+            "label": {
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                },
+                "toolEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "toolText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                97.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ExplorerShopMenu_copy_copy": {
             "components": [
                 {
                     "borderSize": 24.0,
@@ -1207,8 +1649,8 @@
                     "lineSpace": 50.0,
                     "name": "TextComponent",
                     "position": [
-                        290.0,
-                        210.0,
+                        300.0,
+                        220.0,
                         94.0
                     ],
                     "text": "FORGE"
@@ -1224,7 +1666,7 @@
                     "lineSpace": 60.0,
                     "name": "TextComponent",
                     "position": [
-                        300.0,
+                        310.0,
                         270.0,
                         94.0
                     ],
@@ -1925,9 +2367,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 32.0,
@@ -2010,9 +2452,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 20.0,
@@ -2027,9 +2469,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 20.0,
@@ -2070,9 +2512,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 20.0,
@@ -2087,9 +2529,9 @@
                 },
                 {
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.0,
+                        0.0,
+                        0.0,
                         1.0
                     ],
                     "fontSize": 20.0,
@@ -2140,12 +2582,33 @@
                     ],
                     "rotation": 0.0,
                     "width": 60.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        0.8860759735107422,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 20.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        305.0,
+                        110.0,
+                        98.0
+                    ],
+                    "text": "990 G\n"
                 }
             ],
             "label": {
                 "apValueText": {
                     "componentName": "TextComponent",
                     "id": 6
+                },
+                "goldText": {
+                    "componentName": "TextComponent",
+                    "id": 10
                 },
                 "hpBar": {
                     "componentName": "SpriteComponent",

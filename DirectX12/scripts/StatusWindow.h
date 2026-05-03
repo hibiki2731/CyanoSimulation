@@ -25,5 +25,6 @@ private:
 	SpriteComponent* mHPBar;
 	TextComponent* mAPValueText;
 	std::vector<SpriteComponent*> mItemIcons;
+	TextComponent* mGoldText;
 };
 

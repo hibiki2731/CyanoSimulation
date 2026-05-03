@@ -25,9 +25,12 @@ public:
 	//ステータスウィンドウの更新
 	void updateStatusWindow();
 
+	//getter
 	const std::string getName() const override {
 		return "TOWN";
 	}
+	Menu* getCurrentMenu();
+
 
 private:
 	bool isSelected;
