@@ -131,6 +131,15 @@ void MapGenerator::createTile()
 				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
 			}
+			else if (category == "GOAL") {
+				//床の生成
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(rockFloor));
+
+				//旗の生成
+				std::unique_ptr<Object> flag = std::make_unique<Object>(mScene, "Flag", tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(flag));
+			}
 
 			//壁の生成
 			//西壁

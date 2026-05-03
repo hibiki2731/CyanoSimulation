@@ -16,6 +16,7 @@
 #include "AudioManager.h"
 #include "FireParticleComponent.h"
 #include "DebugCamera.h"
+//#define EDIT
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -365,11 +366,6 @@ void DungeonScene::moveToEnemyTurn()
 	mTurnObserver->moveToEnemyTurn();
 }
 
-void DungeonScene::moveNextFloor()
-{
-
-}
-
 void DungeonScene::moveToPlayerTurn()
 {
 	mTurnObserver->moveToPlayerTurn();
@@ -436,7 +432,7 @@ void DungeonScene::createDamageText(const XMFLOAT3& pos, int digit)
 	mDamageTextManaager->createDamageText(pos, digit);
 }
 
-const TurnObserver& DungeonScene::getTurnObserver()
+TurnObserver& DungeonScene::getTurnObserver()
 {
 	return *mTurnObserver.get();
 }

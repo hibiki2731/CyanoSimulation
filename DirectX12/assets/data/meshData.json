@@ -31,5 +31,9 @@
     "TORCH" : {
         "fbxPath" : "assets/3DModels/Torch/torch.fbx",
         "jsonPath" : "assets/3DModels/Torch/torch.json"
+    },
+    "FLAG":{
+        "fbxPath": "assets/3DModels/Flag/flag.fbx",
+        "jsonPath" : "assets/3DModels/Flag/flag.json"
     }
 }

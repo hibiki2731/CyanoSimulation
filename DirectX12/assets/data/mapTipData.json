@@ -2,7 +2,7 @@
     "tile":{
         "-1":{
             "category":"GOAL",
-            "meshID":"ROCK_FLOOR"
+            "meshID":"FLAG"
         },
         "0":{
             "category":"WALL",

@@ -18,6 +18,7 @@ TurnObserver::TurnObserver(DungeonScene& scene)
 	mNextTurn = TurnType::PLAYER;
 	mTurnType = TurnType::PLAYER;
 	mPendingEnemyCount = 0;
+	mIsActive = true;
 }
 
 void TurnObserver::updateTurn()
@@ -35,6 +36,9 @@ void TurnObserver::updateTurn()
 
 	//エネミーターン→プレイヤーターンへの移行時
 	if (mNextTurn == TurnType::PLAYER && mTurnType == TurnType::ENEMY) {
+		//進行を進めるか
+		if (!mIsActive) return;
+
 		//プレイヤーの残り行動回数が0ならば街に帰らせる
 		if (mScene.getPlayerActLimit() == 0) {
 			auto player = mScene.getPlayer();
@@ -89,6 +93,16 @@ void TurnObserver::startEnemyTurn()
 		enemy->startAct();
 	}
 	mScene.updateMiniMapPos();
+}
+
+void TurnObserver::stop()
+{
+	mIsActive = false;
+}
+
+void TurnObserver::start()
+{
+	mIsActive = true;
 }
 
 

@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "TurnObserver.h"
 #include "CameraComponent.h"
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
@@ -58,6 +59,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	spotLight->setRange(50.0f);
 	spotLight->setUAngle(XMConvertToRadians(10.0f));
 	spotLight->setPAngle(XMConvertToRadians(40.0f));
+	spotLight->setOffsetPos(XMFLOAT4(0.0f, 0.2f, 0.0f, 0.0f));
 	addComponent(std::move(spotLight));
 
 	//キャラクターコンポーネントの生成
@@ -552,8 +554,9 @@ void Player::moveNextFloor()
 	if (!isGoal) return;
 
 	//階段があった場合の処理
-	isActing = true;
 	auto goalWindow = std::make_unique<EndWindow>(mScene, WindowType::GOAL);
 	mScene.addActor(std::move(goalWindow));
 
+	turnEnd();
+	mScene.getTurnObserver().stop();
 }

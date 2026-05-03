@@ -82,9 +82,6 @@ public:
 	void moveToPlayerTurn();
 	void moveToEnemyTurn();
 
-	//マップ移動
-	void moveNextFloor();
-
     //setter
     //マップ情報
 	void setTileDataAt(int x, int y, int data);
@@ -120,7 +117,7 @@ public:
 	float getDamageTextNum() const;
 	void createDamageText(const XMFLOAT3& pos, int digit);
 	//ターンオブザーバー
-	const class TurnObserver& getTurnObserver();
+	class TurnObserver& getTurnObserver();
 
 private:
 	//マップ情報

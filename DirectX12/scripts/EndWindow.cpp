@@ -86,11 +86,14 @@ void EndWindow::showWindow()
 		mScene.getGame().getAudioManager().playSE("DUNGEON_END");
 		break;
 	case WindowType::DEAD:
-	//BGMの停止
+		//BGMの停止
 		mScene.getGame().getAudioManager().finishAllSounds();
 		mScene.getGame().getAudioManager().playSE("DUNGEON_END");
 		break;
 	case WindowType::GOAL:
+		//BGMの停止
+		mScene.getGame().getAudioManager().finishAllSounds();
+		mScene.getGame().getAudioManager().playSE("GOAL");
 		break;
 	}
 

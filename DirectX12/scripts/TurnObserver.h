@@ -19,6 +19,8 @@ public:
 	void moveToPlayerTurn();
 	void moveToEnemyTurn();
 	void startEnemyTurn();
+	void stop();
+	void start();
 
 private:
 	void RunOutProcess();
@@ -26,6 +28,7 @@ private:
 	TurnType mNextTurn;
 	TurnType mTurnType;
 	DungeonScene& mScene;
+	bool mIsActive;
 
 	//未行動敵数
 	int mPendingEnemyCount;
