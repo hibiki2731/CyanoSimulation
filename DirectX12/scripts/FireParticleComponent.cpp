@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "Random.h"
 #include "DungeonScene.h"
+#include "myJson.h"
 
 FireParticleComponent::FireParticleComponent(Actor& owner)
 	:Component(owner),
@@ -47,6 +48,11 @@ FireParticleComponent::FireParticleComponent(Actor& owner)
 
     //エミッタの位置を初期化
     mEmitterPosition = {0.0f, 0.0f, 0.0f};
+}
+
+void FireParticleComponent::loadFromJson(const nlohmann::json& json)
+{
+	setEmitterPosition(json.value("particleEmitPos", XMFLOAT3(0.0f, 0.0f, 0.0f)));
 }
 
 void FireParticleComponent::endProcess()

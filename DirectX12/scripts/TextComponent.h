@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Graphic.h"
 #include <string>
+#include "json_fwd.hpp"
 
 class AssetManager;
 
@@ -12,6 +13,7 @@ public:
 	DECLARE_COMPONENT_NAME(TextComponent)
 
 	void loadFileAndCreate(const std::string& structName);
+	void loadFromJson(const nlohmann::json& json) override;
 	void applyTextTexture();
 	void draw();
 
@@ -30,8 +32,8 @@ public:
 	//ゲッター
 	bool getIsActive();
 	float getLineSpace();
-	const float getPosX() const { return mPosX; }
-	const float getPosY() const { return mPosY; }
+	const float getPosX() const { return mPosition.x; }
+	const float getPosY() const { return mPosition.y; }
 
 #ifdef _DEBUG
 	void activateControll(const std::string& structName);
@@ -63,8 +65,7 @@ private:
 	bool isActive;
 
 	//テキストの位置、サイズ、行間など
-	float			mPosX;
-	float			mPosY;
+	XMFLOAT3		mPosition;
 	FLOAT			mFontSize;
 	const WCHAR*	mFontName;
 	bool			isLineSpaceDefault;
@@ -74,7 +75,7 @@ private:
 	float			mTextHeight;			//テキストの高さ
 	bool			isCenter;				//中央ぞろえか？
 	float			mTextMaxWidth;
-	std::vector<float> mColorFloat;
+	XMFLOAT4        mColorFloat;
 
 	ComPtr<IDWriteFactory>		mDWriteFactory;		//DWriteファクトリー
 	ComPtr<IDWriteTextLayout>	mTextLayout;		//テキストレイアウト

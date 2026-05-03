@@ -4,6 +4,8 @@
 #include "PointLightComponent.h"
 #include "Actor.h"
 #include "Game.h"
+#include "json.hpp"
+#include "myJson.h"
 #include "Scene.h"
 
 PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
@@ -18,6 +20,15 @@ PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Compon
 	mRange = 1.0f;
 	mColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	mOwner.getScene().addPointLight(this);
+}
+
+void PointLightComponent::loadFromJson(const nlohmann::json& json)
+{			
+	setOffsetPos(json.value("lightOffsetPos", XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)));
+	setColor(json.value("lightColor", XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)));
+	setIntensity(json.value("intensity", 1.0f));
+	setRange(json.value("range", 1.0f));
+	setActive(true);
 }
 
 void PointLightComponent::endProcess()

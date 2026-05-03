@@ -404,6 +404,9 @@
     <ClInclude Include="scripts\DebugCamera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\json_fwd.hpp">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="scripts\PixelShader.hlsl">

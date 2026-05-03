@@ -16,6 +16,7 @@ class SpriteComponent :
 public:
 	SpriteComponent(Actor& owner, float zDepth = 100.0f);
     DECLARE_COMPONENT_NAME(SpriteComponent)
+    void loadFromJson(const nlohmann::json& json) override;
 
 	void endProcess() override;
 

@@ -14,6 +14,7 @@ class MeshComponent : public Component
 public:
 	MeshComponent(Actor& owner, int updateOrder = 100);
     DECLARE_COMPONENT_NAME(MeshComponent)
+    void loadFromJson(const nlohmann::json& json) override;
 
 	void endProcess() override;
 

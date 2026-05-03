@@ -342,6 +342,7 @@
     <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
     <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
+    <ClInclude Include="scripts\json_fwd.hpp" />
     <ClInclude Include="scripts\myJson.h" />
     <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />

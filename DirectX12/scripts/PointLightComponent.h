@@ -9,6 +9,7 @@ class PointLightComponent : public Component
 public:
 	PointLightComponent(Actor& owner, int updateOrder = 100);
 	DECLARE_COMPONENT_NAME(PointLightComponent)
+	void loadFromJson(const nlohmann::json& json) override;
 
 	void endProcess() override;
 	void updateComponent() override;

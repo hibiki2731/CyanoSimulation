@@ -12,16 +12,6 @@
 #include "MainMenu.h"
 #include "StatusWindow.h"
 
-//BackGround
-BackGround::BackGround(Scene& scene) : Actor(scene)
-{
-	auto window = std::make_unique<SpriteComponent>(*this);
-	window->create("assets\\picture\\town.png");
-	window->setBordarSize(0.0f);
-	window->setSpriteSize(XMFLOAT2(Graphic::ClientWidth, Graphic::ClientHeight));
-	addComponent(std::move(window));
-}
-
 //TownScene
 TownScene::TownScene(Game& game)
 	: Scene(game)
@@ -30,10 +20,6 @@ TownScene::TownScene(Game& game)
 }
 
 void TownScene::onEnter() {
-
-	//背景
-	auto bg = std::make_unique<BackGround>(*this);
-	addActor(std::move(bg));
 
 	//メインメニュー
 	auto mainMenu = std::make_unique<MainMenu>(*this, 99.0f);
@@ -48,6 +34,10 @@ void TownScene::onEnter() {
 	mGame.getGraphic().startFadeIn(1.0f);
 
 	mGame.getAudioManager().playBGM("BGM_TOWN");
+
+#ifdef _DEBUG
+	mDebugFlag = true;
+#endif
 }
 
 void TownScene::onExit() {

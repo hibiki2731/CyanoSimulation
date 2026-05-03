@@ -45,7 +45,6 @@ void MapGenerator::createMap()
 	roof->setPosY(MAPTIPSIZE);
 	mScene.addActor(std::move(roof));
 
-	craeteObject();
 }
 
 void MapGenerator::loadMap(Stage stage)
@@ -207,72 +206,5 @@ void MapGenerator::createCharacter()
 			}
 
 		}
-	}
-}
-
-void MapGenerator::craeteObject()
-{
-	//ファイル読み込み
-	std::ifstream file("assets/data/mapObjectData.json");
-	assert(SUCCEEDED(file.fail()));
-	nlohmann::json json;	//ルートが配列形式
-	file >> json;
-
-	std::string name;
-	std::string meshID;
-	XMFLOAT3    position;
-	XMFLOAT3    rotation;
-	XMFLOAT3    scale;
-
-
-	//オブジェクトの生成
-	for (auto obj : json) {
-
-		name		=	obj["name"].get<std::string>();
-		position	=	obj.value("position", XMFLOAT3(0.0f, 0.0f, 0.0f));
-		rotation	=	obj.value("rotation", XMFLOAT3(0.0f, 0.0f, 0.0f));
-		scale		=	obj.value("scale", XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-		//インスタンスの作成
-		auto object = std::make_unique<Object>(mScene, name);
-		object->setPosition(position);
-		object->setRotation(rotation);
-		object->setScale(scale);
-
-		//コンポーネントの取得
-		for (auto componentJson : obj["components"]) {
-
-			std::string componentName = componentJson["name"];
-			//メッシュ
-			if (componentName == "MeshComponent") {
-				auto mesh = std::make_unique<MeshComponent>(*object);
-				std::string meshID = componentJson.value("meshID", "GRASS");
-				mesh->create(meshID);
-				object->addComponent(std::move(mesh));
-			}
-			//点光源
-			if (componentName == "PointLightComponent") {
-				//光源
-				auto light = std::make_unique<PointLightComponent>(*object);
-				light->setOffsetPos(componentJson.value("lightOffsetPos", XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f)));
-				light->setColor(componentJson.value("lightColor", XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)));
-				light->setIntensity(componentJson.value("intensity", 1.0f));
-				light->setRange(componentJson.value("range", 1.0f));
-				light->setActive(true);
-				object->addComponent(std::move(light));
-			}
-			//炎パーティクル
-			else if (componentName == "FireParticleComponent") {
-				auto fire = std::make_unique<FireParticleComponent>(*object);
-				fire->setEmitterPosition(componentJson.value("particleEmitPos", XMFLOAT3(0.0f, 0.0f, 0.0f)));
-				object->addComponent(std::move(fire));
-			}
-		}
-
-		//編集用配列へ追加
-#ifdef _DEBUG
-		mScene.addDebugObject(object.get());
-#endif
-		mScene.addActor(std::move(object));
 	}
 }

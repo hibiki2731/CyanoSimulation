@@ -17,7 +17,6 @@ ForgeMenu::ForgeMenu(TownScene& scene, float zDepth)
 	mMaxIndex = 2;
 }
 
-
 void ForgeMenu::selectedAct()
 {
 	mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
@@ -44,132 +43,54 @@ ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
 	prepareCraftItems();
 	mScrollOffset = 0;	
 
-	//ファイル読み込み
-	std::ifstream spriteFile("assets\\data\\spriteData.json");
-	nlohmann::json spriteJson;
-	spriteFile >> spriteJson;
-	std::ifstream textFile("assets\\data\\textData.json");
-	nlohmann::json textJson;
-	textFile >> textJson;
+	addComponentLabel("armerText", "TextComponent");
+	addComponentLabel("scrollBar", "SpriteComponent");
+	addComponentLabel("resourceText", "TextComponent");
+	addComponentLabel("armerEffectText", "TextComponent");
+	addComponentLabel("costText", "TextComponent");
 
+	applyComponentLabel();
+}
+
+void ArmerMenu::applyComponentLabel()
+{
 	//購入可能な武器と防具のテキストを作成
-	std::string structName = "ForgeArmerMenuScrollText";
-	std::wstring armerText = L"";
-	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
-	textComponent->setFontSize(textJson[structName]["fontSize"].get<float>());
-	textComponent->setLineSpace(textJson[structName]["lineSpace"].get<float>());
-	textComponent->setPosition(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
-	textComponent->setTextColor(D2D1::ColorF::Black);
-	for (const auto& armerID : mArmers) {
-		const auto& armerData = mItemManager.getArmerData(armerID);
-		armerText += Utility::stringToWString(armerData.name) + L"\n";
+	mArmerText = static_cast<TextComponent*>(mComponentLabels["armerText"].pComponent);
+	if (mArmerText) {
+		std::wstring armerText;
+		for (const auto& armerID : mArmers) {
+			const auto& armerData = mItemManager.getArmerData(armerID);
+			armerText += Utility::stringToWString(armerData.name) + L"\n";
+		}
+		if (armerText.size() == 0) armerText = L"なし\n";
+		mArmerText->setText(armerText);
+
+		//矢印の移動距離を設定
+		mArrowMoveLength = mArmerText->getLineSpace();
 	}
-	if (armerText.size() == 0) armerText = L"なし\n";
-	textComponent->setText(armerText);
-#ifdef _DEBUG
-	textComponent->activateControll(structName);
-#endif
-	mArmerText = textComponent.get();
-	addComponent(std::move(textComponent));
-
-	//矢印の移動距離を設定
-	mArrowMoveLength = textJson[structName]["lineSpace"].get<float>();
 
 	//スクロールバー
-	//下矢印
-	structName = "ForgeArmerMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	downArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	downArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	downArrow->setBordarSize(0.0f);
-	downArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
-	downArrow->setRotation(spriteJson[structName]["rotation"].get<float>());
-#ifdef _DEBUG
-	downArrow->activateControll(structName);
-#endif
-	addComponent(std::move(downArrow));
-
-	//上矢印
-	structName = "ForgeArmerMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	upArrow->create(spriteJson[structName]["filePath"].get<std::string>());
-	upArrow->setPosition(XMFLOAT3(spriteJson[structName]["x"].get<float>(), spriteJson[structName]["y"].get<float>(), zDepth - 0.5f));
-	upArrow->setBordarSize(0.0f);
-	upArrow->setSpriteSize(XMFLOAT2(spriteJson[structName]["width"].get<float>(), spriteJson[structName]["height"].get<float>()));
-#ifdef _DEBUG
-	upArrow->activateControll(structName);
-#endif
-	addComponent(std::move(upArrow));
-
-	//スクロールバー
-	structName = "ForgeArmerMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = spriteJson[structName]["height"].get<float>();
-	float height = maxHeight * MaxShowArmerNum / mArmers.size();
-	if (mArmers.size() < MaxShowArmerNum) height = maxHeight;
-	mScrollBarMoveLength = maxHeight / mArmers.size();
-	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
-#ifdef _DEBUG
-	scrollBar->activateControll(structName);
-#endif
-	mScrollBar = scrollBar.get();
-	addComponent(std::move(scrollBar));
-
-	//所持リソース表示用のキャンバス
-	structName = "ResourceCanvas";
-	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
-	resourceCanvas->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	resourceCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(resourceCanvas));
+	mScrollBar = static_cast<SpriteComponent*>(mComponentLabels["scrollBar"].pComponent);
+	if (mScrollBar) {
+		float maxHeight = mScrollBar->getSpriteSize().y;
+		float height = maxHeight * MaxShowArmerNum / mArmers.size();
+		if (mArmers.size() < MaxShowArmerNum) height = maxHeight;
+		mScrollBarMoveLength = maxHeight / mArmers.size();
+		mScrollBar->setSpriteSize(XMFLOAT2(mScrollBar->getSpriteSize().x, height));
+	}
 
 	//所持リソースのテキストを作成
-	structName = "ResourceText";
-	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	resourceText->loadFileAndCreate(structName);
-	resourceText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	resourceText->activateControll(structName);
-#endif
-	mResourceText = resourceText.get();
-	showResource();
-	addComponent(std::move(resourceText));
+	mResourceText = static_cast<TextComponent*>(mComponentLabels["resourceText"].pComponent);
+	if(mResourceText) showResource();
 
 	//装備の効果
-	structName = "EffectCanvas";
-	auto armerEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
-	armerEffectCanvas->loadFileAndCreate(structName);
-
-#ifdef _DEBUG
-	armerEffectCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(armerEffectCanvas));
-
-	//装備の効果　テキスト	
-	structName = "EffectText";
-	auto armerEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	armerEffectText->loadFileAndCreate(structName);
-	armerEffectText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	armerEffectText->activateControll(structName);
-#endif
-	mArmerEffectText = armerEffectText.get();
-	showArmerEffect();
-	addComponent(std::move(armerEffectText));
+	mArmerEffectText = static_cast<TextComponent*>(mComponentLabels["armerEffectText"].pComponent);
+	if(mArmerEffectText) showArmerEffect();
 
 	//装備作製にかかるコスト
-	structName = "CostText";
-	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	costText->loadFileAndCreate(structName);
-	costText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	costText->activateControll(structName);
-#endif
-	mCostText = costText.get();
-	showCraftCost();
-	addComponent(std::move(costText));
+	mCostText = static_cast<TextComponent*>(mComponentLabels["costText"].pComponent);
+	if(mCostText) showCraftCost();
+
 }
 
 void ArmerMenu::selectedAct()
@@ -342,126 +263,53 @@ WeaponMenu::WeaponMenu(TownScene& scene, float zDepth)
 	prepareCraftItems();
 	mScrollOffset = 0;
 
-	//ファイル読み込み
-	std::ifstream spriteFile("assets\\data\\spriteData.json");
-	nlohmann::json spriteJson;
-	spriteFile >> spriteJson;
-	std::ifstream textFile("assets\\data\\textData.json");
-	nlohmann::json textJson;
-	textFile >> textJson;
+	addComponentLabel("weaponText", "TextComponent");
+	addComponentLabel("scrollBar", "SpriteComponent");
+	addComponentLabel("resourceText", "TextComponent");
+	addComponentLabel("weaponEffectText", "TextComponent");
+	addComponentLabel("costText", "TextComponent");
 
-	std::string structName;
+	applyComponentLabel();
+}
+
+void WeaponMenu::applyComponentLabel()
+{
 	//購入可能な武器と防具のテキストを作成
-	structName = "ForgeWeaponMenuScrollText";
-	std::wstring weaponText = L"";
-	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
-	textComponent->setFontSize(textJson[structName]["fontSize"].get<float>());
-	textComponent->setLineSpace(textJson[structName]["lineSpace"].get<float>());
-	textComponent->setPosition(textJson[structName]["x"].get<float>(), textJson[structName]["y"].get<float>());
-	textComponent->setTextColor(D2D1::ColorF::Black);
-	for (const auto& weaponID : mWeapons) {
-		const auto& weaponData = mItemManager.getWeaponData(weaponID);
-		weaponText += L"・" + Utility::stringToWString(weaponData.name) + L"\n";
+	mWeaponText = static_cast<TextComponent*>(mComponentLabels["weaponText"].pComponent);
+	if (mWeaponText) {
+		std::wstring weaponText;
+		for (const auto& weaponID : mWeapons) {
+			const auto& weaponData = mItemManager.getWeaponData(weaponID);
+			weaponText += Utility::stringToWString(weaponData.name) + L"\n";
+		}
+		if (weaponText.size() == 0) weaponText = L"なし\n";
+		mWeaponText->setText(weaponText);
+
+		//矢印の移動距離を設定
+		mArrowMoveLength = mWeaponText->getLineSpace();
 	}
-	if (weaponText.size() == 0) weaponText = L"なし\n";
-	textComponent->setText(weaponText);
-#ifdef _DEBUG
-	textComponent->activateControll(structName);
-#endif
-	mWeaponText = textComponent.get();
-	addComponent(std::move(textComponent));
-
-	//インジケーターの移動距離を設定
-	mArrowMoveLength = textJson[structName]["lineSpace"].get<float>();
 
 	//スクロールバー
-	//下矢印
-	structName = "ForgeWeaponMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	downArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	downArrow->activateControll(structName);
-#endif
-	addComponent(std::move(downArrow));
-
-	//上矢印
-	structName = "ForgeWeaponMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	upArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	upArrow->activateControll(structName);
-#endif
-	addComponent(std::move(upArrow));
-
-	//スクロールバー
-	structName = "ForgeWeaponMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = scrollBar->getSpriteSize().y;
-	float height = maxHeight * MaxShowWeaponNum / mWeapons.size();
-	if (mWeapons.size() < MaxShowWeaponNum) height = maxHeight;
-	mScrollBarMoveLength = maxHeight / mWeapons.size();
-	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
-#ifdef _DEBUG
-	scrollBar->activateControll(structName);
-#endif
-	mScrollBar = scrollBar.get();
-	addComponent(std::move(scrollBar));
-
-	//所持リソース表示用のキャンバス
-	structName = "ResourceCanvas";
-	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
-	resourceCanvas->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	resourceCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(resourceCanvas));
+	mScrollBar = static_cast<SpriteComponent*>(mComponentLabels["scrollBar"].pComponent);
+	if (mScrollBar) {
+		float maxHeight = mScrollBar->getSpriteSize().y;
+		float height = maxHeight * MaxShowWeaponNum / mWeapons.size();
+		if (mWeapons.size() < MaxShowWeaponNum) height = maxHeight;
+		mScrollBarMoveLength = maxHeight / mWeapons.size();
+		mScrollBar->setSpriteSize(XMFLOAT2(mScrollBar->getSpriteSize().x, height));
+	}
 
 	//所持リソースのテキストを作成
-	structName = "ResourceText";
-	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	resourceText->loadFileAndCreate(structName);
-	resourceText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	resourceText->activateControll(structName);
-#endif
-	mResourceText = resourceText.get();
-	showResource();
-	addComponent(std::move(resourceText));
+	mResourceText = static_cast<TextComponent*>(mComponentLabels["resourceText"].pComponent);
+	if(mResourceText) showResource();
 
 	//装備の効果
-	structName = "EffectCanvas";
-	auto weaponEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
-	weaponEffectCanvas->loadFileAndCreate(structName);
-
-#ifdef _DEBUG
-	weaponEffectCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(weaponEffectCanvas));
-
-	//装備の効果　テキスト	
-	structName = "EffectText";
-	auto weaponEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	weaponEffectText->loadFileAndCreate(structName);
-	weaponEffectText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	weaponEffectText->activateControll(structName);
-#endif
-	mWeaponEffectText = weaponEffectText.get();
-	showWeaponEffect();
-	addComponent(std::move(weaponEffectText));
+	mWeaponEffectText = static_cast<TextComponent*>(mComponentLabels["weaponEffectText"].pComponent);
+	if(mWeaponEffectText) showWeaponEffect();
 
 	//装備作製にかかるコスト
-	structName = "CostText";
-	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	costText->loadFileAndCreate(structName);
-	costText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	costText->activateControll(structName);
-#endif
-	mCostText = costText.get();
-	showCraftCost();
-	addComponent(std::move(costText));
+	mCostText = static_cast<TextComponent*>(mComponentLabels["costText"].pComponent);
+	if(mCostText) showCraftCost();
 }
 
 void WeaponMenu::selectedAct()

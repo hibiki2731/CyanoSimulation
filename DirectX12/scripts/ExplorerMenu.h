@@ -10,6 +10,8 @@ class ExplorerMenu : public Menu {
 public:
 	ExplorerMenu(TownScene& scene, float zDepth);
 	DECLARE_CLASS_NAME(ExplorerMenu)
+	void applyComponentLabel() override;
+
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;

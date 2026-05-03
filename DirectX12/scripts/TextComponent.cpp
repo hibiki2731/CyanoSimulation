@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "AssetManager.h"
 #include "MyUtility.h"
-#include "json.hpp"
+#include "myJson.h"
 #include <fstream>
 
 TextComponent::TextComponent(Actor& owner, float zDepth) 
@@ -16,8 +16,7 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 
 	//各種パラメータの初期化
 	isActive = true;
-	mPosX = 0.0f;
-	mPosY = 0.0f;
+	mPosition = { 0.0f, 0.0f, zDepth };
 	mFontSize = 32;
 	mFontName = L"MS Gothic";
 	mMaxRow = 20;
@@ -41,11 +40,6 @@ TextComponent::TextComponent(Actor& owner, float zDepth)
 	//テキストフォーマットの初期化
 	initDWriteFactory();
 	applyTextFormat();
-
-	mColorFloat.push_back(mTextColor.r);
-	mColorFloat.push_back(mTextColor.g);
-	mColorFloat.push_back(mTextColor.b);
-	mColorFloat.push_back(mTextColor.a);
 }
 
 void TextComponent::loadFileAndCreate(const std::string& structName)
@@ -58,8 +52,8 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 	//構造体が存在しない場合、作成する
 	if (!textJson.contains(structName)) {
 		textJson[structName] = {
-			{"x", mPosX},
-			{"y", mPosY},
+			{"x", mPosition.x},
+			{"y", mPosition.y},
 			{"fontSize", mFontSize},
 			{"lineSpace", mLineSpace},
 			{"text", Utility::wstringToString(mText)}
@@ -70,14 +64,37 @@ void TextComponent::loadFileAndCreate(const std::string& structName)
 
 	mFontSize = textJson[structName].value("fontSize", mFontSize);
 	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));	//ここでテキストフォーマットが更新される
-	mPosX = textJson[structName].value("x", mPosX);
-	mPosY = textJson[structName].value("y", mPosY);
+	mPosition.x = textJson[structName].value("x", mPosition.x);
+	mPosition.y = textJson[structName].value("y", mPosition.y);
 	mText = Utility::stringToWString(textJson[structName].value("text", "empty"));
 	std::vector<float> defaultColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-	mColorFloat = textJson[structName].value("color", defaultColor);
-	setTextColor(D2D1::ColorF(mColorFloat[0], mColorFloat[1], mColorFloat[2], mColorFloat[3]));
+	if (!textJson["color"].is_null()) {
+		mTextColor.r = textJson.at("color").at(0).get<float>();
+		mTextColor.g = textJson.at("color").at(1).get<float>();
+		mTextColor.b = textJson.at("color").at(2).get<float>();
+		mTextColor.a = textJson.at("color").at(3).get<float>();
+		setTextColor(mTextColor);
+	}
 
 	applyTextTexture();
+}
+
+void TextComponent::loadFromJson(const nlohmann::json& json)
+{
+	mFontSize = json.value("fontSize", mFontSize);
+	setLineSpace(json.value("lineSpace", mLineSpace));	//ここでテキストフォーマットが更新される
+	mPosition = json.value("position", mPosition);
+	mText = Utility::stringToWString(json.value("text", "empty"));
+	if (!json["color"].is_null()) {
+		mTextColor.r = json.at("color").at(0).get<float>();
+		mTextColor.g = json.at("color").at(1).get<float>();
+		mTextColor.b = json.at("color").at(2).get<float>();
+		mTextColor.a = json.at("color").at(3).get<float>();
+		setTextColor(mTextColor);
+	}
+
+	applyTextTexture();
+
 }
 
 //要マルチスレッド化
@@ -119,7 +136,7 @@ void TextComponent::applyTextTexture()
 
 	mGraphic.getD2DDeviceContext()->SetTransform(D2D1::Matrix3x2F::Identity());  
 	mGraphic.getD2DDeviceContext()->DrawTextLayout(
-		D2D1::Point2F(mPosX, mPosY),
+		D2D1::Point2F(mPosition.x, mPosition.y),
 		mTextLayout.Get(),
 		mTextBrush.Get()
 	);
@@ -135,6 +152,10 @@ void TextComponent::applyTextTexture()
 
 void TextComponent::draw()
 {
+	//z座標の更新
+	Cb3.world = XMMatrixIdentity()
+		*XMMatrixTranslation(0.0f, 0.0f, mPosition.z);
+	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
 
 	//頂点をセット
 	mGraphic.getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView);
@@ -189,8 +210,8 @@ void TextComponent::setText(const std::wstring& text)
 
 void TextComponent::setPosition(float x, float y)
 {
-	mPosX = x;
-	mPosY = y;
+	mPosition.x = x;
+	mPosition.y = y;
 	applyTextTexture();
 }
 
@@ -203,12 +224,6 @@ void TextComponent::setFontSize(FLOAT size)
 void TextComponent::setTextColor(const D2D1::ColorF& color)
 {
 	mTextColor = color;
-#ifdef _DEBUG
-	mColorFloat[0] = mTextColor.r;
-	mColorFloat[1] = mTextColor.g;
-	mColorFloat[2] = mTextColor.b;
-	mColorFloat[3] = mTextColor.a;
-#endif
 
 	//ブラシを更新
     HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);

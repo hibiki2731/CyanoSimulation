@@ -50,5 +50,7 @@ private:
 	std::string mCurrentSceneType;
 	class Scene* mCurrentScene;
 	std::unordered_map<std::string, std::unique_ptr<Scene>> mSceneMap;
+
+	Game& mGame;
 };
 

@@ -6,6 +6,7 @@
 #include "TextComponent.h"
 #include "GUIDebugger.h"
 #include <algorithm>
+#include "Object.h"
 
 Scene::Scene(Game& game)
 	: mGame(game)
@@ -36,6 +37,20 @@ void Scene::removeActors()
 			return true;
 		}
 		});
+}
+
+void Scene::createObjects()
+{
+		//シーンデータの取得
+		nlohmann::json sceneJson = mGame.getAssetManager().getSceneJson();
+		std::string name = getName();
+		std::vector<std::string> objectIDs = sceneJson.at(name).get<std::vector<std::string>>();
+
+		//オブジェクトID配列からオブジェクトを生成
+		for (auto objID : objectIDs) {
+			auto obj = std::make_unique<Object>(*this, objID);
+			addActor(std::move(obj));
+		}
 }
 
 void Scene::addMesh(MeshComponent* mesh)

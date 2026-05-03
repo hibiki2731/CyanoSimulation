@@ -14,6 +14,8 @@ public:
 	ShopMenu(TownScene& scene, float zDepth);
 	DECLARE_CLASS_NAME(ShopMenu)
 
+	void applyComponentLabel() override;
+
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;

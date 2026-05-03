@@ -75,10 +75,8 @@ AssetManager::AssetManager(Graphic& graphic)
 
 		createMeshData(key, meshFileData);
 	}
-}
 
-AssetManager::~AssetManager()
-{
+	loadJson();
 }
 
 void AssetManager::createMeshData(const std::string& meshID, const MeshFileData& meshFileData)
@@ -442,6 +440,35 @@ void AssetManager::createSpriteBuffers()
 		mSpriteIndexBufView.SizeInBytes = sizeInByte;//全バイト数
 		mSpriteIndexBufView.Format = DXGI_FORMAT_R16_UINT;//UINT16
 	}
+}
+
+void AssetManager::loadJson()
+{
+	//敵パラメータファイルの読み込み
+	std::ifstream enemyDataFile("assets\\data\\enemyData.json");
+	assert(!enemyDataFile.fail());
+	enemyDataFile >> mEnemyJson;
+
+	//オブジェクトデータファイルの読み込み
+	std::ifstream objectDataFile("assets\\data\\objectData.json");
+	assert(!objectDataFile.fail());
+	objectDataFile >> mObjectJson;
+
+	//敵パラメータファイルの読み込み
+	std::ifstream sceneDataFile("assets\\data\\sceneData.json");
+	assert(!sceneDataFile.fail());
+
+	sceneDataFile >> mSceneJson;
+
+
+}
+
+void AssetManager::loadObjectJson()
+{
+	//オブジェクトデータファイルの読み込み
+	std::ifstream objectDataFile("assets\\data\\objectData.json");
+	assert(!objectDataFile.fail());
+	objectDataFile >> mObjectJson;
 }
 
 

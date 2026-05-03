@@ -46,7 +46,7 @@ public:
 	virtual void onExit() = 0;
 
 	//シーン名の取得
-	virtual const std::string& getName() const = 0;
+	virtual const std::string getName() const = 0;
 
 	//Gameの取得
 	Game& getGame() { return mGame; }
@@ -55,6 +55,7 @@ public:
 	void addActor(std::unique_ptr<Actor> actor);
 	void joinActors();
 	void removeActors();
+	void createObjects();
 
 	//メッシュの追加/削除
 	void addMesh(MeshComponent* mesh);

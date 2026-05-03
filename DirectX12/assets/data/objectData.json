@@ -1,0 +1,2180 @@
+{
+    "DUNGEON": {
+        "EmptyObject": null,
+        "TorchBack": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        0.0,
+                        0.4000000059604645,
+                        -0.3499999940395355,
+                        0.0
+                    ],
+                    "name": "PointLightComponent",
+                    "range": 50.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        0.0,
+                        0.30000001192092896,
+                        -0.10000000149011612
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "position": [
+                0.0,
+                1.2999999523162842,
+                7.0
+            ],
+            "rotation": [
+                0.0,
+                -1.7000000476837158,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "TorchFront": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        0.0,
+                        0.4000000059604645,
+                        0.3499999940395355,
+                        0.0
+                    ],
+                    "name": "PointLightComponent",
+                    "range": 50.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        0.0,
+                        0.30000001192092896,
+                        0.10000000149011612
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "position": [
+                12.0,
+                1.2999999523162842,
+                -1.0
+            ],
+            "rotation": [
+                0.0,
+                1.7000000476837158,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "TorchFront2": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        0.0,
+                        0.4000000059604645,
+                        0.3499999940395355,
+                        0.0
+                    ],
+                    "name": "PointLightComponent",
+                    "range": 50.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        0.0,
+                        0.30000001192092896,
+                        0.10000000149011612
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "position": [
+                12.0,
+                1.2999999523162842,
+                11.0
+            ],
+            "rotation": [
+                0.0,
+                1.7000000476837158,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "TorchLeft": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        -0.20000000298023224,
+                        0.4000000059604645,
+                        0.0,
+                        0.0
+                    ],
+                    "meshID": "TORCH",
+                    "name": "PointLightComponent",
+                    "range": 50.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        -0.10000000149011612,
+                        0.30000001192092896,
+                        0.0
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "name": "TorchLeft",
+            "position": [
+                5.0,
+                1.2999999523162842,
+                2.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "TorchLeft2": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        -0.20000000298023224,
+                        0.4000000059604645,
+                        0.0,
+                        0.0
+                    ],
+                    "name": "PointLightComponent",
+                    "range": 50.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        -0.10000000149011612,
+                        0.30000001192092896,
+                        0.0
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "position": [
+                15.0,
+                1.2999999523162842,
+                14.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "TorchRight": {
+            "components": [
+                {
+                    "intensity": 1.0,
+                    "lightColor": [
+                        1.0,
+                        0.4000000059604645,
+                        0.0,
+                        1.0
+                    ],
+                    "lightOffsetPos": [
+                        0.30000001192092896,
+                        0.4000000059604645,
+                        0.0,
+                        0.0
+                    ],
+                    "name": "PointLightComponent",
+                    "range": 10.0
+                },
+                {
+                    "name": "FireParticleComponent",
+                    "particleEmitPos": [
+                        0.10000000149011612,
+                        0.30000001192092896,
+                        0.0
+                    ]
+                },
+                {
+                    "meshID": "TORCH",
+                    "name": "MeshComponent"
+                }
+            ],
+            "position": [
+                1.0,
+                1.2999999523162842,
+                12.0
+            ],
+            "rotation": [
+                0.0,
+                3.299999952316284,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    },
+    "TITLE": {},
+    "TOWN": {
+        "Backgound": {
+            "components": [
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/town.png",
+                    "height": 720.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        0.0,
+                        0.0,
+                        100.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 1280.0
+                }
+            ],
+            "label": null,
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ConfirmMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 150.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        400.0,
+                        100.0,
+                        10.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 450.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 40.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        420.0,
+                        120.0,
+                        9.5
+                    ],
+                    "text": "セーブしますか？\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 40.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        500.0,
+                        180.0,
+                        9.5
+                    ],
+                    "text": "はい   いいえ\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        584.0,
+                        180.0,
+                        9.0
+                    ],
+                    "rotation": 4.71238374710083,
+                    "width": 40.0
+                }
+            ],
+            "label": {
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                400.0,
+                100.0,
+                10.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "EquipArmerMenu": {
+            "components": [
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        410.0,
+                        110.0,
+                        39.5
+                    ],
+                    "text": "ARMER\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        700.0,
+                        200.0,
+                        39.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        470.0,
+                        200.0,
+                        39.5
+                    ],
+                    "text": "裸\nチート服\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        410.0,
+                        488.0,
+                        39.5
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        410.0,
+                        180.0,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        790.0,
+                        130.0,
+                        39.0
+                    ],
+                    "text": "なにも着ていない。\n早く服を着よう\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_compass_future_e.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        439.0,
+                        212.5,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 275.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        412.5400085449219,
+                        210.0,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 20.0
+                }
+            ],
+            "label": {
+                "descriptor": {
+                    "componentName": "TextComponent",
+                    "id": 5
+                },
+                "equipIcon": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "equipmentText": {
+                    "componentName": "TextComponent",
+                    "id": 2
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 7
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 1
+                }
+            },
+            "position": [
+                390.0,
+                100.0,
+                40.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "EquipWeaponMenu": {
+            "components": [
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        410.0,
+                        110.0,
+                        39.5
+                    ],
+                    "text": "WEAPON\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        700.0,
+                        200.0,
+                        39.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        470.0,
+                        200.0,
+                        39.5
+                    ],
+                    "text": "素手\nチート県\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        410.0,
+                        488.0,
+                        39.5
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        410.0,
+                        180.0,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        790.0,
+                        130.0,
+                        39.0
+                    ],
+                    "text": "なにも持っていない!!\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_compass_future_e.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        439.0,
+                        212.5,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 275.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        412.5400085449219,
+                        210.0,
+                        39.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 20.0
+                }
+            ],
+            "label": {
+                "descriptor": {
+                    "componentName": "TextComponent",
+                    "id": 5
+                },
+                "equipIcon": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "equipmentText": {
+                    "componentName": "TextComponent",
+                    "id": 2
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 7
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 1
+                }
+            },
+            "position": [
+                390.0,
+                100.0,
+                40.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ExplorerShopMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        270.0,
+                        130.0,
+                        96.5
+                    ],
+                    "text": "ExplorerShop\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        310.0,
+                        203.0,
+                        96.0
+                    ],
+                    "text": "靴\nバックパック\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        630.0,
+                        96.0
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        185.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        96.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 930  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        96.5
+                    ],
+                    "text": "APの最大値が10増加\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        96.5
+                    ],
+                    "text": "消費リソース\n草 : 25\n"
+                }
+            ],
+            "label": {
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                },
+                "toolEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "toolText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                97.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ForgeArmerMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        280.0,
+                        120.0,
+                        79.5
+                    ],
+                    "text": "Armer\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        213.0,
+                        79.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        310.0,
+                        203.0,
+                        79.0
+                    ],
+                    "text": "服\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        630.0,
+                        79.5
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        185.0,
+                        79.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        213.0,
+                        79.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        79.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 950  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        79.5
+                    ],
+                    "text": "防御力 2"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        79.5
+                    ],
+                    "text": "消費リソース\n草 : 20\n"
+                }
+            ],
+            "label": {
+                "armerEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "armerText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                },
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                80.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ForgeMenu": {
+            "components": [
+                {
+                    "borderSize": 16.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 250.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        200.0,
+                        95.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 250.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 50.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        450.0,
+                        275.0,
+                        94.0
+                    ],
+                    "rotation": -1.5707000494003296,
+                    "width": 50.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        290.0,
+                        210.0,
+                        94.0
+                    ],
+                    "text": "FORGE"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        300.0,
+                        270.0,
+                        94.0
+                    ],
+                    "text": "WEAPON\nARMER\n"
+                }
+            ],
+            "label": {
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 1
+                }
+            },
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ForgeWeaponMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        280.0,
+                        120.0,
+                        79.5
+                    ],
+                    "text": "WEAPON\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        205.0,
+                        79.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 8.0,
+                    "name": "TextComponent",
+                    "position": [
+                        320.0,
+                        235.0,
+                        79.0
+                    ],
+                    "text": "木の剣\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        620.0,
+                        79.0
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        175.0,
+                        79.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        202.0,
+                        79.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        79.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 1000  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        80.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        79.5
+                    ],
+                    "text": "攻撃力 2\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        79.5
+                    ],
+                    "text": "消費リソース\n草 : 50\n"
+                }
+            ],
+            "label": {
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                },
+                "weaponEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "weaponText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                80.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "InnMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 220.01100158691406,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        135.5290069580078,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 240.94900512695313
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        280.0,
+                        150.0,
+                        96.5
+                    ],
+                    "text": "Inn\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        290.0,
+                        200.0,
+                        96.5
+                    ],
+                    "text": "泊る\nセーブ\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        440.0,
+                        210.0,
+                        96.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                }
+            ],
+            "label": {
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                135.5290069580078,
+                97.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "MainMenu": {
+            "components": [
+                {
+                    "borderSize": 39.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/hexagon_brown.png",
+                    "height": 366.5610046386719,
+                    "name": "SpriteComponent",
+                    "position": [
+                        30.0,
+                        170.0,
+                        99.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 374.3999938964844
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        60.0,
+                        200.0,
+                        98.5
+                    ],
+                    "text": "宿屋\n道具屋\n鍛冶屋\n探索道具屋\nダンジョン\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 50.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        320.0,
+                        205.0,
+                        98.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 50.0
+                }
+            ],
+            "label": {
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                }
+            },
+            "position": [
+                30.0,
+                170.0,
+                99.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "ShopMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        256.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 350.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        280.0,
+                        120.0,
+                        96.5
+                    ],
+                    "text": "Shop\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        536.0,
+                        213.0,
+                        96.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        320.0,
+                        203.0,
+                        96.0
+                    ],
+                    "text": "薬草\n塩昆布\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        630.0,
+                        96.0
+                    ],
+                    "rotation": 3.1415927410125732,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 25.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        185.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 10.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/scrollbar_future_grey.png",
+                    "height": 415.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        280.0,
+                        212.0,
+                        96.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 25.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 205.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        110.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        120.0,
+                        96.5
+                    ],
+                    "text": "所持リソース\nGOLD : 990  草 : 1000  \n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_brown.png",
+                    "height": 360.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        606.0,
+                        315.0,
+                        97.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 500.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        325.0,
+                        96.5
+                    ],
+                    "text": "HPを20回復\n"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 30.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        626.0,
+                        555.0,
+                        96.5
+                    ],
+                    "text": "消費リソース\nGOLD : 10\n"
+                }
+            ],
+            "label": {
+                "costText": {
+                    "componentName": "TextComponent",
+                    "id": 11
+                },
+                "itemEffectText": {
+                    "componentName": "TextComponent",
+                    "id": 10
+                },
+                "resourceText": {
+                    "componentName": "TextComponent",
+                    "id": 8
+                },
+                "scrollBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 6
+                },
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 2
+                },
+                "shopText": {
+                    "componentName": "TextComponent",
+                    "id": 3
+                }
+            },
+            "position": [
+                256.0,
+                110.0,
+                97.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "StatusMenu": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+                    "height": 565.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        50.0,
+                        100.0,
+                        50.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 340.0
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 50.0,
+                    "lineSpace": 60.0,
+                    "name": "TextComponent",
+                    "position": [
+                        70.0,
+                        110.0,
+                        49.5
+                    ],
+                    "text": "STATUS"
+                },
+                {
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "fontSize": 45.0,
+                    "lineSpace": 50.0,
+                    "name": "TextComponent",
+                    "position": [
+                        100.0,
+                        180.0,
+                        49.5
+                    ],
+                    "text": "WEAPON\nARMER\n"
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/minimap_arrow_a.png",
+                    "height": 40.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        320.0,
+                        185.0,
+                        49.0
+                    ],
+                    "rotation": -1.5707963705062866,
+                    "width": 40.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+                    "height": 135.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        390.0,
+                        530.0,
+                        49.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 800.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 32.0,
+                    "lineSpace": 40.0,
+                    "name": "TextComponent",
+                    "position": [
+                        420.0,
+                        557.0,
+                        49.0
+                    ],
+                    "text": "MAXHP 20   POWER   3\nMAXAP 10   DEFENCE 1\n"
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+                    "height": 430.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        390.0,
+                        100.0,
+                        49.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 380.0
+                },
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts_detail_a.png",
+                    "height": 430.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        770.0,
+                        100.0,
+                        49.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 420.0
+                }
+            ],
+            "label": {
+                "selectArrow": {
+                    "componentName": "SpriteComponent",
+                    "id": 3
+                },
+                "statusText": {
+                    "componentName": "TextComponent",
+                    "id": 5
+                }
+            },
+            "position": [
+                50.0,
+                100.0,
+                50.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        },
+        "statusWindow": {
+            "components": [
+                {
+                    "borderSize": 24.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey.png",
+                    "height": 144.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        0.0,
+                        0.0,
+                        99.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 384.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 20.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        10.0,
+                        5.0,
+                        98.0
+                    ],
+                    "text": "HP "
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 20.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        40.0,
+                        5.0,
+                        98.0
+                    ],
+                    "text": "20/20\n"
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/progress_green.png",
+                    "height": 14.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        158.0,
+                        15.0,
+                        98.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 192.0
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/progress_green_black.png",
+                    "height": 14.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        158.0,
+                        15.0,
+                        98.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 192.0
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 20.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        10.0,
+                        25.0,
+                        98.0
+                    ],
+                    "text": "AP "
+                },
+                {
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "fontSize": 20.0,
+                    "lineSpace": 30.0,
+                    "name": "TextComponent",
+                    "position": [
+                        40.0,
+                        25.0,
+                        98.0
+                    ],
+                    "text": "10/10\n"
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/progress_red.png",
+                    "height": 14.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        158.0,
+                        34.0,
+                        98.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 192.0
+                },
+                {
+                    "borderSize": 9.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/progress_red_black.png",
+                    "height": 14.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        158.0,
+                        34.0,
+                        98.5
+                    ],
+                    "rotation": 0.0,
+                    "width": 192.0
+                },
+                {
+                    "borderSize": 0.0,
+                    "filePath": "assets/picture/UI2/PNG/Default/panel_grey_bolts.png",
+                    "height": 60.0,
+                    "name": "SpriteComponent",
+                    "position": [
+                        10.0,
+                        52.0,
+                        98.0
+                    ],
+                    "rotation": 0.0,
+                    "width": 60.0
+                }
+            ],
+            "label": {
+                "apValueText": {
+                    "componentName": "TextComponent",
+                    "id": 6
+                },
+                "hpBar": {
+                    "componentName": "SpriteComponent",
+                    "id": 3
+                },
+                "hpValueText": {
+                    "componentName": "TextComponent",
+                    "id": 2
+                },
+                "originItemIcon": {
+                    "componentName": "SpriteComponent",
+                    "id": 9
+                }
+            },
+            "position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ]
+        }
+    }
+}

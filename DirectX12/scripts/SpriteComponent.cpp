@@ -9,7 +9,7 @@
 #include "AssetManager.h"
 #include "Scene.h"
 #include <fstream>
-#include "json.hpp"
+#include "myJson.h"
 
 SpriteComponent::SpriteComponent(Actor& owner, float zDepth) 
 	: Component(owner),
@@ -33,6 +33,19 @@ SpriteComponent::SpriteComponent(Actor& owner, float zDepth)
 	mHeapSize = 0;
 
 	mTextureFilePath = "";
+}
+
+void SpriteComponent::loadFromJson(const nlohmann::json& json)
+{
+	//スプライトの作成
+	auto filePath = json.value("filePath", "");
+	if ( filePath != "")
+		create(json["filePath"].get<std::string>());
+	//スプライトのセッティング
+	mPosition = json.value("position", mPosition);
+	setBordarSize(json.value("borderSize", 0.0f));
+	setSpriteSize(XMFLOAT2(json.value("width", 1.0f), json.value("height", 1.0f)));
+	setRotation(json.value("rotation", 0.0f));
 }
 
 

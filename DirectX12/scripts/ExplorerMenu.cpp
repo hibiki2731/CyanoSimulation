@@ -19,123 +19,54 @@ ExplorerMenu::ExplorerMenu(TownScene& scene, float zDepth)
 	prepareCraftExplorer();
 	mScrollOffset = 0;	
 
-	//ファイル読み込み
-	std::ifstream spriteFile("assets\\data\\spriteData.json");
-	nlohmann::json spriteJson;
-	spriteFile >> spriteJson;
-	std::ifstream textFile("assets\\data\\textData.json");
-	nlohmann::json textJson;
-	textFile >> textJson;
+	addComponentLabel("toolText", "TextComponent");
+	addComponentLabel("scrollBar", "SpriteComponent");
+	addComponentLabel("resourceText", "TextComponent");
+	addComponentLabel("toolEffectText", "TextComponent");
+	addComponentLabel("costText", "TextComponent");
 
-	//購入可能な武器と防具のテキストを作成
-	std::string structName = "ExplorerMenuScrollText";
-	std::wstring toolText = L"";
-	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
-	textComponent->loadFileAndCreate(structName);
-	textComponent->setTextColor(D2D1::ColorF::Black);
-	for (const auto& toolID : mTools) {
-		const auto& toolData = mItemManager.getExplorerData(toolID);
-		toolText += Utility::stringToWString(toolData.name) + L"\n";
+	applyComponentLabel();
+}
+
+void ExplorerMenu::applyComponentLabel()
+{
+	//製作可能な道具を表示
+	mToolText = static_cast<TextComponent*>(mComponentLabels["toolText"].pComponent);
+	if (mToolText) {
+		std::wstring toolText;
+		for (const auto& toolID : mTools) {
+			const auto& toolData = mItemManager.getExplorerData(toolID);
+			toolText += Utility::stringToWString(toolData.name) + L"\n";
+		}
+		if (toolText.size() == 0) toolText = L"なし\n";
+		mToolText->setText(toolText);
+
+		//矢印の移動距離を設定
+		mArrowMoveLength = mToolText->getLineSpace();
 	}
-	if (toolText.size() == 0) toolText = L"なし\n";
-	textComponent->setText(toolText);
-#ifdef _DEBUG
-	textComponent->activateControll(structName);
-#endif
-	mToolText = textComponent.get();
-	addComponent(std::move(textComponent));
-
-	//矢印の移動距離を設定
-	mArrowMoveLength = textJson[structName]["lineSpace"];
 
 	//スクロールバー
-	//下矢印
-	structName = "ExplorerMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	downArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	downArrow->activateControll(structName);
-#endif
-	addComponent(std::move(downArrow));
-
-	//上矢印
-	structName = "ExplorerMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	upArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	upArrow->activateControll(structName);
-#endif
-	addComponent(std::move(upArrow));
-
-	//スクロールバー
-	structName = "ExplorerMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = scrollBar->getSpriteSize().y;
-	float height = maxHeight * MaxShowToolNum / mTools.size();
-	if (mTools.size() < MaxShowToolNum) height = maxHeight;
-	mScrollBarMoveLength = maxHeight / mTools.size();
-	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
-#ifdef _DEBUG
-	scrollBar->activateControll(structName);
-#endif
-	mScrollBar = scrollBar.get();
-	addComponent(std::move(scrollBar));
-
-	//所持リソース表示用のキャンバス
-	structName = "ResourceCanvas";
-	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
-	resourceCanvas->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	resourceCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(resourceCanvas));
+	mScrollBar = static_cast<SpriteComponent*>(mComponentLabels["scrollBar"].pComponent);
+	if (mScrollBar) {
+		float maxHeight = mScrollBar->getSpriteSize().y;
+		float height = maxHeight * MaxShowToolNum / mTools.size();
+		if (mTools.size() < MaxShowToolNum) height = maxHeight;
+		mScrollBarMoveLength = maxHeight / mTools.size();
+		mScrollBar->setSpriteSize(XMFLOAT2(mScrollBar->getSpriteSize().x, height));
+	}
 
 	//所持リソースのテキストを作成
-	structName = "ResourceText";
-	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	resourceText->loadFileAndCreate(structName);
-	resourceText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	resourceText->activateControll(structName);
-#endif
-	mResourceText = resourceText.get();
-	showResource();
-	addComponent(std::move(resourceText));
+	mResourceText = static_cast<TextComponent*>(mComponentLabels["resourceText"].pComponent);
+	if(mResourceText) showResource();
 
-	//装備の効果
-	structName = "EffectCanvas";
-	auto toolEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
-	toolEffectCanvas->loadFileAndCreate(structName);
-
-#ifdef _DEBUG
-	toolEffectCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(toolEffectCanvas));
-
-	//装備の効果　テキスト	
-	structName = "EffectText";
-	auto toolEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	toolEffectText->loadFileAndCreate(structName);
-	toolEffectText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	toolEffectText->activateControll(structName);
-#endif
-	mToolEffectText = toolEffectText.get();
-	showToolEffect();
-	addComponent(std::move(toolEffectText));
+	//道具の効果
+	mToolEffectText = static_cast<TextComponent*>(mComponentLabels["toolEffectText"].pComponent);
+	if(mToolEffectText) showToolEffect();
 
 	//装備作製にかかるコスト
-	structName = "CostText";
-	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	costText->loadFileAndCreate(structName);
-	costText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	costText->activateControll(structName);
-#endif
-	mCostText = costText.get();
-	showCraftCost();
-	addComponent(std::move(costText));
+	mCostText = static_cast<TextComponent*>(mComponentLabels["costText"].pComponent);
+	if(mCostText) showCraftCost();
+
 }
 
 void ExplorerMenu::selectedAct()

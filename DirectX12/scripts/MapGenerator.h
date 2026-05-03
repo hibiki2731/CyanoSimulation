@@ -31,7 +31,6 @@ private:
 	void createTile();
 	void createCharacter();
 
-	void craeteObject();
 #ifdef _DEBUG
 	//DEBUG用
 #endif

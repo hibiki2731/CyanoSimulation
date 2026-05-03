@@ -2,7 +2,6 @@
 #include "MeshComponent.h"
 #include "Game.h"
 #include "EnemyComponent.h"
-#include "json.hpp"
 #include "Player.h"
 #include "DungeonScene.h"
 #include <fstream>
@@ -13,13 +12,7 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	//敵の位置を設定
 	mPosition = XMFLOAT3(x, 0, y);
 
-	//敵のパラメータをjsonファイルから読み込む
-	std::ifstream file("assets\\data\\enemyData.json");
-	assert(!file.fail());
-
-	//jsonファイルの読み込み
-	nlohmann::json enemyData;
-	file >> enemyData;
+	nlohmann::json& enemyData = scene.getGame().getAssetManager().getEnemyJson();
 
 	//コンポーネントの作成
 	auto mesh = std::make_unique<MeshComponent>(*this);

@@ -10,6 +10,7 @@ class FireParticleComponent :
 public:
     FireParticleComponent(class Actor& owner);
     DECLARE_COMPONENT_NAME(FireParticleComponent)
+    void loadFromJson(const nlohmann::json& json) override;
     
     void endProcess() override;
     void updateComponent() override;

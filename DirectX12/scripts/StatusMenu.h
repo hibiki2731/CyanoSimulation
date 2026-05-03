@@ -9,6 +9,7 @@ public:
 	EquipWeaponMenu(TownScene& scene, class StatusMenu& menu, float zDepth);
 	DECLARE_CLASS_NAME(EquipWeaponMenu)
 
+	void applyComponentLabel() override;
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -36,6 +37,7 @@ public:
 	EquipArmerMenu(TownScene& scene, class StatusMenu& menu, float zDepth);
 	DECLARE_CLASS_NAME(EquipArmerMenu)
 
+	void applyComponentLabel() override;
 	void selectedAct() override;
 	void updateMenu() override;
 	void inputMenu() override;
@@ -62,7 +64,8 @@ public:
 	StatusMenu(TownScene& scene, float zDepth);
 	DECLARE_CLASS_NAME(StatusMenu)
 
-	~StatusMenu();
+	void applyComponentLabel() override;
+	void endProcessActor() override;
 	void selectedAct() override;
 	void applyStatus();
 

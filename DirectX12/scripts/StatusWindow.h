@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Actor.h"
+#include "Object.h"
 
 class TownScene;
 class PlayerManager;
@@ -8,11 +8,13 @@ class TextComponent;
 class SpriteComponent;
 
 class StatusWindow :
-    public Actor
+    public Object
 {
 public:
 	StatusWindow(TownScene& scene, float zDepth);
 	DECLARE_CLASS_NAME(StatusWindow)
+
+	void applyComponentLabel() override;
 	void updateStatus();
 
 private:

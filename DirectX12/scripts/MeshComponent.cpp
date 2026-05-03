@@ -5,6 +5,7 @@
 #include "Actor.h"
 #include "Scene.h"
 #include "Game.h"
+#include "myJson.h"
 
 
 
@@ -16,6 +17,12 @@ MeshComponent::MeshComponent(Actor& owner, int updateOrder)
 	mOwner.getScene().addMesh(this);
 	CbvTbvSize = mGraphic.getCbvTbvIncSize();
 	mMeshID = "NONE";
+}
+
+void MeshComponent::loadFromJson(const nlohmann::json& json)
+{
+	std::string meshID = json.value("meshID", "GRASS");
+	create(meshID);
 }
 
 void MeshComponent::endProcess()

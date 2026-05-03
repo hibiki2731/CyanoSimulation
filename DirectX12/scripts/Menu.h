@@ -1,19 +1,21 @@
 ﻿#pragma once
-#include "Actor.h"
+#include "Object.h"
 #include <string>
 
 class TownScene;
 class SpriteComponent;
 
 
-class Menu : public Actor
+class Menu : public Object
 {
 public:
-	Menu(TownScene& scene, std::string windowName, float zDepth);
+	Menu(TownScene& scene, const std::string& windowName, float zDepth);
 	//input
 	virtual	void inputMenu();
 	virtual void selectedAct() {};
 	virtual void updateMenu() {};
+
+	void applyComponentLabel() override;
 
 protected:
 	int mMaxIndex;	//メニューの最大インデックス
@@ -23,6 +25,5 @@ protected:
 	TownScene& mScene;
 
 private:
-	void initComponent(std::string windowName, float zDepth);
 
 };

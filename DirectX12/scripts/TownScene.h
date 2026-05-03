@@ -7,13 +7,6 @@
 class Game;
 class Menu;
 
-class BackGround : public Actor
-{
-public:
-	BackGround(Scene& scene);
-	DECLARE_CLASS_NAME(BackGround)
-};
-
 class TownScene :public Scene
 {
 public:
@@ -32,12 +25,11 @@ public:
 	//ステータスウィンドウの更新
 	void updateStatusWindow();
 
-	const std::string& getName() const override {
+	const std::string getName() const override {
 		return "TOWN";
 	}
 
 private:
-	BackGround* mBg;
 	bool isSelected;
 	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
