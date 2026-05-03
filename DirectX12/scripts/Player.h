@@ -52,6 +52,7 @@ private:
 	void turnEnd();
 	void selectNextItem();
 	void selectPreviousItem();
+	void moveNextFloor();
 
 	float mMoveSpeed;
 	float mRotSpeed;

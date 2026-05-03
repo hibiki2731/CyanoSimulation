@@ -40,7 +40,7 @@ void TurnObserver::updateTurn()
 			auto player = mScene.getPlayer();
 
 			//死亡していたら処理を行わない
-			if (player->getHP() > 0) endProcess();
+			if (player->getHP() > 0) RunOutProcess();
 		}
 
 
@@ -127,13 +127,13 @@ void TurnObserver::spawnEnemy()
 	}
 }
 
-void TurnObserver::endProcess()
+void TurnObserver::RunOutProcess()
 {
 	mTurnType = TurnType::END;
 	mNextTurn = TurnType::END;
 
 	//エンドウィンドウの生成
-	auto endWindow = std::make_unique<EndWindow>(mScene);
+	auto endWindow = std::make_unique<EndWindow>(mScene, WindowType::RETURN);
 	mScene.addActor(std::move(endWindow));
 }
 

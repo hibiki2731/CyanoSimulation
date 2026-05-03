@@ -27,7 +27,7 @@ Menu::Menu(TownScene& scene, const std::string& windowName, float zDepth)
 void Menu::inputMenu() {
 
 	if (mArrow) {
-		if (isKeyJustPressed(VK_UP)) {
+		if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 			if (mSelectedIndex <= 0) {
 				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 				return;
@@ -37,7 +37,7 @@ void Menu::inputMenu() {
 			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		}
 
-		if (isKeyJustPressed(VK_DOWN)) {
+		if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 			if (mSelectedIndex >= mMaxIndex - 1) {
 				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 				return;

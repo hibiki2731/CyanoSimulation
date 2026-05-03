@@ -7,12 +7,12 @@ class ItemManager;
 class TextComponent;
 class SpriteComponent;
 
-class StatusWindow :
+class TownUI :
     public Object
 {
 public:
-	StatusWindow(TownScene& scene, float zDepth);
-	DECLARE_CLASS_NAME(StatusWindow)
+	TownUI(TownScene& scene, float zDepth);
+	DECLARE_CLASS_NAME(TownUI)
 
 	void applyComponentLabel() override;
 	void updateStatus();

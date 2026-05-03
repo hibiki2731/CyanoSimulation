@@ -355,9 +355,19 @@ void DungeonScene::pushMessage(const std::string& message)
 	mUI->pushMessage(message);
 }
 
+void DungeonScene::updateGold()
+{
+	mUI->updateGold();
+}
+
 void DungeonScene::moveToEnemyTurn()
 {
 	mTurnObserver->moveToEnemyTurn();
+}
+
+void DungeonScene::moveNextFloor()
+{
+
 }
 
 void DungeonScene::moveToPlayerTurn()

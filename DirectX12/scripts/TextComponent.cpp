@@ -215,6 +215,11 @@ void TextComponent::setPosition(float x, float y)
 	applyTextTexture();
 }
 
+void TextComponent::setPosZ(float z)
+{
+	mPosition.z = z;
+}
+
 void TextComponent::setFontSize(FLOAT size)
 {
 	mFontSize = size;

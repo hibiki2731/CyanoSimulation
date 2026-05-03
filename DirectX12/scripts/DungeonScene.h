@@ -12,6 +12,7 @@ enum class Stage {
 };
 struct TileType {
 	enum Type {
+		GOAL = -1,
 		WALL = 0,
 		FLOOR = 1,
 		RESOURCE = 2,
@@ -75,10 +76,14 @@ public:
 	void updateItemUI();
 	void updateItemFrame();
 	void pushMessage(const std::string& message);
+	void updateGold();
 
 	//ターンの制御
 	void moveToPlayerTurn();
 	void moveToEnemyTurn();
+
+	//マップ移動
+	void moveNextFloor();
 
     //setter
     //マップ情報

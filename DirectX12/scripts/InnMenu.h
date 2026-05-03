@@ -8,12 +8,18 @@ public:
 
 	void selectedAct() override;
 	void updateMenu() override;
+	void inputMenu() override;
+	void updateActor() override;
+	void applyComponentLabel() override;
 
 private:
 	void stay();
 	void save();
+	void updateDescriptor();
 
 	struct IXAudio2SourceVoice* mSleepVoice;
+	class TextComponent* mDescriptor;
+	float mDescriptorDefaultZ;
 	bool isFading;
 };
 

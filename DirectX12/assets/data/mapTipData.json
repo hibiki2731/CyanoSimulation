@@ -1,5 +1,9 @@
 {
     "tile":{
+        "-1":{
+            "category":"GOAL",
+            "meshID":"ROCK_FLOOR"
+        },
         "0":{
             "category":"WALL",
             "meshID":"ROCK_WALL"

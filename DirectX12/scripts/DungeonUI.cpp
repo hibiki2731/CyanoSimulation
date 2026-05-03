@@ -12,178 +12,103 @@
 #include "AudioManager.h"
 #include <fstream>
 #include <string>
-
-constexpr float CanvasWidth = Graphic::ClientWidth * 0.3f;
-constexpr float CanvasHeight = Graphic::ClientHeight * 0.2;
-constexpr float CanvasZ = 50.0f;
-XMFLOAT2 DungeonUI::ItemIconOriginPos = { 10.0f, 52.0f };
-XMFLOAT2 DungeonUI::ItemIconSize = { 60.0f, 60.0f };
+#include "Math.h"
 
 DungeonUI::DungeonUI(DungeonScene& scene)
-	:Actor(scene),
+	:Object(scene, "DungeonUI"),
 	mItemManager(scene.getGame().getItemManager()),
 	mPlayerManager(scene.getGame().getPlayerManager()),
 	mPlayer(*scene.getPlayer()),
 	mMaxMessageNum(3)
 {
-	nlohmann::json uiData;
-	std::fstream file("assets\\data\\dungeonUIData.json");
-	file >> uiData;
+	addComponentLabel("hpValueText", "TextComponent");
+	addComponentLabel("hpBar", "SpriteComponent");
+	addComponentLabel("apValueText", "TextComponent");
+	addComponentLabel("apBar", "SpriteComponent");
+	addComponentLabel("originItemIcon", "SpriteComponent");
+	addComponentLabel("itemSelectFrame", "SpriteComponent");
+	addComponentLabel("selectItemText", "TextComponent");
+	addComponentLabel("messageText", "TextComponent");
+	addComponentLabel("goldText", "TextComponent");
 
-	{
-		std::wstring text = L"HP\n";
-		//HPテキスト
-		auto hpText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		float hpTextFontSize = uiData["hp"]["textFontSize"].get<float>();
-		hpText->setFontSize(hpTextFontSize);
-		std::vector<float> hpTextPosition = uiData["hp"]["textPosition"].get<std::vector<float>>();
-		hpText->setPosition(hpTextPosition[0], hpTextPosition[1]);
-		hpText->setText(text);
-		addComponent(std::move(hpText));
+	applyComponentLabel();
+}
 
-		//HP値のテキスト
-		auto hpValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		hpValueText->setFontSize(hpTextFontSize);
-		hpValueText->setPosition(hpTextPosition[0] + uiData["hp"]["textSpace"].get<float>(), hpTextPosition[1]);
+void DungeonUI::applyComponentLabel()
+{
+	//HP値
+	mHPValueText = static_cast<TextComponent*>(mComponentLabels["hpValueText"].pComponent);
+	if (mHPValueText) {
 		int hp = mPlayer.getHP();
 		int maxHp = mPlayer.getMaxHP();
-		text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
-		hpValueText->setText(text);
-		mHPValueText = hpValueText.get();
-		addComponent(std::move(hpValueText));
-
-		//HPバー
-		auto hpBar = std::make_unique<SpriteComponent>(*this);
-		hpBar->create(uiData["hp"]["barTexturePath"].get<std::string>());
-		mHPBarOriginalSize = XMFLOAT2(hpTextFontSize * 0.7f, CanvasWidth * 0.5f);
-		XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * hp / maxHp);
-		if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
-		hpBar->setSpriteSize(hpBarSize);
-		auto hpBarOffsetPos = uiData["hp"]["barOffsetPos"].get<std::vector<float>>();
-		mHPBarOffsetPos = XMFLOAT2(CanvasWidth * 0.4 + hpBarOffsetPos[0], hpTextPosition[1] + hpBarOffsetPos[1]);
-		hpBar->setPosition(XMFLOAT3(mHPBarOffsetPos.x + (hpBarSize.y - hpBarSize.x) * 0.5f, mHPBarOffsetPos.y - (hpBarSize.y - hpBarSize.x) * 0.5f, CanvasZ - 1.0f));
-		hpBar->setBordarSize(5.0f);
-		hpBar->setRotation(XM_PIDIV2);
-		mHPBar = hpBar.get();
-		addComponent(std::move(hpBar));
-
-		//HPバーの背景
-		auto hpBarBack = std::make_unique<SpriteComponent>(*this);
-		hpBarBack->create(uiData["hp"]["barBackTexturePath"].get<std::string>());
-		hpBarBack->setSpriteSize(mHPBarOriginalSize);
-		hpBarBack->setPosition(XMFLOAT3(CanvasWidth * 0.4 + hpBarOffsetPos[0] + (mHPBarOriginalSize.y - mHPBarOriginalSize.x) * 0.5f, hpTextPosition[1] + hpBarOffsetPos[1] - (mHPBarOriginalSize.y - mHPBarOriginalSize.x) * 0.5f, CanvasZ - 0.5f));
-		hpBarBack->setBordarSize(5.0f);
-		hpBarBack->setRotation(XM_PIDIV2);
-		addComponent(std::move(hpBarBack));
+		std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
+		mHPValueText->setText(text);
 	}
 
-	{
-		std::wstring text = L"AP\n";
-		//APテキスト
-		auto apText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		float apTextFontSize = uiData["ap"]["textFontSize"].get<float>();
-		apText->setFontSize(apTextFontSize);
-		std::vector<float> apTextPosition = uiData["ap"]["textPosition"].get<std::vector<float>>();
-		apText->setPosition(apTextPosition[0], apTextPosition[1]);
-		apText->setText(text);
-		addComponent(std::move(apText));
+	//HPバー
+	mHPBar = static_cast<SpriteComponent*>(mComponentLabels["hpBar"].pComponent);
+	if (mHPBar) {
+		mHPBarOriginalSize = mHPBar->getSpriteSize();
+		XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x * static_cast<float>(mPlayer.getHP()) / static_cast<float>(mPlayer.getMaxHP()), mHPBarOriginalSize.y);
+		if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
+		mHPBar->setSpriteSize(hpBarSize);
+	}
 
-		//AP値のテキスト
-		auto apValueText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		apValueText->setFontSize(apTextFontSize);
-		apValueText->setPosition(apTextPosition[0] + uiData["ap"]["textSpace"].get<float>(), apTextPosition[1]);
-		text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
-		apValueText->setText(text);
-		mAPValueText = apValueText.get();
-		addComponent(std::move(apValueText));
+	//AP値
+	mAPValueText = static_cast<TextComponent*>(mComponentLabels["apValueText"].pComponent);
+	if (mAPValueText) {
+		std::wstring text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
+		mAPValueText->setText(text);
+	}
 
-		//APバー
-		auto apBar = std::make_unique<SpriteComponent>(*this);
-		apBar->create(uiData["ap"]["barTexturePath"].get<std::string>());
-		 mAPBarOriginalSize = XMFLOAT2(apTextFontSize * 0.7f, CanvasWidth * 0.5f);
-		apBar->setSpriteSize(mAPBarOriginalSize);
-		auto apBarOffsetPos = uiData["ap"]["barOffsetPos"].get<std::vector<float>>();
-		mAPBarOffsetPos = XMFLOAT2(CanvasWidth * 0.4 + apBarOffsetPos[0], apTextPosition[1] + apBarOffsetPos[1]);
-		apBar->setPosition(XMFLOAT3(mAPBarOffsetPos.x + (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, mAPBarOffsetPos.y - (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, CanvasZ - 1.0f));
-		apBar->setBordarSize(5.0f);
-		apBar->setRotation(XM_PIDIV2);
-		mAPBar = apBar.get();
-		addComponent(std::move(apBar));
-
-		//APバーの背景
-		auto apBarBack = std::make_unique<SpriteComponent>(*this);
-		apBarBack->create(uiData["ap"]["barBackTexturePath"].get<std::string>());
-		apBarBack->setSpriteSize(mAPBarOriginalSize);
-		apBarBack->setPosition(XMFLOAT3(CanvasWidth * 0.4 + apBarOffsetPos[0] + (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, apTextPosition[1] + apBarOffsetPos[1] - (mAPBarOriginalSize.y - mAPBarOriginalSize.x) * 0.5f, CanvasZ - 0.5f));
-		apBarBack->setBordarSize(5.0f);
-		apBarBack->setRotation(XM_PIDIV2);
-		addComponent(std::move(apBarBack));
+	//APバー
+	mAPBar = static_cast<SpriteComponent*>(mComponentLabels["apBar"].pComponent);
+	if (mAPBar) {
+		mAPBarOriginalSize = mAPBar->getSpriteSize();
 	}
 
 	//アイテムアイコン
-	for (int i = 0; i < scene.getPlayer()->getStorageSize(); i++) {
-		auto itemIcon = std::make_unique<SpriteComponent>(*this);
-		itemIcon->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , ItemIconOriginPos.y, CanvasZ - 1.0f));
-		itemIcon->setSpriteSize(ItemIconSize);
-		itemIcon->create(uiData["itemIcon"][mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category].get<std::string>());
-		mItemIcons.push_back(itemIcon.get());
-		addComponent(std::move(itemIcon));
+	auto originItemIcon = static_cast<SpriteComponent*>(mComponentLabels["originItemIcon"].pComponent);
+	if (originItemIcon && mItemIcons.size() == 0) {
+		//アイテムアイコン配列に追加
+		mItemIcons.push_back(originItemIcon);
+		mFrameOriginPos = originItemIcon->getPosition();
+
+		for (int i = 1; i < mPlayer.getStorageSize(); i++) {
+			auto itemIcon = std::make_unique<SpriteComponent>(*this);
+			XMFLOAT3 position = mItemIcons[0]->getPosition();
+			position.x += i * (mItemIcons[0]->getSpriteSize().x + 10.0f); //アイテムアイコンの間隔を10.0fとする
+			itemIcon->setPosition(position);
+			itemIcon->setSpriteSize(mItemIcons[0]->getSpriteSize());
+			itemIcon->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+			mItemIcons.push_back(itemIcon.get());
+			addComponent(std::move(itemIcon));
+		}
+
+		//アイコンの画像を反映
+		updateItemIcon();
+
 	}
 
-	{
-		//選択中アイテムの枠
-		auto itemSelectFrame = std::make_unique<SpriteComponent>(*this);
-		itemSelectFrame->create("assets/picture/SelectFrame.png");
-		itemSelectFrame->setSpriteSize(ItemIconSize);
-		itemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x, ItemIconOriginPos.y, CanvasZ - 2.0f));
-		mItemSelectFrame = itemSelectFrame.get();
-		addComponent(std::move(itemSelectFrame));
-
-		//選択アイテムの名前
-		auto selectItemText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		selectItemText->setFontSize(uiData["selectItemText"]["fontSize"].get<float>());
-		auto selectItemTextPosition = uiData["selectItemText"]["position"].get<std::vector<float>>();
-		selectItemText->setPosition(selectItemTextPosition[0], selectItemTextPosition[1]);
+	//選択アイテム枠
+	mItemSelectFrame = static_cast<SpriteComponent*>(mComponentLabels["itemSelectFrame"].pComponent);
+	//選択アイテムテキスト
+	mSelectItemText = static_cast<TextComponent*>(mComponentLabels["selectItemText"].pComponent);
+	if (mSelectItemText) {
 		std::wstring selectItemTextStr = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
-		selectItemText->setText(selectItemTextStr);
-		mSelectItemText = selectItemText.get();
-		addComponent(std::move(selectItemText));
+		mSelectItemText->setText(selectItemTextStr);
 	}
 
-	//メッセージウィンドウ
-	{
-
-
-		//テキスト
-		std::string structName = "Dugeon_messageText";
-		auto messageText = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		messageText->loadFileAndCreate(structName);
-#ifdef _DEBUG
-		messageText->activateControll(structName);
-#endif
-
-		auto message = std::make_unique<TextComponent>(*this, CanvasZ - 1.0f);
-		message->loadFileAndCreate(structName);
-		message->setPosition(message->getPosX()+10.0f, message->getPosY() + 45.0f);
-		message->setFontSize(16.0f);
-		message->setLineSpace(10.0f);
+	//メッセージテキスト
+	mMessageText = static_cast<TextComponent*>(mComponentLabels["messageText"].pComponent);
+	if (mMessageText) {
 		static std::wstring firstMessage = L"";
-		message->setText(firstMessage);
-
-		mMessageText = message.get();
-		addComponent(std::move(message));
-		addComponent(std::move(messageText));
-
-		//メッセージ枠
-		structName = "Dungeon_messageFrame";
-		auto messageFrame = std::make_unique<SpriteComponent>(*this, CanvasZ);
-		messageFrame->loadFileAndCreate(structName);
-#ifdef _DEBUG
-		messageFrame->activateControll(structName);
-#endif
-		addComponent(std::move(messageFrame));
+		mMessageText->setText(firstMessage);
 	}
 
+	//所持金の表示
+	mGoldText = static_cast<TextComponent*>(mComponentLabels["goldText"].pComponent);
+	if (mGoldText) updateGold();
 }
 
 void DungeonUI::updateHP()
@@ -195,10 +120,9 @@ void DungeonUI::updateHP()
 	std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 	mHPValueText->setText(text);
 	//HPバーのサイズを更新
-	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x, mHPBarOriginalSize.y * static_cast<float>(hp) / static_cast<float>(maxHp));
-	if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
-	mHPBar->setSpriteSize(hpBarSize);
-	mHPBar->setPosition(XMFLOAT3(mHPBarOffsetPos.x + (hpBarSize.y - hpBarSize.x) * 0.5f, mHPBarOffsetPos.y - (hpBarSize.y - hpBarSize.x) * 0.5f, CanvasZ - 1.0f));
+	XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x * static_cast<float>(hp) / static_cast<float>(maxHp), mHPBarOriginalSize.y);
+	if (hpBarSize.x < 10.0f) hpBarSize.x = 10.0f; //HPバーの最小サイズ
+	if(mHPBar) mHPBar->setSpriteSize(hpBarSize);
 }
 
 void DungeonUI::updateAP()
@@ -210,41 +134,30 @@ void DungeonUI::updateAP()
 	std::wstring text = std::to_wstring(ap) + L"/" + std::to_wstring(maxAp) + L"\n";
 	mAPValueText->setText(text);
 	//APバーのサイズを更新
-	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x, mAPBarOriginalSize.y * static_cast<float>(ap) / static_cast<float>(maxAp));
-	if (apBarSize.y < 10.0f) apBarSize.y = 10.0f; //HPバーの最小サイズ
-	mAPBar->setSpriteSize(apBarSize);
-	mAPBar->setPosition(XMFLOAT3(mAPBarOffsetPos.x + (apBarSize.y - apBarSize.x) * 0.5f, mAPBarOffsetPos.y - (apBarSize.y - apBarSize.x) * 0.5f, CanvasZ - 1.0f));
+	XMFLOAT2 apBarSize = XMFLOAT2(mAPBarOriginalSize.x * static_cast<float>(ap) / static_cast<float>(maxAp), mAPBarOriginalSize.y);
+	if (apBarSize.x < 10.0f) apBarSize.x = 10.0f; //HPバーの最小サイズ
+	if(mAPBar) mAPBar->setSpriteSize(apBarSize);
 }
 
 void DungeonUI::updateItemIcon()
 {
-	nlohmann::json uiData;
-	std::fstream file("assets\\data\\dungeonUIData.json");
-	file >> uiData;
-
-	//アイテムアイコンを空にする
-	for (auto itemIcon : mItemIcons) {
-		removeComponent(itemIcon);
+	//アイテムアイコンを更新
+	if (mItemIcons.size() != 0) {
+		//アイテムの更新
+		for (int i = 0; i < mPlayer.getStorageSize(); i++) {
+			if (i < mPlayerManager.getInventory().size())
+				mItemIcons[i]->create(mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).iconFilePath);
+			else
+				mItemIcons[i]->create("assets/picture/UI2/PNG/Default/panel_grey_bolts.png");
+		}
 	}
-	mItemIcons.clear();
-
-	for (int i = 0; i < mPlayer.getStorageSize(); i++) {
-		auto itemIcon = std::make_unique<SpriteComponent>(*this);
-		itemIcon->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * i , ItemIconOriginPos.y, CanvasZ - 1.0f));
-		itemIcon->setSpriteSize(ItemIconSize);
-		itemIcon->create(uiData["itemIcon"].value(mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).category, "assets/picture/UI2/PNG/Default/panel_grey_bolts.png"));
-		mItemIcons.push_back(itemIcon.get());
-		addComponent(std::move(itemIcon));
-	}
-
-
 }
 
 void DungeonUI::updateItemFrame()
 {
 	//選択アイテムの枠を更新
 	int selectIndex = mPlayer.getSelectItemIndex();
-	mItemSelectFrame->setPosition(XMFLOAT3(ItemIconOriginPos.x + (ItemIconSize.x + 10.0f) * selectIndex, ItemIconOriginPos.y, CanvasZ - 2.0f));
+	mItemSelectFrame->setPosition(mFrameOriginPos + XMFLOAT3((mItemSelectFrame->getSpriteSize().x + 10.0f) * selectIndex, 0.0f, 0.0f));
 
 	//選択アイテムの名前を更新
 	std::wstring selectItemText = Utility::stringToWString(mItemManager.getItemData(mPlayer.getSelectItemID()).name) + L"\n";
@@ -261,4 +174,13 @@ void DungeonUI::pushMessage(const std::string& message)
 		text += mMessages[i] + "\n";
 	}
 	mMessageText->setText(Utility::stringToWString(text));
+}
+
+void DungeonUI::updateGold()
+{
+	if (!mGoldText) return;
+
+	int goldValue = mItemManager.getResourceNum("GOLD");
+	std::wstring text = std::to_wstring(goldValue) + L" G\n";
+	mGoldText->setText(text);
 }

@@ -9,6 +9,8 @@
     ],
     "TITLE": [],
     "TOWN": [
-        "Backgound"
-    ]
+        "Backgound",
+        "ControllDescriptor"
+    ],
+    "GAMEOVER":[]
 }

@@ -397,6 +397,7 @@ void EnemyComponent::deadProcess()
 	//メッセージの追加
 	std::string message = mName + "を倒した! " + std::to_string(mDropMoney) + "G取得\n";
 	mScene.pushMessage(message);
+	mScene.updateGold();
 
 	finishAct();
 }

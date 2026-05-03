@@ -1,21 +1,24 @@
 ﻿#pragma once
-#include "Actor.h"
+#include "Object.h"
 #include <deque>
 
 class TextComponent;
 class SpriteComponent;
 class DungeonScene;
 
-class DungeonUI : public Actor
+class DungeonUI : public Object
 {
 public:
 	DungeonUI(DungeonScene& scene);
 	DECLARE_CLASS_NAME(DungeonUI)
+	void applyComponentLabel() override;
+
 	void updateHP();
 	void updateAP();
 	void updateItemIcon();
 	void updateItemFrame();
 	void pushMessage(const std::string& message);
+	void updateGold();
 
 private:
 	//各種UIコンポーネント
@@ -23,16 +26,16 @@ private:
 	TextComponent* mAPValueText;
 	SpriteComponent* mHPBar;
 	XMFLOAT2 mHPBarOriginalSize;
-	XMFLOAT2 mHPBarOffsetPos;
 	SpriteComponent* mAPBar;
 	XMFLOAT2 mAPBarOriginalSize;
-	XMFLOAT2 mAPBarOffsetPos;
 	SpriteComponent* mCanvas;
 	SpriteComponent* mItemSelectFrame;
+	XMFLOAT3 mFrameOriginPos;
 	TextComponent* mSelectItemText;
 	TextComponent* mMessageText;
 	std::deque<std::string> mMessages;
 	const int mMaxMessageNum;
+	TextComponent* mGoldText;
 
 
 	//アイテムアイコン

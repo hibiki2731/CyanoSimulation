@@ -95,7 +95,7 @@ void EquipWeaponMenu::inputMenu()
 {
 
 
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
@@ -104,7 +104,7 @@ void EquipWeaponMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
@@ -226,7 +226,7 @@ void EquipArmerMenu::updateMenu()
 void EquipArmerMenu::inputMenu()
 {
 
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
@@ -235,7 +235,7 @@ void EquipArmerMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 		mSelectedIndex++;
@@ -289,7 +289,6 @@ void StatusMenu::applyComponentLabel()
 void StatusMenu::endProcessActor()
 {
 	Object::endProcessActor();
-	mScene.exitStatusMenu();
 }
 
 void StatusMenu::selectedAct()

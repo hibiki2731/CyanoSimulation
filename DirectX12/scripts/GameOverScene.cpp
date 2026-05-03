@@ -49,7 +49,7 @@ GameOverUI::GameOverUI(GameOverScene& scene)
 
 void GameOverUI::inputActor()
 {
-	if (isKeyJustPressed(VK_RETURN)) {
+	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		startTransit();
 	}
 }

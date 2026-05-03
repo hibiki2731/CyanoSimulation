@@ -20,6 +20,7 @@ TitleScene::TitleScene(Game& game)
 void TitleScene::onEnter()
 {
 
+	mDebugFlag = true;
 	mGame.getGraphic().startFadeIn(1.0f);
 
 	auto titleUI = std::make_unique<TitleUI>(*this);
@@ -36,41 +37,24 @@ void TitleScene::onExit()
 }
 
 TitleUI::TitleUI(TitleScene& scene)
-	: Actor(scene)
+	: Object(scene, "TitleUI")
 {
-	//タイトルテキスト
-	std::string structName = "TitleText";
-	auto titleText = std::make_unique<TextComponent>(*this, 0.0f);
-	titleText->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	titleText->activateControll(structName);
-#endif
-	addComponent(std::move(titleText));
-
-	//開始する方法
-	structName = "StartText";
-	auto startText = std::make_unique<TextComponent>(*this, 0.0f);
-	startText->loadFileAndCreate(structName);
-	mStartText = startText.get();
-#ifdef _DEBUG
-	startText->activateControll(structName);
-#endif
-
-	addComponent(std::move(startText));
-
-	auto background = std::make_unique<SpriteComponent>(*this, 100.0f);
-	background->create("assets/picture/TitleBackgroundLow.png");
-	background->setSpriteSize(XMFLOAT2(Graphic::ClientWidth, Graphic::ClientHeight));
-	addComponent(std::move(background));
-
+	addComponentLabel("startText", "TextComponent");
 	mTimer = 0;
 	isStarting = false;
 	mStartSEVoice = nullptr;
+
+	applyComponentLabel();
+}
+
+void TitleUI::applyComponentLabel()
+{
+	mStartText = static_cast<TextComponent*>(mComponentLabels["startText"].pComponent);
 }
 
 void TitleUI::inputActor()
 {
-	if (isKeyJustPressed(VK_RETURN) && !isStarting) {
+	if ((isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) && !isStarting) {
 		startTransit();
 	}
 }

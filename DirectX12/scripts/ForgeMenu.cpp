@@ -15,6 +15,8 @@ ForgeMenu::ForgeMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "ForgeMenu", zDepth)
 {
 	mMaxIndex = 2;
+	addComponentLabel("descriptor", "TextComponent");
+	applyComponentLabel();
 }
 
 void ForgeMenu::selectedAct()
@@ -33,6 +35,73 @@ void ForgeMenu::selectedAct()
 	}
 	}
 
+}
+
+void ForgeMenu::inputMenu()
+{
+	if (mArrow) {
+		if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
+			if (mSelectedIndex <= 0) {
+				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+				return;
+			}
+			mSelectedIndex--;
+			mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+			//説明文の更新
+			updateDescriptor();
+		}
+
+		if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
+			if (mSelectedIndex >= mMaxIndex - 1) {
+				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+				return;
+			}
+			mSelectedIndex++;
+			mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+			//説明文の更新
+			updateDescriptor();
+		}
+	}
+}
+
+void ForgeMenu::updateActor()
+{
+	if (mDescriptor) {
+		//メニューがアクティブでないとき
+		if (mScene.getCurrentMenu() != this) {
+			mDescriptor->setPosZ(200.0f);
+		}
+		else
+			mDescriptor->setPosZ(mDescriptorDefaultZ);
+	}
+}
+
+void ForgeMenu::applyComponentLabel()
+{
+	mDescriptor = static_cast<TextComponent*>(mComponentLabels["descriptor"].pComponent);
+	if (mDescriptor) {
+		mDescriptorDefaultZ = mDescriptor->getPosZ();
+		updateDescriptor();
+	}
+}
+
+void ForgeMenu::updateDescriptor()
+{
+	if (!mDescriptor) return;
+
+	std::wstring text;
+	switch (mSelectedIndex) {
+	case 0:
+		text = L"武器を作製します。\n";
+		break;
+	case 1:
+		text = L"防具を作製します。\n";
+		break;
+	}
+
+	mDescriptor->setText(text);
 }
 
 ArmerMenu::ArmerMenu(TownScene& scene, float zDepth)
@@ -116,7 +185,7 @@ void ArmerMenu::updateMenu()
 
 void ArmerMenu::inputMenu()
 {
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -129,7 +198,7 @@ void ArmerMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -339,7 +408,7 @@ void WeaponMenu::updateMenu()
 
 void WeaponMenu::inputMenu()
 {
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -352,7 +421,7 @@ void WeaponMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;

@@ -102,6 +102,7 @@
             "value": 20
         }
     ],
+    "Resource": null,
     "Weapon": [
         {
             "costResourceID": [

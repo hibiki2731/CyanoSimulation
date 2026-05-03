@@ -92,7 +92,7 @@ void ShopMenu::updateMenu()
 
 void ShopMenu::inputMenu()
 {
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -107,7 +107,7 @@ void ShopMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));			//矢印を上に移動
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;

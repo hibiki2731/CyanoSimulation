@@ -80,5 +80,14 @@ public:
 	DECLARE_CLASS_NAME(ForgeMenu)
 
 	void selectedAct() override;
+	void inputMenu() override;
+	void updateActor() override;
+	void applyComponentLabel();
+
+private:
+	TextComponent* mDescriptor;
+	float mDescriptorDefaultZ;
+
+	void updateDescriptor();
 };
 

@@ -633,8 +633,6 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 		for (auto& [key, label] : object->mComponentLabels) {
 			//ラベルが設定されていない場合
 			if (label.pComponent == nullptr) {
-				objJson["label"][key]["id"] = -1;
-				objJson["label"][key]["componentName"] = label.componentName;
 				continue;
 			}
 
@@ -879,7 +877,7 @@ void GUIDebugger::textComponentEditer(Component* component)
 		}
 
 		//テキストの変更
-		ImGui::InputText("Text", &text->mTextBuffer);
+		ImGui::InputTextMultiline("Text", &text->mTextBuffer);
 
 		if (ImGui::Button("Apply")) {
 			text->mText = Utility::stringToWString(text->mTextBuffer);

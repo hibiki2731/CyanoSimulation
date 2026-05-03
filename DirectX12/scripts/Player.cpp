@@ -105,6 +105,7 @@ void Player::inputActor()
 	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		attack();
 	    collect();
+		moveNextFloor();
 	}
 	if (isKeyJustPressed('I')) {
 		useItem();
@@ -430,7 +431,7 @@ void Player::damagedProcess()
 
 	//死亡処理
 	if (hp <= 0) {
-		auto endWindow = std::make_unique<EndWindow>(mScene);
+		auto endWindow = std::make_unique<EndWindow>(mScene, WindowType::DEAD);
 		mScene.addActor(std::move(endWindow));
 		return;
 	}
@@ -520,4 +521,39 @@ void Player::selectPreviousItem()
 	mSelectItemIndex--;
 	mScene.updateItemFrame();
 	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+}
+
+void Player::moveNextFloor()
+{
+	//敵ターン時は実行不可
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
+	//移動、回転中は実行不可
+	if (isActing || isRotating) return;
+	//残り行動回数が0の場合実行不可
+	if (mAP == 0)return;
+
+	//目の前に階段があるか判定
+	bool isGoal = false;
+	switch (mCharacter->getDirection()) {
+	case Direction::UP:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] + 1) == TileType::GOAL;
+		break;
+	case Direction::DOWN:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] - 1) == TileType::GOAL;
+		break;
+	case Direction::RIGHT:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0] + 1, mCharacter->getIndexPos()[1]) == TileType::GOAL;
+		break;
+	case Direction::LEFT:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0] - 1, mCharacter->getIndexPos()[1]) == TileType::GOAL;
+		break;
+	}
+
+	if (!isGoal) return;
+
+	//階段があった場合の処理
+	isActing = true;
+	auto goalWindow = std::make_unique<EndWindow>(mScene, WindowType::GOAL);
+	mScene.addActor(std::move(goalWindow));
+
 }

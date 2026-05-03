@@ -21,7 +21,7 @@ public:
 	void startEnemyTurn();
 
 private:
-	void endProcess();
+	void RunOutProcess();
 
 	TurnType mNextTurn;
 	TurnType mTurnType;

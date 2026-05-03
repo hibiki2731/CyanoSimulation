@@ -24,6 +24,7 @@ public:
 	//セッター
 	void setText(const std::wstring& text);
 	void setPosition(float x, float y);
+	void setPosZ(float z);
 	void setFontSize(FLOAT size);
 	void setTextColor(const D2D1::ColorF& color);
 	void setLineSpace(float space);
@@ -34,6 +35,8 @@ public:
 	float getLineSpace();
 	const float getPosX() const { return mPosition.x; }
 	const float getPosY() const { return mPosition.y; }
+	const float getPosZ() const { return mPosition.z; }
+	const XMFLOAT3& getPosition() const { return mPosition; }
 
 #ifdef _DEBUG
 	void activateControll(const std::string& structName);

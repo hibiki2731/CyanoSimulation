@@ -10,7 +10,7 @@
 #include "StatusMenu.h"
 #include "AudioManager.h"
 #include "MainMenu.h"
-#include "StatusWindow.h"
+#include "TownUI.h"
 
 //TownScene
 TownScene::TownScene(Game& game)
@@ -26,8 +26,8 @@ void TownScene::onEnter() {
 	addActor(std::move(mainMenu));
 
 	//ステータスウィンドウ
-	auto statusWindow = std::make_unique<StatusWindow>(*this, 99.0f);
-	mStatusWindow = statusWindow.get();
+	auto statusWindow = std::make_unique<TownUI>(*this, 99.0f);
+	mUI = statusWindow.get();
 	addActor(std::move(statusWindow));
 
 	//フェードイン
@@ -43,7 +43,7 @@ void TownScene::onEnter() {
 void TownScene::onExit() {
 	//スタックを空にする
 	for (int i = 0; i < mMenuStack.size(); i++) popMenu();
-	mStatusWindow = nullptr;
+	mUI = nullptr;
 
 }
 
@@ -51,17 +51,16 @@ void TownScene::inputScene()
 {
 	if (!mMenuStack.empty()) mMenuStack.top()->inputMenu();
 
-	if (isKeyJustPressed(VK_RETURN)) {
+	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		isSelected = true;
 	}
 
-	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
+	if ((isKeyJustPressed(VK_ESCAPE) || isKeyJustPressed('I')) && mMenuStack.size() > 1) {
 		popMenu();
 		mGame.getAudioManager().playSE("UI_WINDOW_CLOSE");
 	}
 
-	if (isKeyJustPressed('E') && !isStatusMenu) {
-		isStatusMenu = true;
+	if (isKeyJustPressed('E') && mMenuStack.top()->getClassName() == "MainMenu") {
 		auto status = std::make_unique<StatusMenu>(*this, 50.0f);
 		addActor(std::move(status));
 		mGame.getAudioManager().playSE("UI_WINDOW_OPEN");
@@ -92,14 +91,9 @@ void TownScene::popMenu()
 
 }
 
-void TownScene::exitStatusMenu()
-{
-	isStatusMenu = false;
-}
-
 void TownScene::updateStatusWindow()
 {
-	mStatusWindow->updateStatus();
+	mUI->updateStatus();
 }
 
 Menu* TownScene::getCurrentMenu()

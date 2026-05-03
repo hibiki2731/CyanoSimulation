@@ -186,7 +186,7 @@
     <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\StatusWindow.cpp">
+    <ClCompile Include="scripts\TownUI.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\EndWindow.cpp">
@@ -389,7 +389,7 @@
     <ClInclude Include="scripts\Imgui\imgui_stdlib.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\StatusWindow.h">
+    <ClInclude Include="scripts\TownUI.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scripts\EndWindow.h">

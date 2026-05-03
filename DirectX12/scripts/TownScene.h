@@ -20,8 +20,6 @@ public:
 	void pushMenu(Menu* menu);
 	void popMenu();
 
-	void exitStatusMenu();
-
 	//ステータスウィンドウの更新
 	void updateStatusWindow();
 
@@ -34,8 +32,7 @@ public:
 
 private:
 	bool isSelected;
-	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
-	class StatusWindow* mStatusWindow;
+	class TownUI* mUI;
 };
 

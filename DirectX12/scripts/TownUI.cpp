@@ -1,4 +1,4 @@
-﻿#include "StatusWindow.h"
+﻿#include "TownUI.h"
 #include "TownScene.h"
 #include "Game.h"
 #include "SpriteComponent.h"
@@ -8,7 +8,7 @@
 #include "GUIDebugger.h"
 
 
-StatusWindow::StatusWindow(TownScene& scene, float zDepth)
+TownUI::TownUI(TownScene& scene, float zDepth)
 	: Object(scene, "statusWindow"),
 	mPlayerManager(scene.getGame().getPlayerManager()),
 	mItemManager(scene.getGame().getItemManager())
@@ -23,7 +23,7 @@ StatusWindow::StatusWindow(TownScene& scene, float zDepth)
 	applyComponentLabel();
 }
 
-void StatusWindow::applyComponentLabel()
+void TownUI::applyComponentLabel()
 {
 	//プレイヤーデータの取得
 	auto playerData = mPlayerManager.getPlayerData();
@@ -78,7 +78,7 @@ void StatusWindow::applyComponentLabel()
 	}
 }
 
-void StatusWindow::updateStatus()
+void TownUI::updateStatus()
 {
 	//プレイヤーデータの取得
 	auto playerData = mPlayerManager.getPlayerData();
