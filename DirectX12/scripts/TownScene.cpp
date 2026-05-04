@@ -10,17 +10,7 @@
 #include "StatusMenu.h"
 #include "AudioManager.h"
 #include "MainMenu.h"
-#include "StatusWindow.h"
-
-//BackGround
-BackGround::BackGround(Scene& scene) : Actor(scene)
-{
-	auto window = std::make_unique<SpriteComponent>(*this);
-	window->create("assets\\picture\\town.png");
-	window->setBordarSize(0.0f);
-	window->setSpriteSize(XMFLOAT2(Graphic::ClientWidth, Graphic::ClientHeight));
-	addComponent(std::move(window));
-}
+#include "TownUI.h"
 
 //TownScene
 TownScene::TownScene(Game& game)
@@ -31,29 +21,29 @@ TownScene::TownScene(Game& game)
 
 void TownScene::onEnter() {
 
-	//背景
-	auto bg = std::make_unique<BackGround>(*this);
-	addActor(std::move(bg));
-
 	//メインメニュー
 	auto mainMenu = std::make_unique<MainMenu>(*this, 99.0f);
 	addActor(std::move(mainMenu));
 
 	//ステータスウィンドウ
-	auto statusWindow = std::make_unique<StatusWindow>(*this, 99.0f);
-	mStatusWindow = statusWindow.get();
+	auto statusWindow = std::make_unique<TownUI>(*this, 99.0f);
+	mUI = statusWindow.get();
 	addActor(std::move(statusWindow));
 
 	//フェードイン
 	mGame.getGraphic().startFadeIn(1.0f);
 
 	mGame.getAudioManager().playBGM("BGM_TOWN");
+
+#ifdef _DEBUG
+	mDebugFlag = true;
+#endif
 }
 
 void TownScene::onExit() {
 	//スタックを空にする
 	for (int i = 0; i < mMenuStack.size(); i++) popMenu();
-	mStatusWindow = nullptr;
+	mUI = nullptr;
 
 }
 
@@ -61,17 +51,16 @@ void TownScene::inputScene()
 {
 	if (!mMenuStack.empty()) mMenuStack.top()->inputMenu();
 
-	if (isKeyJustPressed(VK_RETURN)) {
+	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		isSelected = true;
 	}
 
-	if (isKeyJustPressed(VK_ESCAPE) && mMenuStack.size() > 1) {
+	if ((isKeyJustPressed(VK_ESCAPE) || isKeyJustPressed('I')) && mMenuStack.size() > 1) {
 		popMenu();
 		mGame.getAudioManager().playSE("UI_WINDOW_CLOSE");
 	}
 
-	if (isKeyJustPressed('E') && !isStatusMenu) {
-		isStatusMenu = true;
+	if (isKeyJustPressed('E') && mMenuStack.top()->getClassName() == "MainMenu") {
 		auto status = std::make_unique<StatusMenu>(*this, 50.0f);
 		addActor(std::move(status));
 		mGame.getAudioManager().playSE("UI_WINDOW_OPEN");
@@ -102,13 +91,13 @@ void TownScene::popMenu()
 
 }
 
-void TownScene::exitStatusMenu()
-{
-	isStatusMenu = false;
-}
-
 void TownScene::updateStatusWindow()
 {
-	mStatusWindow->updateStatus();
+	mUI->updateStatus();
+}
+
+Menu* TownScene::getCurrentMenu()
+{
+	return mMenuStack.top();
 }
 

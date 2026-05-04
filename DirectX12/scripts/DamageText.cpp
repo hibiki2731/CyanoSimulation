@@ -1,6 +1,7 @@
 ﻿#include "DamageText.h"
 #include "Game.h"
 #include "AssetManager.h"
+#include "Math.h"
 
 
 DamageText::DamageText(XMFLOAT3& position, int digit, float maxLifeTime, XMFLOAT3 velocity)
@@ -9,10 +10,6 @@ DamageText::DamageText(XMFLOAT3& position, int digit, float maxLifeTime, XMFLOAT
 	mVelocity = velocity;
 	mDigit = digit;
 	mLifeTime = maxLifeTime;
-}
-
-DamageText::~DamageText()
-{
 }
 
 void DamageText::update()
@@ -47,9 +44,7 @@ float DamageText::getLifeTime()
 DamageTextGenerator::DamageTextGenerator(Game& game) :
 	mGame(game)
 {
-	mCBSize = 256; //使用するコンスタントバッファは一つだけ
 	mHeapSize = 4;
-	mCBIndex = mGame.getAssetManager().getCBEndIndex(mCBSize);
 	mHeapIndex = mGame.getAssetManager().getHeapEndIndex(mHeapSize);
 	mNextInstanceIndex = 0;
 
@@ -69,18 +64,12 @@ DamageTextGenerator::DamageTextGenerator(Game& game) :
 	for(int i = 0; i < 2; i++) 
 	HRESULT hr = mVertexBuf[i]->Map(0, nullptr, reinterpret_cast<void**>(&mMappedData[i]));
 
-	//コンスタントバッファの初期化
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mGame.getGraphic().getAspect(), 0.01f, 50.0f);
-	mBC.proj = proj;
-	memcpy(mGame.getGraphic().getConstantData(0) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
-	memcpy(mGame.getGraphic().getConstantData(1) + mCBIndex, &mBC, sizeof(BillboardConstBuf));
-
 	////ファイルを読み込み、テクスチャバッファをつくる
 	mTextureBuf = mGame.getAssetManager().getShaderResource("assets\\picture\\digits.png");
 
 	////ディスクリプタヒープにビューを作成
 	auto heapIndex = mHeapIndex;
-	mGame.getGraphic().createConstantBufferView(mCBIndex, mCBSize, heapIndex, 2); heapIndex ++;
+	mGame.getGraphic().createConstantBufferView(mGame.getGraphic().getBCIndex(), 256, heapIndex, 2); heapIndex++;
 	mGame.getGraphic().createShaderResourceView(mTextureBuf, heapIndex); heapIndex += 2;
 	mGame.getGraphic().createShaderResourceView(mTextureBuf, heapIndex); 
 
@@ -131,7 +120,6 @@ void DamageTextGenerator::draw()
 	//描画するダメージテキストがなければ、描画処理を抜ける
 	if (mInstanceRawData.size() == 0)  return; 
 
-	mGame.getGraphic().getCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 	//頂点をセット
 	int backBufIdx = mGame.getGraphic().getBackBufIdx();
@@ -167,12 +155,6 @@ void DamageTextGenerator::createDamageText(const XMFLOAT3& position, int digit)
 	}
 	//最大数でない場合、配列の後に追加
 	else mInstanceRawData.emplace_back(text);
-}
-
-void DamageTextGenerator::updateView(XMMATRIX& view)
-{
-	mBC.view = view;
-	memcpy(mGame.getGraphic().getConstantData() + mCBIndex, &mBC, sizeof(BillboardConstBuf));
 }
 
 float DamageTextGenerator::getSize()

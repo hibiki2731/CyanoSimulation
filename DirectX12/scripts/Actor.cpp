@@ -1,6 +1,7 @@
 ﻿#include "Actor.h"
 #include "Component.h"
 #include "Game.h"
+#include "Math.h"
 
 Actor::Actor(Scene& scene)
 : mScene(scene)
@@ -22,9 +23,7 @@ Actor::Actor(Scene& scene, float x, float y)
 
 }
 
-Actor::~Actor()
-{
-}
+Actor::~Actor() = default;
 
 void Actor::input()
 {

@@ -13,14 +13,19 @@ class MeshComponent : public Component
 {
 public:
 	MeshComponent(Actor& owner, int updateOrder = 100);
-    ~MeshComponent();
+    DECLARE_COMPONENT_NAME(MeshComponent)
+    void loadFromJson(const nlohmann::json& json) override;
 
 	void endProcess() override;
 
-    void create(const std::string& objectName);
+    void create(const std::string& meshID);
+    void create(const MeshData * meshData);
 	void draw();
 
     void updateFlashIntensity(float intensity);
+
+    //getter
+    const std::string& getMeshID();
 
 private:
 
@@ -56,4 +61,7 @@ private:
     int mHeapSize;
     int mCBIndex;
     int mCBSize;
+
+    //メッシュのID
+    std::string mMeshID;
 };

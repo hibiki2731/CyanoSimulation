@@ -8,6 +8,11 @@ using namespace DirectX;
 
 extern XMFLOAT3 normalZ;
 
+XMFLOAT4 operator+(const XMFLOAT4& v1, const XMFLOAT4& v2);
+XMFLOAT4 operator-(const XMFLOAT4& v1, const XMFLOAT4& v2);
+XMFLOAT4 operator*(const XMFLOAT4& v1, const float& val);
+XMFLOAT4 operator/(const XMFLOAT4& v1, const float& val);
+
 XMFLOAT3 operator+(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator-(const XMFLOAT3& v1, const XMFLOAT3& v2);
 XMFLOAT3 operator*(const XMFLOAT3& v1, const float& val);
@@ -25,6 +30,7 @@ public:
 	static XMFLOAT3 rotateY(const XMFLOAT3& v1, const float& rot);
 	static XMFLOAT3 rotateX(const XMFLOAT3& v1, const float& rot);
 	static XMFLOAT3 rotateZ(const XMFLOAT3& v1, const float& rot);
+	static XMFLOAT3 rotate(const XMFLOAT3& v1, const XMFLOAT3& rot);
 	static XMFLOAT3 normalize(const XMFLOAT3& v);
 	static XMFLOAT3 lerp(const XMFLOAT3& start, const XMFLOAT3& end, const float& ratio);
 

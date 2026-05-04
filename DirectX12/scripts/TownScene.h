@@ -7,12 +7,6 @@
 class Game;
 class Menu;
 
-class BackGround : public Actor
-{
-public:
-	BackGround(Scene& scene);
-};
-
 class TownScene :public Scene
 {
 public:
@@ -26,20 +20,19 @@ public:
 	void pushMenu(Menu* menu);
 	void popMenu();
 
-	void exitStatusMenu();
-
 	//ステータスウィンドウの更新
 	void updateStatusWindow();
 
-	const std::string& getName() const override {
+	//getter
+	const std::string getName() const override {
 		return "TOWN";
 	}
+	Menu* getCurrentMenu();
+
 
 private:
-	BackGround* mBg;
 	bool isSelected;
-	bool isStatusMenu;
 	std::stack<Menu*> mMenuStack; //アクティブなメニューを管理
-	class StatusWindow* mStatusWindow;
+	class TownUI* mUI;
 };
 

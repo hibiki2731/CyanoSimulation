@@ -14,6 +14,7 @@ SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder) : Componen
 	mUAngle = 0.0f;
 	mPAngle = 0.0f;
 	mDirection = XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
+	mOffsetPos = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	mOwner.getScene().addSpotLight(this);
 }
 
@@ -27,6 +28,7 @@ void SpotLightComponent::updateComponent()
 		mPosition.x = mOwner.getPosition().x;
 		mPosition.y = mOwner.getPosition().y;
 		mPosition.z = mOwner.getPosition().z;
+		mPosition = mPosition + mOffsetPos;
 		// ライトの向きをオーナーの前方ベクトルに設定
 		XMFLOAT3 forward = { 0.0f, 0.0f, 1.0f }; // オーナーの前方ベクトル
 		forward = Math::rotateX(forward, mOwner.getRotation().x);
@@ -84,7 +86,7 @@ float SpotLightComponent::getPAngle()
 	return mPAngle;
 }
 
-void SpotLightComponent::setColor(const XMFLOAT4 color)
+void SpotLightComponent::setColor(const XMFLOAT4& color)
 {
 	mColor = color;
 }
@@ -112,4 +114,9 @@ void SpotLightComponent::setUAngle(const float uAngle)
 void SpotLightComponent::setPAngle(const float pAngle)
 {
 	mPAngle = pAngle;
+}
+
+void SpotLightComponent::setOffsetPos(const XMFLOAT4& offsetPos)
+{
+	mOffsetPos = offsetPos;
 }

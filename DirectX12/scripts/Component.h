@@ -3,6 +3,10 @@
 #include <vector>
 #include <concepts>
 #include <algorithm>
+#include <string>
+#include "json_fwd.hpp"
+#define DECLARE_COMPONENT_NAME(componentName) \
+			const std::string getComponentName() const override {return std::string(#componentName); }
 
 //前方宣言
 class Actor;
@@ -12,6 +16,10 @@ class Component
 public:
 	Component(Actor& owner, int updateOrder = 100);
 	virtual ~Component() {};
+	virtual const std::string getComponentName() const = 0;
+	
+	//jsonからのデータ取得
+	virtual void loadFromJson(const nlohmann::json& json) {};
 
 	//入力
 	virtual void inputComponent() {};
@@ -31,4 +39,7 @@ protected:
 	//更新順序
 	int mUpdateOrder;
 
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
 };

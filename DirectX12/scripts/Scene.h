@@ -46,7 +46,7 @@ public:
 	virtual void onExit() = 0;
 
 	//シーン名の取得
-	virtual const std::string& getName() const = 0;
+	virtual const std::string getName() const = 0;
 
 	//Gameの取得
 	Game& getGame() { return mGame; }
@@ -55,6 +55,7 @@ public:
 	void addActor(std::unique_ptr<Actor> actor);
 	void joinActors();
 	void removeActors();
+	void createObjects();
 
 	//メッシュの追加/削除
 	void addMesh(MeshComponent* mesh);
@@ -79,10 +80,17 @@ public:
 
 #ifdef _DEBUG
 	void drawDebugGUI();
+	void addDebugObject(class Object* object);
+	void removeDebugObject(class Object* object);
+	void clearDebugObject();
 #endif
 
 protected:
 	Game& mGame;
+#ifdef _DEBUG
+	std::vector<class Object*> mDebugObjects;
+	bool mDebugFlag = false;
+#endif
 
 private:
 	std::vector<std::unique_ptr<Actor>> mActors;
@@ -92,5 +100,10 @@ private:
 	std::vector<TextComponent*> mTexts;
 	std::vector<PointLightComponent*> mPointLights;
 	std::vector<SpotLightComponent*> mSpotLights;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
+
 };
 

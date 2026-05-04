@@ -2,9 +2,9 @@
 #include "MeshComponent.h"
 #include "Game.h"
 #include "EnemyComponent.h"
-#include "json.hpp"
 #include "Player.h"
 #include "DungeonScene.h"
+#include "ItemManager.h"
 #include <fstream>
 
 Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
@@ -13,40 +13,27 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	//敵の位置を設定
 	mPosition = XMFLOAT3(x, 0, y);
 
-	//敵のパラメータをjsonファイルから読み込む
-	std::ifstream file("assets\\data\\enemyData.json");
-	assert(!file.fail());
-
-	//jsonファイルの読み込み
-	nlohmann::json enemyData;
-	file >> enemyData;
-
-	EnemyParam param;
-	//敵のタイプがjsonファイルに存在するか確認
-	if (enemyData.contains(enemyID)) {
-		param.hp = enemyData[enemyID]["hp"].get<int>();
-		param.power = enemyData[enemyID]["power"].get<int>();
-		param.defense = enemyData[enemyID]["defense"].get<int>();
-		param.meshName = enemyData[enemyID]["meshName"].get<std::string>();
-		param.movePattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
-		param.senseRange = enemyData[enemyID].value("senseRange", 0); //senseRangeがない場合はデフォルトで0を使用
-	}
+	nlohmann::json& enemyData = scene.getGame().getAssetManager().getEnemyJson();
 
 	//コンポーネントの作成
 	auto mesh = std::make_unique<MeshComponent>(*this);
-	mesh->create(param.meshName);
+	mesh->create(enemyData[enemyID]["meshID"].get<std::string>());
 
 	auto enemy = std::make_unique<EnemyComponent>(*this, scene);
 	mEnemy = enemy.get();
 	mEnemy->setMesh(mesh.get());
 	mEnemy->setDirection(Direction::UP); //上向き
-	mEnemy->setDefense(param.defense);
-	mEnemy->setPower(param.power);
-	mEnemy->setMaxHP(param.hp);
-	mEnemy->setMovePattern(param.movePattern);
+	mEnemy->setDefense(enemyData[enemyID]["defense"].get<int>());
+	mEnemy->setPower(enemyData[enemyID]["power"].get<int>());
+	mEnemy->setMaxHP(enemyData[enemyID]["hp"].get<int>());
+	int dropMoney = enemyData[enemyID].value("dropMoney", 0) + scene.getGame().getItemManager().getResourceData("GOLD").yield;
+	mEnemy->setDropMoney(dropMoney);
+	mEnemy->setName(enemyData[enemyID]["name"].get<std::string>());
+	MovePattern pattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
+	mEnemy->setMovePattern(pattern);
 	//移動パターンがSENSEのときは、senseRangeを設定する
-	if (param.movePattern == MovePattern::SENSE) {
-		mEnemy->setSenseRange(param.senseRange);
+	if (pattern == MovePattern::SENSE) {
+		mEnemy->setSenseRange(enemyData[enemyID].value("senseRange", 0));
 	}
 
 	//所有権をActorに渡す
@@ -54,14 +41,3 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	addComponent(std::move(enemy));
 }
 
-Enemy::~Enemy()
-{
-}
-
-void Enemy::updateActor()
-{
-}
-
-void Enemy::inputActor()
-{
-}

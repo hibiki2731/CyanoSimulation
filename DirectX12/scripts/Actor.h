@@ -3,6 +3,11 @@
 #include <memory>
 #include <vector>
 #include <DirectXMath.h>
+#include <string>
+//派生クラスの名前取得用マクロ
+#define DECLARE_CLASS_NAME(className) \
+			const std::string getClassName() const override { return std::string(#className);}
+
 using namespace DirectX;
 
 //前方宣言
@@ -27,6 +32,9 @@ public:
 	//入力処理
 	void input();
 	virtual void inputActor() {};
+
+	//派生クラス先の名前を取得
+	virtual const std::string getClassName() const = 0;
 
 	//更新関数
 	void fastUpdate();
@@ -84,4 +92,9 @@ protected:
 	XMFLOAT3 mPosition;
 	XMFLOAT3 mScale;
 	XMFLOAT3 mRotation;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
+
 };

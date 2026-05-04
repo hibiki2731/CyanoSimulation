@@ -208,6 +208,26 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="scripts\FPPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="scripts\FPGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="scripts\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -235,11 +255,13 @@
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
+    <ClCompile Include="scripts\DebugCamera.cpp" />
     <ClCompile Include="scripts\DungeonScene.cpp" />
     <ClCompile Include="scripts\DungeonUI.cpp" />
     <ClCompile Include="scripts\EndWindow.cpp" />
     <ClCompile Include="scripts\EnemyComponent.cpp" />
     <ClCompile Include="scripts\ExplorerMenu.cpp" />
+    <ClCompile Include="scripts\FireParticleComponent.cpp" />
     <ClCompile Include="scripts\ForgeMenu.cpp" />
     <ClCompile Include="scripts\GameOverScene.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
@@ -253,6 +275,7 @@
     <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="scripts\myJson.cpp" />
     <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
@@ -272,7 +295,6 @@
     <ClCompile Include="scripts\MapGenerator.cpp" />
     <ClCompile Include="scripts\MessageWindow.cpp" />
     <ClCompile Include="scripts\PlayerManager.cpp" />
-    <ClCompile Include="scripts\PointLight.cpp" />
     <ClCompile Include="scripts\PointLightComponent.cpp" />
     <ClCompile Include="scripts\Math.cpp" />
     <ClCompile Include="scripts\MeshComponent.cpp" />
@@ -284,7 +306,7 @@
     <ClCompile Include="scripts\SpotLightComponent.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
     <ClCompile Include="scripts\StatusMenu.cpp" />
-    <ClCompile Include="scripts\StatusWindow.cpp" />
+    <ClCompile Include="scripts\TownUI.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
     <ClCompile Include="scripts\TitleScene.cpp" />
@@ -298,12 +320,14 @@
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
+    <ClInclude Include="scripts\DebugCamera.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DungeonScene.h" />
     <ClInclude Include="scripts\DungeonUI.h" />
     <ClInclude Include="scripts\EndWindow.h" />
     <ClInclude Include="scripts\EnemyComponent.h" />
     <ClInclude Include="scripts\ExplorerMenu.h" />
+    <ClInclude Include="scripts\FireParticleComponent.h" />
     <ClInclude Include="scripts\ForgeMenu.h" />
     <ClInclude Include="scripts\GameOverScene.h" />
     <ClInclude Include="scripts\GUIDebugger.h">
@@ -318,6 +342,8 @@
     <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
     <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
+    <ClInclude Include="scripts\json_fwd.hpp" />
+    <ClInclude Include="scripts\myJson.h" />
     <ClInclude Include="scripts\PerlinNoise1D.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
@@ -340,7 +366,6 @@
     <ClInclude Include="scripts\MapGenerator.h" />
     <ClInclude Include="scripts\MessageWindow.h" />
     <ClInclude Include="scripts\PlayerManager.h" />
-    <ClInclude Include="scripts\PointLight.h" />
     <ClInclude Include="scripts\PointLightComponent.h" />
     <ClInclude Include="scripts\Math.h" />
     <ClInclude Include="scripts\MeshComponent.h" />
@@ -352,7 +377,7 @@
     <ClInclude Include="scripts\SpotLightComponent.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\StatusMenu.h" />
-    <ClInclude Include="scripts\StatusWindow.h" />
+    <ClInclude Include="scripts\TownUI.h" />
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />

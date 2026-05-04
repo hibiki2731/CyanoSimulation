@@ -40,22 +40,24 @@ class AssetManager
 public:
 
 	AssetManager(Graphic& graphic);
-	~AssetManager();
-
 
 	//getter
 	int getCBEndIndex(int size);//必要なサイズを引数に取る
 	int getHeapEndIndex(int size); //必要なサイズを引数に取る
-	MeshData* getMeshData(const std::string& objectName); 
+	MeshData* getMeshData(const std::string& meshID); 
 	SpriteData getSpriteData();
 	XMFLOAT2 createTextureAndGetSize(const std::string& filePath);
 	ID3D12Resource* getShaderResource(const std::string& textureName);
 	UINT getSpriteVerticesSize();
 	UINT getSpriteIndicesSize();
+	nlohmann::json& getEnemyJson() { return mEnemyJson; }
+	nlohmann::json& getObjectJson() { return mObjectJson; }
+	nlohmann::json& getSceneJson() { return mSceneJson; }
 
 	void deleteMemory(int index, int size);
 	void deleteHeap(int index, int size);
 
+	void loadObjectJson();
 
 private:
 	//解放されたメモリやヒープを管理するための構造体
@@ -91,7 +93,14 @@ private:
 	D3D12_INDEX_BUFFER_VIEW mSpriteIndexBufView;
 	std::unordered_map<std::string, XMFLOAT2> mTextureSizeData;
 
-	void createMesh(const std::string& objectName, const MeshFileData& meshFileData);
+
+	//json
+	nlohmann::json mEnemyJson;
+	nlohmann::json mObjectJson;
+	nlohmann::json mSceneJson;
+
+	void createMeshData(const std::string& meshID, const MeshFileData& meshFileData);
 	void createSpriteBuffers();
+	void loadJson();
 };
 

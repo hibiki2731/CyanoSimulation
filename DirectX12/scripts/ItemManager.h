@@ -43,12 +43,16 @@ struct ExplorerData {
 	int value;
 	bool inPossession;
 	std::string description;
+	std::string valueID;
 };
 
 struct ResourceData {
 	std::string id;
 	std::string name;
 	size_t num;
+	int life;
+	int yield;
+	int defaultYield;
 };
 
 class ItemManager
@@ -60,9 +64,10 @@ public:
 
 	void addResource(const std::string& id, int num);
 	void subResource(const std::string& id, int num);
+	void addResourceYield(const std::string& id, int num);
 
 	//getter
-	int getResourceNum(std::string id);
+	int getResourceNum(const std::string& id);
 	const ResourceData& getResourceData(const std::string& id);
 	const std::unordered_map<std::string, ResourceData>& getResourceData();
 	const ItemData& getItemData(const std::string& id);
@@ -75,9 +80,9 @@ public:
 	const std::unordered_map<std::string, ExplorerData>& getExplorerData();
 
 	//setter
-	void setWeaopnPossession(std::string id, bool possession);
-	void setArmerPossession(std::string id, bool possession);
-	void setToolPossession(std::string id, bool possession);
+	void setWeaopnPossession(const std::string& id, bool possession);
+	void setArmerPossession(const std::string& id, bool possession);
+	void setToolPossession(const std::string& id, bool possession);
 
 	static const ItemData EmptyItem;
 	static const WeaponData EmptyWeapon;
@@ -90,6 +95,5 @@ private:
 	std::unordered_map<std::string, WeaponData> mWeaponData;
 	std::unordered_map<std::string, ArmerData> mArmerData;
 	std::unordered_map<std::string, ExplorerData> mExplorerData;
-
 };
 

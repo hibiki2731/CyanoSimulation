@@ -17,6 +17,7 @@ class EnemyComponent : public CharacterComponent
 {
 public:
 	EnemyComponent(Actor& owner, DungeonScene& scene);
+	DECLARE_COMPONENT_NAME(EnemyComponent)
 
 	void inputComponent() override;
 	void updateComponent() override;
@@ -28,6 +29,8 @@ public:
 	void setMesh(MeshComponent* mesh);
 	void setMovePattern(MovePattern state);
 	void setSenseRange(int range);
+	void setDropMoney(int money);
+	void setName(const std::string& name);
 	void activate();
 
 	void startFlash();
@@ -35,6 +38,7 @@ public:
 	//getter
 	XMFLOAT3 getPosition();
 	int getDist();
+	const std::string& getName() { return mName; }
 
 private:
 	//A*アルゴリズム用構造体
@@ -63,6 +67,7 @@ private:
 	void calcTargetIndex(int(&targetIndex)[2]);
 	void Astar(int (& targetIndex)[2]);
 	void randomWalk(int(&targetIndex)[2]);
+	void deadProcess();
 
 	//アクターに設定されているメッシュ
 	MeshComponent* mMesh;
@@ -85,10 +90,14 @@ private:
 
 	int mDistPlayer; //プレイヤーからの距離(マンハッタン距離)
 
-	//マップマネージャー
-	//class MapGenerator& mMapGenerator;
 	//シーン
 	DungeonScene& mScene;
+
+	//エネミーの名前
+	std::string mName;
+
+	//ドロップするお金
+	int mDropMoney;
 
 };
 

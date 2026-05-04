@@ -5,12 +5,14 @@
 
 class Player;
 class EnemyComponent;
+class FireParticleComponent;
 
 enum class Stage {
 	MAP1,
 };
 struct TileType {
 	enum Type {
+		GOAL = -1,
 		WALL = 0,
 		FLOOR = 1,
 		RESOURCE = 2,
@@ -38,7 +40,7 @@ public:
     void onEnter() override;
     void onExit() override;
     
-    const std::string& getName() const override {
+    const std::string getName() const override {
         return "DUNGEON";
     };
 
@@ -49,6 +51,8 @@ public:
 	void createPlayer(float x, float y);
     //リソースの作成
 	void createResource(const std::string& resourceID, const std::string& meshID, float x, float y, int index);
+	void spawnResource();
+	void deleteResourceFromIndex(int index);
 
     //シーン遷移
     void returnToTown();
@@ -59,6 +63,10 @@ public:
 	void removeEnemy(EnemyComponent* enemy);
 	void sortEnemiesByDistanceToPlayer();
 
+	//パーティクル配列の制御
+	void addParticle(FireParticleComponent* particle);
+	void removeParticle(FireParticleComponent* particle);
+
 	//ミニマップの更新
 	void updateMiniMapPos();
 	void updateMiniMapDirection();
@@ -67,9 +75,8 @@ public:
 	void updateAPUI();
 	void updateItemUI();
 	void updateItemFrame();
-
-	//ダメージテキストの公人
-	void updateDTView(XMMATRIX& view);
+	void pushMessage(const std::string& message);
+	void updateGold();
 
 	//ターンの制御
 	void moveToPlayerTurn();
@@ -92,6 +99,7 @@ public:
 	int getTileDataAt(int index);   
 	int getCharacterDataAt(int x, int y);
 	int getCharacterDataAt(int index);
+	const Stage& getStage();
     //エネミー
 	const std::vector<EnemyComponent*>& getEnemies() const { return mEnemies; }
 	const int getEnemyCount() const { return mEnemies.size(); }
@@ -101,31 +109,36 @@ public:
 	Player* getPlayer() const { return mPlayer; }
     int getPlayerActLimit();
     //リソース
-    const std::string& getResourceID(int index);
-    const std::string& getResourceID(int x, int y);
+    class Resource* getResource(int index);
+    class Resource* getResource(int x, int y);
 	//ターン情報
 	enum struct TurnType getTurnType() const;
 	//ダメージテキスト
 	float getDamageTextNum() const;
 	void createDamageText(const XMFLOAT3& pos, int digit);
 	//ターンオブザーバー
-	const class TurnObserver& getTurnObserver();
+	class TurnObserver& getTurnObserver();
 
 private:
 	//マップ情報
     int mMapSize;
 	std::vector<std::vector<int>> mTileData; //[x][y]
 	std::vector<std::vector<int>> mCharacterData; //[x][y]
+	Stage mStage;
 
 	//キャラクター
 	std::vector<EnemyComponent*> mEnemies;
 	Player* mPlayer;
-	//リソースID
-	std::unordered_map<int, std::string> mResourceIDs;
+	//リソース
+	std::unordered_map<int, class Resource*> mResources;
+	int mMaxResourcePoint;
 
 	//UIアクター
 	class MiniMap* mMiniMap;
 	class DungeonUI* mUI;
+
+	//エフェクト
+	std::vector<FireParticleComponent*> mParticles;
 	
 	//管理クラス
 	std::unique_ptr<class MapGenerator> mMapGenerator;	//マップ生成

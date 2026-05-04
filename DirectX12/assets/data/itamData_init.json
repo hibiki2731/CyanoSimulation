@@ -1,0 +1,198 @@
+{
+    "Armer": [
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "defence": 0,
+            "description": "なにも着ていない。\n早く服を着よう\n",
+            "id": "NONE",
+            "inPossession": true,
+            "name": "裸",
+            "price": [
+                0
+            ]
+        },
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GRASS"
+            ],
+            "defence": 2,
+            "description": "防御力 2",
+            "id": "CLOTHES",
+            "inPossession": false,
+            "name": "布の服",
+            "price": [
+                3
+            ]
+        },
+        {
+            "category": "CHEST",
+            "costResourceID":[
+                "GOLD",
+                "GRASS"
+            ],
+            "defence": 5,
+            "description": "防御力 5",
+            "id": "LETHER_ARMER",
+            "inPossession": false,
+            "name" :"皮の鎧",
+            "price":[
+                20,
+                20
+            ]
+        },
+        {
+            "category": "CHEST",
+            "costResourceID": [
+                "GOLD"
+            ],
+            "defence": 1000,
+            "description": "きかん",
+            "id": "INFINIT_ARMER",
+            "inPossession": true,
+            "name": "チート服",
+            "price": [
+                0
+            ]
+        }
+    ],
+    "Tool": [
+        {
+            "category": "ACTION_LIMIT",
+            "costResourceID": [
+                "GOLD",
+                "GRASS"
+            ],
+            "description": "APの最大値が10増加\n",
+            "id": "BOOTS",
+            "inPossession": false,
+            "name": "靴",
+            "price": [
+                10,
+                8
+            ],
+            "value": 10
+        },
+        {
+            "category": "YIELD",
+            "costResourceID":[
+                "GOLD",
+                "GRASS"
+            ],
+            "description": "魔鉱石の収穫量が+2される\n",
+            "id": "PICKSXE",
+            "inPossession": false,
+            "name": "ピッケル",
+            "price":[
+                15,
+                10
+            ],
+            "value": 2,
+            "valueID":"GRASS"
+        },
+        {
+            "category": "STORAGE_SIZE",
+            "costResourceID": [
+                "GOLD",
+                "GRASS"
+            ],
+            "description": "所持アイテム数が1増加\n",
+            "id": "BACKPACK",
+            "inPossession": false,
+            "name": "バックパック",
+            "price": [
+                30,
+                15
+            ]
+        }
+    ],
+    "Item": [
+        {
+            "category": "HP_RECOVER",
+            "costResourceID": [
+                "GOLD"
+            ],
+            "description": "HPを20回復\n",
+            "iconFilePath": "assets/picture/HerbIcon.png",
+            "id": "HERB",
+            "name": "薬草",
+            "price": [
+                3
+            ],
+            "value": 20
+        },
+        {
+            "category": "AP_RECOVER",
+            "costResourceID": [
+                "GOLD"
+            ],
+            "description": "APを20回復\nAPの最大値を越えて回復はしない。\n",
+            "iconFilePath": "assets/picture/SaltedKerp.png",
+            "id": "SALTED_KELP",
+            "name": "塩昆布",
+            "price": [
+                5
+            ],
+            "value": 20
+        }
+    ],
+    "Weapon": [
+        {
+            "costResourceID": [
+                "GRASS"
+            ],
+            "description": "なにも持っていない!!\n",
+            "id": "NONE",
+            "inPossession": true,
+            "name": "素手",
+            "power": 0,
+            "price": [
+                0
+            ]
+        },
+        {
+            "costResourceID": [
+                "GRASS"
+            ],
+            "description": "攻撃力 2\n",
+            "id": "WOODEN_SORD",
+            "inPossession": false,
+            "name": "木の剣",
+            "power": 2,
+            "price": [
+                5
+            ]
+        },
+        {
+            "costResourceID":[
+                "GOLD",
+                "GRASS"
+            ],
+            "description": "攻撃力 4",
+            "id":"IRON_SORD",
+            "inPossession":false,
+            "name":"鉄の剣",
+            "power": 4,
+            "price":[
+                20,
+                25
+            ]
+        },
+        {
+            "costResourceID": [
+                "GOLD"
+            ],
+            "description": "瞬殺マン\n",
+            "id": "INFINIT_BLADE",
+            "inPossession": true,
+            "name": "チート県",
+            "power": 9999,
+            "price": [
+                0
+            ]
+        }
+    ]
+}

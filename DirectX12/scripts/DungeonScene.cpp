@@ -14,6 +14,9 @@
 #include "Graphic.h"
 #include "DungeonUI.h"
 #include "AudioManager.h"
+#include "FireParticleComponent.h"
+#include "DebugCamera.h"
+//#define EDIT
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -23,6 +26,8 @@ DungeonScene::DungeonScene(Game& game)
 	mDamageTextManaager = std::make_unique<DamageTextGenerator>(game);
 	mPlayer = nullptr;
 	mMapSize = 0;
+	mMaxResourcePoint = 5;
+	mStage = Stage::MAP1;
 }
 
 void DungeonScene::fastUpdateScene() {
@@ -42,14 +47,40 @@ void DungeonScene::lateUpdateScene()
 
 void DungeonScene::drawScene()
 {
+	//ダメージテキストの描画
 	mGame.getGraphic().setRenderType(Graphic::RENDER_DT);
 	mDamageTextManaager->draw();
+
+	//炎パーティクルの描画
+	mGame.getGraphic().setRenderType(Graphic::RENDER_FP);
+	for (auto p : mParticles) p->draw();
+
 }
 
 void DungeonScene::onEnter()
 {
 	mMapGenerator->begin();
 	mTurnObserver->begin();
+
+	mGame.getGraphic().startFadeIn(1.0f); 
+	mGame.getAudioManager().playBGM("BGM_DUNGEON");
+
+#ifdef _DEBUG
+	mDebugFlag = true;
+
+#ifdef EDIT
+	//プレイヤーを削除
+	mPlayer->setState(Actor::State::Dead);
+	mPlayer = nullptr;
+
+	//デバッグ用カメラの生成
+	auto camera = std::make_unique<DebugCamera>(*this);
+	addActor(std::move(camera));
+
+	return;
+#endif
+
+#endif
 
 	//ミニマップの作成
 	auto minimap = std::make_unique<MiniMap>(*this);
@@ -62,15 +93,17 @@ void DungeonScene::onEnter()
 	mUI = dungeonUI.get();
 	addActor(std::move(dungeonUI));
 
-	mGame.getGraphic().startFadeIn(1.0f);
 
-	mGame.getAudioManager().playBGM("BGM_DUNGEON");
 }
 
 void DungeonScene::onExit()
 {
 	mMapGenerator->end();
-	mResourceIDs.clear();
+	mResources.clear();
+
+#ifdef _DEBUG
+	mDebugFlag = false;
+#endif
 }
 
 void DungeonScene::createEnemy(const std::string& enemyID, float x, float y)
@@ -92,9 +125,66 @@ void DungeonScene::createPlayer(float x, float y)
 void DungeonScene::createResource(const std::string& resourceID, const std::string& meshID, float x, float y, int index)
 {
 	//草の生成
-	std::unique_ptr<Resource> resource = std::make_unique<Resource>(*this, resourceID, meshID, x, y);
-	mResourceIDs[index] = resourceID;
+	std::unique_ptr<Resource> resource = std::make_unique<Resource>(*this, resourceID, meshID, x, y, index);
+	mResources[index] = resource.get();
 	addActor(std::move(resource)); //所有権をGameへ渡す
+}
+
+void DungeonScene::spawnResource()
+{
+	if (mResources.size() >= mMaxResourcePoint) return;
+
+	int playerIndex[2];
+	mPlayer->getIndexPos(playerIndex);
+
+	int i = 0;
+	//障害物がない　かつ　プレイヤーから4マス以上9マス以下の範囲でスポーン
+	while (i < 50) {
+		//スポーンするマスを乱数で決定
+		int x = playerIndex[0] + Random::dist(-9, 9);
+		int y = playerIndex[1] + Random::dist(-9, 9);
+
+		//障害物がある場合、もう一度乱数を振りなおす
+		if (x < 0 || x >= mMapSize || y < 0 || y >= mMapSize) {
+			i++;
+			continue;
+		}
+		if (mTileData[x][y] != TileType::FLOOR
+			|| mCharacterData[x][y] != CharacterType::EMPTY) {
+			i++;
+			continue;
+		}
+		
+		//プレイヤーから2マスいないならば、もう一度乱数を振りなおす
+		int distance = abs(playerIndex[0] - x) + abs(playerIndex[1] - y);
+		if (distance <= 2) {
+			i++;
+			continue;
+		}
+
+		//リソースの生成
+		std::string resourceID;
+		std::string meshID;
+
+		switch (mStage) {
+		case Stage::MAP1:
+			resourceID = "GRASS";
+			meshID = "GRASS";
+			break;
+		default:
+			resourceID = "GRASS";
+			meshID = "GRASS";
+			break;
+		}
+
+		createResource(resourceID, meshID, static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y), y * mMapSize + x);
+		break;
+	}
+}
+
+void DungeonScene::deleteResourceFromIndex(int index)
+{
+	mResources.erase(index);
 }
 
 void DungeonScene::returnToTown()
@@ -199,6 +289,10 @@ int DungeonScene::getCharacterDataAt(int index)
 
 	return mCharacterData[x][y];
 }
+const Stage& DungeonScene::getStage()
+{
+	return mStage;
+}
 void DungeonScene::addEnemy(EnemyComponent* enemy)
 {
 	mEnemies.emplace_back(enemy);
@@ -215,6 +309,16 @@ void DungeonScene::sortEnemiesByDistanceToPlayer()
 	std::sort(mEnemies.begin(), mEnemies.end(), [](auto const lenemy, auto const renemy) {
 		return lenemy->getDist() < renemy->getDist();
 		});
+}
+
+void DungeonScene::addParticle(FireParticleComponent* particle)
+{
+	mParticles.push_back(particle);
+}
+
+void DungeonScene::removeParticle(FireParticleComponent* particle)
+{
+	mParticles.erase(std::remove(mParticles.begin(), mParticles.end(), particle), mParticles.end());
 }
 
 void DungeonScene::updateMiniMapPos()
@@ -247,9 +351,14 @@ void DungeonScene::updateItemFrame()
 	mUI->updateItemFrame();
 }
 
-void DungeonScene::updateDTView(XMMATRIX& view)
+void DungeonScene::pushMessage(const std::string& message)
 {
-	mDamageTextManaager->updateView(view);
+	mUI->pushMessage(message);
+}
+
+void DungeonScene::updateGold()
+{
+	mUI->updateGold();
 }
 
 void DungeonScene::moveToEnemyTurn()
@@ -291,21 +400,21 @@ int DungeonScene::getPlayerActLimit()
 	return (mPlayer) ? mPlayer->getAP() : 0;
 }
 
-const std::string& DungeonScene::getResourceID(int index)
+class Resource* DungeonScene::getResource(int index)
 {
-	auto iter = mResourceIDs.find(index);
-	if (iter != mResourceIDs.end()) {
+	auto iter = mResources.find(index);
+	if (iter != mResources.end()) {
 		return iter->second;
 	}
 	else {
-		return "";
+		return nullptr;
 	}
 }
 
-const std::string& DungeonScene::getResourceID(int x, int y)
+class Resource* DungeonScene::getResource(int x, int y)
 {
 	int index = y * mMapSize + x;
-	return getResourceID(index);
+	return getResource(index);
 }
 
 TurnType DungeonScene::getTurnType() const
@@ -323,7 +432,7 @@ void DungeonScene::createDamageText(const XMFLOAT3& pos, int digit)
 	mDamageTextManaager->createDamageText(pos, digit);
 }
 
-const TurnObserver& DungeonScene::getTurnObserver()
+TurnObserver& DungeonScene::getTurnObserver()
 {
 	return *mTurnObserver.get();
 }

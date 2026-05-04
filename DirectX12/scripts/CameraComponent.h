@@ -8,7 +8,8 @@ class DungeonScene;
 class CameraComponent :  public Component
 {
 public:
-	CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder = 100);
+	CameraComponent(Actor& owner, int updateOrder = 100);
+    DECLARE_COMPONENT_NAME(CameraComponent)
 
     void inputComponent() override;
     void updateComponent() override;
@@ -42,7 +43,6 @@ private:
     float mRot;
 
     bool isActive;
-	DungeonScene& mDungeonScene;
 
     //画面揺れ
 	static float AccumulatedTime;

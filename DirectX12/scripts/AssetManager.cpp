@@ -1,6 +1,8 @@
 ﻿#include "AssetManager.h"
 #include <string>
 #include <fstream>
+#include "FBXConverter.h"
+#include "json.hpp"
 
 static float spriteVertices[] = {
 	0.0f, 0.0f, 0.0f, 0.0f,
@@ -42,45 +44,56 @@ static UINT16 spriteIndices[] = {
 	14, 13, 15,
 };
 
-
+static const int NumElementsPerVertex = 8;
 
 AssetManager::AssetManager(Graphic& graphic)
 	: mGraphic(graphic)
 {
+	//Base3DDataが先頭のメモリを使用する
 	mCBEndIndex = mGraphic.alignedSize(sizeof(Base3DData));
 	mHeapEndIndex = 0;
 	createSpriteBuffers();
-	std::fstream file("assets/data/meshData.json");
+
+	std::fstream file("assets/data/MeshData.json");
 	nlohmann::json json;
 	file >> json;
+
+#ifdef _DEBUG
+	FBXConverter fbxConverter;
+#endif
 
 	//全メッシュの読み込みを最初に行う
 	for (const auto& [key, value] : json.items()) {
 		MeshFileData meshFileData;
-		meshFileData.filePath = value["filePath"].get<std::string>();
+
+		meshFileData.filePath = value["jsonPath"].get<std::string>();
 		meshFileData.scale = value.value("scale", std::vector<float>{1.0f, 1.0f, 1.0f});
+#ifdef _DEBUG
+		//FBXファイルの変換
+		fbxConverter.fbxToJson(value["fbxPath"].get<std::string>().c_str(), meshFileData.filePath.c_str() , 1.0f, 1.0f, 1.0f, 0, 1, 2); //横、縦、奥行
+#endif
 
-		createMesh(key, meshFileData);
+		createMeshData(key, meshFileData);
 	}
+
+	loadJson();
 }
 
-AssetManager::~AssetManager()
+void AssetManager::createMeshData(const std::string& meshID, const MeshFileData& meshFileData)
 {
-}
-
-void AssetManager::createMesh(const std::string& objectName, const MeshFileData& meshFileData)
-{
-	if (mLoadData.contains(objectName)) return; //すでに読み込まれたオブジェクトはスルー
+	if (mLoadData.contains(meshID)) return; //すでに読み込まれたオブジェクトはスルー
 
 	//ファイルを読み込む
 	std::ifstream meshFile(meshFileData.filePath);
 	assert(!meshFile.fail());
+	//jsonへ読み込み
+	nlohmann::json json;
+	meshFile >> json;
 
 	auto meshData = std::make_unique<MeshData>();
 
 	//メッシュパーツ数を読み込み、メモリを確保
-	int numParts = 0;
-	meshFile >> numParts;
+	int numParts = json["numParts"].get<int>();
 	meshData->NumParts = numParts;
 	meshData->NumVertices.resize(numParts);
 	meshData->VertexBuf.resize(numParts);
@@ -89,31 +102,37 @@ void AssetManager::createMesh(const std::string& objectName, const MeshFileData&
 	meshData->TextureName.resize(numParts);
 	meshData->Scale = XMFLOAT3(meshFileData.scale[0], meshFileData.scale[1], meshFileData.scale[2]);
 
+	int k = -1; //パーツのインデックス
+
 	//パーツごとのデータを読み込む
-	for (int k = 0; k < numParts; k++) {
+	for (auto partsJson : json["parts"]) {
+		k++;
 		//頂点バッファ
 		{
-			//生データをファイルからvector配列に読み込む
-			//　データチェック
-			std::string dataType;
-			meshFile >> dataType;
-			assert(dataType == "vertices");
-			//　頂点数
-			int numVertices = 0;
-			meshFile >> numVertices;//頂点数
-			//　vector配列に読み込む
-			UINT NumElementsPerVertex = 8;
-			int NumElements = numVertices * NumElementsPerVertex;
-			std::vector<float>vertices(NumElements);
-			for (int i = 0; i < NumElements; i++) {
-				meshFile >> vertices[i];
+			//jsonから生データをvector配列に読み込む
+			std::vector<float> positions = partsJson["position"].get<std::vector<float>>();
+			std::vector<float> normals = partsJson["normal"].get<std::vector<float>>();
+			std::vector<float> texcoords = partsJson["texcoord"].get<std::vector<float>>();
+			int numVertices = positions.size() / 3;
+
+			//一つのvector配列に格納
+			std::vector<float> vertices(numVertices * NumElementsPerVertex);
+			for (int i = 0; i < numVertices; i++) {
+				vertices[i * NumElementsPerVertex] = positions[i * 3];
+				vertices[i * NumElementsPerVertex + 1] = positions[i * 3 + 1];
+				vertices[i * NumElementsPerVertex + 2] = positions[i * 3 + 2];
+				vertices[i * NumElementsPerVertex + 3] = normals[i * 3];
+				vertices[i * NumElementsPerVertex + 4] = normals[i * 3 + 1];
+				vertices[i * NumElementsPerVertex + 5] = normals[i * 3 + 2];
+				vertices[i * NumElementsPerVertex + 6] = texcoords[i * 2];
+				vertices[i * NumElementsPerVertex + 7] = texcoords[i * 2 + 1];
 			}
 
 			//インデックスを使用しない描画の時に、これを使用するので取っておく
 			meshData->NumVertices[k] = numVertices;
 
 			//頂点バッファをつくる
-			UINT sizeInByte = sizeof(float) * NumElements;//全バイト数
+			UINT sizeInByte = sizeof(float) * vertices.size();//全バイト数
 			HRESULT hr = mGraphic.createBuf(sizeInByte,meshData->VertexBuf[k]);
 			assert(SUCCEEDED(hr));
 
@@ -128,46 +147,35 @@ void AssetManager::createMesh(const std::string& objectName, const MeshFileData&
 		}
 		//マテリアル
 		{
-			//生データをファイルからvector配列に読み込む
-			std::string dataType;
-			meshFile >> dataType;
-			assert(dataType == "material");
-			XMFLOAT4 ambient, diffuse, specular;
-			meshFile >> ambient.x >> ambient.y >> ambient.z >> ambient.w;
-			meshFile >> diffuse.x >> diffuse.y >> diffuse.z >> diffuse.w;
-			meshFile >> specular.x >> specular.y >> specular.z >> specular.w;
+			std::vector<float> material = partsJson["material"].get<std::vector<float>>();
 
-			meshData->Material[k * 3] = ambient;
-			meshData->Material[k * 3 + 1] = diffuse;
-			meshData->Material[k * 3 + 2] = specular;
+			meshData->Material[k * 3] = XMFLOAT4(material[0], material[1], material[2], material[3]);
+			meshData->Material[k * 3 + 1] = XMFLOAT4(material[4], material[5], material[6], material[7]);
+			meshData->Material[k * 3 + 2] = XMFLOAT4(material[8], material[9], material[10], material[11]);
 		}
 		//テクスチャバッファ
 		{
 			//ファイル名を読み込む
-			std::string dataType;
-			meshFile >> dataType;
-			assert(dataType == "texture");
-			std::string textureFileName;
-			std::getline(meshFile, textureFileName);
-			textureFileName.erase(0, 1); //先頭の" "を削除
 
-			auto iter = mTextureData.find(textureFileName);
+			std::string texturePath = partsJson["texturePath"].get<std::string>();
+
+			auto iter = mTextureData.find(texturePath);
 			if (iter != mTextureData.end()) {
 				//すでに読み込まれたテクスチャはスルー
-				meshData->TextureName[k] = textureFileName;
+				meshData->TextureName[k] = texturePath;
 				continue;
 			}
 
 			ComPtr<ID3D12Resource> textureBuf;
-			HRESULT hr = mGraphic.createShaderResource(textureFileName, textureBuf);
+			HRESULT hr = mGraphic.createShaderResource(texturePath, textureBuf);
 			assert(SUCCEEDED(hr));
-			meshData->TextureName[k] = textureFileName;
-			mTextureData[textureFileName] = std::move(textureBuf);
+			meshData->TextureName[k] = texturePath;
+			mTextureData[texturePath] = std::move(textureBuf);
 
 		}
 	}
 
-	mLoadData[objectName] = std::move(meshData);
+	mLoadData[meshID] = std::move(meshData);
 }
 
 XMFLOAT2 AssetManager::createTextureAndGetSize(const std::string& filePath)
@@ -282,26 +290,26 @@ int AssetManager::getHeapEndIndex(int size)
 	return index;
 }
 
-MeshData* AssetManager::getMeshData(const std::string& objectName)
+MeshData* AssetManager::getMeshData(const std::string& meshID)
 {
-	auto iter = mLoadData.find(objectName);
+	auto iter = mLoadData.find(meshID);
 	if (iter != mLoadData.end()) {
 		return iter->second.get();
 	}
 	else {
-		std::fstream file("assets/data/meshData.json");
+		std::fstream file("assets/data/MeshData.json");
 		nlohmann::json json;
 		file >> json;
 
 		//メッシュデータに目的のIDが存在するか調べる
 		for (const auto& [key, value] : json.items()) {
-			if (objectName != key) continue;
+			if (meshID != key) continue;
 
 			MeshFileData meshFileData;
 			meshFileData.filePath = value["filePath"].get<std::string>();
 			meshFileData.scale = value.value("scale", std::vector<float>{ 1.0f, 1.0f, 1.0f });
-			createMesh(objectName, meshFileData);
-			return mLoadData[objectName].get();
+			createMeshData(meshID, meshFileData);
+			return mLoadData[meshID].get();
 		}
 	}
 
@@ -432,7 +440,35 @@ void AssetManager::createSpriteBuffers()
 		mSpriteIndexBufView.SizeInBytes = sizeInByte;//全バイト数
 		mSpriteIndexBufView.Format = DXGI_FORMAT_R16_UINT;//UINT16
 	}
+}
 
+void AssetManager::loadJson()
+{
+	//敵パラメータファイルの読み込み
+	std::ifstream enemyDataFile("assets\\data\\enemyData.json");
+	assert(!enemyDataFile.fail());
+	enemyDataFile >> mEnemyJson;
+
+	//オブジェクトデータファイルの読み込み
+	std::ifstream objectDataFile("assets\\data\\objectData.json");
+	assert(!objectDataFile.fail());
+	objectDataFile >> mObjectJson;
+
+	//敵パラメータファイルの読み込み
+	std::ifstream sceneDataFile("assets\\data\\sceneData.json");
+	assert(!sceneDataFile.fail());
+
+	sceneDataFile >> mSceneJson;
+
+
+}
+
+void AssetManager::loadObjectJson()
+{
+	//オブジェクトデータファイルの読み込み
+	std::ifstream objectDataFile("assets\\data\\objectData.json");
+	assert(!objectDataFile.fail());
+	objectDataFile >> mObjectJson;
 }
 
 

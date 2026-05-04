@@ -1,19 +1,21 @@
 {
     "SLIME": {
-        "name": "SLIME",
-        "hp": 10,
-        "power": 5,
-        "defense": 3,
-        "meshName": "SLIME",
+        "name": "スライム",
+        "hp": 5,
+        "power": 4,
+        "dropMoney": 2,
+        "defense": 1,
+        "meshID": "SLIME",
         "movePattern": "SENSE",
         "senseRange": 4
     },
     "NURIKABE": {
-        "name": "NURIKABE",
+        "name": "ぬりかべ",
         "hp": 20,
         "power": 8,
+        "dropMoney": 10,
         "defense": 4,
-        "meshName": "NURIKABE",
+        "meshID": "NURIKABE",
         "movePattern": "RANDOM"
     }
 }

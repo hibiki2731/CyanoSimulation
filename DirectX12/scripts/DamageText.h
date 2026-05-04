@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <DirectXMath.h>
 #include "Graphic.h"
 #include <vector>
 using namespace DirectX;
@@ -39,16 +38,14 @@ public:
 	//ダメージテキストの追加
 	void createDamageText(const XMFLOAT3& position, int digit);
 
-	void updateView(XMMATRIX& view);
-
 	float getSize();
 
 private:
 	struct DamageTextInstance {
 		XMFLOAT3 pos;
 		float size;
-		float  digit;
 		float alpha;
+		float  digit;
 	};
 
 	const UINT NumElementsPerVertex = 6; //頂点ごとの要素数
@@ -65,8 +62,6 @@ private:
 	BillboardConstBuf mBC;
 	ID3D12Resource* mTextureBuf;
 
-	int mCBIndex;
-	int mCBSize;
 	int mHeapIndex;
 	int mHeapSize;
 

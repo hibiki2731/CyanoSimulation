@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Scene.h"
-#include "Actor.h"
+#include "Object.h"
 
 
 class TitleScene : public Scene
@@ -10,7 +10,7 @@ public:
 	void onEnter() override;
 	void onExit() override;
 
-	const std::string& getName() const override {
+	const std::string getName() const override {
 		return "TITLE";
 	};
 
@@ -21,10 +21,13 @@ private:
 };
 
 
-class TitleUI : public Actor
+class TitleUI : public Object
 {
 public:
 	TitleUI(TitleScene& scene);
+	DECLARE_CLASS_NAME(TitleUI)
+
+	void applyComponentLabel() override;
 	void inputActor() override;
 	void updateActor() override;
 

@@ -32,8 +32,9 @@ public:
 	//シーン中のアクターの削除
 	void removeSceneActors();
 
-
+	//getter
 	const std::string& getCurrentSceneType();
+	class Scene& getCurrentScene();
 
 	void transitToTitle();
 	void transitToTown();
@@ -49,5 +50,7 @@ private:
 	std::string mCurrentSceneType;
 	class Scene* mCurrentScene;
 	std::unordered_map<std::string, std::unique_ptr<Scene>> mSceneMap;
+
+	Game& mGame;
 };
 

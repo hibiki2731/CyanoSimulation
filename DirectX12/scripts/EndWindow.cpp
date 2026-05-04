@@ -12,25 +12,31 @@
 #include "Game.h"
 
 
-EndWindow::EndWindow(DungeonScene& scene)
-	:Actor(scene),
+EndWindow::EndWindow(DungeonScene& scene, const WindowType& type)
+	:Object(scene, "EndWindow"),
 	mDungeon(scene),
-	mObserver(scene.getTurnObserver())
+	mObserver(scene.getTurnObserver()),
+	mType(type)
 {
 	isActive = false;
 	mTimer = 0;
 	isTransitting = false;
 
+	addComponentLabel("deadText", "TextComponent");
+	addComponentLabel("runOutText", "TextComponent");
+	addComponentLabel("goalText", "TextComponent");
+
+	applyComponentLabel();
+
+	showWindow();
 }
 
 void EndWindow::updateActor()
 {
 	if (mDungeon.getPlayer()->getIsActing()) return;
 
-	if (mTimer == 0) showWindow();
-
 	if (isTransitting && mScene.getGame().getGraphic().isFinishedFade()) {
-		if (mObserver.getTurnType() == TurnType::END)
+		if (mType == WindowType::RETURN || mType == WindowType::GOAL)
 			mDungeon.returnToTown();
 		else
 			mDungeon.transitToGameOver();
@@ -42,43 +48,54 @@ void EndWindow::updateActor()
 
 void EndWindow::inputActor()
 {
-	if (mTimer > 10 && isKeyJustPressed(VK_RETURN)) {
+	if (mTimer > 10 && (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K'))) {
 		startTransitScene();
+	}
+}
+
+void EndWindow::applyComponentLabel()
+{
+	mDeadText = static_cast<TextComponent*>(mComponentLabels["deadText"].pComponent);
+	mRunOutText = static_cast<TextComponent*>(mComponentLabels["runOutText"].pComponent);
+	mGoalText = static_cast<TextComponent*>(mComponentLabels["goalText"].pComponent);
+
+	if (mDeadText) mDeadText->alignCenter(450.0f);
+	if (mRunOutText) mRunOutText->alignCenter(450.0f);
+	if (mGoalText) mGoalText->alignCenter(500.0f);
+
+	switch (mType) {
+	case WindowType::DEAD:
+		if (mRunOutText) mRunOutText->setPosZ(101.0f);
+		if (mGoalText) mGoalText->setPosZ(101.0f);
+		break;
+	case WindowType::RETURN:
+		if (mDeadText) mDeadText->setPosZ(101.0f);
+		if (mGoalText) mGoalText->setPosZ(101.0f);
+		break;
+	case WindowType::GOAL:
+		if (mDeadText) mDeadText->setPosZ(101.0f);
+		if (mRunOutText) mRunOutText->setPosZ(101.0f);
 	}
 }
 
 void EndWindow::showWindow()
 {
-	std::string structName = "EndWindow";
-	auto window = std::make_unique<SpriteComponent>(*this, 30.0f);
-	window->loadFileAndCreate(structName);
-	window->create("assets/picture/UI2/PNG/Default/panel_brown_damaged.png");
-#ifdef _DEBUG
-	window->activateControll(structName);
-#endif
-	addComponent(std::move(window));
 
-	structName = "EndWindowText";
-	auto text = std::make_unique<TextComponent>(*this, 29.0f);
-	text->loadFileAndCreate(structName);
-	text->alignCenter(450.0f);
-	std::wstring message = L" ";
-	if (mObserver.getTurnType() == TurnType::END) {
-		message = L"体力が尽きました\n街へ帰還します\n";
-	} 
-	else {
-		text->setTextColor(D2D1::ColorF::DarkRed);
-		text->setPosition(text->getPosX(), text->getPosY() + 10.0f);
-		message = L"あなたは死にました\n";
+	switch (mType) {
+	case WindowType::RETURN:
+		mScene.getGame().getAudioManager().playSE("DUNGEON_END");
+		break;
+	case WindowType::DEAD:
+		//BGMの停止
+		mScene.getGame().getAudioManager().finishAllSounds();
+		mScene.getGame().getAudioManager().playSE("DUNGEON_END");
+		break;
+	case WindowType::GOAL:
+		//BGMの停止
+		mScene.getGame().getAudioManager().finishAllSounds();
+		mScene.getGame().getAudioManager().playSE("GOAL");
+		break;
 	}
-	text->setText(message);
-#ifdef _DEBUG
-	text->activateControll(structName);
-#endif
-	addComponent(std::move(text));
-
-	mScene.getGame().getAudioManager().finishAllSounds();
-	mScene.getGame().getAudioManager().playSE("DUNGEON_END");
 
 }
 
@@ -86,6 +103,6 @@ void EndWindow::startTransitScene()
 {
 	isTransitting = true;
 	mScene.getGame().getGraphic().startFadeOut(1.0f);
-	if (mObserver.getTurnType() == TurnType::END) 
+	if (mType == WindowType::RETURN) 
 		mScene.getGame().getAudioManager().playSE("ESCAPE");
 }

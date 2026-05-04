@@ -8,15 +8,16 @@
 #include "MiniMap.h"
 #include "EnemyComponent.h"
 #include "AudioManager.h"
-#include "json.hpp"
+#include "myJson.h"
+#include "PointLightComponent.h"
+#include "MeshComponent.h"
+#include "FireParticleComponent.h"
 #include <fstream>
 #include <cassert>
 
 MapGenerator::MapGenerator(DungeonScene& scene)
 	: mScene(scene)
 {
-	mStage = Stage::MAP1;
-
 }
 
 void MapGenerator::begin()
@@ -33,9 +34,16 @@ void MapGenerator::end()
 void MapGenerator::createMap()
 {
 
-	loadMap(mStage);	//マップデータの読み込み
-	createWall();	//マップの壁、床の生成
-	createObject(); //オブジェクトの生成
+	loadMap(mScene.getStage());	//マップデータの読み込み
+	createTile();	//マップの壁、床の生成
+	createCharacter(); //オブジェクトの生成
+
+	//天井の作成
+	int mapSize = mScene.getMapSize();
+	auto roof = std::make_unique<Object>(mScene, "RockRoof", "ROCK_ROOF", MAPTIPSIZE * (static_cast<float>(mapSize) / 2.0f), MAPTIPSIZE * (static_cast<float>(mapSize) / 2.0f));
+	roof->setScale(XMFLOAT3(static_cast<float>(mapSize) * 1.2f, 1, static_cast<float>(mapSize) * 1.2f));
+	roof->setPosY(MAPTIPSIZE);
+	mScene.addActor(std::move(roof));
 
 }
 
@@ -95,7 +103,7 @@ void MapGenerator::loadMap(Stage stage)
 
 }
 
-void MapGenerator::createWall()
+void MapGenerator::createTile()
 {
 	std::fstream file("assets/data/mapTipData.json");
 	nlohmann::json json;
@@ -113,54 +121,66 @@ void MapGenerator::createWall()
 			if (category == "WALL") continue; //壁の中
 			else if(category == "FLOOR") {
 				//床の生成
-				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
 			}
 			else if(category == "RESOURCE"){
 				//草の生成
 				mScene.createResource(tileJson[tileID]["meshID"].get<std::string>(), tileJson[tileID]["resourceID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y), y * mScene.getMapSize() + x);
+				//床の生成
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
+			}
+			else if (category == "GOAL") {
+				//床の生成
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(rockFloor));
+
+				//旗の生成
+				std::unique_ptr<Object> flag = std::make_unique<Object>(mScene, "Flag", tileJson[tileID]["meshID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(flag));
 			}
 
 			//壁の生成
 			//西壁
 			if (x == 0) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2); 
 				mScene.addActor(std::move(wall));
 			} else if(mScene.getTileDataAt(x - 1, y) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			//東壁
 			if (x == mapSize - 1) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x + 1, y) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(-XM_PIDIV2);
 				mScene.addActor(std::move(wall));
 			}
 			//北壁
 			if (y == mapSize - 1) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x, y + 1) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				wall->setYRot(XM_PI);
 				mScene.addActor(std::move(wall));
 			}
 			//南壁
 			if (y == 0) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(wall));
 			}
 			else if (mScene.getTileDataAt(x, y - 1) == TileType::WALL) {
-				auto wall = std::make_unique<Object>(mScene, "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				auto wall = std::make_unique<Object>(mScene, "Wall", "ROCK_WALL", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(wall));
 			}
 
@@ -169,20 +189,20 @@ void MapGenerator::createWall()
 	}
 }
 
-void MapGenerator::createObject()
+void MapGenerator::createCharacter()
 {
 	std::fstream file("assets/data/mapTipData.json");
 	nlohmann::json json;
 	file >> json;
 	auto objectJson = json["object"];
 
-	std::string objectID = "";
+	std::string meshID = "";
 	std::string category = "";
 	int mapSize = mScene.getMapSize();
 	for (int y = 0; y < mapSize; y++){
 		for (int x = 0; x < mapSize; x++) {
-			objectID = std::to_string(mScene.getCharacterDataAt(x, y));
-			category = objectJson[objectID]["category"].get<std::string>();
+			meshID = std::to_string(mScene.getCharacterDataAt(x, y));
+			category = objectJson[meshID]["category"].get<std::string>();
 
 			if (category == "EMPTY") continue;
 			else if (category == "PLAYER") {
@@ -191,7 +211,7 @@ void MapGenerator::createObject()
 			}
 			else if (category == "ENEMY") {
 				//敵の生成
-				mScene.createEnemy(objectJson[objectID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.createEnemy(objectJson[meshID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 			}
 
 		}

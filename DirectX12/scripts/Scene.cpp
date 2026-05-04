@@ -6,6 +6,7 @@
 #include "TextComponent.h"
 #include "GUIDebugger.h"
 #include <algorithm>
+#include "Object.h"
 
 Scene::Scene(Game& game)
 	: mGame(game)
@@ -36,6 +37,20 @@ void Scene::removeActors()
 			return true;
 		}
 		});
+}
+
+void Scene::createObjects()
+{
+		//シーンデータの取得
+		nlohmann::json sceneJson = mGame.getAssetManager().getSceneJson();
+		std::string name = getName();
+		std::vector<std::string> objectIDs = sceneJson.at(name).get<std::vector<std::string>>();
+
+		//オブジェクトID配列からオブジェクトを生成
+		for (auto objID : objectIDs) {
+			auto obj = std::make_unique<Object>(*this, objID);
+			addActor(std::move(obj));
+		}
 }
 
 void Scene::addMesh(MeshComponent* mesh)
@@ -105,6 +120,11 @@ void Scene::refreshActors()
 	for (auto& actor : mActors) {
 		actor->setState(Actor::State::Dead);
 	}
+
+	//デバッグ時、編集用のオブジェクト配列を空にする
+#ifdef _DEBUG
+	mDebugObjects.clear();
+#endif
 }
 
 
@@ -180,17 +200,29 @@ void Scene::inputActors()
 #ifdef _DEBUG
 void Scene::drawDebugGUI()
 {
-	for (auto sprite : mSprites) {
-		if (sprite->getActiveControll()) {
-			mGame.getGUIDebugger().drawSpriteDebugGUI(*sprite);
-		}
-	}
 
-	for (auto text : mTexts) {
-		if (text->getActiveControll()) {
-			mGame.getGUIDebugger().drawTextDebugGUI(*text);
-		}
+	if (mDebugFlag) {
+		//カメラ位置の表示
+		mGame.getGUIDebugger().drawCameraPos();
+		//オブジェクトの編集
+		mGame.getGUIDebugger().drawObjectDebugGUI(mDebugObjects);
 	}
+}
+void Scene::addDebugObject(Object* object)
+{
+	mDebugObjects.push_back(object);
+}
+
+void Scene::removeDebugObject(Object* object)
+{
+	std::erase_if(mDebugObjects, [object](const Object* o) {
+		return o == object;
+		});
+}
+
+void Scene::clearDebugObject()
+{
+	mDebugObjects.clear();
 }
 #endif
 

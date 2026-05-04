@@ -1,5 +1,5 @@
 {
-    "actionLimit": 1000,
+    "actionLimit": 10,
     "armers": [
         "NONE"
     ],
@@ -17,4 +17,5 @@
     "weapons": [
         "NONE"
     ]
+    
 }

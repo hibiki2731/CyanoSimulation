@@ -26,13 +26,16 @@ public:
 	void createMap();
 
 private:
+
 	void loadMap(Stage stage);
-	void createWall();
-	void createObject();
+	void createTile();
+	void createCharacter();
+
+#ifdef _DEBUG
+	//DEBUG用
+#endif
 
 	//ダンジョンシーン	
 	DungeonScene& mScene;
-
-	Stage mStage;
 };
 

@@ -7,13 +7,13 @@
 #include "DungeonScene.h"
 #include "PerlinNoise1D.h"
 #include "Random.h"
+#include "GUIDebugger.h"
 #include <windows.h>
 
 float CameraComponent::AccumulatedTime = 0.0f;
 
-CameraComponent::CameraComponent(Actor& owner, DungeonScene& scene, int updateOrder)
-	: Component(owner, updateOrder),
-	mDungeonScene(scene)
+CameraComponent::CameraComponent(Actor& owner, int updateOrder)
+	: Component(owner, updateOrder)
 {
 	mFront = { 0, 0, 1.0f };  mUp = { 0, 1, 0 };
 	mFocus = mOwner.getPosition() + mFront;
@@ -30,9 +30,7 @@ void CameraComponent::updateComponent()
 {
 	if (isActive) {
 		mFront = { 0.0f, 0.0f, 1.0f };
-		mFront = Math::rotateX(mFront, mOwner.getRotation().x);
-		mFront = Math::rotateY(mFront, mOwner.getRotation().y);
-		mFront = Math::rotateZ(mFront, mOwner.getRotation().z);
+		mFront = Math::rotate(mFront, mOwner.getRotation());
 		mFocus = mOwner.getPosition() + mFront;
 		XMFLOAT3 eye = mOwner.getPosition() + applyShake();
 
@@ -41,7 +39,7 @@ void CameraComponent::updateComponent()
 		//プロジェクションマトリックス
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic().getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
-		mDungeonScene.updateDTView(view);
+		mOwner.getScene().getGame().getGraphic().updateView(view);
 		mOwner.getScene().getGame().getGraphic().updateViewProj(viewProj);
 
 		XMFLOAT4 cameraPos;
@@ -50,6 +48,11 @@ void CameraComponent::updateComponent()
 		cameraPos.z = eye.z;
 		cameraPos.w = 1;
 		mOwner.getScene().getGame().getGraphic().updateCameraPos(cameraPos);
+
+#ifdef _DEBUG
+		//デバッグ画面のカメラ位置の更新
+		mOwner.getScene().getGame().getGUIDebugger().updateCameraPos(eye);
+#endif
 	}
 
 }

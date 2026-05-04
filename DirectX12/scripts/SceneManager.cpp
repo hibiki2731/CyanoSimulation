@@ -5,8 +5,12 @@
 #include "DungeonScene.h"
 #include "GameOverScene.h"
 #include "TitleScene.h"
+#include "json.hpp"
+#include "AssetManager.h"
+#include "Object.h"
 
 SceneManager::SceneManager(Game& game)
+	:mGame(game)
 {
 	mCurrentSceneType = "TITLE";
 	mNextSceneType = mCurrentSceneType;
@@ -83,6 +87,11 @@ const std::string& SceneManager::getCurrentSceneType()
 	return mCurrentSceneType;
 }
 
+Scene& SceneManager::getCurrentScene()
+{
+	return *mCurrentScene;
+}
+
 void SceneManager::transitToTitle()
 {
 	mNextSceneType = "TITLE";
@@ -120,6 +129,7 @@ void SceneManager::transitScene()
 			mCurrentSceneType = mNextSceneType;
 			mCurrentScene = iter->second.get();
 			mCurrentScene->onEnter();
+			mCurrentScene->createObjects();
 		}
 		else {
 			std::cerr << "シーンが存在しません" << std::endl;

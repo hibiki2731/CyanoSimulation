@@ -18,23 +18,7 @@ CharacterComponent::CharacterComponent(Actor& owner, DungeonScene& scene)
 		static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE)),
 		static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE))
 	};
-}
 
-CharacterComponent::~CharacterComponent()
-{
-}
-
-void CharacterComponent::inputComponent()
-{
-}
-
-void CharacterComponent::updateComponent()
-{
-
-}
-
-void CharacterComponent::endProcess()
-{
 }
 
 int CharacterComponent::getHP()

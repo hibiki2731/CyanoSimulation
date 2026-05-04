@@ -3,7 +3,11 @@
 #include "Game.h"
 #include "Player.h"
 #include "Random.h"
+#include "Math.h"
 #include "DungeonScene.h"
+#include "ItemManager.h"
+#include "Enemy.h"
+#include "Math.h"
 
 EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
 	: CharacterComponent(owner, scene),
@@ -22,6 +26,7 @@ EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene)
 	isActive = false;
 	mTargetPos = mOwner.getPosition();
 	mDistPlayer = 10000000;
+	mDropMoney = 0;
 
 	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
 	mIndexPos[1] = static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE));
@@ -72,8 +77,7 @@ void EnemyComponent::updateComponent()
 
 	//死亡したらActor配列から除去
 	if (!isAlive) {
-		mOwner.setState(Actor::State::Dead);
-		finishAct();
+		deadProcess();
 	}
 
 }	
@@ -115,6 +119,16 @@ void EnemyComponent::setSenseRange(int range)
 	mSenseRange = range;
 }
 
+void EnemyComponent::setDropMoney(int money)
+{
+	mDropMoney = money;
+}
+
+void EnemyComponent::setName(const std::string& name)
+{
+	mName = name;
+}
+
 void EnemyComponent::activate()
 {
 	isActive = true;
@@ -148,12 +162,8 @@ void EnemyComponent::updateFlash()
 }
 
 void EnemyComponent::move()
-{
-	//移動時は実行できない
-	//if (isMoving) return;
-	//エネミーターン時のみ実行
-	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
-	//行動済みならスキップ
+{	
+//行動済みならスキップ
 	if (!isActive) return;
 
 	isMoving = true;
@@ -189,10 +199,6 @@ void EnemyComponent::move()
 
 void EnemyComponent::attack()
 {
-	//移動時は実行できない
-	//if (isMoving) return;
-	//エネミーターン時のみ実行
-	//if (mMapGenerator.getTurnType() == TurnType::PLAYER) return;
 	//行動済みならスキップ
 	if (!isActive) return;
 
@@ -253,6 +259,7 @@ void EnemyComponent::calcTargetIndex(int(&targetIndex)[2])
 		else {
 			randomWalk(targetIndex);
 		}
+		break;
 	}
 
 }
@@ -358,15 +365,19 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 	switch (direction) {
 		case Direction::UP:
 			targetIndex[1] += 1;
+			if (targetIndex[1] > mScene.getMapSize() - 1) targetIndex[1]--;
 			break;
 		case Direction::DOWN:
 			targetIndex[1] -= 1;
+			if (targetIndex[1] < 0) targetIndex[1]++;
 			break;
 		case Direction::RIGHT:
 			targetIndex[0] += 1;
+			if (targetIndex[0] > mScene.getMapSize() - 1) targetIndex[0]--;
 			break;
 		case Direction::LEFT:
 			targetIndex[0] -= 1;
+			if (targetIndex[0] < 0) targetIndex[0]++;
 			break;
 		case 1 << 4:
 			break;
@@ -374,4 +385,19 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 
 	return;
 
+}
+
+void EnemyComponent::deadProcess()
+{
+	//ステートの変更
+	mOwner.setState(Actor::State::Dead);
+	//お金の取得
+	mScene.getGame().getItemManager().addResource("GOLD", mDropMoney);
+		
+	//メッセージの追加
+	std::string message = mName + "を倒した! " + std::to_string(mDropMoney) + "G取得\n";
+	mScene.pushMessage(message);
+	mScene.updateGold();
+
+	finishAct();
 }

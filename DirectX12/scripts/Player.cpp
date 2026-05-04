@@ -1,4 +1,5 @@
 ﻿#include "Player.h"
+#include "TurnObserver.h"
 #include "CameraComponent.h"
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
@@ -18,6 +19,7 @@
 #include "AudioManager.h"
 #include "MiniMap.h"
 #include "DungeonScene.h"
+#include "Resource.h"
 #include "EndWindow.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
@@ -44,7 +46,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mFlashDuration = data.flushDuration;
 
 	//カメラの生成
-	std::unique_ptr camera = std::make_unique<CameraComponent>(*this, scene);
+	std::unique_ptr camera = std::make_unique<CameraComponent>(*this);
 	camera->setActive(true);
 	mCamera = camera.get();
 	addComponent(std::move(camera));
@@ -53,10 +55,11 @@ Player::Player(DungeonScene& scene, float x, float y)
 	std::unique_ptr<SpotLightComponent> spotLight = std::make_unique<SpotLightComponent>(*this);
 	spotLight->setActive(true);
 	spotLight->setColor(XMFLOAT4(1.0f, 0.9f, 0.8f, 1.0f));
-	spotLight->setIntensity(30.0f);
+	spotLight->setIntensity(20.0f);
 	spotLight->setRange(50.0f);
 	spotLight->setUAngle(XMConvertToRadians(10.0f));
 	spotLight->setPAngle(XMConvertToRadians(40.0f));
+	spotLight->setOffsetPos(XMFLOAT4(0.0f, 0.2f, 0.0f, 0.0f));
 	addComponent(std::move(spotLight));
 
 	//キャラクターコンポーネントの生成
@@ -65,12 +68,8 @@ Player::Player(DungeonScene& scene, float x, float y)
 	character->setIndexPos(static_cast<int>(std::round(x / MAPTIPSIZE)), static_cast<int>(std::round(y / MAPTIPSIZE)));
 	character->setMaxHP(data.maxHp);
 	character->setHP(data.hp);
-	//力の計算
-	int power = data.power + mScene.getGame().getItemManager().getWeaponData(data.weaponInventory[data.equippedWeaponIndex]).power;
-	character->setPower(power);
-	//防御力の計算
-	int defence = data.defence + mScene.getGame().getItemManager().getArmerData(data.armerInventory[data.equippedArmerIndex]).defence;
-	character->setDefense(defence);
+	character->setPower(data.power);	
+	character->setDefense(data.defence);
 	mCharacter = character.get();
 	addComponent(std::move(character));
 
@@ -87,27 +86,28 @@ void Player::inputActor()
 {
 	if (mScene.getTurnType() == TurnType::END || mCharacter->getHP() <= 0) return;
 
-	if (GetAsyncKeyState('A')) {
+	if (isKeyPressed('A')) {
 		move(Direction::LEFT);
 	}
-	if (GetAsyncKeyState('D')) {
+	if (isKeyPressed('D')) {
 		move(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState('W')) {
+	if (isKeyPressed('W')) {
 		move(Direction::UP);
 	}
-	if (GetAsyncKeyState('S')) {
+	if (isKeyPressed('S')) {
 		move(Direction::DOWN);
 	}
-	if (GetAsyncKeyState(VK_RIGHT) || GetAsyncKeyState('L')) {
+	if (isKeyPressed(VK_RIGHT) || isKeyPressed('L')) {
 		rotate(Direction::RIGHT);
 	}
-	if (GetAsyncKeyState(VK_LEFT) || GetAsyncKeyState('J')) {
+	if (isKeyPressed(VK_LEFT) || isKeyPressed('J')) {
 		rotate(Direction::LEFT);
 	}
 	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		attack();
 	    collect();
+		moveNextFloor();
 	}
 	if (isKeyJustPressed('I')) {
 		useItem();
@@ -292,6 +292,10 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 	std::vector<int> num;	//各桁の値
 
 	//桁数と各桁の値を取得
+	if (value == 0) {
+		num.push_back(value);
+		digit = 1;
+	}
 	while (value > 0) {
 		digit++;
 		num.push_back(value % 10);
@@ -348,12 +352,12 @@ void Player::rotate(Direction direction)
 
 	switch (direction) {
 	case Direction::RIGHT:
-		mTargetRot = mRotation - XMFLOAT3(0, XM_PIDIV2, 0);
+		mTargetRot = mRotation + XMFLOAT3(0, XM_PIDIV2, 0);
 		mCharacter->turnRight(); //向きの更新
 
 		break;
 	case Direction::LEFT:
-		mTargetRot = mRotation + XMFLOAT3(0, XM_PIDIV2, 0);
+		mTargetRot = mRotation - XMFLOAT3(0, XM_PIDIV2, 0);
 		mCharacter->turnLeft(); //向きの更新
 		break;
 	}
@@ -400,17 +404,17 @@ void Player::collect()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
+
+	auto resource = mScene.getResource(mCharacter->getIndexPosInt());
+	if (resource) resource->collect();
+	else return;
+
+	//SE
 	mScene.getGame().getAudioManager().playSE("PICKAXE");
-
-	int tileData = mScene.getTileDataAt(mCharacter->getIndexPosInt());
-
-	//今いるマスが通常の床ならば何も行わない
-	if (tileData == TileType::FLOOR) return;
-
-	if (tileData >= TileType::RESOURCE){
-		std::string resourceID = mScene.getResourceID(mCharacter->getIndexPosInt());
-		mScene.getGame().getItemManager().addResource(resourceID, 1);
-	}
+	//メッセージを追加 resourceをx取得した！(現在の総数)
+	std::string message = resource->getResourceName() + "を" + std::to_string(resource->getAmount()) + "取得した! (総数"
+						 + std::to_string(mItemManager.getResourceNum(resource->getResourceID())) + ")\n";
+	mScene.pushMessage(message);
 
 	//ターン経過
 	turnEnd();
@@ -429,7 +433,7 @@ void Player::damagedProcess()
 
 	//死亡処理
 	if (hp <= 0) {
-		auto endWindow = std::make_unique<EndWindow>(mScene);
+		auto endWindow = std::make_unique<EndWindow>(mScene, WindowType::DEAD);
 		mScene.addActor(std::move(endWindow));
 		return;
 	}
@@ -519,4 +523,40 @@ void Player::selectPreviousItem()
 	mSelectItemIndex--;
 	mScene.updateItemFrame();
 	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+}
+
+void Player::moveNextFloor()
+{
+	//敵ターン時は実行不可
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
+	//移動、回転中は実行不可
+	if (isActing || isRotating) return;
+	//残り行動回数が0の場合実行不可
+	if (mAP == 0)return;
+
+	//目の前に階段があるか判定
+	bool isGoal = false;
+	switch (mCharacter->getDirection()) {
+	case Direction::UP:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] + 1) == TileType::GOAL;
+		break;
+	case Direction::DOWN:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] - 1) == TileType::GOAL;
+		break;
+	case Direction::RIGHT:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0] + 1, mCharacter->getIndexPos()[1]) == TileType::GOAL;
+		break;
+	case Direction::LEFT:
+		isGoal = mScene.getTileDataAt(mCharacter->getIndexPos()[0] - 1, mCharacter->getIndexPos()[1]) == TileType::GOAL;
+		break;
+	}
+
+	if (!isGoal) return;
+
+	//階段があった場合の処理
+	auto goalWindow = std::make_unique<EndWindow>(mScene, WindowType::GOAL);
+	mScene.addActor(std::move(goalWindow));
+
+	turnEnd();
+	mScene.getTurnObserver().stop();
 }

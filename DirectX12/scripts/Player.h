@@ -15,6 +15,7 @@ class Player : public Actor
 {
 public:
 	Player(DungeonScene& scene, float x, float y);
+	DECLARE_CLASS_NAME(PLAYER)
 
 	void inputActor() override;
 	void updateActor() override;
@@ -51,6 +52,7 @@ private:
 	void turnEnd();
 	void selectNextItem();
 	void selectPreviousItem();
+	void moveNextFloor();
 
 	float mMoveSpeed;
 	float mRotSpeed;

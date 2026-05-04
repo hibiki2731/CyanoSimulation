@@ -132,6 +132,12 @@
          "fileType": "mp3",
          "filePath": "assets/sounds/SEs/sleep.mp3",
          "poolSize": 1
+      },
+      {
+         "id":"GOAL",
+         "fileType": "mp3",
+         "filePath": "assets/sounds/SEs/goal.mp3",
+         "poolSize":1
       }
    ]
 }

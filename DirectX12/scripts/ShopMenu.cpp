@@ -11,7 +11,7 @@
 #include "json.hpp"
 #include <fstream>
 
-ShopMenu::ShopMenu(TownScene& scene, float zDepth) 
+ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	: Menu(scene, "ShopMenu", zDepth),
 	mItemManager(scene.getGame().getItemManager()),
 	mPlayerManager(scene.getGame().getPlayerManager())
@@ -19,124 +19,54 @@ ShopMenu::ShopMenu(TownScene& scene, float zDepth)
 	prepareSaleItem();
 	mScrollOffset = 0;
 
-	//ファイル読み込み
-	std::ifstream spriteFile("assets\\data\\spriteData.json");
-	nlohmann::json spriteJson;
-	spriteFile >> spriteJson;
-	std::ifstream textFile("assets\\data\\textData.json");
-	nlohmann::json textJson;
-	textFile >> textJson;
+	addComponentLabel("shopText", "TextComponent");
+	addComponentLabel("scrollBar", "SpriteComponent");
+	addComponentLabel("resourceText", "TextComponent");
+	addComponentLabel("itemEffectText", "TextComponent");
+	addComponentLabel("costText", "TextComponent");
 
-	//購入可能な武器と防具のテキストを作成
-	std::string structName = "ShopMenuScrollText";
-	std::wstring shopText = L"";
-	auto textComponent = std::make_unique<TextComponent>(*this, zDepth - 1.0f);
-	textComponent->loadFileAndCreate(structName);
-	textComponent->setTextColor(D2D1::ColorF::Black);
-	for (const auto& saleItemID : mSaleItem) {
-		const auto& itemData = mItemManager.getItemData(saleItemID);
-		shopText += Utility::stringToWString(itemData.name) + L"\n";
+	applyComponentLabel();
+
+}
+
+void ShopMenu::applyComponentLabel()
+{
+	mShopText = static_cast<TextComponent*>(mComponentLabels["shopText"].pComponent);
+	if(mShopText){
+		//購入可能な武器と防具のテキストを作成
+		std::wstring shopText = L"";
+		for (const auto& saleItemID : mSaleItem) {
+			const auto& itemData = mItemManager.getItemData(saleItemID);
+			shopText += Utility::stringToWString(itemData.name) + L"\n";
+		}
+		if (shopText.size() == 0) shopText = L"なし\n";
+		mShopText->setText(shopText);
+
+		//インジケーターの移動距離を設定
+		mArrowMoveLength = mShopText->getLineSpace();
 	}
-	if (shopText.size() == 0) shopText = L"なし\n";
-	textComponent->setText(shopText);
-#ifdef _DEBUG
-	textComponent->activateControll("ShopMenuScrollText");
-#endif
-	mShopText = textComponent.get();
-	addComponent(std::move(textComponent));
-
-	//インジケーターの移動距離を設定
-	mArrowMoveLength = textJson[structName]["lineSpace"];
 
 	//スクロールバー
-	//下矢印
-	structName = "ShopMenuDownArrow";
-	auto downArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	downArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	downArrow->activateControll(structName);
-#endif
-	addComponent(std::move(downArrow));
-
-	//上矢印
-	structName = "ShopMenuUpArrow";
-	auto upArrow = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	upArrow->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	upArrow->activateControll(structName);
-#endif
-	addComponent(std::move(upArrow));
-
-	//スクロールバー
-	structName = "ShopMenuScrollBar";
-	auto scrollBar = std::make_unique<SpriteComponent>(*this, zDepth - 1.0f);
-	scrollBar->loadFileAndCreate(structName);
-	float maxHeight = scrollBar->getSpriteSize().y;
-	float height = maxHeight * MaxShowItemNum / mSaleItem.size();
-	if (mSaleItem.size() < MaxShowItemNum) height = maxHeight;
-	mScrollBarMoveLength = maxHeight / mSaleItem.size();
-	scrollBar->setSpriteSize(XMFLOAT2(scrollBar->getSpriteSize().x, height));
-#ifdef _DEBUG
-	scrollBar->activateControll(structName);
-#endif
-	mScrollBar = scrollBar.get();
-	addComponent(std::move(scrollBar));
-
-	//所持リソース表示用のキャンバス
-	structName = "ResourceCanvas";
-	auto resourceCanvas = std::make_unique<SpriteComponent>(*this, zDepth);
-	resourceCanvas->loadFileAndCreate(structName);
-#ifdef _DEBUG
-	resourceCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(resourceCanvas));
+	mScrollBar = static_cast<SpriteComponent*>(mComponentLabels["scrollBar"].pComponent);
+	if (mScrollBar) {
+		float maxHeight = mScrollBar->getSpriteSize().y;
+		float height = maxHeight * MaxShowItemNum / mSaleItem.size();
+		if (mSaleItem.size() < MaxShowItemNum) height = maxHeight;
+		mScrollBarMoveLength = maxHeight / mSaleItem.size();
+		mScrollBar->setSpriteSize(XMFLOAT2(mScrollBar->getSpriteSize().x, height));
+	}
 
 	//所持リソースのテキストを作成
-	structName = "ResourceText";
-	auto resourceText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	resourceText->loadFileAndCreate(structName);
-	resourceText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	resourceText->activateControll(structName);
-#endif
-	mResourceText = resourceText.get();
-	showResource();
-	addComponent(std::move(resourceText));
-
-	//アイテムの効果
-	structName = "EffectCanvas";
-	auto itemEffectCanvas = std::make_unique<SpriteComponent>(*this, zDepth );
-	itemEffectCanvas->loadFileAndCreate(structName);
-
-#ifdef _DEBUG
-	itemEffectCanvas->activateControll(structName);
-#endif
-	addComponent(std::move(itemEffectCanvas));
+	mResourceText = static_cast<TextComponent*>(mComponentLabels["resourceText"].pComponent);
+	if(mResourceText)showResource();
 
 	//アイテムの効果　テキスト	
-	structName = "EffectText";
-	auto itemEffectText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	itemEffectText->loadFileAndCreate(structName);
-	itemEffectText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	itemEffectText->activateControll(structName);
-#endif
-	mItemEffectText = itemEffectText.get();
-	showItemEffect();
-	addComponent(std::move(itemEffectText));
+	mItemEffectText = static_cast<TextComponent*>(mComponentLabels["itemEffectText"].pComponent);
+	if(mItemEffectText) showItemEffect();
 
 	//アイテム購入にかかるコスト
-	structName = "CostText";
-	auto costText = std::make_unique<TextComponent>(*this, zDepth - 0.5f);
-	costText->loadFileAndCreate(structName);
-	costText->setTextColor(D2D1::ColorF::Black);
-#ifdef _DEBUG
-	costText->activateControll(structName);
-#endif
-	mCostText = costText.get();
-	showItemCost();
-	addComponent(std::move(costText));
-
+	mCostText = static_cast<TextComponent*>(mComponentLabels["costText"].pComponent);
+	if(mCostText) showItemCost();
 }
 
 void ShopMenu::selectedAct()
@@ -162,7 +92,7 @@ void ShopMenu::updateMenu()
 
 void ShopMenu::inputMenu()
 {
-	if (isKeyJustPressed(VK_UP)) {
+	if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
 		if (mSelectedIndex <= 0) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -177,7 +107,7 @@ void ShopMenu::inputMenu()
 		mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));			//矢印を上に移動
 	}
 
-	if (isKeyJustPressed(VK_DOWN)) {
+	if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
 		if (mSelectedIndex >= mMaxIndex - 1) {
 			mScene.getGame().getAudioManager().playSE("UI_CANCEL");
 			return;
@@ -241,7 +171,7 @@ void ShopMenu::showItemCost()
 	std::wstring costText = L"消費リソース\n";
 	for (int i = 0; i < itemData.costResourceID.size(); i++) {
 		const auto& resourceData = mItemManager.getResourceData(itemData.costResourceID[i]);
-		costText += Utility::stringToWString(resourceData.name) + L" : " + std::to_wstring(itemData.price[i]);
+		costText += Utility::stringToWString(resourceData.name) + L" " + std::to_wstring(itemData.price[i]) + L"  ";
 	}
 	costText += L"\n";
 	mCostText->setText(costText);

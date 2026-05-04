@@ -36,12 +36,14 @@ public:
 		RENDER_3D,
 		RENDER_2D,
 		RENDER_DT,
+		RENDER_FP
 	};
 
 	Graphic(Game& game);
 	~Graphic();
 
-	void init();	
+	void init();
+	void initBilbordBuffer();
 	HRESULT createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);
 	HRESULT updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);
 	HRESULT mapBuf(void** mappedBuffer, ComPtr<ID3D12Resource>& buffer);
@@ -95,13 +97,15 @@ public:
 	int getBackBufIdx();
 	bool isFading();
 	bool isFinishedFade();
+	int getBCIndex() { return mBCIndex; }
 
 	//Setter
 	void setRenderType(STATE state);
 
 	//update
 	void updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights); //cameraの更新後に実行しなければいけない
-	void updateViewProj(XMMATRIX& viewProj);
+	void updateView(const XMMATRIX& view);
+	void updateViewProj(const XMMATRIX& viewProj);
 	void updatePointLight(const std::vector<PointLightComponent*>& lights);
 	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
 	void updateCameraPos(XMFLOAT4& cameraPos);
@@ -184,10 +188,11 @@ private:
 	//パイプライン
 	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12RootSignature> RootSignature2D;
-	ComPtr<ID3D12RootSignature> RootSignatureDT;
+	ComPtr<ID3D12RootSignature> RootSignatureBB;
 	ComPtr<ID3D12PipelineState> PipelineState;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	ComPtr<ID3D12PipelineState> PipelineStateDT;
+	ComPtr<ID3D12PipelineState> PipelineStateFP;
 	RenderStruct RenderStructFade;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
@@ -214,6 +219,11 @@ private:
 	//参照
 	Game& mGame;
 
+	//ビルボード処理
+	BillboardConstBuf mBC;
+	int mBCSize, mBCIndex;
+
+	//フェード処理
 	float currentFadeAlpha;
 	float fadeTimer;
 	float fadeOutDuration;

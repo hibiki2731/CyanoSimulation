@@ -18,6 +18,9 @@ InnMenu::InnMenu(TownScene& scene, float zDepth) : Menu(scene, "InnMenu", zDepth
 	mMaxIndex = 2;
 	isFading = false;
 	mSleepVoice = nullptr;
+
+	addComponentLabel("descriptor", "TextComponent");
+	applyComponentLabel();
 }
 
 void InnMenu::selectedAct()
@@ -29,6 +32,7 @@ void InnMenu::selectedAct()
 	case 1:
 		auto saveWindow = std::make_unique<ConfirmWindow>(mScene, *this);
 		mScene.addActor(std::move(saveWindow));
+		mScene.getGame().getAudioManager().playSE("UI_WINDOW_OPEN");
 		break;
 	}
 }
@@ -40,6 +44,10 @@ void InnMenu::updateMenu()
 		XAUDIO2_VOICE_STATE state;
 		mSleepVoice->GetState(&state);
 		if (state.BuffersQueued == 0) {
+			//HPを全回復
+			mScene.getGame().getPlayerManager().setHP(mScene.getGame().getPlayerManager().getPlayerData().maxHp);
+			//UIに反映
+			mScene.updateStatusWindow();
 			mScene.getGame().getGraphic().startFadeIn(1.0f);
 			mScene.getGame().getAudioManager().playBGM("BGM_TOWN");
 			mSleepVoice = nullptr;
@@ -47,12 +55,58 @@ void InnMenu::updateMenu()
 	}
 }
 
+void InnMenu::inputMenu()
+{
+	if (mArrow) {
+		if (isKeyJustPressed(VK_UP) || isKeyJustPressed('W')) {
+			if (mSelectedIndex <= 0) {
+				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+				return;
+			}
+			mSelectedIndex--;
+			mArrow->movePosition(XMFLOAT2(0.0f, -mArrowMoveLength));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+			//説明文の更新
+			updateDescriptor();
+		}
+
+		if (isKeyJustPressed(VK_DOWN) || isKeyJustPressed('S')) {
+			if (mSelectedIndex >= mMaxIndex - 1) {
+				mScene.getGame().getAudioManager().playSE("UI_CANCEL");
+				return;
+			}
+			mSelectedIndex++;
+			mArrow->movePosition(XMFLOAT2(0.0f, mArrowMoveLength));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
+			//説明文の更新
+			updateDescriptor();
+		}
+	}
+}
+
+void InnMenu::updateActor()
+{
+	if (mDescriptor) {
+		//メニューがアクティブでないとき
+		if (mScene.getCurrentMenu() != this) {
+			mDescriptor->setPosZ(200.0f);
+		}
+		else
+			mDescriptor->setPosZ(mDescriptorDefaultZ);
+	}
+}
+
+void InnMenu::applyComponentLabel()
+{
+	mDescriptor = static_cast<TextComponent*>(mComponentLabels["descriptor"].pComponent);
+	if (mDescriptor) {
+		mDescriptorDefaultZ = mDescriptor->getPosZ();
+		updateDescriptor();
+	}
+}
+
 void InnMenu::stay()
 {
-	//HPを全回復
-	mScene.getGame().getPlayerManager().setHP(mScene.getGame().getPlayerManager().getPlayerData().maxHp);
-	//UIに反映
-	mScene.updateStatusWindow();
 	//SE
 	mScene.getGame().getAudioManager().finishAllSounds();
 	mSleepVoice = mScene.getGame().getAudioManager().playSE("SLEEP");
@@ -143,6 +197,23 @@ void InnMenu::save()
 
 }
 
+void InnMenu::updateDescriptor()
+{
+	if (!mDescriptor) return;
+
+	std::wstring text;
+	switch (mSelectedIndex) {
+	case 0:
+		text = L"HPを全回復します。\n";
+		break;
+	case 1:
+		text = L"セーブします。\n";
+		break;
+	}
+
+	mDescriptor->setText(text);
+}
+
 ConfirmWindow::ConfirmWindow(TownScene& scene, InnMenu& menu)
 	:Menu(scene, "ConfirmMenu", 10.0f)
 {
@@ -152,15 +223,17 @@ ConfirmWindow::ConfirmWindow(TownScene& scene, InnMenu& menu)
 
 void ConfirmWindow::inputMenu()
 {
-	if (isKeyJustPressed(VK_RIGHT)) {
+	if (isKeyJustPressed(VK_RIGHT) || isKeyJustPressed('D')) {
 		if (mSelectedIndex >= mMaxIndex - 1) return;
 		mSelectedIndex++;
 		mArrow->movePosition(XMFLOAT2(mArrowMoveLength, 0.0f));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 	}
-	else if (isKeyJustPressed(VK_LEFT)) {
+	else if (isKeyJustPressed(VK_LEFT) || isKeyJustPressed('A')) {
 		if (mSelectedIndex <= 0) return;
 		mSelectedIndex--;
 		mArrow->movePosition(XMFLOAT2(-mArrowMoveLength, 0.0f));
+			mScene.getGame().getAudioManager().playSE("UI_MOVE1");
 	}
 }
 
@@ -170,9 +243,11 @@ void ConfirmWindow::selectedAct()
 	case 0:
 		save();
 		mScene.popMenu();
+		mScene.getGame().getAudioManager().playSE("UI_ENTER");
 		break;
 	case 1:
 		mScene.popMenu();
+		mScene.getGame().getAudioManager().playSE("UI_WINDOW_CLOSE");
 		break;
 	}
 }
@@ -186,10 +261,6 @@ void ConfirmWindow::save()
 		itemFile >> itemJson;
 		itemFile.close();
 
-		//リソースの所持数を更新
-		for (auto& resource : itemJson["Resource"]) {
-			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
-		}
 		//武器の所有を更新
 		for (auto& weapon : itemJson["Weapon"]) {
 			weapon["inPossession"] = mScene.getGame().getItemManager().getWeaponData(weapon["id"]).inPossession;
@@ -199,10 +270,9 @@ void ConfirmWindow::save()
 			armer["inPossession"] = mScene.getGame().getItemManager().getArmerData(armer["id"]).inPossession;
 		}
 		//探索道具の所有を更新
-		for (auto& tool : itemJson["Explorer"]) {
+		for (auto& tool : itemJson["Tool"]) {
 			tool["inPossession"] = mScene.getGame().getItemManager().getExplorerData(tool["id"]).inPossession;
 		}
-
 
 		//一時ファイルへの書き出し
 		try {
@@ -218,6 +288,37 @@ void ConfirmWindow::save()
 		try {
 			// すでに正式なファイルが存在する場合は上書きされる
 			std::filesystem::rename("assets/data/itemData.json.tmp", "assets/data/itemData.json");
+		}
+		catch (const std::filesystem::filesystem_error& e) {
+			std::cerr << e.what() << std::endl;
+		}
+	}
+	//リソースデータの書き込み
+	{
+		nlohmann::json resourceJson;
+		std::ifstream resourceFile("assets/data/resourceData.json");
+		resourceFile >> resourceJson;
+		resourceFile.close();
+
+		//リソースの所持数を更新
+		for (auto& resource : resourceJson["Resource"]) {
+			resource["num"] = mScene.getGame().getItemManager().getResourceNum(resource["id"]);
+		}
+
+		//一時ファイルへの書き出し
+		try {
+			std::ofstream os("assets/data/resourceData.json.tmp");
+			if (!os) throw std::runtime_error("ファイルが開けません");
+
+			os << resourceJson.dump(4);
+		}
+		catch (const std::exception& e) {
+			std::cerr << e.what() << std::endl;
+		}
+		//書き込みが成功したら、一時ファイルを正式な名前にリネームする
+		try {
+			// すでに正式なファイルが存在する場合は上書きされる
+			std::filesystem::rename("assets/data/resourceData.json.tmp", "assets/data/resourceData.json");
 		}
 		catch (const std::filesystem::filesystem_error& e) {
 			std::cerr << e.what() << std::endl;

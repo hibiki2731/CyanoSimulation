@@ -11,21 +11,10 @@ class Enemy : public Actor
 {
 public:
 	Enemy(class DungeonScene& scene, const std::string& enemyID, float x, float y);
-	~Enemy();
-
-	void updateActor() override;
-	void inputActor() override;
+	DECLARE_CLASS_NAME(Enemy)
 
 private:
 
-	struct EnemyParam {
-		int hp;
-		int power;
-		int defense;
-		std::string meshName;
-		MovePattern movePattern;
-		int senseRange;
-	};
 	class EnemyComponent* mEnemy;
 };
 
