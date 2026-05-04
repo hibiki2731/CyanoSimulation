@@ -43,6 +43,7 @@ struct ExplorerData {
 	int value;
 	bool inPossession;
 	std::string description;
+	std::string valueID;
 };
 
 struct ResourceData {
@@ -50,7 +51,8 @@ struct ResourceData {
 	std::string name;
 	size_t num;
 	int life;
-	int acquiredAmount;
+	int yield;
+	int defaultYield;
 };
 
 class ItemManager
@@ -62,6 +64,7 @@ public:
 
 	void addResource(const std::string& id, int num);
 	void subResource(const std::string& id, int num);
+	void addResourceYield(const std::string& id, int num);
 
 	//getter
 	int getResourceNum(const std::string& id);
@@ -92,6 +95,5 @@ private:
 	std::unordered_map<std::string, WeaponData> mWeaponData;
 	std::unordered_map<std::string, ArmerData> mArmerData;
 	std::unordered_map<std::string, ExplorerData> mExplorerData;
-
 };
 

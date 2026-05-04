@@ -13,7 +13,7 @@ public:
 	//getter
 	const std::string& getResourceID() { return mResourceID; }
 	const std::string& getResourceName() { return mName; }
-	int getAmount() { return mAcquiredAmount; }
+	int getAmount() { return mYield; }
 
 private:
 	std::string mResourceID;
@@ -23,7 +23,7 @@ private:
 
 	int mIndex;
 	int mLife;
-	int mAcquiredAmount;
+	int mYield;
 
 };
 

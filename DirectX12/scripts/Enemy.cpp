@@ -4,6 +4,7 @@
 #include "EnemyComponent.h"
 #include "Player.h"
 #include "DungeonScene.h"
+#include "ItemManager.h"
 #include <fstream>
 
 Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
@@ -25,7 +26,8 @@ Enemy::Enemy(DungeonScene& scene, const std::string& enemyID, float x, float y)
 	mEnemy->setDefense(enemyData[enemyID]["defense"].get<int>());
 	mEnemy->setPower(enemyData[enemyID]["power"].get<int>());
 	mEnemy->setMaxHP(enemyData[enemyID]["hp"].get<int>());
-	mEnemy->setDropMoney(enemyData[enemyID].value("dropMoney", 0));
+	int dropMoney = enemyData[enemyID].value("dropMoney", 0) + scene.getGame().getItemManager().getResourceData("GOLD").yield;
+	mEnemy->setDropMoney(dropMoney);
 	mEnemy->setName(enemyData[enemyID]["name"].get<std::string>());
 	MovePattern pattern = magic_enum::enum_cast<MovePattern>(enemyData[enemyID]["movePattern"].get<std::string>()).value();
 	mEnemy->setMovePattern(pattern);

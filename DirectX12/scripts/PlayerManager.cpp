@@ -155,6 +155,9 @@ void PlayerManager::applyToolParamater()
 		else if (category == "STORAGE_SIZE") {
 			mPlayerData.storageSize++;
 		}
+		else if (category == "YIELD") {
+			mGame.getItemManager().addResourceYield(toolData.valueID, toolData.value);
+		}
 	}
 }
 

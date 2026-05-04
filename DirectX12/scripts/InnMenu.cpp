@@ -270,7 +270,7 @@ void ConfirmWindow::save()
 			armer["inPossession"] = mScene.getGame().getItemManager().getArmerData(armer["id"]).inPossession;
 		}
 		//探索道具の所有を更新
-		for (auto& tool : itemJson["Explorer"]) {
+		for (auto& tool : itemJson["Tool"]) {
 			tool["inPossession"] = mScene.getGame().getItemManager().getExplorerData(tool["id"]).inPossession;
 		}
 

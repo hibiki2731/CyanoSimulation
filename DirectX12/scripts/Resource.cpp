@@ -17,7 +17,7 @@ Resource::Resource(DungeonScene& scene, const std::string& resourceID, const std
 	//リソースデータの読み込み
 	auto& resourceData = mItemManager.getResourceData(resourceID);
 	mLife = resourceData.life;
-	mAcquiredAmount = resourceData.acquiredAmount;
+	mYield = resourceData.yield;
 	mIndex = index;
 	mName = resourceData.name;
 	mResourceID = resourceID;
@@ -27,7 +27,7 @@ Resource::Resource(DungeonScene& scene, const std::string& resourceID, const std
 
 void Resource::collect()
 {
-	mScene.getGame().getItemManager().addResource(mResourceID, mAcquiredAmount);
+	mScene.getGame().getItemManager().addResource(mResourceID, mYield);
 
 	mLife--;
 	if (mLife <= 0) {

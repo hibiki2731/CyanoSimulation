@@ -120,6 +120,7 @@ void ExplorerMenu::inputMenu()
 
 void ExplorerMenu::prepareCraftExplorer()
 {
+
 	for (auto& data : mItemManager.getExplorerData()) {
 		if (data.second.inPossession) continue;
 		mTools.emplace_back(data.second.id);

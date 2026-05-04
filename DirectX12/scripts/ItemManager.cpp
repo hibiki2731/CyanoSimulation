@@ -43,6 +43,7 @@ const ExplorerData ItemManager::EmptyExplorer{
 	"",
 	0,
 	false,
+	"",
 	""
 };
 
@@ -69,12 +70,15 @@ void ItemManager::loadItemData()
 
 	//保存してあるリソース数を読み込む
 	for (auto& resourceJson : json["Resource"]) {
-		ResourceData resource;
-		resource.id = resourceJson["id"];
-		resource.name = resourceJson["name"];
-		resource.num = resourceJson["num"];
-		resource.life = resourceJson["life"];
-		resource.acquiredAmount = resourceJson["acquiredAmount"].get<int>();
+		ResourceData resource{
+			resourceJson["id"].get<std::string>(),
+			resourceJson["name"].get<std::string>(),
+			resourceJson["num"].get<size_t>(),
+			resourceJson["life"].get<int>(),
+			resourceJson["defaultYield"].get<int>(),
+			resourceJson["defaultYield"].get<int>()
+		};
+
 		mResourceData[resourceJson["id"]] = std::move(resource);
 	}
 
@@ -122,7 +126,7 @@ void ItemManager::loadItemData()
 		mArmerData[armerJson["id"]] = armer;
 	}
 	//探索道具データを読み込む
-	for (auto& explorerJson : json["Explorer"]) {
+	for (auto& explorerJson : json["Tool"]) {
 		ExplorerData explorer;
 		explorer.id = explorerJson["id"];
 		explorer.name = explorerJson["name"];
@@ -132,6 +136,7 @@ void ItemManager::loadItemData()
 		explorer.value = explorerJson.value("value", 0);
 		explorer.inPossession = explorerJson["inPossession"];
 		explorer.description = explorerJson["description"].get<std::string>();
+		explorer.valueID = explorerJson.value("valueID", "");
 		mExplorerData[explorerJson["id"]] = explorer;
 	}
 }
@@ -155,6 +160,20 @@ void ItemManager::subResource(const std::string& id, int num)
 	if (value < 0) return; //数が負の数になる場合、0で止める
 
 	iter->second.num = static_cast<size_t>(value);
+}
+
+void ItemManager::addResourceYield(const std::string& id, int num)
+{
+	auto iter = mResourceData.find(id);
+	//idが存在しない場合
+	if (iter == mResourceData.end()) return;
+
+	//存在する場合
+	int yield = iter->second.defaultYield + num;
+	if (yield < 0) yield = 0;
+
+	iter->second.yield = yield;
+	
 }
 
 int ItemManager::getResourceNum(const std::string& id) {
