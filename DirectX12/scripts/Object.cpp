@@ -5,12 +5,12 @@
 #include "Game.h"
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
-
 #include "FireParticleComponent.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"
 #include "myJson.h"
 
+//メッシュのみを生成するためのコンストラクタ
 Object::Object(Scene& scene, const std::string& name, const std::string& meshID, float x, float z) 
 	: Actor(scene, x, z),
 	mName(name)
@@ -25,6 +25,7 @@ Object::Object(Scene& scene, const std::string& name, const std::string& meshID,
 
 }
 
+//オブジェクトIDから生成するためのコンストラクタ
 Object::Object(Scene& scene, const std::string& objectID)
 	:Actor(scene),
 	mName(objectID)
@@ -32,7 +33,7 @@ Object::Object(Scene& scene, const std::string& objectID)
 	//jsonの取得
 	nlohmann::json& objJson = scene.getGame().getAssetManager().getObjectJson()[scene.getName()];
 
-	//オブジェクトIDが存在するかどうか判定
+	//オブジェクトIDが存在するかどうか判定し、存在する場合JSONから各情報を取得する
 	if (objJson.contains(objectID)) {
 		//アクター情報を取得
 		loadActorData(objJson[objectID]);
@@ -46,15 +47,19 @@ Object::Object(Scene& scene, const std::string& objectID)
 
 }
 
+//アクターの終了処理
 void Object::endProcessActor()
 {
+	//編集用配列から除去
 #ifdef _DEBUG
 	mScene.removeDebugObject(this);
 #endif
 }
 
+//ラベル名とそれに対応する型名を登録
 void Object::addComponentLabel(const std::string& labelName, const std::string& componentName)
 {
+	//すでに同じ名前のラベルが登録されていたら無視する
 	if (mComponentLabels.contains(labelName)) {
 		return;
 	}
@@ -65,6 +70,7 @@ void Object::addComponentLabel(const std::string& labelName, const std::string& 
 
 void Object::loadActorData(nlohmann::json& json)
 {
+	//アクター情報がなければ何も実行しない
 	if (json.empty()) return;
 
 	//アクターデータの取得
@@ -76,7 +82,7 @@ void Object::loadActorData(nlohmann::json& json)
 	loadComponentData(json);
 
 	//ラベルデータの取得
-	loadLabeData(json);
+	loadLabelData(json);
 
 }
 
@@ -85,6 +91,7 @@ void Object::loadComponentData(nlohmann::json& json)
 	//コンポーネントの取得
 	for (auto componentJson : json["components"]) {
 
+		//コンポーネントの型名を取得
 		std::string componentName = componentJson["name"];
 		//メッシュ
 		if (componentName == "MeshComponent") {
@@ -94,7 +101,6 @@ void Object::loadComponentData(nlohmann::json& json)
 		}
 		//点光源
 		if (componentName == "PointLightComponent") {
-			//光源
 			auto light = std::make_unique<PointLightComponent>(*this);
 			light->loadFromJson(componentJson);
 			addComponent(std::move(light));
@@ -105,11 +111,13 @@ void Object::loadComponentData(nlohmann::json& json)
 			fire->loadFromJson(componentJson);
 			addComponent(std::move(fire));
 		}
+		//スプライト
 		else if (componentName == "SpriteComponent") {
 			auto sprite = std::make_unique<SpriteComponent>(*this);
 			sprite->loadFromJson(componentJson);
 			addComponent(std::move(sprite));
 		}
+		//テキスト
 		else if (componentName == "TextComponent") {
 			auto text = std::make_unique<TextComponent>(*this);
 			text->loadFromJson(componentJson);
@@ -118,13 +126,17 @@ void Object::loadComponentData(nlohmann::json& json)
 	}
 }
 
-void Object::loadLabeData(nlohmann::json& json)
+void Object::loadLabelData(nlohmann::json& json)
 {
 	//ラベルがなければ終了
 	if (json["label"].empty()) return;
 
+	//JSONはラベル名をキーとして、IDと型名を要素とする構造体を配列として保持
+	//IDはObjectの持つコンポーネント配列のindexを指す
 	for (auto& [labelName, labelJson] : json["label"].items()) {
 		ComponentLabel label;
+		
+		//IDから参照するコンポーネントを取得
 		int id = labelJson.at("id").get<int>();
 		if (id < 0) {
 			label.pComponent = nullptr;
@@ -132,6 +144,7 @@ void Object::loadLabeData(nlohmann::json& json)
 		else {
 			label.pComponent = mComponents[id].get();
 		}
+		//コンポーネントの型名を取得
 		label.componentName = labelJson.at("componentName").get<std::string>();
 
 		mComponentLabels[labelName] = label;

@@ -19,8 +19,9 @@ TitleScene::TitleScene(Game& game)
 
 void TitleScene::onEnter()
 {
-
+#ifdef _DEBUG
 	mDebugFlag = true;
+#endif
 	mGame.getGraphic().startFadeIn(1.0f);
 
 	auto titleUI = std::make_unique<TitleUI>(*this);

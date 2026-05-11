@@ -82,7 +82,7 @@
                 "GOLD",
                 "GRASS"
             ],
-            "description": "魔鉱石の採掘量が+2される\n",
+            "description": "魔鉱石の収穫量が+2される\n",
             "id": "PICKSXE",
             "inPossession": false,
             "name": "ピッケル",
@@ -95,20 +95,20 @@
         },
         {
             "category": "YIELD",
-            "costResourceID":[
+            "costResourceID": [
                 "GOLD",
                 "GRASS"
             ],
             "description": "敵が落とすお金が+5される\n",
-            "id":"BANK",
-            "inPossession":false,
+            "id": "BANK",
+            "inPossession": false,
             "name": "貯金箱",
-            "price":[
-                40,
+            "price": [
+                10,
                 20
             ],
             "value": 5,
-            "valueID":"GOLD"
+            "valueID": "GOLD"
         },
         {
             "category": "STORAGE_SIZE",

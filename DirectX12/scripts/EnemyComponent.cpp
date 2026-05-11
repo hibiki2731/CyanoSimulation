@@ -13,28 +13,25 @@ EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene)
 	: CharacterComponent(owner, scene),
 	mScene(scene)
 {
-	scene.addEnemy(this);
-	mMesh = nullptr;
-
-	mFlashTimer = 0.0f;
-	mFlashDuration = 0.3f;	//ダメージを受けたときの点滅時間
-
-	isMoving = false;
-	mMoveSpeed =5.0f;
-
+	//初期化
 	mState = MovePattern::RANDOM;
 	isActive = false;
 	mTargetPos = mOwner.getPosition();
 	mDistPlayer = 10000000;
 	mDropMoney = 0;
-
-	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
+	//メッシュ
+	mMesh = nullptr;
+	//点滅処理
+	mFlashTimer = 0.0f;
+	mFlashDuration = 0.3f;	//ダメージを受けたときの点滅時間
+	//移動
+	isMoving = false;
+	mMoveSpeed =5.0f;
+	//アクターの初期位置から、インデックス位置を計算
 	mIndexPos[1] = static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE));
-}
-
-void EnemyComponent::inputComponent()
-{
-	CharacterComponent::inputComponent();
+	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
+	//シーンのエネミーの処理用配列に追加する
+	scene.addEnemy(this);
 }
 
 void EnemyComponent::updateComponent()
@@ -43,36 +40,29 @@ void EnemyComponent::updateComponent()
 	//点滅処理の更新
 	updateFlash();
 
-	switch (mScene.getTurnType()) {
-		//プレイヤーターン時の動作
-	case TurnType::PLAYER:
-		break;
-		//エネミーターン時の動作
-	case TurnType::ENEMY:
-
-
-		//移動
+	//エネミーターンにのみ処理
+	if(mScene.getTurnType() == TurnType::ENEMY){
+		//移動処理
+		//移動先(mTargetPos)はmove関数内で決定
 		if (isMoving) {
 			//移動する差分の計算
 			XMFLOAT3 diffPos = mTargetPos - mOwner.getPosition();
 			float moveLength = deltaTime * mMoveSpeed;
 
-			//位置の更新
+			//位置の更新  diffPos(現在地と目的地の差分)よりmoveLength(移動距離)が大きくなるまで現在地にmoveLengthを加算
 			if (fabsf(diffPos.x) > moveLength || fabsf(diffPos.y) > moveLength || fabsf(diffPos.z) > moveLength) {
 				mOwner.setPosition(mOwner.getPosition() + Math::normalize(diffPos) * moveLength);
 			}
-			//移動終了時の処理
 			else
 			{
+				//目的地にピッタリ合わせる
 				mOwner.setPosition(mTargetPos);
 
-				//ターン経過
+				//ターン経過処理
 				isMoving = false;
 				finishAct();
 			}
 		}
-
-		break;
 	}
 
 	//死亡したらActor配列から除去
@@ -82,29 +72,30 @@ void EnemyComponent::updateComponent()
 
 }	
 
+//コンポーネント除去時の処理
 void EnemyComponent::endProcess()
 {
-	CharacterComponent::endProcess();
+	mScene.removeEnemy(this);			//シーンのエネミー配列から除去
 	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //自分のいるindex座標を空に
-	mScene.removeEnemy(this);
 }
 
+//エネミーターン開始時の処理
 void EnemyComponent::startAct()
 {
+	//ターン経過するアクションを実行可能にする
 	isActive = true;
-	//プレイヤーとの距離を計算
+
+	//ターン経過するアクション
+	attack();	//プレイヤーが隣接していたら攻撃
+	move();		//行動パターンに基づいて移動先を決定
+	
+	//プレイヤーとの距離を計算 プレイヤーに近いエネミーから行動するようにエネミー配列をソートするため。
 	int playerIndex[2];
 	mScene.getPlayer()->getIndexPos(playerIndex);
 	mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
-
-	attack();
-	move();
-
-	//プレイヤーとの距離を計算
-	mDistPlayer = abs(playerIndex[0] - mIndexPos[0]) + abs(playerIndex[1] - mIndexPos[1]);
-
 }
 
+//---setter---
 void EnemyComponent::setMesh(MeshComponent* mesh)
 {
 	mMesh = mesh;
@@ -129,24 +120,20 @@ void EnemyComponent::setName(const std::string& name)
 	mName = name;
 }
 
-void EnemyComponent::activate()
+
+//---getter---
+XMFLOAT3 EnemyComponent::getPosition()
 {
-	isActive = true;
+	return mOwner.getPosition();
+}
+int EnemyComponent::getDist()
+{
+	return mDistPlayer;
 }
 
 void EnemyComponent::startFlash()
 {
 	mFlashTimer = mFlashDuration;
-}
-
-XMFLOAT3 EnemyComponent::getPosition()
-{
-	return mOwner.getPosition();
-}
-
-int EnemyComponent::getDist()
-{
-	return mDistPlayer;
 }
 
 void EnemyComponent::updateFlash()
@@ -157,13 +144,13 @@ void EnemyComponent::updateFlash()
 	if(mFlashTimer > 0.0f) {
 		mFlashTimer -= deltaTime;
 		float intensity = max(0.0f, mFlashTimer / mFlashDuration);
-		mMesh->updateFlashIntensity(intensity * intensity);
+		mMesh->updateFlashIntensity(intensity * intensity);			//メッシュのコンスタントバッファの値を更新
 	}
 }
 
 void EnemyComponent::move()
 {	
-//行動済みならスキップ
+	//行動済みならスキップ
 	if (!isActive) return;
 
 	isMoving = true;
@@ -189,12 +176,15 @@ void EnemyComponent::move()
 	//下向き
 	else if (targetIndexPos[1] - mIndexPos[1] == -1) mOwner.setYRot(XM_PI);
 
-	mTargetPos = XMFLOAT3(targetIndexPos[0] * MAPTIPSIZE, 0.0f, targetIndexPos[1] * MAPTIPSIZE); //移動先のワールド座標を計算
+	//移動先のワールド座標を計算
+	mTargetPos = XMFLOAT3(targetIndexPos[0] * MAPTIPSIZE, 0.0f, targetIndexPos[1] * MAPTIPSIZE);
 
 	//マップデータや自身のインデックス座標を更新
-	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); //元居た場所を空に
-	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); //移動先のデータを先に更新する
-	mIndexPos[0] = targetIndexPos[0]; mIndexPos[1] = targetIndexPos[1]; //インデックス座標の更新
+	mScene.setCharacterDataAt(mIndexPos[0], mIndexPos[1], CharacterType::EMPTY); 			//元居た場所を空に
+	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::ENEMY); 	//移動先のデータを先に更新する
+	mIndexPos[0] = targetIndexPos[0]; mIndexPos[1] = targetIndexPos[1]; 					//インデックス座標の更新
+
+	//行動終了処理は移動先に到着したとき行う
 }
 
 void EnemyComponent::attack()
@@ -207,8 +197,10 @@ void EnemyComponent::attack()
 	int playerIndexPos[2];
 	player->getIndexPos(playerIndexPos);
 
+	//プレイヤーとの位置の差を計算
 	int diffIndexPos[2] = { playerIndexPos[0] - mIndexPos[0], playerIndexPos[1] - mIndexPos[1] };
 
+	//プレイヤーの位置によって向きを変える
 	//プレイヤーが左側
 	if (diffIndexPos[0] == -1 && diffIndexPos[1] == 0) {
 		mOwner.setYRot(-XM_PIDIV2);
@@ -228,21 +220,25 @@ void EnemyComponent::attack()
 		return;
 	}
 
+	//ダメージを計算し、プレイヤーのHPを減らす
 	int damage = max(0, mPower - player->getDefense());
 	player->giveDamage(damage);
 
+	//行動終了
 	finishAct();
 }
 
 void EnemyComponent::finishAct()
 {
+	//プレイヤーターンへ移行する
+	//シーン中の全エネミーがmoveToPlayerTurnを実行するとプレイヤーターンに移行
 	mScene.moveToPlayerTurn();
 	isActive = false;
-
 }
 
 void EnemyComponent::calcTargetIndex(int(&targetIndex)[2])
 {
+	//行動パターンに応じて移動先を計算する
 	switch (mState) {
 	case MovePattern::RANDOM:
 		randomWalk(targetIndex);
@@ -335,7 +331,8 @@ void EnemyComponent::Astar(int(&targetIndex)[2])
 		}
 	}
 
-	if (grid[playerIndex[0]][playerIndex[1]].isClosed == false) return; //プレイヤーにたどり着けない場合何も返さない
+	//プレイヤーにたどり着けない場合何も返さない
+	if (grid[playerIndex[0]][playerIndex[1]].isClosed == false) return; 
 	int childIndex[2];
 	childIndex[0] = playerIndex[0];
 	childIndex[1] = playerIndex[1];
@@ -361,6 +358,7 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 {
 	targetIndex[0] = mIndexPos[0]; targetIndex[1] = mIndexPos[1];
 
+	//ランダムに移動
 	int direction = 1 << Random::dist(0,4);
 	switch (direction) {
 		case Direction::UP:
@@ -380,6 +378,7 @@ void EnemyComponent::randomWalk(int(&targetIndex)[2])
 			if (targetIndex[0] < 0) targetIndex[0]++;
 			break;
 		case 1 << 4:
+			//その場で停止
 			break;
 	}
 

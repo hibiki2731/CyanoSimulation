@@ -94,6 +94,23 @@
             "valueID":"GRASS"
         },
         {
+            "category": "YIELD",
+            "costResourceID": [
+                "GOLD",
+                "GRASS"
+            ],
+            "description": "敵が落とすお金が+5される\n",
+            "id": "BANK",
+            "inPossession": false,
+            "name": "貯金箱",
+            "price": [
+                40,
+                20
+            ],
+            "value": 5,
+            "valueID": "GOLD"
+        },
+        {
             "category": "STORAGE_SIZE",
             "costResourceID": [
                 "GOLD",

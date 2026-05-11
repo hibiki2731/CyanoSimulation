@@ -17,6 +17,7 @@
 #include "Object.h"
 #include "CameraComponent.h"
 
+//ImGUi用に必要なアロケーター（git上のものをコピペしました。https://github.com/ocornut/imgui/blob/master/examples/example_win32_directx12/main.cpp）
 struct ExampleDescriptorHeapAllocator
 {
 	ID3D12DescriptorHeap* Heap = nullptr;
@@ -67,7 +68,7 @@ GUIDebugger::GUIDebugger(Game& game)
 	: mGraphic(game.getGraphic()),
 	mGame(game)
 {
-	// Make process DPI aware and obtain main monitor scale
+	//プロセスをDPI対応にし、メインモニターのスケールを取得
 	ImGui_ImplWin32_EnableDpiAwareness();
 	float main_scale = ImGui_ImplWin32_GetDpiScaleForMonitor(::MonitorFromPoint(POINT{ 0, 0 }, MONITOR_DEFAULTTOPRIMARY));
 
@@ -81,21 +82,19 @@ GUIDebugger::GUIDebugger(Game& game)
 	assert(SUCCEEDED(hr));
 	g_pd3dSrvDescHeapAlloc.Create(mGraphic.getDevice(), mSrvHeap.Get());
 
-
 	//ImGuiコンテキストの作成
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
 	//インプットの設定
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     //キーボード入力を有効化
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      //ゲームパッド入力を有効化
 
-	// Setup scaling
+	//スケールの設定
 	ImGuiStyle& style = ImGui::GetStyle();
-	//style.ScaleAllSizes(main_scale);        // Bake a fixed style scale. (until we have a solution for dynamic style scaling, changing this requires resetting Style + calling this again)
-	style.FontScaleDpi = main_scale;        // Set initial font scale. (in docking branch: using io.ConfigDpiScaleFonts=true automatically overrides this for every window depending on the current monitor)
-
+	style.FontScaleDpi = main_scale; 
+	
 	//Win32バックエンドの初期化
 	ImGui_ImplWin32_Init(mGraphic.getWindowHandle());
 
@@ -125,6 +124,7 @@ GUIDebugger::~GUIDebugger()
 
 void GUIDebugger::begin()
 {
+	//GUIを表示するのに毎フレーム必要な初期化処理
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -132,6 +132,7 @@ void GUIDebugger::begin()
 
 void GUIDebugger::end()
 {
+	//GUIを表示するのに毎フレーム必要な終了処理
 	ImGui::Render();
 	mGraphic.getCommandList()->SetDescriptorHeaps(1, mSrvHeap.GetAddressOf());
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), mGraphic.getCommandList());
@@ -150,8 +151,7 @@ void GUIDebugger::drawCameraPos()
 
 }
 
-//シーン中のアクターを取得
-static int selectedIndex = -1;          //選択中のアクターインデックス
+static int selectedIndex = -1;          //選択中のオブジェクトのインデックス
 static bool showEditorWindow = false;   //エディタウィンドウを表示するかどうか
 
 //追加可能コンポーネント
@@ -179,24 +179,25 @@ void GUIDebugger::hierarchyMenu(std::vector<class Object*>& objects)
 {
 	//ウィンドウの大きさ
 	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_Appearing);
-	//アクターリストウィンドウ
+	//オブジェクトリストウィンドウ
 	ImGui::Begin("Scene Hierarchy");
-
 
 	//オブジェクトの表示
 	for (int i = 0; i < objects.size(); i++) {
-
+		//オブジェクト名が重複するとエラーが出るので、その対策にIDをpushする
 		ImGui::PushID(i);
 		//選択状態を判定してハイライトをつける
 		bool isSelected = (selectedIndex == i);
 
-		std::string labelName = objects[i]->mName.empty() ? "(Unnamed)" : objects[i]->mName;
+		//オブジェクト名の取得
+		std::string objectName = objects[i]->mName.empty() ? "(Unnamed)" : objects[i]->mName;
 
-		if (ImGui::Selectable(labelName.c_str(), isSelected)) {
+		if (ImGui::Selectable(objectName.c_str(), isSelected)) {
 			selectedIndex = i;          //選択インデックスを更新
 			showEditorWindow = true;    //エディタウィンドウのフラグを立てる
 		}
 
+		//pushしたIDをpop
 		ImGui::PopID();
 	}
 
@@ -246,6 +247,7 @@ void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objec
 
 		//コンポーネント追加用ウィジェット
 		ImGui::Separator();
+		//追加可能なコンポーネントの型名を列挙し、選択できるようにする
 		if (selectedComponentIndex >= 0 &&
 			selectedComponentIndex < componentList.size() &&
 			ImGui::BeginCombo("Components", componentList[selectedComponentIndex].c_str())) {
@@ -262,7 +264,7 @@ void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objec
 			}
 			ImGui::EndCombo();
 		}
-		//コンポーネント追加ボタン
+		//選択した型名のコンポーネントを追加
 		if (ImGui::Button("addComponent")) {
 			const std::string& componentName = componentList[selectedComponentIndex];
 
@@ -281,6 +283,7 @@ void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objec
 		ImGui::End();
 }
 
+//JSON上でオブジェクト名をキーとし、各パラメータを保存しているため、オブジェクト名の重複を避けなければならない
 void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 {
 	static std::string newName;
@@ -289,7 +292,6 @@ void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 	static bool isError = false;
 	if (ImGui::Button("apply")) {
 
-		//名前が一致するオブジェクトが存在するか確認
 		//オブジェクトデータの取得
 		std::ifstream infile("assets/data/objectData.json");
 		nlohmann::json j;
@@ -305,7 +307,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 			//一致しなかった場合
 			isError = false;
 
-			//シーンの初期オブジェクトに対する処理
+			//シーンの初期オブジェクトに含まれている場合、シーン初期化用のJSONのオブジェクトIDも変える必要がある
 			std::ifstream insceneFile("assets/data/sceneData.json");
 			nlohmann::json sceneJson;
 			insceneFile >> sceneJson;
@@ -315,6 +317,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 				if (objects[i] == obj->mName) {
 					objects[i] = newName;
 
+					//JSONを変更
 					sceneJson[sceneName] = std::move(objects);
 
 					std::ofstream outsceneFile("assets/data/sceneData.json");
@@ -323,10 +326,9 @@ void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 				}
 			}
 
-			//重複がなかった場合の処理
 			//新たなオブジェクトIDに元データを移す
 			j[sceneName][newName] = std::move(j[sceneName].value(obj->mName, R"({})"_json));
-			//元オブジェクトIDをjsonから削除
+			//元オブジェクトIDをオブジェクトファイルから削除
 			if (j[sceneName].contains(obj->mName)) j[sceneName].erase(obj->mName);
 			obj->mName = newName;
 
@@ -336,9 +338,12 @@ void GUIDebugger::inputName(Object* obj, std::vector<class Object*>& objects)
 		}
 	}
 
+	//名前が重複していた場合
 	if (isError) {
 		ImGui::TextColored((ImVec4(1.0f, 0.0f, 0.0f, 1.0f)), "the name is conflicted");
 		ImGui::SameLine();
+		
+		//オブジェクトファイルに保存してあるオブジェクトIDを参照して複製できる
 		if (ImGui::Button("do you duplicate?")) {
 			obj->mState = Actor::State::Dead;
 			objectDuplicate(newName, objects);
@@ -354,13 +359,14 @@ void GUIDebugger::labelEditer(Object* obj)
 	auto& componentLabels = obj->mComponentLabels;
 	for (auto& [key, label] : componentLabels) {
 
-		//ラベル名の取得
+		//ラベルの型名を取得　コンポーネントのポインタが設定されていなかったらNONE
 		std::string selectedComponentName;
 		if (label.pComponent != nullptr) 
 			selectedComponentName = label.pComponent->getComponentName();
 		else
 			selectedComponentName = "None";
 
+		//選択可能なコンポーネント一覧を表示
 		if (ImGui::BeginCombo(key.c_str(), selectedComponentName.c_str())) {
 			for (int i = 0; i < obj->mComponents.size(); i++) {
 				//ラベル付したいコンポーネントの型と一致しているか
@@ -391,7 +397,7 @@ void GUIDebugger::objectDeleteButton(Object* obj)
 		//シーンの取得
 		const std::string& sceneName = mGame.getSceneManager().getCurrentScene().getName();
 
-		//jsonに反映
+		//オブジェクトファイルから削除
 		std::ifstream infile("assets/data/objectData.json");
 		nlohmann::json j;
 		infile >> j;
@@ -400,7 +406,7 @@ void GUIDebugger::objectDeleteButton(Object* obj)
 		std::ofstream outfile("assets/data/objectData.json");
 		outfile << j.dump(4);
 
-		//シーンの初期に存在する場合
+		//シーンの初期に存在する場合、シーンファイルからも削除
 		std::ifstream insceneFile("assets/data/sceneData.json");
 		nlohmann::json sceneJson;
 		insceneFile >> sceneJson;
@@ -435,7 +441,7 @@ void GUIDebugger::objectHideButton(Object* obj, std::vector<Object*>& objects)
 	}
 }
 
-//各ウィンドウの定義用関数
+//---各ウィンドウの定義用関数---
 void GUIDebugger::objectDuplicateButton(Object* refObj, std::vector<Object*>& objects) {
 	if (ImGui::Button("Duplicate")) {
 		objectDuplicate(refObj->getName(), objects);
@@ -446,7 +452,7 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 {
 
 	auto& scene = mGame.getSceneManager().getCurrentScene();
-	//現在、シーン中にオブジェクトが存在しているか判定
+	//現在、シーン中に同じ名前のオブジェクトが存在しているか判定
 	std::ifstream infile("assets/data/objectData.json");
 	nlohmann::json j;
 	infile >> j;
@@ -454,6 +460,10 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 	dupFlag = true;
 	static std::string newName;
 	newName = refID;
+	//オブジェクトの生成
+	auto newObj = std::make_unique<Object>(scene, newName);
+
+	//名前の重複を修正
 	while (dupFlag) {
 		for (auto obj : objects) {
 			if (obj->getName() == newName) {
@@ -468,7 +478,7 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 			continue;
 		}
 
-		//名前が変更された場合
+		//名前が変更された場合、変更された名前が重複していないか確認する
 		if (refID != newName) {
 			//変更された名前がオブジェクトファイルにすでに登録されていたら、もう一度名前を変える
 			if (j[scene.getName()].contains(newName) && j[scene.getName()][newName].size() != 0) {
@@ -476,10 +486,9 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 				continue;
 			}
 
-			//オブジェクトの生成
-			auto newObj = std::make_unique<Object>(scene, newName);
 			//jsonへ反映
 			j[scene.getName()][newName] = j[scene.getName()][refID];
+			newObj->setName(newName);
 			//配列へ追加
 			mGame.getSceneManager().getCurrentScene().addActor(std::move(newObj));
 
@@ -493,20 +502,21 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 		dupFlag = false;
 	}
 
-	//オブジェクトの生成
-	auto newObj = std::make_unique<Object>(scene, refID);
-	//配列へ追加
+	//名前が重複していなかった場合、ファイル操作をせずにシーンに追加
 	mGame.getSceneManager().getCurrentScene().addActor(std::move(newObj));
 
 }
 
+//シーンの初期オブジェクトIDの保存
 void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 {
 	if (ImGui::Button("Save Scene")) {
+		//シーンファイルを開く
 		std::ifstream infile("assets/data/sceneData.json");
 		nlohmann::json j;
 		infile >> j;
 
+		//シーンの名前を取得し、現在ヒエラルキーウィンドウに表示されているオブジェクトIDを保存する
 		std::string sceneName = mGame.getSceneManager().getCurrentScene().getName();
 		std::vector<std::string> objectIDs;
 		for (auto obj : objects) {
@@ -519,17 +529,19 @@ void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 	}
 }
 
+//オブジェクトデータの保存
 void GUIDebugger::saveToObjectJsonButton(Object* object)
 {
 	ImGui::Separator();
 	if (ImGui::Button("Save Object")) {
+		//オブジェクトファイルを開く
 		std::ifstream infile("assets/data/objectData.json");
 		nlohmann::json j;
 		infile >> j;
 		std::string sceneName = mGame.getSceneManager().getCurrentScene().getName();
 		nlohmann::json& objJson = j[sceneName][object->getName()];
 
-		//アクターデータ
+		//アクターデータをJSONに保存
 		objJson["position"] = object->mPosition;
 		objJson["rotation"] = object->mRotation;
 		objJson["scale"] = object->mScale;
@@ -538,12 +550,12 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 		std::vector<int> labelIDs;
 		objJson["label"].clear();
 		for (auto& [key, label] : object->mComponentLabels) {
-			//ラベルが設定されていない場合
+			//ラベルが設定されていない場合無視
 			if (label.pComponent == nullptr) {
 				continue;
 			}
 
-			//インデックスを探索
+			//ラベル付けされたコンポーネントの配列上のインデックスを取得
 			for (int i = 0; i < object->mComponents.size(); i++) {
 				if (label.pComponent == object->mComponents[i].get()) {
 					objJson["label"][key]["id"] = i;
@@ -586,11 +598,13 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 			}
 		}
 
+		//ファイルに出力
 		std::ofstream outfile("assets/data/objectData.json");
 		outfile << j.dump(4);
 		infile.close();
 		outfile.close();
 
+		//アセットマネージャにもう一度オブジェクトファイルを読み込ませる
 		mGame.getAssetManager().loadObjectJson();
 	} 
 
@@ -611,7 +625,7 @@ void GUIDebugger::componentEditer(Object* object)
 		ImGui::Separator();
 		ImGui::Text(component->getComponentName().c_str());
 		//各種コンポーネントの編集
-		if (componentName == "MeshComponent")				 meshComponentEditer(component);
+		if 		(componentName == "MeshComponent")				 meshComponentEditer(component);
 		else if (componentName == "PointLightComponent")	 pointLightComponentEditer(component);
 		else if (componentName == "FireParticleComponent")	 fireParticleComponentEditer(component);
 		else if (componentName == "SpriteComponent")		 spriteComponentEditer(component);
@@ -633,7 +647,7 @@ void GUIDebugger::meshComponentEditer(Component* component)
 			MeshComponent* mesh = static_cast<MeshComponent*>(component);
 
 			std::string meshID = mesh->getMeshID();
-			//メッシュが設定されていない場合
+			//メッシュが設定されていない場合、MeshIDを入力できるようにする
 			if (meshID == "NONE") {
 				//メッシュIDの入力
 				static std::string preMeshID;
@@ -644,7 +658,7 @@ void GUIDebugger::meshComponentEditer(Component* component)
 				}
 
 			}
-			//メッシュが設定されている場合
+			//メッシュが設定されている場合は何も変更できない
 			else ImGui::Text(meshID.c_str());
 }
 
@@ -735,6 +749,7 @@ void GUIDebugger::spriteComponentEditer(Component* component)
 	ImGui::InputText("Texture Path", &sprite->mTextureFilePath);
 	ImGui::SameLine();
 
+	//テクスチャの適用
 	if (ImGui::Button("Apply")) {
 		sprite->create(sprite->mTextureFilePath);
 	}

@@ -16,7 +16,7 @@
 #include "AudioManager.h"
 #include "FireParticleComponent.h"
 #include "DebugCamera.h"
-//#define EDIT
+#define EDIT
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
