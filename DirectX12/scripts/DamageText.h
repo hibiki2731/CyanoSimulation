@@ -40,6 +40,7 @@ public:
 
 	float getSize();
 
+	static const int MaxNum = 16;
 private:
 	struct DamageTextInstance {
 		XMFLOAT3 pos;
@@ -49,7 +50,6 @@ private:
 	};
 
 	const UINT NumElementsPerVertex = 6; //頂点ごとの要素数
-	const int MaxNum = 16;
 	//const int MaxInstanceNum = MaxNum;
 	const UINT NumElements = NumElementsPerVertex * MaxNum; //全要素数
 	const UINT SizeInByte = sizeof(float) * NumElements; //全バイト数

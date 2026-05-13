@@ -19,6 +19,7 @@ DungeonUI::DungeonUI(DungeonScene& scene)
 	mItemManager(scene.getGame().getItemManager()),
 	mPlayerManager(scene.getGame().getPlayerManager()),
 	mPlayer(*scene.getPlayer()),
+	mPlayerData(mPlayerManager.getPlayerData()),
 	mMaxMessageNum(3)
 {
 	addComponentLabel("hpValueText", "TextComponent");
@@ -39,8 +40,8 @@ void DungeonUI::applyComponentLabel()
 	//HP値
 	mHPValueText = static_cast<TextComponent*>(mComponentLabels["hpValueText"].pComponent);
 	if (mHPValueText) {
-		int hp = mPlayer.getHP();
-		int maxHp = mPlayer.getMaxHP();
+		int hp = mPlayer.getCurrentHP();
+		int maxHp = mPlayerData.maxHp;
 		std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 		mHPValueText->setText(text);
 	}
@@ -49,7 +50,7 @@ void DungeonUI::applyComponentLabel()
 	mHPBar = static_cast<SpriteComponent*>(mComponentLabels["hpBar"].pComponent);
 	if (mHPBar) {
 		mHPBarOriginalSize = mHPBar->getSpriteSize();
-		XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x * static_cast<float>(mPlayer.getHP()) / static_cast<float>(mPlayer.getMaxHP()), mHPBarOriginalSize.y);
+		XMFLOAT2 hpBarSize = XMFLOAT2(mHPBarOriginalSize.x * static_cast<float>(mPlayer.getCurrentHP()) / static_cast<float>(mPlayerData.maxHp), mHPBarOriginalSize.y);
 		if (hpBarSize.y < 10.0f) hpBarSize.y = 10.0f; //HPバーの最小サイズ
 		mHPBar->setSpriteSize(hpBarSize);
 	}
@@ -57,7 +58,7 @@ void DungeonUI::applyComponentLabel()
 	//AP値
 	mAPValueText = static_cast<TextComponent*>(mComponentLabels["apValueText"].pComponent);
 	if (mAPValueText) {
-		std::wstring text = std::to_wstring(mPlayer.getAP()) + L"/" + std::to_wstring(mPlayer.getMaxAP()) + L"\n";
+		std::wstring text = std::to_wstring(mPlayer.getCurrentAP()) + L"/" + std::to_wstring(mPlayerData.actionLimit) + L"\n";
 		mAPValueText->setText(text);
 	}
 
@@ -74,7 +75,7 @@ void DungeonUI::applyComponentLabel()
 		mItemIcons.push_back(originItemIcon);
 		mFrameOriginPos = originItemIcon->getPosition();
 
-		for (int i = 1; i < mPlayer.getStorageSize(); i++) {
+		for (int i = 1; i < mPlayerData.storageSize; i++) {
 			auto itemIcon = std::make_unique<SpriteComponent>(*this);
 			XMFLOAT3 position = mItemIcons[0]->getPosition();
 			position.x += i * (mItemIcons[0]->getSpriteSize().x + 10.0f); //アイテムアイコンの間隔を10.0fとする
@@ -114,8 +115,8 @@ void DungeonUI::applyComponentLabel()
 void DungeonUI::updateHP()
 {
 	//現在のHPを取得
-	int hp =mPlayer.getHP();
-	int maxHp = mPlayer.getMaxHP();
+	int hp =mPlayer.getCurrentHP();
+	int maxHp = mPlayerData.maxHp;
 	//HP値のテキストを更新
 	std::wstring text = std::to_wstring(hp) + L"/" + std::to_wstring(maxHp) + L"\n";
 	mHPValueText->setText(text);
@@ -128,8 +129,8 @@ void DungeonUI::updateHP()
 void DungeonUI::updateAP()
 {
 	//現在のAPを取得
-	int ap = mPlayer.getAP();
-	int maxAp = mPlayer.getMaxAP();
+	int ap = mPlayer.getCurrentAP();
+	int maxAp = mPlayerData.actionLimit;
 	//AP値のテキストを更新
 	std::wstring text = std::to_wstring(ap) + L"/" + std::to_wstring(maxAp) + L"\n";
 	mAPValueText->setText(text);
@@ -144,7 +145,7 @@ void DungeonUI::updateItemIcon()
 	//アイテムアイコンを更新
 	if (mItemIcons.size() != 0) {
 		//アイテムの更新
-		for (int i = 0; i < mPlayer.getStorageSize(); i++) {
+		for (int i = 0; i < mPlayerData.storageSize; i++) {
 			if (i < mPlayerManager.getInventory().size())
 				mItemIcons[i]->create(mItemManager.getItemData(mPlayerManager.getInventoryItem(i)).iconFilePath);
 			else

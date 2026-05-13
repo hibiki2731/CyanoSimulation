@@ -44,7 +44,7 @@ void TurnObserver::updateTurn()
 			auto player = mScene.getPlayer();
 
 			//死亡していたら処理を行わない
-			if (player->getHP() > 0) RunOutProcess();
+			if (player->getCurrentHP() > 0) RunOutProcess();
 		}
 
 

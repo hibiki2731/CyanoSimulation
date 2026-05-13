@@ -3,6 +3,7 @@
 #include "CameraComponent.h"
 #include "PointLightComponent.h"
 #include "SpotLightComponent.h"
+#include "json.hpp"
 #include "Math.h"
 #include "timer.h"
 #include "CharacterComponent.h"
@@ -10,7 +11,6 @@
 #include "EnemyComponent.h"
 #include <windows.h>
 #include <algorithm>
-#include <cmath>
 #include "Game.h"
 #include "Graphic.h"
 #include "ItemManager.h"
@@ -26,32 +26,25 @@ Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
 	mScene(scene),
 	mPlayerManager(scene.getGame().getPlayerManager()),
-	mItemManager(scene.getGame().getItemManager())
+	mItemManager(scene.getGame().getItemManager()),
+	mPlayerData(mPlayerManager.getPlayerData())
 {
-	mPosition = { x, 0.8f, y };
-	mTargetPos = mPosition;
-	mTargetRot = mRotation;
-	isActing = false;
-	isRotating = false;
-	mFlashTimer = 0.0f;
+	//初期化
+	mPosition		 = { x, 0.8f, y };
+	mTargetPos	     = mPosition;
+	mTargetRot		 = mRotation;
+	isActing		 = false;
+	isRotating		 = false;
+	mFlashTimer		 = 0.0f;
 	mSelectItemIndex = 0;
 
-	//プレイヤーデータの取得
-	mPlayerManager.applyToolParamater();
-	const PlayerData& data = mPlayerManager.getPlayerData();
-
-	//移動速度、回転速度、点滅時間の設定
-	mMoveSpeed = data.moveSpeed;
-	mRotSpeed = data.rotSpeed;
-	mFlashDuration = data.flushDuration;
-
-	//カメラの生成
+	//カメラコンポーネントの生成：プレイヤーの視点を制御
 	std::unique_ptr camera = std::make_unique<CameraComponent>(*this);
 	camera->setActive(true);
 	mCamera = camera.get();
 	addComponent(std::move(camera));
 
-	//スポットライトの生成
+	//スポットライトコンポーネントの生成：プレイヤーの視点方向を照らすライト
 	std::unique_ptr<SpotLightComponent> spotLight = std::make_unique<SpotLightComponent>(*this);
 	spotLight->setActive(true);
 	spotLight->setColor(XMFLOAT4(1.0f, 0.9f, 0.8f, 1.0f));
@@ -62,30 +55,34 @@ Player::Player(DungeonScene& scene, float x, float y)
 	spotLight->setOffsetPos(XMFLOAT4(0.0f, 0.2f, 0.0f, 0.0f));
 	addComponent(std::move(spotLight));
 
+	//プレイヤーデータから各種パラメータを取得
+	//探索道具の効果をステータスに適用する
+	mPlayerManager.applyToolParamater();
+
+	mMoveSpeed		= mPlayerData.moveSpeed;		//移動速度
+	mRotSpeed		= mPlayerData.rotSpeed;			//回転速度
+	mFlashDuration  = mPlayerData.flushDuration;	//ダメージを受けたときの点滅時間
+	mAP = mPlayerData.actionLimit;					//APの初期値
+
 	//キャラクターコンポーネントの生成
 	auto character = std::make_unique<CharacterComponent>(*this, scene);
 	character->setDirection(Direction::UP);
 	character->setIndexPos(static_cast<int>(std::round(x / MAPTIPSIZE)), static_cast<int>(std::round(y / MAPTIPSIZE)));
-	character->setMaxHP(data.maxHp);
-	character->setHP(data.hp);
-	character->setPower(data.power);	
-	character->setDefense(data.defence);
+	character->setMaxHP(mPlayerData.maxHp);
+	character->setHP(mPlayerData.hp);
+	character->setPower(mPlayerData.power);	
+	character->setDefense(mPlayerData.defence);
 	mCharacter = character.get();
 	addComponent(std::move(character));
-
-	//行動回数制限の取得
-	mMaxAP = data.actionLimit;
-	mAP = mMaxAP;
-
-	//最大所持アイテム数
-	mStorageSize = data.storageSize;
 
 }
 
 void Player::inputActor()
 {
+	//敵ターン、HP0以下のときは入力を受け付けない
 	if (mScene.getTurnType() == TurnType::END || mCharacter->getHP() <= 0) return;
 
+	//---移動---
 	if (isKeyPressed('A')) {
 		move(Direction::LEFT);
 	}
@@ -98,17 +95,20 @@ void Player::inputActor()
 	if (isKeyPressed('S')) {
 		move(Direction::DOWN);
 	}
+	//---視点移動---
 	if (isKeyPressed(VK_RIGHT) || isKeyPressed('L')) {
 		rotate(Direction::RIGHT);
 	}
 	if (isKeyPressed(VK_LEFT) || isKeyPressed('J')) {
 		rotate(Direction::LEFT);
 	}
+	//---アクション---
 	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
-		attack();
-	    collect();
-		moveNextFloor();
+		attack();			//目の前の敵を攻撃
+		collect();			//リソースを回収
+		moveNextFloor();	//次の階へ移動
 	}
+	//---アイテム使用---
 	if (isKeyJustPressed('I')) {
 		useItem();
 	}
@@ -121,54 +121,61 @@ void Player::inputActor()
 	
 }
 
+//毎フレームの更新処理
 void Player::updateActor()
 {
 	//移動処理
 	if (isActing) {
-		//移動処理
 		XMFLOAT3 diffPos = mTargetPos - mPosition;
-
 		float moveLength = deltaTime * mMoveSpeed;
 
-		//位置の更新
+		//位置の更新  diffPos(現在地と目的地の差分)よりmoveLength(移動距離)が大きくなるまで現在地にmoveLengthを加算
 		if (fabsf(diffPos.x) > moveLength || fabsf(diffPos.y) > moveLength || fabsf(diffPos.z) > moveLength) {
 			mPosition = mPosition + Math::normalize(diffPos) * moveLength;
 		}
 		else {
-			//移動終了時の処理
+			//目的地にピッタリ合わせる
 			mPosition = mTargetPos;
-			
 			isActing = false;
 		}
 	}
+
 	//カメラ回転時の処理
 	if (isRotating) {
 		XMFLOAT3 diffRot = mTargetRot - mRotation;
 		float rotLength = deltaTime * mRotSpeed;
 
-		////回転の更新
+		////回転の更新 diffRot(現在の回転角と目的の回転角の差分)よりrotLength(回転量)が大きくなるまで現在の回転にrotLengthを加算
 		if (fabsf(diffRot.x) > rotLength || fabsf(diffRot.y) > rotLength || fabsf(diffRot.z) > rotLength) {
 
 			mRotation = mRotation + Math::normalize(diffRot) * rotLength;
 		}
 		//終了時の処理
 		else {
+			//目的の回転角にピッタリ合わせる
 			mRotation = mTargetRot;
 			isRotating = false;
 		}
 	}
 
+	//ダメージを受けたときの処理
 	if (!isActing) damagedProcess();
+
+	//ダメージを受けたときの点滅処理
 	updateFlash();
 }
 
+//アクター破棄時の処理
 void Player::endProcessActor()
 {
+	//ダンジョンシーン中のデータをプレイヤーマネージャーに保存する
 	PlayerManager& player = mScene.getGame().getPlayerManager();
 	player.setHP(mCharacter->getHP());
+	//点滅強度をリセットする
 	mScene.getGame().getGraphic().updateDamageFlashIntensity(0.0f);
 }
 
+//---getter---
 int Player::getDirection()
 {
 	return mCharacter->getDirection();
@@ -180,39 +187,14 @@ void Player::getIndexPos(int(&pos)[2])
 	pos[1] = mCharacter->getIndexPos()[1];
 }
 
-int Player::getMaxHP()
-{
-	return mCharacter->getMaxHP();
-}
-
-int Player::getHP()
+int Player::getCurrentHP()
 {
 	return mCharacter->getHP();
 }
 
-int Player::getPower()
-{
-	return mCharacter->getPower();
-}
-
-int Player::getDefense()
-{
-	return mCharacter->getDefense();
-}
-
-int Player::getAP()
+int Player::getCurrentAP()
 {
 	return mAP;
-}
-
-int Player::getMaxAP()
-{
-	return mMaxAP;
-}
-
-int Player::getStorageSize()
-{
-	return mStorageSize;
 }
 
 int Player::getSelectItemIndex()
@@ -230,8 +212,11 @@ const std::string& Player::getSelectItemID()
 	return mPlayerManager.getInventoryItem(mSelectItemIndex);
 }
 
+//プレイヤーにダメージを与える
 void Player::giveDamage(int damage)
 {
+	//直接HPを減らさない
+	//行動中に受けたダメージを全て加算し、行動終了後にまとめてHPから引くようにする
 	mPendingDamage += damage;
 }
 
@@ -244,7 +229,7 @@ void Player::attack()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0)return;
 
-	//前方のエネミーを取得
+	//前方のエネミーのポインターを取得
 	EnemyComponent* target = nullptr;
 	switch (mCharacter->getDirection()) {
 	case Direction::UP:
@@ -261,6 +246,7 @@ void Player::attack()
 		break;
 	}
 
+	//前方に敵がいない場合は攻撃できない
 	if (target == nullptr) { 
 		return; 
 	}
@@ -270,8 +256,8 @@ void Player::attack()
 	target->giveDamage(damage); //ダメージを与える
 
 	//ダメージエフェクト
-	target->startFlash(); //敵を点滅させる
-	calcDamageText(target->getPosition(), damage);
+	target->startFlash();	//敵を点滅させる
+	calcDamageText(target->getPosition(), damage);	//ダメージ値を描画
 	mScene.getGame().getAudioManager().playSE("DAMAGE1");
 
 	//ターン経過
@@ -280,25 +266,27 @@ void Player::attack()
 
 void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 {
+	//ダメージ値を生成する位置を計算
 	XMFLOAT3 textPos = targetPos;
 	textPos.y += 0.8f; //少しだけ上に
 
-	XMFLOAT3 front = Math::rotateY(XMFLOAT3(0.0f, 0.0f, 1.0f), mRotation.y);//前方ベクトル
-	XMFLOAT3 right = Math::rotateY(front, -XM_PIDIV2);//右ベクトル
+	//ダメージ値はビルボード処理でカメラの方向を向くようにするため、プレイヤーの前方ベクトルと右ベクトルを計算する
+	XMFLOAT3 front = Math::rotateY(XMFLOAT3(0.0f, 0.0f, 1.0f), mRotation.y); //プレイヤーの前方ベクトル
+	XMFLOAT3 right = Math::rotateY(front, -XM_PIDIV2);	//プレイヤーの右ベクトル
 	textPos = textPos - front;	//敵オブジェクトより手前に
 
 	int digit = 0;			//桁数
 	int value = val;		//表示したい数値
-	std::vector<int> num;	//各桁の値
+	std::vector<int> num(DamageTextGenerator::MaxNum);	//各桁の値, 最大数で配列を初期化しておく
 
 	//桁数と各桁の値を取得
 	if (value == 0) {
-		num.push_back(value);
+		num[0] = val;
 		digit = 1;
 	}
 	while (value > 0) {
+		num[digit] = value % 10;
 		digit++;
-		num.push_back(value % 10);
 		value = value / 10;
 	}
 
@@ -308,7 +296,7 @@ void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
 	//桁ごとの表示位置の調整
 	for (int i = 0; i < digit; i++) {
 		mScene.createDamageText(textPos, num[i]);
-		textPos = textPos - right * DTHalfSize;
+		textPos = textPos - right * DTHalfSize;	//次の桁はカメラの左方向にずらす
 	}
 }
 
@@ -322,7 +310,7 @@ void Player::move(Direction direction)
 	if (mAP == 0) return;
 
 	int targetIndexPos[2] = {mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1]};
-	//進行する差分のインデックスを取得
+	//現在の向きと進行方向から移動先のインデックス座標を計算
 	calcMoveDirectionToIndexPos(direction, targetIndexPos);
 
 	//進先に障害物がある場合移動不可
@@ -363,30 +351,42 @@ void Player::rotate(Direction direction)
 	}
 
 	isRotating = true;
-	mScene.updateMiniMapDirection();
+	mScene.updateMiniMapDirection();	//ミニマップのアイコンの向きを更新
 }
 
 void Player::calcMoveDirectionToIndexPos(Direction moveDirection, int (&indexPos)[2])
 {
-	//動く方向と向いている方向から、最終的に動く向きをもとめる
+	//動く方向と向いている方角の論理和から、最終的に動く向きをもとめる
+	//moveDirection(移動方向)					　: 0001(後),0010(右),0100(上),1000(左)
+	//mCharacter->getDirection() (向いている方角) : 0001(南),0010(東),0100(北),1000(西)
 	int index = moveDirection | mCharacter->getDirection(); 
 
-	//インデックス座標の変位をもとめる
+	//indexは以下の10通りになる
+	//東　0100, 0001, 1010
+	//西　0101, 0010, 1000
+	//北　0110, 1001
+	//南　1100, 0011
+
+	//indexから移動先のインデックス座標を計算
 	switch (index) {
+	//東に移動
 	case 0b0100:
 	case 0b0001:
 	case 0b1010:
 		indexPos[1] += 1;
 		break;
+	//西に移動
 	case 0b0101:
 	case 0b0010:
 	case 0b1000:
 		indexPos[1] -= 1;
 		break;
+	//北に移動
 	case 0b0110:
 	case 0b1001:
 		indexPos[0] += 1;
 		break;
+	//南に移動
 	case 0b1100:
 	case 0b0011:
 		indexPos[0] -= 1;
@@ -404,9 +404,11 @@ void Player::collect()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
-
+	//プレイヤーの位置に資源があるか判定
 	auto resource = mScene.getResource(mCharacter->getIndexPosInt());
+	//ある場合、Resourceクラスのポインタからリソースを回収する関数を実行
 	if (resource) resource->collect();
+	//ない場合は何もしない
 	else return;
 
 	//SE
@@ -422,7 +424,7 @@ void Player::collect()
 
 void Player::damagedProcess()
 {
-	//ダメージの反映
+	//ダメージの反映 
 	if (mPendingDamage <= 0) return;
 	int hp = mCharacter->getHP() - mPendingDamage;
 	mCharacter->setHP(hp);
@@ -433,14 +435,15 @@ void Player::damagedProcess()
 
 	//死亡処理
 	if (hp <= 0) {
+		//死亡ウィンドウを表示
 		auto endWindow = std::make_unique<EndWindow>(mScene, WindowType::DEAD);
 		mScene.addActor(std::move(endWindow));
 		return;
 	}
 
 	//被ダメージ時の演出
-	mFlashTimer = mFlashDuration;
-	mCamera->startShake();
+	mFlashTimer = mFlashDuration;	//画面を点滅
+	mCamera->startShake();			//カメラを揺らす
 	mScene.getGame().getAudioManager().playSE("DAMAGE2");
 
 	
@@ -452,7 +455,7 @@ void Player::updateFlash()
 	if (mFlashTimer > 0.0f) {
 		mFlashTimer -= deltaTime;
 		float intensity = max(0.0f, mFlashTimer / mFlashDuration);
-		mScene.getGame().getGraphic().updateDamageFlashIntensity(intensity);
+		mScene.getGame().getGraphic().updateDamageFlashIntensity(intensity);	//コンスタントバッファに点滅の強度を送る
 	}
 }
 
@@ -465,28 +468,31 @@ void Player::useItem()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
-	//アイテムのIDを取得
+	//選択中のIndexからアイテムのIDを取得
 	const auto& itemID = mPlayerManager.getInventoryItem(mSelectItemIndex);
 	if (itemID == "") {
+		//アイテムがない場合は何もしない
 		return;
 	}
 	
-	//アイテムデータを取得
+	//アイテムのIDからアイテムデータを取得
 	const ItemData& itemData = mItemManager.getItemData(itemID);
 
 	//アイテムのカテゴリーから効果を発揮
+	//HP回復
 	if (itemData.category == "HP_RECOVER") {
 		mCharacter->addHP(itemData.value);
 		mScene.updateHPUI();
 		mScene.getGame().getAudioManager().playSE("RECOVER1");
 	}
+	//AP回復
 	else if (itemData.category == "AP_RECOVER") {
 		mAP += itemData.value;
-		if (mAP > mMaxAP) mAP = mMaxAP + 1;
+		if (mAP > mPlayerData.actionLimit) mAP = mPlayerData.actionLimit + 1;
 		mScene.getGame().getAudioManager().playSE("RECOVER1");
 	}
 
-	//インベントリーから削除
+	//使用したアイテムをインベントリーから削除
 	mPlayerManager.removeInventory(mSelectItemIndex);
 
 	//UIの更新
@@ -511,7 +517,8 @@ void Player::turnEnd()
 
 void Player::selectNextItem()
 {
-	if (mSelectItemIndex >= mStorageSize - 1) return;
+	//アイテムカーソルを右に移動
+	if (mSelectItemIndex >= mPlayerData.storageSize - 1) return;
 	mSelectItemIndex++;
 	mScene.updateItemFrame();
 	mScene.getGame().getAudioManager().playSE("UI_MOVE1");
@@ -519,6 +526,7 @@ void Player::selectNextItem()
 
 void Player::selectPreviousItem()
 {
+	//アイテムカーソルを左に移動
 	if (mSelectItemIndex <= 0) return;
 	mSelectItemIndex--;
 	mScene.updateItemFrame();
@@ -554,9 +562,10 @@ void Player::moveNextFloor()
 	if (!isGoal) return;
 
 	//階段があった場合の処理
+	//現在はクリアウィンドウを表示するだけだが、次の階のマップを生成して移動する処理などもここに書くことになる
 	auto goalWindow = std::make_unique<EndWindow>(mScene, WindowType::GOAL);
 	mScene.addActor(std::move(goalWindow));
 
 	turnEnd();
-	mScene.getTurnObserver().stop();
+	mScene.getTurnObserver().stop();	//ターンオブザーバーを止める(敵の行動も止まる)
 }

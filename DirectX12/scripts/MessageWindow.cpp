@@ -47,8 +47,9 @@ void MessageWindow::updateActor()
 		message += L"HP: " + std::to_wstring(mScene.getGame().getPlayerManager().getPlayerData().hp) + L" ";
 	}
 	else if (mPlayer) {
-		message += L"HP: " + std::to_wstring(mPlayer->getHP()) + L" STR: " + std::to_wstring(mPlayer->getPower())
-			+ L" DEF: " + std::to_wstring(mPlayer->getDefense()) + L" ACTION_LIMIT" + std::to_wstring(mPlayer->getAP()) + L"\n";
+		const auto& playerData = mPlayerManager->getPlayerData();
+		message += L"HP: " + std::to_wstring(mPlayer->getCurrentHP()) + L" STR: " + std::to_wstring(playerData.power)
+		 + L" ACTION_LIMIT" + std::to_wstring(mPlayer->getCurrentAP()) + L"\n";
 	}
 
 	message += L"G:" + std::to_wstring(mScene.getGame().getItemManager().getResourceNum("GOLD")) + L"\n";

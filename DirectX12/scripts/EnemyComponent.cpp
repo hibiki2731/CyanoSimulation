@@ -7,26 +7,28 @@
 #include "DungeonScene.h"
 #include "ItemManager.h"
 #include "Enemy.h"
+#include "PlayerManager.h"
 #include "Math.h"
 
 EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene) 
 	: CharacterComponent(owner, scene),
-	mScene(scene)
+	mScene(scene),
+	mPlayerData(scene.getGame().getPlayerManager().getPlayerData())
 {
 	//初期化
-	mState = MovePattern::RANDOM;
-	isActive = false;
-	mTargetPos = mOwner.getPosition();
-	mDistPlayer = 10000000;
-	mDropMoney = 0;
+	mState			= MovePattern::RANDOM;
+	isActive		= false;
+	mTargetPos		= mOwner.getPosition();
+	mDistPlayer		= 10000000;
+	mDropMoney		= 0;
 	//メッシュ
-	mMesh = nullptr;
+	mMesh			= nullptr;
 	//点滅処理
-	mFlashTimer = 0.0f;
-	mFlashDuration = 0.3f;	//ダメージを受けたときの点滅時間
+	mFlashTimer		= 0.0f;
+	mFlashDuration	= 0.3f;	//ダメージを受けたときの点滅時間
 	//移動
-	isMoving = false;
-	mMoveSpeed =5.0f;
+	isMoving		= false;
+	mMoveSpeed		= 5.0f;
 	//アクターの初期位置から、インデックス位置を計算
 	mIndexPos[1] = static_cast<int>(std::round(mOwner.getPosition().z / MAPTIPSIZE));
 	mIndexPos[0] = static_cast<int>(std::round(mOwner.getPosition().x / MAPTIPSIZE));
@@ -36,7 +38,6 @@ EnemyComponent::EnemyComponent(Actor& owner, DungeonScene& scene)
 
 void EnemyComponent::updateComponent()
 {
-
 	//点滅処理の更新
 	updateFlash();
 
@@ -221,7 +222,7 @@ void EnemyComponent::attack()
 	}
 
 	//ダメージを計算し、プレイヤーのHPを減らす
-	int damage = max(0, mPower - player->getDefense());
+	int damage = max(0, mPower - mPlayerData.defence);
 	player->giveDamage(damage);
 
 	//行動終了

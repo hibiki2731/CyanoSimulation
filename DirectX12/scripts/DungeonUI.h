@@ -47,5 +47,6 @@ private:
 	class ItemManager& mItemManager;
 	class PlayerManager& mPlayerManager;
 	class Player& mPlayer;
+	const struct PlayerData& mPlayerData;
 };
 

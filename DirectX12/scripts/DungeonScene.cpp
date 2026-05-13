@@ -397,7 +397,7 @@ EnemyComponent* DungeonScene::getEnemyFromIndexPos(int x, int y)
 
 int DungeonScene::getPlayerActLimit()
 {
-	return (mPlayer) ? mPlayer->getAP() : 0;
+	return (mPlayer) ? mPlayer->getCurrentAP() : 0;
 }
 
 class Resource* DungeonScene::getResource(int index)
