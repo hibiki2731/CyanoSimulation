@@ -11,15 +11,14 @@ public:
 	DECLARE_COMPONENT_NAME(PointLightComponent)
 	void loadFromJson(const nlohmann::json& json) override;
 
-	void endProcess() override;
 	void updateComponent() override;
 
 	//ゲッター
-	XMFLOAT4 getPosition();
-	XMFLOAT4 getColor();
-	bool getActive();
-	float getRange();
-	float getIntensity();
+	XMFLOAT4 getPosition() const;
+	XMFLOAT4 getColor() const;
+	bool getActive() const;
+	float getRange() const;
+	float getIntensity() const;
 	//セッター
 	void setColor(const XMFLOAT4& color);
 	void setActive(const bool state);
@@ -34,6 +33,8 @@ private:
 	XMFLOAT4 mColor;
 	XMFLOAT4 mPosition;
 	XMFLOAT4 mOffsetPos;
+
+	class Graphic& mGraphic;
 
 #ifdef _DEBUG
 	friend class GUIDebugger;

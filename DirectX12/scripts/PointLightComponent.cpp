@@ -7,8 +7,11 @@
 #include "json.hpp"
 #include "myJson.h"
 #include "Scene.h"
+#include "Graphic.h"
 
-PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
+PointLightComponent::PointLightComponent(Actor& owner, int updateOrder)
+	: Component(owner, updateOrder),
+	mGraphic(owner.getScene().getGame().getGraphic())
 {
 	isActive = false;
 	mOffsetPos = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -19,7 +22,6 @@ PointLightComponent::PointLightComponent(Actor& owner, int updateOrder) : Compon
 	mIntensity = 1.0f;
 	mRange = 1.0f;
 	mColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	mOwner.getScene().addPointLight(this);
 }
 
 void PointLightComponent::loadFromJson(const nlohmann::json& json)
@@ -31,12 +33,6 @@ void PointLightComponent::loadFromJson(const nlohmann::json& json)
 	setActive(true);
 }
 
-void PointLightComponent::endProcess()
-{
-	//Gameからライトを削除
-	mOwner.getScene().removePointLight(this);
-}
-
 void PointLightComponent::updateComponent()
 {
 	if (isActive) {
@@ -46,29 +42,31 @@ void PointLightComponent::updateComponent()
 		mPosition.z = mOwner.getPosition().z;
 		mPosition = mPosition + mOffsetPos;
 	}
+
+	mGraphic.updatePointLight(*this);
 }
 
-XMFLOAT4 PointLightComponent::getPosition()
+XMFLOAT4 PointLightComponent::getPosition() const
 {
 	return mPosition;
 }
 
-XMFLOAT4 PointLightComponent::getColor()
+XMFLOAT4 PointLightComponent::getColor() const
 {
 	return mColor;
 }
 
-bool PointLightComponent::getActive()
+bool PointLightComponent::getActive() const
 {
 	return isActive;
 }
 
-float PointLightComponent::getRange()
+float PointLightComponent::getRange() const
 {
 	return mRange;
 }
 
-float PointLightComponent::getIntensity()
+float PointLightComponent::getIntensity() const
 {
 	return mIntensity;
 }

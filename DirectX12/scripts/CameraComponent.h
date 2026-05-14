@@ -11,7 +11,6 @@ public:
 	CameraComponent(Actor& owner, int updateOrder = 100);
     DECLARE_COMPONENT_NAME(CameraComponent)
 
-    void inputComponent() override;
     void updateComponent() override;
 
     void setActive(bool state);

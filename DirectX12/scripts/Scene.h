@@ -66,14 +66,6 @@ public:
 	//テキストの追加/削除
 	void addText(TextComponent* text);
 	void removeText(TextComponent* text);
-	//点光源の追加/削除
-	void addPointLight(PointLightComponent* light);
-	void removePointLight(PointLightComponent* light);
-	std::vector<PointLightComponent*>& getPointLights() { return mPointLights; }
-	//スポットライトの追加/削除
-	void addSpotLight(SpotLightComponent* light);
-	void removeSpotLight(SpotLightComponent* light);
-	std::vector<SpotLightComponent*>& getSpotLights() { return mSpotLights; }
 
 	//アクターの全消去
 	void refreshActors();

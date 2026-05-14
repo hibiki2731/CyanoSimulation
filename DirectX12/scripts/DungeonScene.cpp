@@ -42,7 +42,7 @@ void DungeonScene::updateScene()
 void DungeonScene::lateUpdateScene()
 {
 	//光源の更新
-	mGame.getGraphic().updateBase3DData(getPointLights(), getSpotLights());
+	mGame.getGraphic().updateBase3DData();
 }
 
 void DungeonScene::drawScene()

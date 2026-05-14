@@ -411,18 +411,9 @@ void TextComponent::applyTextFormat()
 void TextComponent::initDWriteFactory()
 {
 	HRESULT hr = DWriteCreateFactory(
-        DWRITE_FACTORY_TYPE_SHARED, //ファクトリのタイプ
-        __uuidof(IDWriteFactory),   //取得したいインターフェースのIID
-        reinterpret_cast<IUnknown**>(mDWriteFactory.ReleaseAndGetAddressOf()) //出力先のポインタ
-    );
+		DWRITE_FACTORY_TYPE_SHARED, //ファクトリのタイプ
+		__uuidof(IDWriteFactory),   //取得したいインターフェースのIID
+		reinterpret_cast<IUnknown**>(mDWriteFactory.ReleaseAndGetAddressOf()) //出力先のポインタ
+	);
 	assert(SUCCEEDED(hr));
 }
-
-#ifdef _DEBUG
-void TextComponent::activateControll(const std::string& structName)
-{
-	mActiveControll = true;
-	mStructName = structName;
-	mTextBuffer = Utility::wstringToString(mText);
-}
-#endif

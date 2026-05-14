@@ -89,32 +89,6 @@ void Scene::removeText(TextComponent* text)
 		});
 }
 
-void Scene::addPointLight(PointLightComponent* light)
-{
-	if (mPointLights.size() > MAX_LIGHT_NUM) return;
-	mPointLights.emplace_back(light);
-}
-
-void Scene::removePointLight(PointLightComponent* light)
-{
-	std::erase_if(mPointLights, [light](const PointLightComponent* l) {
-		return l == light;
-		});
-}
-
-void Scene::addSpotLight(SpotLightComponent* light)
-{
-	if (mSpotLights.size() > MAX_LIGHT_NUM) return;
-	mSpotLights.emplace_back(light);
-}
-
-void Scene::removeSpotLight(SpotLightComponent* light)
-{
-	std::erase_if(mSpotLights, [light](const SpotLightComponent* l) {
-		return l == light;
-		});
-}
-
 void Scene::refreshActors()
 {
 	for (auto& actor : mActors) {
@@ -126,7 +100,6 @@ void Scene::refreshActors()
 	mDebugObjects.clear();
 #endif
 }
-
 
 void Scene::fastUpdate()
 {

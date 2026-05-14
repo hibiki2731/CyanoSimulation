@@ -9,19 +9,17 @@ public:
 	SpotLightComponent(Actor& owner, int updateOrder = 100);
 	DECLARE_COMPONENT_NAME(SpotLightComponent)
 
-	void inputComponent() override;
 	void updateComponent() override;
-	void endProcess() override;
 
 	//ゲッター
-	XMFLOAT4 getPosition();
-	XMFLOAT4 getDirection();
-	XMFLOAT4 getColor();
-	bool getActive();
-	float getIntensity();
-	float getRange();
-	float getUAngle();
-	float getPAngle();
+	XMFLOAT4 getPosition() const;
+	XMFLOAT4 getDirection() const;
+	XMFLOAT4 getColor() const;
+	bool getActive() const;
+	float getIntensity() const;
+	float getRange() const;
+	float getUAngle() const;
+	float getPAngle() const;
 
 	//セッター
 	void setColor(const XMFLOAT4& color);
@@ -43,5 +41,7 @@ private:
 	float mRange;
 	float mUAngle; //角度減衰が起こらない範囲 radianにする
 	float mPAngle; //ライトがあたる範囲 radianにする
+
+	class Graphic& mGraphic;
 };
 

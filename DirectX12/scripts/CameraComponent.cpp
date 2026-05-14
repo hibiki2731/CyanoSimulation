@@ -22,10 +22,6 @@ CameraComponent::CameraComponent(Actor& owner, int updateOrder)
 	mPerlinNoise = std::make_unique<PerlinNoise1D>(Random::dist(0, 10000));
 }
 
-void CameraComponent::inputComponent()
-{
-}
-
 void CameraComponent::updateComponent()
 {
 	if (isActive) {
@@ -39,7 +35,7 @@ void CameraComponent::updateComponent()
 		//プロジェクションマトリックス
 		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, mOwner.getScene().getGame().getGraphic().getAspect(), 0.01f, 50.0f);
 		XMMATRIX viewProj = view * proj;
-		mOwner.getScene().getGame().getGraphic().updateView(view);
+		mOwner.getScene().getGame().getGraphic().updateBillboardView(view);
 		mOwner.getScene().getGame().getGraphic().updateViewProj(viewProj);
 
 		XMFLOAT4 cameraPos;

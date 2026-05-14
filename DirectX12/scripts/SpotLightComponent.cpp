@@ -3,8 +3,11 @@
 #include "Math.h"
 #include "Scene.h"
 #include "Game.h"
+#include "Graphic.h"
 
-SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder) : Component(owner, updateOrder)
+SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder)
+	: Component(owner, updateOrder),
+	mGraphic(owner.getScene().getGame().getGraphic())
 {
 	isActive = false;
 	mPosition.w = 1.0f;
@@ -15,11 +18,6 @@ SpotLightComponent::SpotLightComponent(Actor& owner, int updateOrder) : Componen
 	mPAngle = 0.0f;
 	mDirection = XMFLOAT4(0.0f, 0.0f, 1.0f, 0.0f);
 	mOffsetPos = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	mOwner.getScene().addSpotLight(this);
-}
-
-void SpotLightComponent::inputComponent()
-{
 }
 
 void SpotLightComponent::updateComponent()
@@ -38,50 +36,45 @@ void SpotLightComponent::updateComponent()
 		mDirection.y = forward.y;
 		mDirection.z = forward.z;
 	}
-}
 
-void SpotLightComponent::endProcess()
-{
-	//Gameからライトを削除
-	mOwner.getScene().removeSpotLight(this);
+	mGraphic.updateSpotLight(*this);
 }
-
-XMFLOAT4 SpotLightComponent::getPosition()
+XMFLOAT4 SpotLightComponent::getPosition() const 
 {
 	return mPosition;
 }
 
-XMFLOAT4 SpotLightComponent::getDirection()
+XMFLOAT4 SpotLightComponent::getDirection() const
 {
 	return mDirection;
 }
 
-XMFLOAT4 SpotLightComponent::getColor()
+XMFLOAT4 SpotLightComponent::getColor() const
 {
 	return mColor;
 }
 
-bool SpotLightComponent::getActive()
+bool SpotLightComponent::getActive() const
 {
 	return isActive;
 }
 
-float SpotLightComponent::getIntensity()
+float SpotLightComponent::getIntensity() const
 {
 	return mIntensity;
 }
 
-float SpotLightComponent::getRange()
+float SpotLightComponent::getRange() const 
 {
 	return mRange;
 }
 
-float SpotLightComponent::getUAngle()
+float SpotLightComponent::getUAngle() const
 {
 	return mUAngle;
 }
 
-float SpotLightComponent::getPAngle()
+float SpotLightComponent::getPAngle() const
 {
 	return mPAngle;
 }

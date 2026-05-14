@@ -149,7 +149,7 @@ void Game::draw()
 {
 
 	//3D描画
-	mGraphic->begin3DRender();
+	mGraphic->beginRender();
 
 
 	mGraphic->setRenderType(Graphic::RENDER_3D);
@@ -172,7 +172,7 @@ void Game::draw()
 #endif
 
 
-	mGraphic->end3DRender();
+	mGraphic->endRender();
 
 	mGraphic->moveToNextFrame();
 

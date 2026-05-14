@@ -38,11 +38,6 @@ public:
 	const float getPosZ() const { return mPosition.z; }
 	const XMFLOAT3& getPosition() const { return mPosition; }
 
-#ifdef _DEBUG
-	void activateControll(const std::string& structName);
-	bool getActiveControll() const { return mActiveControll; }
-#endif
-
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
 	Graphic& mGraphic;
@@ -97,8 +92,6 @@ private:
 
 #ifdef _DEBUG
 	friend class GUIDebugger;
-	bool mActiveControll = false;
-	std::string mStructName;
 	std::string mTextBuffer;
 #endif
 

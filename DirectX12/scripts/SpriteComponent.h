@@ -42,13 +42,6 @@ public:
 	const float getBordarSize() const { return mBordarSize; }
 	const float getRotation() const { return mRotation; }
 
-    //デバッグ用
-#ifdef _DEBUG
-    void activateControll(const std::string& structName);
-	bool getActiveControll() const { return mActiveControll; }
-
-#endif
-
 private:
     //描画範囲
     XMFLOAT3 mPosition;
@@ -88,8 +81,6 @@ private:
     //デバッグ用
 #ifdef _DEBUG
 	friend class GUIDebugger;
-	bool mActiveControll = false;
-	std::string mStructName;
 #endif
 
 };

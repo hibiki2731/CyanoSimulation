@@ -17,7 +17,7 @@
 #include "Object.h"
 #include "CameraComponent.h"
 
-//ImGUi用に必要なアロケーター（git上のものをコピペしました。https://github.com/ocornut/imgui/blob/master/examples/example_win32_directx12/main.cpp）
+//ImGUi用に必要なアロケーター
 struct ExampleDescriptorHeapAllocator
 {
 	ID3D12DescriptorHeap* Heap = nullptr;

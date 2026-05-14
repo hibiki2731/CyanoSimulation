@@ -207,12 +207,3 @@ void SpriteComponent::setPosZ(float zPos)
 {
 	mPosition.z = zPos;
 }
-
-//デバッグ用
-#ifdef _DEBUG
-void SpriteComponent::activateControll(const std::string& structName)
-{
-	mActiveControll = true;
-	mStructName = structName;
-}
-#endif

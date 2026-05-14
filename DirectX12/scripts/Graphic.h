@@ -20,62 +20,92 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
+//前方宣言
 class PointLightComponent;
 class SpotLightComponent;
 class Game;
 
-struct Vertex {
-	XMFLOAT3 pos; //xyz座標
-	XMFLOAT2 uv;  //uv座標
-};
+//GraphicクラスでDirectX12の初期化、リソース管理、描画処理を行う
+/*
+-----バッファ等のルール-----
+・バーテックスバッファ（頂点情報を格納するバッファ）
+　AssetManagerクラスで作成、管理する。同時にビューも作成
+  AssetManagerクラスが1種類のメッシュに対し、1バッファに制御する
+  AssetManagerクラスからMeshIDをキーとして、ビューを取得できる。
+
+・インデックスバッファ（頂点の描画順を格納するバッファ)
+  基本使わない
+
+・コンスタントバッファ（シェーダーに渡す定数を格納するバッファ）
+  CPUとGPUの非同期処理のため、フレーム数分の大きなバッファを作成し、フレームごとに切り替えて使用する
+  オブジェクトごとにコンスタントバッファ内のアドレスをずらして使用する。
+  アドレスはAssetManagerクラスで管理
+
+・シェーダーリソース（テクスチャなどのリソース）
+  AssetManagerクラスで作成、管理する。MeshIDをキーとして、ビューを取得できる。
+  1種類のテクスチャにつき1リソースに制御する
+
+・ディスクリプタヒープ（ビューを格納するヒープ）
+  一つの大きなヒープを作成
+  オブジェクトごとに、ヒープ内のアドレスをずらして使用する。アドレスはAssetManagerクラスで管理
+  CPUとGPUの非同期処理のため、フレーム数分同じビューを作成する必要がある。
+  フレーム毎のビューは同じ構造で連続して配置する必要がある。
+  例えばコンスタントバッファ1(CB1)、コンスタントバッファ2(CB2)、シェーダーリソース1(SR1)の順でビューを2フレーム分作成する場合、
+  CB1、CB2、SR1、CB1、CB2、SR1の順でビューを配置する必要がある。
+
+*/
 
 class Graphic
 {
 public:
+	//レンダリングの種類　パイプラインステートやルートシグネチャを切り替えるために使用
 	enum STATE {
-		RENDER_3D,
-		RENDER_2D,
-		RENDER_DT,
-		RENDER_FP
+		RENDER_3D,	//3Dオブジェクトの描画
+		RENDER_2D,	//UIなどの2D描画
+		RENDER_DT,	//ダメージテキストの描画
+		RENDER_FP	//炎パーティクルの描画
 	};
 
 	Graphic(Game& game);
 	~Graphic();
 
-	void init();
-	void initBilbordBuffer();
-	HRESULT createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);
-	HRESULT updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);
-	HRESULT mapBuf(void** mappedBuffer, ComPtr<ID3D12Resource>& buffer);
-	void unmapBuf(ComPtr<ID3D12Resource>& buffer);
-	UINT alignedSize(UINT size);
-	HRESULT createShaderResource(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);
-	XMFLOAT2 createShaderResourceGetSize(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);
-	HRESULT createCbvTbvHeap(ComPtr<ID3D12DescriptorHeap>& cbvTbvHeap, UINT numDescriptors);
-	void createVertexBufferView(ComPtr<ID3D12Resource>& vertexBuf, UINT sizeInBytes, UINT strideInBytes, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView);
-	void createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeInBytes, D3D12_INDEX_BUFFER_VIEW& indexBufferView);
-	void createConstantBufferView(ComPtr<ID3D12Resource>& constantBuf, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-	void createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize);
-	void createBase3DBufferView(int heapIndex, int heapSize);
-	void createShaderResourceView(ComPtr<ID3D12Resource>& shaderResource, D3D12_CPU_DESCRIPTOR_HANDLE handle);
-	void createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex);
+	void init();				//初期化
+	void initBilbordBuffer();	//ビルボード処理用のバッファを初期化
+	//---ディスクリプタヒープの作成---
+	HRESULT createCbvTbvHeap(ComPtr<ID3D12DescriptorHeap>& cbvTbvHeap, UINT numDescriptors);	//CBVとSRV用のディスクリプタヒープの作成
+	//---リソースの作成、更新、マッピング---
+	HRESULT  createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);				//バッファの作成
+	HRESULT  updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);	//バッファの更新
+	HRESULT  mapBuf(void** mappedBuffer, ComPtr<ID3D12Resource>& buffer);				//バッファのマッピング
+	void     unmapBuf(ComPtr<ID3D12Resource>& buffer);									//バッファのマッピング解除
+	HRESULT  createShaderResource(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);	//テクスチャの作成
+	XMFLOAT2 createShaderResourceGetSize(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);	//テクスチャの作成とサイズの取得
+	//---バッファビューの作成---
+	void createVertexBufferView(ComPtr<ID3D12Resource>& vertexBuf, UINT sizeInBytes, UINT strideInBytes, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView);	//頂点バッファビューの作成
+	void createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeInBytes, D3D12_INDEX_BUFFER_VIEW& indexBufferView);	//インデックスバッファビューの作成
+	void createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize);	//コンスタントバッファビューの作成(2フレーム分コンスタントバッファ内の領域を確保するため、heapSize間隔で2つビューを作成)
+	void createBase3DBufferView(int heapIndex, int heapSize);								//3Dオブジェクトが共通して使うコンスタントバッファビューの作成(2フレーム分)
+	void createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex);			//シェーダーリソースビューの作成
 	
-	void clearColor(float r, float g, float b);
-	void begin3DRender();
-	void end3DRender();
-	void moveToNextFrame();
-	void prepareCommandList();
 
-	bool quit();
-	int msg_wparam();
-	void closeEventHandle();
-	void waitGPU();
-	void delayRelease(ComPtr<IUnknown>& resource);
+	//---描画処理---
+	void beginRender();			//レンダリング開始前の処理(レンダーターゲットの設定、画面クリアなど)
+	void endRender();			//レンダリング終了後の処理(コマンドリストのクローズ、GPUへのコマンドの送信など)
+	void moveToNextFrame();		//フレームの切り替え。1フレーム前のGPUの処理が終わっていなかったら、待機する。
 
-	//フェードイン、フェードアウト
+	//---その他---
+	void clearColor(float r, float g, float b);			//画面クリアの色の設定
+	bool quit();										//ウィンドウの×ボタンが押されたか
+	int msg_wparam();									//ウィンドウメッセージのwparamを取得
+	void closeEventHandle();							//ウィンドウの×ボタンが押されたときの処理
+	void waitGPU();										//GPUの処理が終わるまで待機する
+	void delayRelease(ComPtr<IUnknown>& resource);		//リソースの開放を遅らせる。GPUがリソースを使用している可能性がある場合に、すぐに開放せず、次のフレームで開放する。
+	static UINT alignedSize(UINT size);					//引数のサイズを256バイトアライメントにする
+
+	//---フェードイン、フェードアウト---
 	void startFadeIn(float duration);
 	void startFadeOut(float duration);
-	void renderFade();
+	void renderFade();	//画面を覆う三角形のα値を制御してフェードイン、フェードアウトを実現する。描画処理の最後に呼び出す必要がある。
 
 
 	//getter
@@ -100,24 +130,24 @@ public:
 	int getBCIndex() { return mBCIndex; }
 
 	//Setter
-	void setRenderType(STATE state);
+	void setRenderType(STATE state);	//描画するオブジェクトの種類に応じて、パイプラインステートやルートシグネチャを切り替える
 
 	//update
-	void updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights); //cameraの更新後に実行しなければいけない
-	void updateView(const XMMATRIX& view);
-	void updateViewProj(const XMMATRIX& viewProj);
-	void updatePointLight(const std::vector<PointLightComponent*>& lights);
-	void updateSpotLight(const std::vector<SpotLightComponent*>& lights);
-	void updateCameraPos(XMFLOAT4& cameraPos);
-	void updateDamageFlashIntensity(float intensity);
-	void updateFade();
+	void updateBase3DData(); //更新した3Dオブジェクト共通のデータをコンスタントバッファへコピー
+	void updateBillboardView(const XMMATRIX& view);				//ビルボード処理用のビュー行列の更新。
+	void updateViewProj(const XMMATRIX& viewProj);				//Base3DDataのviewProjを更新
+	void updatePointLight(const PointLightComponent& light);	//Base3DDataのpointLightを更新
+	void updateSpotLight(const SpotLightComponent& light);		//Base3DDataのspotLightを更新
+	void updateCameraPos(XMFLOAT4& cameraPos);					//Base3DDataのcameraPosを更新
+	void updateDamageFlashIntensity(float intensity);			//Base3DDataのplayerFlashIntensityを更新
+	void updateFade();											//フェードイン、フェードアウトの更新
 
-	//ウィンドウ
-	static constexpr LPCWSTR WindowTitle = L"DirectX12 Sample";
-	static constexpr int ClientWidth = 1280;
-	static constexpr int ClientHeight = 720;
-	static constexpr float Aspect = static_cast<float>(ClientWidth) / ClientHeight;
-	static constexpr int FrameCount = 2;
+	//ウィンドウパラメータ
+	static constexpr LPCWSTR WindowTitle = L"The Dungeon";
+	static constexpr int	 ClientWidth = 1280;
+	static constexpr int	 ClientHeight = 720;
+	static constexpr float	 Aspect = static_cast<float>(ClientWidth) / ClientHeight;
+	static constexpr int	 FrameCount = 2;
 
 #ifdef _DEBUG
 	void setShareDescriptor();
@@ -215,6 +245,10 @@ private:
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
+
+	//光源のindexカウンター Base3DDataの配列のどこに光源のデータを入れるかを管理する。
+	int mPointLightIndex = 0;
+	int mSpotLightIndex = 0;
 
 	//参照
 	Game& mGame;

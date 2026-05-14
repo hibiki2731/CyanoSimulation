@@ -960,18 +960,38 @@ void Graphic::initBilbordBuffer()
 
 }
 
-void Graphic::updateBase3DData(const std::vector<PointLightComponent*>& pointLights, const std::vector<SpotLightComponent*>& spotLights)
+void Graphic::updateBase3DData()
 {
-	//光源の更新
-	updatePointLight(pointLights);
-	updateSpotLight(spotLights);
+	//前フレームのライトの数を保存
+	static int prePointLightIndex = 0;
+	static int preSpotLightIndex = 0;
+	//ライトの数が減った場合、減った分のライトを無効にする
+	if (prePointLightIndex > mPointLightIndex) {
+		for (int i = mPointLightIndex + 1; i <= prePointLightIndex; i++) {
+			Base3DData.pointLights[i].setValue.x = 0;	//ライトを無効にする
+		}
+	}
+	if (preSpotLightIndex > mSpotLightIndex) {
+		for (int i = mSpotLightIndex + 1; i <= preSpotLightIndex; i++) {
+			Base3DData.spotLights[i].setValue.x = 0;	//ライトを無効にする
+		}
+	}
+
 	//更新したデータをコンスタントバッファへコピー
-	for(int i = 0; i < FrameCount; i++)
-	memcpy(mConstantData[i], &Base3DData, sizeof(Base3DData));
+	memcpy(mConstantData[BackBufIdx], &Base3DData, sizeof(Base3DData));
+
+
+	//前フレームのライトの数を保存
+	prePointLightIndex = mPointLightIndex;
+	preSpotLightIndex = mSpotLightIndex;
+
+	//インデックスをリセット
+	mPointLightIndex = 0;
+	mSpotLightIndex = 0;
 
 }
 
-void Graphic::updateView(const XMMATRIX& view)
+void Graphic::updateBillboardView(const XMMATRIX& view)
 {
 	mBC.view = view;
 	memcpy(mConstantData[BackBufIdx] + mBCIndex, &mBC, sizeof(BillboardConstBuf));
@@ -1337,14 +1357,6 @@ void Graphic::createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeI
 	indexBufferView.Format = DXGI_FORMAT_R16_UINT; //1頂点のバイト数
 }
 
-void Graphic::createConstantBufferView(ComPtr<ID3D12Resource>& constantBuf, D3D12_CPU_DESCRIPTOR_HANDLE handle)
-{
-	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
-	desc.BufferLocation = constantBuf->GetGPUVirtualAddress();
-	desc.SizeInBytes = static_cast<UINT>(constantBuf->GetDesc().Width); //256バイトアライメント
-	Device->CreateConstantBufferView(&desc, handle);
-}
-
 void Graphic::createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize)
 {
 	//二つのコンスタントバッファ分ビューを作成する
@@ -1363,17 +1375,6 @@ void Graphic::createConstantBufferView(int cbIndex, int cbSize, int heapIndex, i
 void Graphic::createBase3DBufferView(int heapIndex, int heapSize)
 {
 	createConstantBufferView(0, alignedSize(sizeof(Base3DData)), heapIndex, heapSize);
-}
-
-void Graphic::createShaderResourceView(ComPtr<ID3D12Resource>& shaderResource, D3D12_CPU_DESCRIPTOR_HANDLE handle)
-{
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-	desc.Format = shaderResource->GetDesc().Format;
-	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
-
-	Device->CreateShaderResourceView(shaderResource.Get(), &desc, handle);
 }
 
 void Graphic::createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex)
@@ -1395,29 +1396,31 @@ void Graphic::updateViewProj(const XMMATRIX& viewProj)
 	Base3DData.viewProj = viewProj;
 }
 
-void Graphic::updatePointLight(const std::vector<PointLightComponent*>& lights)
+void Graphic::updatePointLight(const PointLightComponent& light)
 {
-	for (int i = 0; i < lights.size(); i++) {
-		Base3DData.pointLights[i].position = lights[i]->getPosition();
-		Base3DData.pointLights[i].color = lights[i]->getColor();
-		Base3DData.pointLights[i].setValue.x = lights[i]->getActive();
-		Base3DData.pointLights[i].setValue.y = lights[i]->getIntensity();
-		Base3DData.pointLights[i].setValue.z = lights[i]->getRange();
-	}
+	if (mPointLightIndex >= MAX_LIGHT_NUM) return;
+	Base3DData.pointLights[mPointLightIndex].position   = light.getPosition();
+	Base3DData.pointLights[mPointLightIndex].color      = light.getColor();
+	Base3DData.pointLights[mPointLightIndex].setValue.x = light.getActive();
+	Base3DData.pointLights[mPointLightIndex].setValue.y = light.getIntensity();
+	Base3DData.pointLights[mPointLightIndex].setValue.z = light.getRange();
+
+	mPointLightIndex++;
 }
 
-void Graphic::updateSpotLight(const std::vector<SpotLightComponent*>& lights)
+void Graphic::updateSpotLight(const SpotLightComponent& light)
 {
-	for (int i = 0; i < lights.size(); i++) {
-		Base3DData.spotLights[i].position = lights[i]->getPosition();
-		Base3DData.spotLights[i].direction = lights[i]->getDirection();
-		Base3DData.spotLights[i].color = lights[i]->getColor();
-		Base3DData.spotLights[i].setValue.x = lights[i]->getActive();
-		Base3DData.spotLights[i].setValue.y = lights[i]->getIntensity();
-		Base3DData.spotLights[i].setValue.z = lights[i]->getRange();
-		Base3DData.spotLights[i].attAngle.x = lights[i]->getUAngle();
-		Base3DData.spotLights[i].attAngle.y = lights[i]->getPAngle();
-	}
+	if (mSpotLightIndex >= MAX_LIGHT_NUM) return;
+	Base3DData.spotLights[mSpotLightIndex].position   = light.getPosition();
+	Base3DData.spotLights[mSpotLightIndex].direction  = light.getDirection();
+	Base3DData.spotLights[mSpotLightIndex].color      = light.getColor();
+	Base3DData.spotLights[mSpotLightIndex].setValue.x = light.getActive();
+	Base3DData.spotLights[mSpotLightIndex].setValue.y = light.getIntensity();
+	Base3DData.spotLights[mSpotLightIndex].setValue.z = light.getRange();
+	Base3DData.spotLights[mSpotLightIndex].attAngle.x = light.getUAngle();
+	Base3DData.spotLights[mSpotLightIndex].attAngle.y = light.getPAngle();
+
+	mSpotLightIndex++;
 }
 
 void Graphic::updateCameraPos(XMFLOAT4& cameraPos)
@@ -1453,7 +1456,7 @@ void Graphic::clearColor(float r, float g, float b)
 	ClearColor[0] = r, ClearColor[1] = g, ClearColor[2] = b;
 }
 
-void Graphic::begin3DRender()
+void Graphic::beginRender()
 {
 	//バリアでバックバッファを描画ターゲットに切り替える
 	D3D12_RESOURCE_BARRIER barrier;
@@ -1492,7 +1495,7 @@ void Graphic::begin3DRender()
 
 }
 
-void Graphic::end3DRender()
+void Graphic::endRender()
 {
 	
 	//バリアでバックバッファを表示用に切り替える
@@ -1544,13 +1547,6 @@ void Graphic::moveToNextFrame()
 	assert(SUCCEEDED(Hr));
 
 	BackBufIdx = nextBufIdx;
-}
-
-void Graphic::prepareCommandList()
-{
-	mCommandList->Close();
-	mCommandAllocator[BackBufIdx]->Reset();
-	mCommandList->Reset(mCommandAllocator[BackBufIdx].Get(), nullptr);
 }
 
 bool Graphic::quit()
