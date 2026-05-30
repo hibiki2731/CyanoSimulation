@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include "Actor.h"
+#include "Component.h"
+#include "AttackType.h"
 #include <unordered_map>
 //実装必要な機能
 //コンストラクタ in:シーンポインタ、プレイヤーポインタ
@@ -13,15 +14,10 @@ class DungeonScene;
 class Player;
 class EnemyComponent;
 
-enum class AttackType {
-	SINGLE,
-	DOUBLE,
-};
-
-class IAttackProcess : public Actor
+class PlayerAttackComponent : public Component
 {
 public:
-	IAttackProcess(DungeonScene& scene, Player& player);
+	PlayerAttackComponent(DungeonScene& scene, Player& player);
 	
 	virtual void execute() = 0;
 
@@ -36,23 +32,23 @@ protected:
 
 };
 
-class SingleAttackProcess : public IAttackProcess
+class PlayerSingleAttackComponent : public PlayerAttackComponent
 {
 public:
-	SingleAttackProcess(DungeonScene& scene, Player& player);
-	DECLARE_CLASS_NAME(SINGLEATTACKPROCESS)
+	PlayerSingleAttackComponent(DungeonScene& scene, Player& player);
+	DECLARE_COMPONENT_NAME(PlayerSingleAttackComponent)
 	void execute() override;
 private:
 	int calcDamage(EnemyComponent* target) override;
 };
 
-class DoubleAttackProcess : public IAttackProcess
+class PlayerDoubleAttackComponent : public PlayerAttackComponent
 {
 public:
-	DoubleAttackProcess(DungeonScene& scene, Player& player);
-	DECLARE_CLASS_NAME(DOUBLEATTACKPROCESS)
+	PlayerDoubleAttackComponent(DungeonScene& scene, Player& player);
+	DECLARE_COMPONENT_NAME(PlayerDoubleAttackComponent)
 	
-	void updateActor() override;
+	void updateComponent() override;
 	void execute() override;
 private:
 	float mTimer;
@@ -61,15 +57,4 @@ private:
 
 	int calcDamage(EnemyComponent* target) override;
 	void executeSecondAttack();
-};
-
-
-//各攻撃処理のクラスを変更するためのクラス
-class AttackProcesses {
-public:
-	AttackProcesses(DungeonScene& scene, Player& player);
-	IAttackProcess* getAttackProcess(AttackType attackType);
-
-private:
-	std::unordered_map<AttackType, IAttackProcess*> mAttackProcessMap;
 };

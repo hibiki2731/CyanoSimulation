@@ -24,7 +24,8 @@
 #include "Treasure.h"
 #include "SpriteComponent.h"
 #include "TextComponent.h"
-#include "AttackProcess.h"
+#include "PlayerAttackComponent.h"
+#include "PlayerMoveComponent.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
@@ -79,7 +80,18 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mCharacter = character.get();
 	addComponent(std::move(character));
 
-	mAttackProcesses = std::make_unique<AttackProcesses>(scene, *this);
+	//移動用コンポーネントの生成
+	auto moveComponent = std::make_unique<PlayerMoveComponent>(scene, *this);
+	mMoveComponent = moveComponent.get();
+	addComponent(std::move(moveComponent));
+
+	//攻撃用コンポーネントの生成
+	auto singleAttack = std::make_unique<PlayerSingleAttackComponent>(scene, *this);
+	auto doubleAttack = std::make_unique<PlayerDoubleAttackComponent>(scene, *this);
+	mAttackComponents[AttackType::SINGLE] = singleAttack.get();	//攻撃タイプに対応する攻撃コンポーネントをマップに格納
+	mAttackComponents[AttackType::DOUBLE] = doubleAttack.get();
+	addComponent(std::move(singleAttack));
+	addComponent(std::move(doubleAttack));
 }
 
 void Player::inputActor()
@@ -129,22 +141,6 @@ void Player::inputActor()
 //毎フレームの更新処理
 void Player::updateActor()
 {
-	//移動処理
-	if (isActing) {
-		XMFLOAT3 diffPos = mTargetPos - mPosition;
-		float moveLength = deltaTime * mMoveSpeed;
-
-		//位置の更新  diffPos(現在地と目的地の差分)よりmoveLength(移動距離)が大きくなるまで現在地にmoveLengthを加算
-		if (fabsf(diffPos.x) > moveLength || fabsf(diffPos.y) > moveLength || fabsf(diffPos.z) > moveLength) {
-			mPosition = mPosition + Math::normalize(diffPos) * moveLength;
-		}
-		else {
-			//目的地にピッタリ合わせる
-			mPosition = mTargetPos;
-			isActing = false;
-		}
-	}
-
 	//カメラ回転時の処理
 	if (isRotating) {
 		XMFLOAT3 diffRot = mTargetRot - mRotation;
@@ -195,7 +191,7 @@ void Player::getIndexPos(int(&pos)[2])
 std::vector<int> Player::getIndexPos()
 {
 	std::vector<int> pos = { mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] };
-	return std::move(pos);
+	return pos;
 }
 
 int Player::getCurrentHP()
@@ -233,12 +229,27 @@ const std::string& Player::getSelectItemID()
 	return mPlayerManager.getInventoryItem(mSelectItemIndex);
 }
 
+void Player::setIndexPos(int x, int y)
+{
+	mCharacter->setIndexPos(x, y);
+}
+
 //プレイヤーにダメージを与える
 void Player::giveDamage(int damage)
 {
 	//直接HPを減らさない
 	//行動中に受けたダメージを全て加算し、行動終了後にまとめてHPから引くようにする
 	mPendingDamage += damage;
+}
+
+void Player::startAct()
+{
+	isActing = true;
+}
+
+void Player::moveToEnemyTurn()
+{
+	mScene.moveToEnemyTurn();
 }
 
 void Player::attack()
@@ -250,46 +261,11 @@ void Player::attack()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0)return;
 
-	IAttackProcess* attackProcess = mAttackProcesses->getAttackProcess(mPlayerData.attackType);
-	if (attackProcess == nullptr) return;
+	//攻撃タイプに対応する攻撃コンポーネントをマップから取得
+	auto attackComponentIter = mAttackComponents.find(mPlayerData.attackType);
+	if (attackComponentIter == mAttackComponents.end()) return;	//攻撃タイプに対応する攻撃コンポーネントが存在しない場合は処理を終了
 
-	attackProcess->execute();
-}
-
-void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
-{
-	//ダメージ値を生成する位置を計算
-	XMFLOAT3 textPos = targetPos;
-	textPos.y += 0.8f; //少しだけ上に
-
-	//ダメージ値はビルボード処理でカメラの方向を向くようにするため、プレイヤーの前方ベクトルと右ベクトルを計算する
-	XMFLOAT3 front = Math::rotateY(XMFLOAT3(0.0f, 0.0f, 1.0f), mRotation.y); //プレイヤーの前方ベクトル
-	XMFLOAT3 right = Math::rotateY(front, -XM_PIDIV2);	//プレイヤーの右ベクトル
-	textPos = textPos - front;	//敵オブジェクトより手前に
-
-	int digit = 0;			//桁数
-	int value = val;		//表示したい数値
-	std::vector<int> num(DamageTextGenerator::MaxNum);	//各桁の値, 最大数で配列を初期化しておく
-
-	//桁数と各桁の値を取得
-	if (value == 0) {
-		num[0] = val;
-		digit = 1;
-	}
-	while (value > 0) {
-		num[digit] = value % 10;
-		digit++;
-		value = value / 10;
-	}
-
-	float DTHalfSize = mScene.getDamageTextNum() * 0.5f;
-	//数値が画面中心に来るよう調整
-	textPos = textPos + (right * DTHalfSize * 0.5f * (digit - 1));
-	//桁ごとの表示位置の調整
-	for (int i = 0; i < digit; i++) {
-		mScene.createDamageText(textPos, num[i]);
-		textPos = textPos - right * DTHalfSize;	//次の桁はカメラの左方向にずらす
-	}
+	attackComponentIter->second->execute();	//攻撃コンポーネントの攻撃処理を実行
 }
 
 void Player::move(Direction direction)
@@ -301,26 +277,7 @@ void Player::move(Direction direction)
 	//行動回数が0の場合実行不可
 	if (mAP == 0) return;
 
-	int targetIndexPos[2] = {mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1]};
-	//現在の向きと進行方向から移動先のインデックス座標を計算
-	calcMoveDirectionToIndexPos(direction, targetIndexPos);
-
-	//進先に障害物がある場合移動不可
-	if (mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
-		mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) return;
-
-	//移動前の座標を空に
-	mScene.setCharacterDataAt(mCharacter->getIndexPosInt(), CharacterType::EMPTY);
-	//マップ上のオブジェクトデータ更新
-	mScene.setCharacterDataAt(targetIndexPos[0], targetIndexPos[1], CharacterType::PLAYER);
-	//プレイヤーのインデックス座標の更新
-	mCharacter->setIndexPos(targetIndexPos[0], targetIndexPos[1]);
-
-	mTargetPos = XMFLOAT3(static_cast<float>(targetIndexPos[0]) * MAPTIPSIZE, mPosition.y, static_cast<float>(targetIndexPos[1]) * MAPTIPSIZE);
-	
-	mScene.getGame().getAudioManager().playSE("DUNGEON_FOOTSTEP");
-	turnEnd();
-
+	mMoveComponent->move(direction);	//移動用コンポーネントの移動処理を実行
 }	
 
 void Player::rotate(Direction direction)
@@ -344,47 +301,6 @@ void Player::rotate(Direction direction)
 
 	isRotating = true;
 	mScene.updateMiniMapDirection();	//ミニマップのアイコンの向きを更新
-}
-
-void Player::calcMoveDirectionToIndexPos(Direction moveDirection, int (&indexPos)[2])
-{
-	//動く方向と向いている方角の論理和から、最終的に動く向きをもとめる
-	//moveDirection(移動方向)					　: 0001(後),0010(右),0100(上),1000(左)
-	//mCharacter->getDirection() (向いている方角) : 0001(南),0010(東),0100(北),1000(西)
-	int index = moveDirection | mCharacter->getDirection(); 
-
-	//indexは以下の10通りになる
-	//東　0100, 0001, 1010
-	//西　0101, 0010, 1000
-	//北　0110, 1001
-	//南　1100, 0011
-
-	//indexから移動先のインデックス座標を計算
-	switch (index) {
-	//東に移動
-	case 0b0100:
-	case 0b0001:
-	case 0b1010:
-		indexPos[1] += 1;
-		break;
-	//西に移動
-	case 0b0101:
-	case 0b0010:
-	case 0b1000:
-		indexPos[1] -= 1;
-		break;
-	//北に移動
-	case 0b0110:
-	case 0b1001:
-		indexPos[0] += 1;
-		break;
-	//南に移動
-	case 0b1100:
-	case 0b0011:
-		indexPos[0] -= 1;
-		break;
-	}
-
 }
 
 void Player::collect()
@@ -411,7 +327,8 @@ void Player::collect()
 	mScene.pushMessage(message);
 
 	//ターン経過
-	turnEnd();
+	endAct();
+	moveToEnemyTurn();
 }
 
 void Player::damagedProcess()
@@ -492,7 +409,8 @@ void Player::useItem()
 	mScene.updateItemFrame();
 
 	//ターン経過
-	turnEnd();
+	endAct();
+	moveToEnemyTurn();
 }
 
 void Player::getTreasure()
@@ -539,19 +457,18 @@ void Player::getTreasure()
 
 
 	//終了処理
-	turnEnd();
+	endAct();
+	moveToEnemyTurn();
 }
 
-void Player::turnEnd()
+void Player::endAct()
 {
-	//ターンをエネミーターンに変更
-	mScene.moveToEnemyTurn();
+	isActing = false;
+
 	//残り行動回数を減らす
 	mAP--;
 	//UIの更新
 	if(mAP >= 0) mScene.updateAPUI();
-	//行動中フラグをtureにする
-	isActing = true;
 }
 
 void Player::selectNextItem()
@@ -605,7 +522,8 @@ void Player::moveNextFloor()
 	auto goalWindow = std::make_unique<EndWindow>(mScene, WindowType::GOAL);
 	mScene.addActor(std::move(goalWindow));
 
-	turnEnd();
+	endAct();
+	moveToEnemyTurn();
 	mScene.getTurnObserver().stop();	//ターンオブザーバーを止める(敵の行動も止まる)
 }
 

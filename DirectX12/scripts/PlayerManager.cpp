@@ -3,7 +3,7 @@
 #include "ItemManager.h"
 #include <fstream>
 #include "json.hpp"
-#include "AttackProcess.h"
+#include "PlayerAttackComponent.h"
 
 static std::string empty = "";
 
@@ -186,6 +186,7 @@ void PlayerManager::loadPlayerData()
 	mDefaultPlayerData.equippedWeaponIndex = json["equippedWeaponIndex"].get<int>();
 	mDefaultPlayerData.equippedArmerIndex = json["equippedArmerIndex"].get<int>();
 	mDefaultPlayerData.actionLimit = json["actionLimit"].get<int>();
+	mDefaultPlayerData.attackType = AttackType::SINGLE;	//攻撃タイプの初期値はシングルアタックにする
 
 	mPlayerData = mDefaultPlayerData; //プレイヤーデータを初期値で初期化:
 }

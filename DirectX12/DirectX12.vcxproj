@@ -254,7 +254,7 @@
   <ItemGroup>
     <ClCompile Include="scripts\Actor.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
-    <ClCompile Include="scripts\AttackProcess.cpp" />
+    <ClCompile Include="scripts\PlayerAttackComponent.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
@@ -279,6 +279,7 @@
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="scripts\myJson.cpp" />
+    <ClCompile Include="scripts\PlayerMoveComponent.cpp" />
     <ClCompile Include="scripts\Resource.cpp" />
     <ClCompile Include="scripts\ItemManager.cpp" />
     <ClCompile Include="scripts\MainMenu.cpp" />
@@ -323,7 +324,8 @@
   <ItemGroup>
     <ClInclude Include="scripts\Actor.h" />
     <ClInclude Include="scripts\AssetManager.h" />
-    <ClInclude Include="scripts\AttackProcess.h" />
+    <ClInclude Include="scripts\AttackType.h" />
+    <ClInclude Include="scripts\PlayerAttackComponent.h" />
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
@@ -352,6 +354,7 @@
     <ClInclude Include="scripts\json_fwd.hpp" />
     <ClInclude Include="scripts\myJson.h" />
     <ClInclude Include="scripts\PerlinNoise1D.h" />
+    <ClInclude Include="scripts\PlayerMoveComponent.h" />
     <ClInclude Include="scripts\Resource.h" />
     <ClInclude Include="scripts\ItemManager.h" />
     <ClInclude Include="scripts\json.hpp" />

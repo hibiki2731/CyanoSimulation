@@ -65,7 +65,7 @@
          "id":"DAMAGE1",
          "fileType" : "mp3",
          "filePath" : "assets/sounds/SEs/damage1.mp3",
-         "poolSize" : 1
+         "poolSize" : 2
       },
       {
          "id":"DAMAGE2",

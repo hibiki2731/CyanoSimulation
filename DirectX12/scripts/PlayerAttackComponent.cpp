@@ -1,4 +1,4 @@
-﻿#include "AttackProcess.h"
+﻿#include "PlayerAttackComponent.h"
 #include "Player.h"
 #include "DungeonScene.h"
 #include "EnemyComponent.h"
@@ -7,12 +7,12 @@
 #include "Game.h"
 #include "AudioManager.h"
 
-IAttackProcess::IAttackProcess(DungeonScene& scene, Player& player)
-	:Actor(scene), mScene(scene), mPlayer(player)
+PlayerAttackComponent::PlayerAttackComponent(DungeonScene& scene, Player& player)
+	:Component(player), mScene(scene), mPlayer(player)
 {
 }
 
-EnemyComponent* IAttackProcess::searchTargetEnemy()
+EnemyComponent* PlayerAttackComponent::searchTargetEnemy()
 {
 	//前方のエネミーのポインターを取得
 	EnemyComponent* target = nullptr;
@@ -35,7 +35,7 @@ EnemyComponent* IAttackProcess::searchTargetEnemy()
 	return target;
 }
 
-void IAttackProcess::createDamageText(EnemyComponent* target, int damageValue)
+void PlayerAttackComponent::createDamageText(EnemyComponent* target, int damageValue)
 {
 	//ダメージ値を生成する位置を計算
 	XMFLOAT3 textPos = target->getPosition();
@@ -71,46 +71,48 @@ void IAttackProcess::createDamageText(EnemyComponent* target, int damageValue)
 	}
 }
 
-void IAttackProcess::moveNextTurn()
+void PlayerAttackComponent::moveNextTurn()
 {
-	mPlayer.turnEnd();
+	mPlayer.endAct();	//プレイヤーの行動終了処理
+	mScene.moveToEnemyTurn();	//敵ターンに移行
 }
 
-SingleAttackProcess::SingleAttackProcess(DungeonScene& scene, Player& player)
-	: IAttackProcess(scene, player)
+PlayerSingleAttackComponent::PlayerSingleAttackComponent(DungeonScene& scene, Player& player)
+	: PlayerAttackComponent(scene, player)
 {
 }
 
-void SingleAttackProcess::execute()
+void PlayerSingleAttackComponent::execute()
 {
 	EnemyComponent* target = searchTargetEnemy();
 	if (target == nullptr) return; //攻撃対象がいない場合は処理を終了
 
-	int damage = calcDamage(target); //ダメージの計算
-	target->giveDamage(damage); //ダメージを与える
+	mPlayer.startAct();					//プレイヤーの行動開始処理
+	int damage = calcDamage(target);	//ダメージの計算
+	target->giveDamage(damage);			//ダメージを与える
 	//ダメージエフェクト
-	target->startFlash();	//敵を点滅させる
+	target->startFlash();				//敵を点滅させる
 	createDamageText(target, damage);	//ダメージ値を描画
 	mScene.getGame().getAudioManager().playSE("DAMAGE1");
 	moveNextTurn();	//ターン経過
 }
 
-int SingleAttackProcess::calcDamage(EnemyComponent* target)
+int PlayerSingleAttackComponent::calcDamage(EnemyComponent* target)
 {
 	int damage = max(mPlayer.getPower() - target->getDefence(), 0);
 	return damage;
 }
 
 
-const float DoubleAttackProcess::NextAttackTime = 0.2f;	//2撃目の攻撃までの時間
-DoubleAttackProcess::DoubleAttackProcess(DungeonScene& scene, Player& player)
-	: IAttackProcess(scene, player)
+const float PlayerDoubleAttackComponent::NextAttackTime = 0.2f;	//2撃目の攻撃までの時間
+PlayerDoubleAttackComponent::PlayerDoubleAttackComponent(DungeonScene& scene, Player& player)
+	: PlayerAttackComponent(scene, player)
 {
 	mTimer = 0.0f;
 	mIsFirstAttackExecuted = false;
 }
 
-void DoubleAttackProcess::updateActor()
+void PlayerDoubleAttackComponent::updateComponent()
 {
 	if(mIsFirstAttackExecuted) mTimer += deltaTime;
 
@@ -120,10 +122,13 @@ void DoubleAttackProcess::updateActor()
 	}
 }
 
-void DoubleAttackProcess::execute()
+void PlayerDoubleAttackComponent::execute()
 {
 	EnemyComponent* target = searchTargetEnemy();
 	if (target == nullptr) return; //攻撃対象がいない場合は処理を終了
+
+	//プレイヤーの行動開始
+	mPlayer.startAct();
 
 	//1撃目のダメージの計算
 	int damage = calcDamage(target);
@@ -137,13 +142,13 @@ void DoubleAttackProcess::execute()
 
 }
 
-int DoubleAttackProcess::calcDamage(EnemyComponent* target)
+int PlayerDoubleAttackComponent::calcDamage(EnemyComponent* target)
 {
 	int damage = max(mPlayer.getPower() - target->getDefence(), 0);
 	return damage;
 }
 
-void DoubleAttackProcess::executeSecondAttack()
+void PlayerDoubleAttackComponent::executeSecondAttack()
 {
 	EnemyComponent* target = searchTargetEnemy();
 
@@ -164,24 +169,4 @@ void DoubleAttackProcess::executeSecondAttack()
 	mTimer = 0.0f;
 	mIsFirstAttackExecuted = false;	//2撃目の攻撃が実行されたのでフラグをリセット
 	moveNextTurn();	//ターン経過
-}
-
-AttackProcesses::AttackProcesses(DungeonScene& scene, Player& player)
-{
-	auto singleAttackProcess = std::make_unique<SingleAttackProcess>(scene, player);
-	auto doubleAttackProcess = std::make_unique<DoubleAttackProcess>(scene, player);
-	mAttackProcessMap[AttackType::SINGLE] = singleAttackProcess.get();
-	mAttackProcessMap[AttackType::DOUBLE] = doubleAttackProcess.get();
-	scene.addActor(std::move(singleAttackProcess));
-	scene.addActor(std::move(doubleAttackProcess));
-}
-
-IAttackProcess* AttackProcesses::getAttackProcess(AttackType attackType)
-{
-	auto iter = mAttackProcessMap.find(attackType);
-	if (iter != mAttackProcessMap.end()) {
-		return iter->second;
-	}
-
-	return nullptr;
 }

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <string>
-#include "AttackProcess.h"
+#include "AttackType.h"
 
 class Game;
 

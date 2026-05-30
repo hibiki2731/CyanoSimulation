@@ -2,6 +2,7 @@
 #include "Actor.h"
 #include "Object.h"
 #include "Definition.h"
+#include "AttackType.h"
 #include "json_fwd.hpp"
 #include <vector>
 
@@ -36,11 +37,16 @@ public:
 	bool getIsActing();
 	const std::string& getSelectItemID();
 
+	//setter
+	void setIndexPos(int x, int y);
+
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
 
 	//ターン経過処理
-	void turnEnd();
+	void startAct();
+	void moveToEnemyTurn();
+	void endAct();
 private:
 	//--ターン経過する行動--
 	void attack();
@@ -49,8 +55,6 @@ private:
 	void useItem();
 	void getTreasure();
 
-	void calcDamageText(const XMFLOAT3& targetPos, int val);						//ダメージテキストの生成
-	void calcMoveDirectionToIndexPos(Direction moveDirection, int(&indexPos)[2]);	//移動先のインデックス座標を計算
 	void rotate(Direction direction);	//視点移動
 	void damagedProcess();				//ダメージを受けたときの処理
 	void updateFlash();					//点滅処理の更新	
@@ -80,8 +84,10 @@ private:
 	DungeonScene& mScene;
 	const struct PlayerData& mPlayerData;	//プレイヤーデータの参照
 
-	//攻撃用クラス
-	std::unique_ptr<class AttackProcesses> mAttackProcesses;
+	//移動用コンポーネント
+	class PlayerMoveComponent* mMoveComponent;
+	//攻撃処理用コンポーネント
+	std::unordered_map<AttackType, class PlayerAttackComponent*> mAttackComponents;
 };
 
 class TreasureWindow : public Object
