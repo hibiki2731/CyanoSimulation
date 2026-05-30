@@ -1,8 +1,7 @@
 {
-    "actionLimit": 10,
+    "actionLimit": 20,
     "armers": [
-        "NONE",
-        "INFINIT_ARMER"
+        "NONE"
     ],
     "defense": 1,
     "equippedArmerIndex": 0,
@@ -16,7 +15,6 @@
     "power": 3,
     "rotSpeed": 4.5,
     "weapons": [
-        "NONE",
-        "INFINIT_BLADE"
+        "NONE"
     ]
 }

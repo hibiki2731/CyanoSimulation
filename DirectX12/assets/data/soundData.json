@@ -138,6 +138,12 @@
          "fileType": "mp3",
          "filePath": "assets/sounds/SEs/goal.mp3",
          "poolSize":1
+      },
+      {
+         "id":"OPEN_TREASURE",
+         "filePath": "assets/sounds/SEs/openTreasure.mp3",
+         "fileType": "mp3",
+         "poolSize":1
       }
    ]
 }

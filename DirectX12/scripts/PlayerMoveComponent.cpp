@@ -40,8 +40,11 @@ void PlayerMoveComponent::move(Direction direction)
 	const std::vector<int> targetIndexPos = calcTargetIndexPos(direction);
 
 	//進先に障害物がある場合移動不可
-	if (mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]) == TileType::WALL ||
-		mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]) != CharacterType::EMPTY) return;
+	const int tileData = mScene.getTileDataAt(targetIndexPos[0], targetIndexPos[1]);
+	const int characterData = mScene.getCharacterDataAt(targetIndexPos[0], targetIndexPos[1]);
+	if (tileData == TileType::WALL ||
+		tileData == TileType::TREASURE ||
+		characterData != CharacterType::EMPTY) return;
 
 	//移動前の座標を空に
 	const std::vector<int> currentIndexPos = mPlayer.getIndexPos();

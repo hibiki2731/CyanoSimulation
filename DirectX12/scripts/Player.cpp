@@ -123,6 +123,7 @@ void Player::inputActor()
 	if (isKeyJustPressed(VK_RETURN) || isKeyJustPressed('K')) {
 		attack();			//目の前の敵を攻撃
 		collect();			//リソースを回収
+		getTreasure();		//宝箱からアイテムを入手
 		moveNextFloor();	//次の階へ移動
 	}
 	//---アイテム使用---

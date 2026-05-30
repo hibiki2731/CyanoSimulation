@@ -40,7 +40,7 @@ void EquipWeaponMenu::applyComponentLabel()
 		const auto& inventory = mPlayerManager.getPlayerData().weaponInventory;
 		int showWeaponNum = min(inventory.size(), MaxShowWeaponNum);
 		for (int i = 0; i < showWeaponNum; i++) {
-			if (i == mPlayerManager.getPlayerData().equippedArmerIndex) {
+			if (i == mPlayerManager.getPlayerData().equippedWeaponIndex) {
 				float y = mTextComponent->getPosY() + mEquipIcon->getSpriteSize().y / 2.0f + mTextComponent->getLineSpace() * i;
 				mEquipIcon->setPosY(y);
 			}

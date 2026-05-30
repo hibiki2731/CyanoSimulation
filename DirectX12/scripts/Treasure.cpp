@@ -4,17 +4,21 @@
 #include "Scene.h"
 #include "Game.h"
 #include "PlayerManager.h"
+#include "ItemManager.h"
+#include "DungeonScene.h"
+#include "AudioManager.h"
 
 const std::string Treasure::TreasureMeshID = "TREASURE";
 const std::string Treasure::TreasureOpenMeshID = "TREASURE_OPEN";
 
-Treasure::Treasure(Scene& scene, int x, int y, const std::string& direction, const std::string& category, const std::string& itemID)
+Treasure::Treasure(DungeonScene& scene, int x, int y, const std::string& direction, const std::string& category, const std::string& itemID)
 	: Actor(scene, static_cast<float>(x) * MAPTIPSIZE, static_cast<float>(y) * MAPTIPSIZE)
 	, mX(x)
 	, mY(y)
 	, mDirection(direction)
 	, mCategory(category)
 	, mItemID(itemID)
+	, mDScene(scene)
 {
 	//3Dモデルの生成
 	auto mesh = std::make_unique<MeshComponent>(*this);
@@ -23,6 +27,7 @@ Treasure::Treasure(Scene& scene, int x, int y, const std::string& direction, con
 
 	mIsOpen = false;
 
+	//向きの設定
 	if (direction == "UP") {
 		setYRot(0);
 	}
@@ -69,6 +74,11 @@ void Treasure::open()
 		//武器の取得
 		mScene.getGame().getPlayerManager().addWeapon(mItemID);
 	}
+	//メッセージの追加
+	std::string message = mScene.getGame().getItemManager().getExplorerData(mItemID).name + "を手に入れた!\n";
+	mDScene.pushMessage(message);
+	//SE
+	mScene.getGame().getAudioManager().playSE("OPEN_TREASURE");
 
 	mIsOpen = true;
 }

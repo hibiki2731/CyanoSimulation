@@ -1,10 +1,12 @@
 ﻿#pragma once
 #include "Actor.h"
 
+class DungeonScene;
+
 class Treasure : public Actor
 {
 public:
-	Treasure(Scene& scene, int x, int y, const std::string& direction, const std::string& category, const std::string& itemID);
+	Treasure(DungeonScene& scene, int x, int y, const std::string& direction, const std::string& category, const std::string& itemID);
 
 	bool equal(int x, int y) const;
 
@@ -17,6 +19,7 @@ public:
 
 
 private:
+	DungeonScene& mDScene;
 	const int mX;
 	const int mY;
 	const std::string mDirection;
