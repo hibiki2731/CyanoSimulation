@@ -14,6 +14,7 @@
 #include "FireParticleComponent.h"
 #include <fstream>
 #include <cassert>
+#include "Treasure.h"
 
 MapGenerator::MapGenerator(DungeonScene& scene)
 	: mScene(scene)
@@ -50,49 +51,82 @@ void MapGenerator::createMap()
 void MapGenerator::loadMap(Stage stage)
 {
 	//読み込み用変数
-	int mapSize;
 	std::vector<std::vector<int>> tileData;
 	std::vector<std::vector<int>> characterData;
 
 
 	std::ifstream file;
+	nlohmann::json json;
 
 	//ファイルの読み込み
+	file.open("assets\\data\\mapData.json");
+	assert(!file.fail());
+	file >> json;
+
+	//ステージに応じたマップデータの読み込み
+	nlohmann::json mapJson;
 	switch (stage) {
 	case Stage::MAP1:
-		file.open("assets\\mapdata\\stage1.txt");
+		mapJson = json["stage1"];
 		break;
 	}
 
-	assert(!file.fail());
-	file >> mapSize;
+	//マップサイズの読み込み
+	const int mapSize = mapJson["mapSize"].get<int>();
 
-	//マップデータの読み込み
+	//タイルデータの読み込み
 	tileData.resize(mapSize);
 	for (int i = 0; i < mapSize; i++) tileData[i].resize(mapSize);
-
-	for (int y = mapSize - 1; y >= 0; y--)
+	const nlohmann::json tileJson = mapJson["tileData"];
+	//jsonのタイルデータは左上から右に向かって、下の行へと続いているため、読み込む際にy座標を逆転させる
+	int x = 0, y = mapSize - 1;
+	for (int num : tileJson)
 	{
-		for (int x = 0; x < mapSize; x++)
-		{
-			int tileNum = 0;
-			file >> tileNum;
-			tileData[x][y] = tileNum;
+		tileData[x][y] = num;
+		x++;
+		if (x >= mapSize) {
+			x = 0;
+			y--;
 		}
 	}
-	//オブジェクトデータの読み込み
+
+	//キャラクターデータの読み込み
 	characterData.resize(mapSize);
 	for (int i = 0; i < mapSize; i++) characterData[i].resize(mapSize);
-
-	for (int y = mapSize - 1; y >= 0; y--)
+	const nlohmann::json characterJson = mapJson["characterData"];
+	//キャラクターデータも同様にy座標を逆転させて読み込む
+	x = 0, y = mapSize - 1;
+	for (int num : characterJson)
 	{
-		for (int x = 0; x < mapSize; x++)
-		{
-			int objectNum = 0;
-			file >> objectNum;
-			characterData[x][y] = objectNum;
+		characterData[x][y] = num;
+		x++;
+		if (x >= mapSize) {
+			x = 0;
+			y--;
 		}
 	}
+
+	//プレイヤーデータの読み込み
+	const XMFLOAT2 playerPos = mapJson["playerPos"].get<XMFLOAT2>();
+	mScene.createPlayer(static_cast<float>(MAPTIPSIZE * playerPos.x), static_cast<float>(MAPTIPSIZE * playerPos.y));
+
+	//宝箱データの読み込み
+	const nlohmann::json treasureJson = mapJson["treasureData"];
+	std::vector<Treasure*> treasures(treasureJson.size());
+	int index = 0;
+	for (const auto& treasureData : treasureJson)
+	{
+		const std::vector<int> position = treasureData["position"].get<std::vector<int>>();
+		const std::string direction = treasureData["direction"].get<std::string>();
+		const std::string category = treasureData["category"].get<std::string>();
+		const std::string itemID = treasureData["id"].get<std::string>();
+		std::unique_ptr<Treasure> tresure = std::make_unique<Treasure>(mScene, position[0], position[1], direction, category, itemID);
+		treasures[index] = tresure.get();
+		mScene.addActor(std::move(tresure)); //所有権をGameへ渡す
+
+		index++;
+	}
+
 
 	file.close();
 
@@ -100,6 +134,7 @@ void MapGenerator::loadMap(Stage stage)
 	mScene.setTileData(std::move(tileData));
 	mScene.setCharacterData(std::move(characterData));
 	mScene.setMapSize(mapSize);
+	mScene.setTreasures(std::move(treasures));
 
 }
 
@@ -127,6 +162,11 @@ void MapGenerator::createTile()
 			else if(category == "RESOURCE"){
 				//草の生成
 				mScene.createResource(tileJson[tileID]["meshID"].get<std::string>(), tileJson[tileID]["resourceID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y), y * mScene.getMapSize() + x);
+				//床の生成
+				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
+				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
+			}
+			else if (category == "TREASURE") {
 				//床の生成
 				std::unique_ptr<Object> rockFloor = std::make_unique<Object>(mScene, "Tile", "ROCK_FLOOR", static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
 				mScene.addActor(std::move(rockFloor)); //所有権をGameへ渡す
@@ -205,10 +245,6 @@ void MapGenerator::createCharacter()
 			category = objectJson[meshID]["category"].get<std::string>();
 
 			if (category == "EMPTY") continue;
-			else if (category == "PLAYER") {
-				//プレイヤー生成
-				mScene.createPlayer(static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));
-			}
 			else if (category == "ENEMY") {
 				//敵の生成
 				mScene.createEnemy(objectJson[meshID]["enemyID"].get<std::string>(), static_cast<float>(MAPTIPSIZE * x), static_cast<float>(MAPTIPSIZE * y));

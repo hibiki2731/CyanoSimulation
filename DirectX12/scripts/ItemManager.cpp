@@ -130,8 +130,8 @@ void ItemManager::loadItemData()
 		ExplorerData explorer;
 		explorer.id = explorerJson["id"];
 		explorer.name = explorerJson["name"];
-		explorer.costResourceID = explorerJson["costResourceID"];
-		explorer.price = explorerJson["price"].get<std::vector<int>>();
+		explorer.costResourceID = explorerJson.value("costResourceID", std::vector<std::string>());
+		explorer.price = explorerJson.value("price", std::vector<int>());
 		explorer.category = explorerJson["category"];
 		explorer.value = explorerJson.value("value", 0);
 		explorer.inPossession = explorerJson["inPossession"];

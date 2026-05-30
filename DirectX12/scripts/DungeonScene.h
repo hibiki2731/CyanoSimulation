@@ -6,6 +6,7 @@
 class Player;
 class EnemyComponent;
 class FireParticleComponent;
+class Treasure;
 
 enum class Stage {
 	MAP1,
@@ -16,6 +17,7 @@ struct TileType {
 		WALL = 0,
 		FLOOR = 1,
 		RESOURCE = 2,
+		TREASURE = 3,
 	};
 };
 
@@ -91,6 +93,7 @@ public:
 	void setCharacterDataAt(int index, int data);
 	void setCharacterData(const std::vector<std::vector<int>>& objectData);
 	void setMapSize(int size) { mMapSize = size; }
+	void setTreasures(const std::vector<Treasure*>& treasures) { mTreasures = treasures; }
 
     //getter
     //マップ情報
@@ -99,6 +102,7 @@ public:
 	int getTileDataAt(int index);   
 	int getCharacterDataAt(int x, int y);
 	int getCharacterDataAt(int index);
+	Treasure* getTreasureAt(int x, int y);
 	const Stage& getStage();
     //エネミー
 	const std::vector<EnemyComponent*>& getEnemies() const { return mEnemies; }
@@ -124,6 +128,7 @@ private:
     int mMapSize;
 	std::vector<std::vector<int>> mTileData; //[x][y]
 	std::vector<std::vector<int>> mCharacterData; //[x][y]
+	std::vector<Treasure*> mTreasures;
 	Stage mStage;
 
 	//キャラクター

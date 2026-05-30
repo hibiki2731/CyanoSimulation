@@ -16,7 +16,7 @@ public:
 	int getHP();
 	int getMaxHP();
 	int getPower();
-	int getDefense();
+	int getDefence();
 	int getDirection();
 	bool getAlive();
 	std::vector<int>& getIndexPos();

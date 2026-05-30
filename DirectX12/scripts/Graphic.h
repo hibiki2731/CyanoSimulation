@@ -107,7 +107,6 @@ public:
 	void startFadeOut(float duration);
 	void renderFade();	//画面を覆う三角形のα値を制御してフェードイン、フェードアウトを実現する。描画処理の最後に呼び出す必要がある。
 
-
 	//getter
 	HWND getWindowHandle();
 	float getAspect();
@@ -166,42 +165,36 @@ private:
 	HRESULT createD2D();
 	HRESULT createCbvAndHeap();
 
-	//ウィンドウ
+	//---ウィンドウ---
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
 	const int ClientPosY = (GetSystemMetrics(SM_CYSCREEN) - ClientHeight) / 2;
+	HWND hWnd = nullptr;		//ウィンドウハンドル
+	MSG Msg;					//ウィンドウメッセージ
 #if 1
 	DWORD WindowStyle = WS_OVERLAPPEDWINDOW;
 #else
 	DWORD WindowStyle = WS_POPUP;
 #endif
 
-	HWND hWnd = nullptr;
-	MSG Msg;
-
-	struct RenderStruct {
-		ComPtr<ID3D12PipelineState> pipelineState;
-		ComPtr<ID3D12RootSignature> rootSignature;
-	};
+	/*
+	本プログラムでは、DirectX12とDirect2Dを両方使用している。
+	DirectX12は3Dオブジェクトやスプライトの描画に使用し、Direct2Dはテキスト描画に使用する。
+	Direct2DはDirectX11のリソースに対してのみ描画できるため、DirectX12のリソースをDirectX11On12でラップして、Direct2Dで描画できるようにしている。
+	*/
+	//---DirectX12---
 	//デバイス
 	ComPtr<ID3D12Device> Device;
-	ComPtr<ID2D1Device> mD2DDevice;
-	//デバイスコンテキスト
-	ComPtr<ID2D1DeviceContext> mD2DDeviceContext;
-	//ファクトリー
-	ComPtr<ID2D1Factory1> mD2DFactory;
 	//コマンド
-	ComPtr<ID3D12CommandAllocator> mCommandAllocator[FrameCount];
-	ComPtr<ID3D12CommandAllocator> mLoadAllocator;
+	ComPtr<ID3D12CommandAllocator> mCommandAllocator[FrameCount];	//フレーム数分用意
 	ComPtr<ID3D12GraphicsCommandList> mCommandList;
+	ComPtr<ID3D12CommandAllocator> mLoadAllocator;					//リソースの読み込みに使用するコマンドアロケータ
 	ComPtr<ID3D12GraphicsCommandList> mLoadList;
 	ComPtr<ID3D12CommandQueue> mCommandQueue;
 	//フェンス
-	ComPtr<ID3D12Fence> mFence;
-	HANDLE mFenceEvent;
-	UINT64 mFenceValue;
-	UINT64 mFenceValues[FrameCount] = {};
-	//デバッグ
-	HRESULT Hr;
+	ComPtr<ID3D12Fence> mFence;				//GPUの処理完了をチェックするフェンス
+	HANDLE mFenceEvent;						//フェンスのシグナルを待機するためのイベントハンドル
+	UINT64 mFenceValue;						//フェンスの値。毎フレーム+1していき、GPUの処理がどこまで進んでいるかを管理する。
+	UINT64 mFenceValues[FrameCount] = {};	//フレームごとのフェンスの値。非同期処理のため、前フレームのGPUの処理が終わっているかを確認するために使用する。
 
 	//リソース
 	//バックバッファ
@@ -211,7 +204,6 @@ private:
 	ComPtr<ID3D12DescriptorHeap> BbvHeap; //BackBufferViewHeap
 	UINT BbvHeapSize;
 	float ClearColor[4];
-
 	//デプスステンシルバッファ
 	ComPtr<ID3D12Resource> DepthStencilBuf;
 	ComPtr<ID3D12DescriptorHeap> DsvHeap; //DepthStencilBufView
@@ -219,29 +211,34 @@ private:
 	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12RootSignature> RootSignature2D;
 	ComPtr<ID3D12RootSignature> RootSignatureBB;
+	ComPtr<ID3D12RootSignature> RootSignatureFade;
 	ComPtr<ID3D12PipelineState> PipelineState;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	ComPtr<ID3D12PipelineState> PipelineStateDT;
 	ComPtr<ID3D12PipelineState> PipelineStateFP;
-	RenderStruct RenderStructFade;
+	ComPtr<ID3D12PipelineState> PipelineStateFade;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
-
-	//全3Dオブジェクト共通のデータ
-	Base3DData Base3DData;
-
-	//2D描画
-	ComPtr<ID3D11On12Device> mD3D11On12Device;
-	ComPtr<ID3D11DeviceContext> mD3D11DeviceContext;
-	ComPtr<IDWriteFactory> mDWriteFactory;
-	ComPtr<ID2D1Bitmap1> mD2DRenderTargets[FrameCount];
-	ComPtr<ID3D11Resource> mWrappedBackBuffers[FrameCount];
-
 	//共有して使用するヒープ、コンスタントバッファ
 	ComPtr<ID3D12DescriptorHeap> mCbvTbvHeap;
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
 
+	//全3Dオブジェクト共通のデータ
+	Base3DData Base3DData;
+
+	//Direct2D
+	ComPtr<ID3D11On12Device> mD3D11On12Device;
+	ComPtr<ID3D11DeviceContext> mD3D11DeviceContext;
+	ComPtr<IDWriteFactory> mDWriteFactory;
+	ComPtr<ID2D1Bitmap1> mD2DRenderTargets[FrameCount];
+	ComPtr<ID3D11Resource> mWrappedBackBuffers[FrameCount];
+	//---デバイス---
+	ComPtr<ID2D1Device> mD2DDevice;	//D2Dの描画に使用
+	//---デバイスコンテキスト---
+	ComPtr<ID2D1DeviceContext> mD2DDeviceContext;	//D2Dの描画に使用
+	//---ファクトリー---
+	ComPtr<ID2D1Factory1> mD2DFactory;	//D2Dのデバイスを作成するために使用
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];

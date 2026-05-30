@@ -254,6 +254,7 @@
   <ItemGroup>
     <ClCompile Include="scripts\Actor.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
+    <ClCompile Include="scripts\AttackProcess.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\CharacterComponent.cpp" />
     <ClCompile Include="scripts\DamageText.cpp" />
@@ -308,17 +309,21 @@
     <ClCompile Include="scripts\SpotLightComponent.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
     <ClCompile Include="scripts\StatusMenu.cpp" />
+    <ClCompile Include="scripts\TextureLoader.cpp" />
+    <ClCompile Include="scripts\ThreadPool.cpp" />
     <ClCompile Include="scripts\TownUI.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
     <ClCompile Include="scripts\TitleScene.cpp" />
     <ClCompile Include="scripts\TownScene.cpp" />
+    <ClCompile Include="scripts\Treasure.cpp" />
     <ClCompile Include="scripts\TurnObserver.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scripts\Actor.h" />
     <ClInclude Include="scripts\AssetManager.h" />
+    <ClInclude Include="scripts\AttackProcess.h" />
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\CharacterComponent.h" />
     <ClInclude Include="scripts\DamageText.h" />
@@ -379,12 +384,15 @@
     <ClInclude Include="scripts\SpotLightComponent.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\StatusMenu.h" />
+    <ClInclude Include="scripts\TextureLoader.h" />
+    <ClInclude Include="scripts\ThreadPool.h" />
     <ClInclude Include="scripts\TownUI.h" />
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
     <ClInclude Include="scripts\TitleScene.h" />
     <ClInclude Include="scripts\TownScene.h" />
+    <ClInclude Include="scripts\Treasure.h" />
     <ClInclude Include="scripts\TurnObserver.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>

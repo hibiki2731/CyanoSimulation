@@ -21,6 +21,10 @@
 #include "DungeonScene.h"
 #include "Resource.h"
 #include "EndWindow.h"
+#include "Treasure.h"
+#include "SpriteComponent.h"
+#include "TextComponent.h"
+#include "AttackProcess.h"
 
 Player::Player(DungeonScene& scene, float x, float y)
 	: Actor(scene),
@@ -75,6 +79,7 @@ Player::Player(DungeonScene& scene, float x, float y)
 	mCharacter = character.get();
 	addComponent(std::move(character));
 
+	mAttackProcesses = std::make_unique<AttackProcesses>(scene, *this);
 }
 
 void Player::inputActor()
@@ -187,6 +192,12 @@ void Player::getIndexPos(int(&pos)[2])
 	pos[1] = mCharacter->getIndexPos()[1];
 }
 
+std::vector<int> Player::getIndexPos()
+{
+	std::vector<int> pos = { mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] };
+	return std::move(pos);
+}
+
 int Player::getCurrentHP()
 {
 	return mCharacter->getHP();
@@ -195,6 +206,16 @@ int Player::getCurrentHP()
 int Player::getCurrentAP()
 {
 	return mAP;
+}
+
+int Player::getPower()
+{
+	return mCharacter->getPower();
+}
+
+int Player::getDefence()
+{
+	return mCharacter->getDefence();
 }
 
 int Player::getSelectItemIndex()
@@ -229,39 +250,10 @@ void Player::attack()
 	//残り行動回数が0の場合実行不可
 	if (mAP == 0)return;
 
-	//前方のエネミーのポインターを取得
-	EnemyComponent* target = nullptr;
-	switch (mCharacter->getDirection()) {
-	case Direction::UP:
-		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] + 1);
-		break;
-	case Direction::DOWN:
-		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1] - 1);
-		break;
-	case Direction::RIGHT:
-		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] + 1, mCharacter->getIndexPos()[1]);
-		break;
-	case Direction::LEFT:
-		target = mScene.getEnemyFromIndexPos(mCharacter->getIndexPos()[0] - 1, mCharacter->getIndexPos()[1]);
-		break;
-	}
+	IAttackProcess* attackProcess = mAttackProcesses->getAttackProcess(mPlayerData.attackType);
+	if (attackProcess == nullptr) return;
 
-	//前方に敵がいない場合は攻撃できない
-	if (target == nullptr) { 
-		return; 
-	}
-
-	//ダメージの計算
-	int damage = max(mCharacter->getPower() - target->getDefense(), 0);
-	target->giveDamage(damage); //ダメージを与える
-
-	//ダメージエフェクト
-	target->startFlash();	//敵を点滅させる
-	calcDamageText(target->getPosition(), damage);	//ダメージ値を描画
-	mScene.getGame().getAudioManager().playSE("DAMAGE1");
-
-	//ターン経過
-	turnEnd();
+	attackProcess->execute();
 }
 
 void Player::calcDamageText(const XMFLOAT3& targetPos, int val)
@@ -503,6 +495,53 @@ void Player::useItem()
 	turnEnd();
 }
 
+void Player::getTreasure()
+{
+	//プレイヤーターン時のみ実行
+	if (mScene.getTurnType() == TurnType::ENEMY) return;
+	//移動、回転中は実行不可
+	if (isActing || isRotating) return;
+	//残り行動回数が0の場合実行不可
+	if (mAP == 0) return;
+
+	//前方に宝箱があるか判定
+	std::vector<int> searchPos = {mCharacter->getIndexPos()[0], mCharacter->getIndexPos()[1]};
+
+	switch (mCharacter->getDirection()) {
+	case Direction::UP:
+		searchPos[1] += 1;
+		break;
+	case Direction::DOWN:
+		searchPos[1] -= 1;
+		break;
+	case Direction::RIGHT:
+		searchPos[0] += 1;
+		break;
+	case Direction::LEFT:
+		searchPos[0] -= 1;
+		break;
+	}
+
+	const int tileData = mScene.getTileDataAt(searchPos[0], searchPos[1]);
+
+	//前方に宝箱がない場合は何もしない
+	if (tileData != TileType::TREASURE) return;
+
+	//宝箱のポインタを取得
+	Treasure* treasure = mScene.getTreasureAt(searchPos[0], searchPos[1]);
+	//宝箱が設定されていなかったら何もしない
+	if (treasure == nullptr) return;
+
+	//宝箱からアイテムを取得
+	treasure->open();
+
+	//取得処理
+
+
+	//終了処理
+	turnEnd();
+}
+
 void Player::turnEnd()
 {
 	//ターンをエネミーターンに変更
@@ -568,4 +607,14 @@ void Player::moveNextFloor()
 
 	turnEnd();
 	mScene.getTurnObserver().stop();	//ターンオブザーバーを止める(敵の行動も止まる)
+}
+
+TreasureWindow::TreasureWindow(Scene& scene, const std::string& itemID)
+	: Object(scene, "TREASURE_WINDOW")
+{
+}
+
+void TreasureWindow::inputActor()
+{
+	
 }

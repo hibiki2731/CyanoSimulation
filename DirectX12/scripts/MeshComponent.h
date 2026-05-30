@@ -1,5 +1,4 @@
 ﻿#pragma once
-#pragma once
 
 //#define USE_INDEX
 #include <memory>

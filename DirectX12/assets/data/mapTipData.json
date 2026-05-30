@@ -16,6 +16,9 @@
             "category":"RESOURCE",
             "resourceID":"GRASS",
             "meshID":"GRASS"
+        },
+        "3":{
+            "category":"TREASURE"
         }
     },
 

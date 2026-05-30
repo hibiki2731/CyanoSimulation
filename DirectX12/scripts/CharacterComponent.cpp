@@ -36,7 +36,7 @@ int CharacterComponent::getPower()
 	return mPower;
 }
 
-int CharacterComponent::getDefense()
+int CharacterComponent::getDefence()
 {
 	return mDefense;
 }

@@ -6,20 +6,26 @@
 #include "Game.h"
 #include "Imgui/imgui_impl_win32.h"
 #include "AssetManager.h"
+#include <comdef.h>
+#include <iostream>
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
 {
+	//画面クリア時の色を設定
 	ClearColor[0] = 1.0f;
 	ClearColor[1] = 0.4f;
 	ClearColor[2] = 0.45f;
 	ClearColor[3] = 1.0f;
 
+	//初期のバックバッファのインデックスは0
 	BackBufIdx = 0;
 
+	//全3Dオブジェクト共通のデータの初期化
 	Base3DData.playerFlashColor = XMFLOAT3(1.0f, 0.0f, 0.0f);
 	Base3DData.playerFlashIntensity = 0.0f;
 
+	//フェードイン、フェードアウトの初期化
 	currentFadeAlpha = 0.0f;
 	fadeTimer = 1.0f;
 	fadeOutDuration = 1.0f;
@@ -48,7 +54,7 @@ void Graphic::init() {
 	//コマンド作成
 	hr = createCommand();
 	assert(SUCCEEDED(hr));
-	//フェンス 処理完了のチェック
+	//フェンスの作成
 	hr = createFence();
 	assert(SUCCEEDED(hr));
 
@@ -90,21 +96,58 @@ void Graphic::setShareDescriptor()
 #endif
 
 HRESULT Graphic::createDevice() {
-	{
+	UINT dxgiFactoryFlags = 0;
 #ifdef _DEBUG
+	{
 		//デバッグレイヤーをオンに
 		ComPtr<ID3D12Debug> debug;
 		HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debug));
 		assert(SUCCEEDED(hr));
 		debug->EnableDebugLayer();
-#endif
+		dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 	}
+#endif
 
-	HRESULT hr = D3D12CreateDevice(
-		nullptr,
+	//対応する機能レベルの配列を用意
+	D3D_FEATURE_LEVEL featureLevels[] = {
+		D3D_FEATURE_LEVEL_12_2,
+		D3D_FEATURE_LEVEL_12_1,
 		D3D_FEATURE_LEVEL_12_0,
-		IID_PPV_ARGS(Device.GetAddressOf())
-	);
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0
+	};
+
+	//デバイスを作成するためのfactoryを作成
+	ComPtr<IDXGIFactory6> factory;
+	HRESULT factoryHr = CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory));
+	assert(SUCCEEDED(factoryHr));
+
+	ComPtr<IDXGIAdapter1> adapter;
+	//性能の良いハードウェアアダプタから取得して、DirectX12に対応しているか確認。対応しているアダプタが見つかったらループを抜ける。
+	for (int adapterIndex = 0;
+		SUCCEEDED(factory->EnumAdapterByGpuPreference(adapterIndex,
+				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+				IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf())));
+		adapterIndex++)
+	{
+
+		bool isDeviceCreated = false;
+		for (auto level : featureLevels) {
+			//実際にデバイスを作成せず、サポートしているかのみ確認
+			HRESULT hr = D3D12CreateDevice(adapter.Get(), level, _uuidof(ID3D12Device), nullptr);
+
+			if (SUCCEEDED(hr)) {
+				//サポートが確認できたら、実際にデバイスを作成してループを抜ける
+				hr = D3D12CreateDevice(adapter.Get(), level, IID_PPV_ARGS(Device.GetAddressOf()));
+				assert(SUCCEEDED(hr));
+				isDeviceCreated = true;
+				break;
+			}
+		}
+
+		//デバイスが作成できていたらループを抜ける
+		if (isDeviceCreated) break;
+	}
 
 #ifdef _DEBUG
 	//誤検知エラーを無視するフィルタの作成
@@ -124,26 +167,30 @@ HRESULT Graphic::createDevice() {
 	}
 
 #endif
-	return hr;
+	return S_OK;
 }
 
 HRESULT Graphic::createCommand() {
-	//コマンドアロケータ作成
+	//コマンドアロケータ作成 (GPU、CPUの非同期処理のためにフレーム数分確保)
 	for (int i = 0; i < FrameCount; i++) {
 		HRESULT hr = Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
 			IID_PPV_ARGS(mCommandAllocator[i].GetAddressOf()));
 		if (FAILED(hr))	return hr;
 		
 	}
-	HRESULT hr = Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(mLoadAllocator.GetAddressOf()));
-	assert(SUCCEEDED(hr));
 
 	//コマンドリスト作成
-	hr = Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+	HRESULT hr = Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 		mCommandAllocator[0].Get(), nullptr, IID_PPV_ARGS(mCommandList.GetAddressOf())
 	);
 	assert(SUCCEEDED(hr));
+
+	//---リソース読み込み用---
+	//リソースの読み込み用コマンドアロケータの作成
+	hr = Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(mLoadAllocator.GetAddressOf()));
+	assert(SUCCEEDED(hr));
+	//リソースの読み込み用コマンドリストの作成
 	hr = Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 		mLoadAllocator.Get(), nullptr, IID_PPV_ARGS(mLoadList.GetAddressOf())
 	);
@@ -207,15 +254,12 @@ HRESULT Graphic::createWindow() {
 }
 
 HRESULT Graphic::createSwapChain() {
-	//DXGIファクトリーの生成、スワップチェイン作成(バックバッファもここで作成)
+	//スワップチェイン作製用のDXGIファクトリーの生成
 	ComPtr<IDXGIFactory4> dxgiFactory;
 	HRESULT hr = CreateDXGIFactory2(0, IID_PPV_ARGS(dxgiFactory.GetAddressOf()));
-	if (FAILED(hr)) {
-		return hr;
-	}
+	assert(SUCCEEDED(hr));
 
 	//スワップチェインの作成
-
 	DXGI_SWAP_CHAIN_DESC1 desc = {};
 	desc.BufferCount = 2; //ダブルバッファ
 	desc.Width = ClientWidth;
@@ -241,13 +285,13 @@ HRESULT Graphic::createBbv() {
 
 	//デスクリプターヒープ（ビューを記憶する場所）の作成
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-	desc.NumDescriptors = 2; //バックバッファの数
+	desc.NumDescriptors = FrameCount; //バックバッファの数
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; //レンダーターゲットビュー
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE; //シェーダからアクセスしない
 	HRESULT hr = Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(BbvHeap.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+
 	//バックバッファビューの作成
-	
 	//ポインタにヒープのアドレスを入れる
 	D3D12_CPU_DESCRIPTOR_HANDLE hBbvHeap = BbvHeap->GetCPUDescriptorHandleForHeapStart();
 	//ビューのサイズ
@@ -267,23 +311,24 @@ HRESULT Graphic::createBbv() {
 HRESULT Graphic::createDSbuf() {
 	//デプスステンシルバッファを作る
 	D3D12_HEAP_PROPERTIES prop = {};
-	prop.Type = D3D12_HEAP_TYPE_DEFAULT; //DEFAULTだからあとはUNKNOWN
+	prop.Type = D3D12_HEAP_TYPE_DEFAULT;						 //DEFAULTだからあとはUNKNOWN
 	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
 	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
 	D3D12_RESOURCE_DESC desc = {};
 	desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	desc.Width = ClientWidth; //レンダーターゲットと同じ
+	desc.Width = ClientWidth;									 //レンダーターゲットと同じ
 	desc.Height = ClientHeight;
-	desc.DepthOrArraySize = 1; //二次元のテクスチャデータとして　
-	desc.Format = DXGI_FORMAT_D32_FLOAT; //深度書き込み用フォーマット
-	desc.SampleDesc.Count = 1; //サンプルは1ピクセルあたり1つ
-	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; //深度ステンシルとして使用
+	desc.DepthOrArraySize = 1;									//二次元のテクスチャデータとして　
+	desc.Format = DXGI_FORMAT_D32_FLOAT;						//深度書き込み用フォーマット
+	desc.SampleDesc.Count = 1;									//サンプルは1ピクセルあたり1つ
+	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;		//深度ステンシルとして使用
 	desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 	desc.MipLevels = 1;
 	//デプスステンシルバッファをクリアする値
 	D3D12_CLEAR_VALUE depthClearValue = {};
-	depthClearValue.DepthStencil.Depth = 1.0f; //深さ1(最大値)でクリア
-	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT; //32bit深度値としてクリア
+	depthClearValue.DepthStencil.Depth = 1.0f;		//深さ1(最大値)でクリア
+	depthClearValue.Format = DXGI_FORMAT_D32_FLOAT;	//32bit深度値としてクリア
+
 	//デプスステンシルバッファを作る
 	HRESULT hr = Device->CreateCommittedResource(
 		&prop,
@@ -300,12 +345,13 @@ HRESULT Graphic::createDSbv() {
 	//デプスステンシルバッファビューの入れ物であるディスクリプタヒープを作る
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-		desc.NumDescriptors = 1; //深度ビュー1るのみ
+		desc.NumDescriptors = 1;					//深度ビュー1のみ
 		desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV; //デプスステンシルビューのディスクリプタヒープ
 		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		HRESULT hr = Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(DsvHeap.GetAddressOf()));
 		assert(SUCCEEDED(hr));
 	}
+
 	//デプスステンシルバッファビューをディスクリプタヒープに作る
 	{
 		D3D12_DEPTH_STENCIL_VIEW_DESC desc = {};
@@ -738,7 +784,7 @@ HRESULT Graphic::createPipeline()
 
 		//ルートシグネチャの作成
 		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
-			IID_PPV_ARGS(RenderStructFade.rootSignature.GetAddressOf()));
+			IID_PPV_ARGS(RootSignatureFade.GetAddressOf()));
 		assert(SUCCEEDED(hr));
 
 		{
@@ -783,7 +829,7 @@ HRESULT Graphic::createPipeline()
 			depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
 			//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
 			D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc = {};
-			pipelineDesc.pRootSignature = RenderStructFade.rootSignature.Get();
+			pipelineDesc.pRootSignature = RootSignatureFade.Get();
 			pipelineDesc.VS = { vsFade.code(), vsFade.size() };
 			pipelineDesc.PS = { psFade.code(), psFade.size() };
 			pipelineDesc.InputLayout = { nullptr, 0 };
@@ -796,7 +842,7 @@ HRESULT Graphic::createPipeline()
 			pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 			pipelineDesc.NumRenderTargets = 1;
 			pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-			HRESULT hr = Device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(RenderStructFade.pipelineState.GetAddressOf()));
+			HRESULT hr = Device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(PipelineStateFade.GetAddressOf()));
 			assert(SUCCEEDED(hr));
 		}
 	} {}
@@ -993,6 +1039,7 @@ void Graphic::updateBase3DData()
 
 void Graphic::updateBillboardView(const XMMATRIX& view)
 {
+	//ビルボード処理用のバッファにビュー行列をセットしてコピー
 	mBC.view = view;
 	memcpy(mConstantData[BackBufIdx] + mBCIndex, &mBC, sizeof(BillboardConstBuf));
 }
@@ -1059,9 +1106,6 @@ UINT Graphic::alignedSize(UINT size)
 
 HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource)
 {
-
-
-
 	//ファイルを読み込み、生データを取り出す
 	unsigned char* pixels = nullptr;
 	int width = 0, height = 0, bytePerPixel = 4;
@@ -1101,7 +1145,7 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 			IID_PPV_ARGS(&uploadBuf));
 		assert(SUCCEEDED(hr));
 
-		//生データをuploadbuffに一旦コピーします
+		//生データをuploadbuffに一旦コピー
 		uint8_t* mapBuf = nullptr;
 		hr = uploadBuf->Map(0, nullptr, (void**)&mapBuf);//マップ
 		auto srcAddress = pixels;
@@ -1115,7 +1159,7 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 		uploadBuf->Unmap(0, nullptr);//アンマップ
 	}
 
-	//そして、最終コピー先であるテクスチャバッファ_bを作る
+	//そして、最終コピー先であるテクスチャバッファを作る
 	{
 		D3D12_HEAP_PROPERTIES prop = {};
 		prop.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -1143,9 +1187,9 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 			IID_PPV_ARGS(shaderResource.ReleaseAndGetAddressOf()));
 		assert(SUCCEEDED(hr));
 	}
-	//uploadBufからtextureBufへコピーする長い道のりが始まります
 
-	//まずコピー元ロケーションの準備・フットプリント指定
+	//---uploadBufからtextureBufへコピー---
+	//コピー元ロケーションの準備・フットプリント指定
 	D3D12_TEXTURE_COPY_LOCATION src = {};
 	src.pResource = uploadBuf.Get();
 	src.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
@@ -1160,7 +1204,7 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 	dst.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 	dst.SubresourceIndex = 0;
 
-	//コマンドリストでコピーを予約しますよ！！！
+	//コマンドリストでコピーを予約
 	mLoadList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 	//コピー先からテクスチャリソースに切り替える
 	D3D12_RESOURCE_BARRIER barrier = {};
@@ -1192,13 +1236,11 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 	//開放
 	stbi_image_free(pixels);
 
-	return true;
+	return S_OK;
 }
 
 XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource)
 {
-
-
 	//ファイルを読み込み、生データを取り出す
 	unsigned char* pixels = nullptr;
 	int width = 0, height = 0, bytePerPixel = 4;
@@ -1238,7 +1280,7 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 			IID_PPV_ARGS(&uploadBuf));
 		assert(SUCCEEDED(hr));
 
-		//生データをuploadbuffに一旦コピーします
+		//生データをuploadbuffに一旦コピー
 		uint8_t* mapBuf = nullptr;
 		hr = uploadBuf->Map(0, nullptr, (void**)&mapBuf);//マップ
 		auto srcAddress = pixels;
@@ -1252,7 +1294,7 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 		uploadBuf->Unmap(0, nullptr);//アンマップ
 	}
 
-	//そして、最終コピー先であるテクスチャバッファ_bを作る
+	//そして、最終コピー先であるテクスチャバッファを作る
 	{
 		D3D12_HEAP_PROPERTIES prop = {};
 		prop.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -1280,9 +1322,9 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 			IID_PPV_ARGS(shaderResource.ReleaseAndGetAddressOf()));
 		assert(SUCCEEDED(hr));
 	}
-	//uploadBufからtextureBufへコピーする長い道のりが始まります
 
-	//まずコピー元ロケーションの準備・フットプリント指定
+	//---uploadBufからtextureBufへコピー---
+	//コピー元ロケーションの準備・フットプリント指定
 	D3D12_TEXTURE_COPY_LOCATION src = {};
 	src.pResource = uploadBuf.Get();
 	src.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
@@ -1297,7 +1339,7 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 	dst.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
 	dst.SubresourceIndex = 0;
 
-	//コマンドリストでコピーを予約しますよ！！！
+	//コマンドリストでコピーを予約
 	mLoadList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 	//コピー先からテクスチャリソースに切り替える
 	D3D12_RESOURCE_BARRIER barrier = {};
@@ -1540,11 +1582,11 @@ void Graphic::moveToNextFrame()
 	mTrashQueue[nextBufIdx].clear();
 
 	//コマンドアロケータをリセット
-	Hr = mCommandAllocator[nextBufIdx]->Reset();
-	assert(SUCCEEDED(Hr));
+	HRESULT hr = mCommandAllocator[nextBufIdx]->Reset();
+	assert(SUCCEEDED(hr));
 	//コマンドリストをリセット
-	Hr = mCommandList->Reset(mCommandAllocator[nextBufIdx].Get(), nullptr);
-	assert(SUCCEEDED(Hr));
+	hr = mCommandList->Reset(mCommandAllocator[nextBufIdx].Get(), nullptr);
+	assert(SUCCEEDED(hr));
 
 	BackBufIdx = nextBufIdx;
 }
@@ -1609,8 +1651,8 @@ void Graphic::startFadeOut(float duration)
 void Graphic::renderFade()
 {
 	if (isFadingIn || isFadingOut) {
-		mCommandList->SetPipelineState(RenderStructFade.pipelineState.Get());
-		mCommandList->SetGraphicsRootSignature(RenderStructFade.rootSignature.Get());
+		mCommandList->SetPipelineState(PipelineStateFade.Get());
+		mCommandList->SetGraphicsRootSignature(RootSignatureFade.Get());
 		mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		//ルートパラメータにフェードのアルファ値をセット

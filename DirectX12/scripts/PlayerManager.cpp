@@ -3,6 +3,7 @@
 #include "ItemManager.h"
 #include <fstream>
 #include "json.hpp"
+#include "AttackProcess.h"
 
 static std::string empty = "";
 
@@ -157,6 +158,9 @@ void PlayerManager::applyToolParamater()
 		}
 		else if (category == "YIELD") {
 			mGame.getItemManager().addResourceYield(toolData.valueID, toolData.value);
+		}
+		else if (category == "DOUBLE_ATTACK") {
+			mPlayerData.attackType = AttackType::DOUBLE;
 		}
 	}
 }

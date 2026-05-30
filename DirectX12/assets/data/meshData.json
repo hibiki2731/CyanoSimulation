@@ -35,5 +35,13 @@
     "FLAG":{
         "fbxPath": "assets/3DModels/Flag/flag.fbx",
         "jsonPath" : "assets/3DModels/Flag/flag.json"
+    },
+    "TREASURE":{
+        "fbxPath": "assets/3DModels/Treasure/treasureBox.fbx",
+        "jsonPath": "assets/3DModels/Treasure/treasureBox.json"
+    },
+    "TREASURE_OPEN":{
+        "fbxPath": "assets/3DModels/Treasure/treasureBox_open.fbx",
+        "jsonPath": "assets/3DModels/Treasure/treasureBox_open.json"
     }
 }

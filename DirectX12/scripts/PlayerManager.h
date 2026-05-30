@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <string>
+#include "AttackProcess.h"
 
 class Game;
 
@@ -20,6 +21,7 @@ struct PlayerData {
 	int equippedWeaponIndex = 0;
 	int equippedArmerIndex = 0;
 	int storageSize = 1;
+	AttackType attackType = AttackType::SINGLE;
 };
 
 class PlayerManager

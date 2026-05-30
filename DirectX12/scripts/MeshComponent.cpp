@@ -7,8 +7,6 @@
 #include "Game.h"
 #include "myJson.h"
 
-
-
 MeshComponent::MeshComponent(Actor& owner, int updateOrder) 
 	: Component(owner, updateOrder),
 	mGraphic(owner.getScene().getGame().getGraphic())

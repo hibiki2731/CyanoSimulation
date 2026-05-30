@@ -124,6 +124,13 @@
                 30,
                 15
             ]
+        },
+        {
+            "category": "DOUBLE_ATTACK",
+            "description": "攻撃が2回連続で発生するようになる。",
+            "id": "COMBO_ATTACK",
+            "inPossession": false,
+            "name": "連撃の書"
         }
     ],
     "Item": [

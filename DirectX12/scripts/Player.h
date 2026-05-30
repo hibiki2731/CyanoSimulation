@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
+#include "Object.h"
 #include "Definition.h"
 #include "json_fwd.hpp"
 #include <vector>
@@ -26,8 +27,11 @@ public:
 	//getter
 	int getDirection();
 	void getIndexPos(int(&pos)[2]);
+	std::vector<int> getIndexPos();
 	int getCurrentHP();
 	int getCurrentAP();
+	int getPower();
+	int getDefence();
 	int getSelectItemIndex();
 	bool getIsActing();
 	const std::string& getSelectItemID();
@@ -35,19 +39,21 @@ public:
 	//プレイヤーにダメージを与える
 	void giveDamage(int damage);
 
+	//ターン経過処理
+	void turnEnd();
 private:
 	//--ターン経過する行動--
 	void attack();
 	void move(Direction direction);
 	void collect();
 	void useItem();
+	void getTreasure();
 
 	void calcDamageText(const XMFLOAT3& targetPos, int val);						//ダメージテキストの生成
 	void calcMoveDirectionToIndexPos(Direction moveDirection, int(&indexPos)[2]);	//移動先のインデックス座標を計算
 	void rotate(Direction direction);	//視点移動
 	void damagedProcess();				//ダメージを受けたときの処理
 	void updateFlash();					//点滅処理の更新	
-	void turnEnd();						//ターン経過処理
 	void selectNextItem();				//アイテム選択
 	void selectPreviousItem();			//アイテム選択
 	void moveNextFloor();				//次の階へ移動
@@ -73,5 +79,16 @@ private:
 	PlayerManager& mPlayerManager;
 	DungeonScene& mScene;
 	const struct PlayerData& mPlayerData;	//プレイヤーデータの参照
+
+	//攻撃用クラス
+	std::unique_ptr<class AttackProcesses> mAttackProcesses;
 };
 
+class TreasureWindow : public Object
+{
+public:
+	TreasureWindow(Scene& scene, const std::string& itemID);
+	DECLARE_CLASS_NAME(TREASUREWINDOW)
+
+	void inputActor() override;			//入力処理
+};

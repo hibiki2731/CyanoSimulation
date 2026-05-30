@@ -16,7 +16,8 @@
 #include "AudioManager.h"
 #include "FireParticleComponent.h"
 #include "DebugCamera.h"
-#define EDIT
+#include "Treasure.h"
+//#define EDIT
 
 DungeonScene::DungeonScene(Game& game)
 	:Scene(game)
@@ -288,6 +289,14 @@ int DungeonScene::getCharacterDataAt(int index)
 		y < 0 || y > mMapSize - 1) return CharacterType::EMPTY;
 
 	return mCharacterData[x][y];
+}
+Treasure* DungeonScene::getTreasureAt(int x, int y)
+{
+	for (auto treasure : mTreasures) {
+		if (treasure->equal(x, y)) return treasure;
+	}
+
+	return nullptr;
 }
 const Stage& DungeonScene::getStage()
 {
