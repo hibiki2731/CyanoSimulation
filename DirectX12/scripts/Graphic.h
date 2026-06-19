@@ -21,8 +21,6 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 //前方宣言
-class PointLightComponent;
-class SpotLightComponent;
 class Game;
 
 //GraphicクラスでDirectX12の初期化、リソース管理、描画処理を行う
@@ -70,7 +68,6 @@ public:
 	~Graphic();
 
 	void init();				//初期化
-	void initBilbordBuffer();	//ビルボード処理用のバッファを初期化
 	//---ディスクリプタヒープの作成---
 	HRESULT createCbvTbvHeap(ComPtr<ID3D12DescriptorHeap>& cbvTbvHeap, UINT numDescriptors);	//CBVとSRV用のディスクリプタヒープの作成
 	//---リソースの作成、更新、マッピング---
@@ -102,11 +99,6 @@ public:
 	void delayRelease(ComPtr<IUnknown>& resource);		//リソースの開放を遅らせる。GPUがリソースを使用している可能性がある場合に、すぐに開放せず、次のフレームで開放する。
 	static UINT alignedSize(UINT size);					//引数のサイズを256バイトアライメントにする
 
-	//---フェードイン、フェードアウト---
-	void startFadeIn(float duration);
-	void startFadeOut(float duration);
-	void renderFade();	//画面を覆う三角形のα値を制御してフェードイン、フェードアウトを実現する。描画処理の最後に呼び出す必要がある。
-
 	//getter
 	HWND getWindowHandle();
 	float getAspect();
@@ -124,22 +116,9 @@ public:
 	UINT8* getConstantData(int frame);
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
-	bool isFading();
-	bool isFinishedFade();
-	int getBCIndex() { return mBCIndex; }
 
 	//Setter
 	void setRenderType(STATE state);	//描画するオブジェクトの種類に応じて、パイプラインステートやルートシグネチャを切り替える
-
-	//update
-	void updateBase3DData(); //更新した3Dオブジェクト共通のデータをコンスタントバッファへコピー
-	void updateBillboardView(const XMMATRIX& view);				//ビルボード処理用のビュー行列の更新。
-	void updateViewProj(const XMMATRIX& viewProj);				//Base3DDataのviewProjを更新
-	void updatePointLight(const PointLightComponent& light);	//Base3DDataのpointLightを更新
-	void updateSpotLight(const SpotLightComponent& light);		//Base3DDataのspotLightを更新
-	void updateCameraPos(XMFLOAT4& cameraPos);					//Base3DDataのcameraPosを更新
-	void updateDamageFlashIntensity(float intensity);			//Base3DDataのplayerFlashIntensityを更新
-	void updateFade();											//フェードイン、フェードアウトの更新
 
 	//ウィンドウパラメータ
 	static constexpr LPCWSTR WindowTitle = L"The Dungeon";
@@ -208,24 +187,14 @@ private:
 	ComPtr<ID3D12Resource> DepthStencilBuf;
 	ComPtr<ID3D12DescriptorHeap> DsvHeap; //DepthStencilBufView
 	//パイプライン
-	ComPtr<ID3D12RootSignature> RootSignature;
 	ComPtr<ID3D12RootSignature> RootSignature2D;
-	ComPtr<ID3D12RootSignature> RootSignatureBB;
-	ComPtr<ID3D12RootSignature> RootSignatureFade;
-	ComPtr<ID3D12PipelineState> PipelineState;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
-	ComPtr<ID3D12PipelineState> PipelineStateDT;
-	ComPtr<ID3D12PipelineState> PipelineStateFP;
-	ComPtr<ID3D12PipelineState> PipelineStateFade;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
 	//共有して使用するヒープ、コンスタントバッファ
 	ComPtr<ID3D12DescriptorHeap> mCbvTbvHeap;
 	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
 	UINT8* mConstantData[FrameCount];	//生データ
-
-	//全3Dオブジェクト共通のデータ
-	Base3DData Base3DData;
 
 	//Direct2D
 	ComPtr<ID3D11On12Device> mD3D11On12Device;
@@ -243,25 +212,8 @@ private:
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
 
-	//光源のindexカウンター Base3DDataの配列のどこに光源のデータを入れるかを管理する。
-	int mPointLightIndex = 0;
-	int mSpotLightIndex = 0;
-
 	//参照
 	Game& mGame;
-
-	//ビルボード処理
-	BillboardConstBuf mBC;
-	int mBCSize, mBCIndex;
-
-	//フェード処理
-	float currentFadeAlpha;
-	float fadeTimer;
-	float fadeOutDuration;
-	float fadeInDuration;
-	bool isFadingIn;
-	bool isFadingOut;
-	
 };
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

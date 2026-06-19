@@ -6,7 +6,6 @@
 #include <algorithm>
 #include "Graphic.h"
 #include "json.hpp"
-#include "magic_enum.hpp"
 
 struct MeshData {
 	int NumParts;

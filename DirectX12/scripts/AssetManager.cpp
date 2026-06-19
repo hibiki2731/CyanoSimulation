@@ -444,11 +444,6 @@ void AssetManager::createSpriteBuffers()
 
 void AssetManager::loadJson()
 {
-	//敵パラメータファイルの読み込み
-	std::ifstream enemyDataFile("assets\\data\\enemyData.json");
-	assert(!enemyDataFile.fail());
-	enemyDataFile >> mEnemyJson;
-
 	//オブジェクトデータファイルの読み込み
 	std::ifstream objectDataFile("assets\\data\\objectData.json");
 	assert(!objectDataFile.fail());

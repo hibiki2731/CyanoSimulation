@@ -3,9 +3,6 @@
 #include "Scene.h"
 #include "AssetManager.h"
 #include "Game.h"
-#include "PointLightComponent.h"
-#include "SpotLightComponent.h"
-#include "FireParticleComponent.h"
 #include "TextComponent.h"
 #include "SpriteComponent.h"
 #include "myJson.h"
@@ -93,26 +90,8 @@ void Object::loadComponentData(nlohmann::json& json)
 
 		//コンポーネントの型名を取得
 		std::string componentName = componentJson["name"];
-		//メッシュ
-		if (componentName == "MeshComponent") {
-			auto mesh = std::make_unique<MeshComponent>(*this);
-			mesh->loadFromJson(componentJson);
-			addComponent(std::move(mesh));
-		}
-		//点光源
-		if (componentName == "PointLightComponent") {
-			auto light = std::make_unique<PointLightComponent>(*this);
-			light->loadFromJson(componentJson);
-			addComponent(std::move(light));
-		}
-		//炎パーティクル
-		else if (componentName == "FireParticleComponent") {
-			auto fire = std::make_unique<FireParticleComponent>(*this);
-			fire->loadFromJson(componentJson);
-			addComponent(std::move(fire));
-		}
 		//スプライト
-		else if (componentName == "SpriteComponent") {
+		if (componentName == "SpriteComponent") {
 			auto sprite = std::make_unique<SpriteComponent>(*this);
 			sprite->loadFromJson(componentJson);
 			addComponent(std::move(sprite));

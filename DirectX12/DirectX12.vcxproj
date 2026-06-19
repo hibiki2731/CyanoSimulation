@@ -132,6 +132,8 @@
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,34 +166,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
     </FxCompile>
-    <FxCompile Include="scripts\DTGeometryShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\DTPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\DTVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
     <FxCompile Include="scripts\FadePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -210,63 +184,13 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="scripts\FPPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\FPGeometryShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="scripts\VertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.1</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.1</ShaderModel>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scripts\Actor.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
-    <ClCompile Include="scripts\PlayerAttackComponent.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
-    <ClCompile Include="scripts\CharacterComponent.cpp" />
-    <ClCompile Include="scripts\DamageText.cpp" />
-    <ClCompile Include="scripts\DebugCamera.cpp" />
-    <ClCompile Include="scripts\DungeonScene.cpp" />
-    <ClCompile Include="scripts\DungeonUI.cpp" />
-    <ClCompile Include="scripts\EndWindow.cpp" />
-    <ClCompile Include="scripts\EnemyComponent.cpp" />
-    <ClCompile Include="scripts\ExplorerMenu.cpp" />
-    <ClCompile Include="scripts\FireParticleComponent.cpp" />
-    <ClCompile Include="scripts\ForgeMenu.cpp" />
-    <ClCompile Include="scripts\GameOverScene.cpp" />
+    <ClCompile Include="scripts\ComputeShader.cpp" />
+    <ClCompile Include="scripts\FadeGenerator.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -279,66 +203,45 @@
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
     <ClCompile Include="scripts\myJson.cpp" />
-    <ClCompile Include="scripts\PlayerMoveComponent.cpp" />
-    <ClCompile Include="scripts\Resource.cpp" />
-    <ClCompile Include="scripts\ItemManager.cpp" />
-    <ClCompile Include="scripts\MainMenu.cpp" />
-    <ClCompile Include="scripts\Menu.cpp" />
-    <ClCompile Include="scripts\MiniMap.cpp" />
     <ClCompile Include="scripts\MyUtility.cpp" />
-    <ClCompile Include="scripts\InnMenu.cpp" />
-    <ClCompile Include="scripts\Object.cpp" />
-    <ClCompile Include="scripts\Player.cpp" />
-    <ClCompile Include="scripts\CameraComponent.cpp" />
     <ClCompile Include="scripts\Component.cpp" />
     <ClCompile Include="scripts\FBXConverter.cpp" />
     <ClCompile Include="scripts\BIN_FILE12.cpp" />
     <ClCompile Include="scripts\Game.cpp" />
     <ClCompile Include="scripts\Graphic.cpp" />
     <ClCompile Include="scripts\input.cpp" />
-    <ClCompile Include="scripts\MapGenerator.cpp" />
-    <ClCompile Include="scripts\MessageWindow.cpp" />
-    <ClCompile Include="scripts\PlayerManager.cpp" />
-    <ClCompile Include="scripts\PointLightComponent.cpp" />
     <ClCompile Include="scripts\Math.cpp" />
     <ClCompile Include="scripts\MeshComponent.cpp" />
+    <ClCompile Include="scripts\Object.cpp" />
+    <ClCompile Include="scripts\pch.cpp" />
     <ClCompile Include="scripts\Random.cpp" />
-    <ClCompile Include="scripts\Enemy.cpp" />
     <ClCompile Include="scripts\Scene.cpp" />
     <ClCompile Include="scripts\SceneManager.cpp" />
-    <ClCompile Include="scripts\ShopMenu.cpp" />
-    <ClCompile Include="scripts\SpotLightComponent.cpp" />
+    <ClCompile Include="scripts\SimulationScene.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
-    <ClCompile Include="scripts\StatusMenu.cpp" />
-    <ClCompile Include="scripts\TextureLoader.cpp" />
-    <ClCompile Include="scripts\ThreadPool.cpp" />
-    <ClCompile Include="scripts\TownUI.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\TitleScene.cpp" />
-    <ClCompile Include="scripts\TownScene.cpp" />
-    <ClCompile Include="scripts\Treasure.cpp" />
-    <ClCompile Include="scripts\TurnObserver.cpp" />
+    <ClCompile Include="scripts\UnorderedAccessBuffer.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scripts\Actor.h" />
     <ClInclude Include="scripts\AssetManager.h" />
-    <ClInclude Include="scripts\AttackType.h" />
-    <ClInclude Include="scripts\PlayerAttackComponent.h" />
     <ClInclude Include="scripts\AudioManager.h" />
-    <ClInclude Include="scripts\CharacterComponent.h" />
-    <ClInclude Include="scripts\DamageText.h" />
-    <ClInclude Include="scripts\DebugCamera.h" />
+    <ClInclude Include="scripts\ComputeShader.h" />
+    <ClInclude Include="scripts\d3dx12.h" />
+    <ClInclude Include="scripts\d3dx12_barriers.h" />
+    <ClInclude Include="scripts\d3dx12_check_feature_support.h" />
+    <ClInclude Include="scripts\d3dx12_core.h" />
+    <ClInclude Include="scripts\d3dx12_default.h" />
+    <ClInclude Include="scripts\d3dx12_pipeline_state_stream.h" />
+    <ClInclude Include="scripts\d3dx12_property_format_table.h" />
+    <ClInclude Include="scripts\d3dx12_render_pass.h" />
+    <ClInclude Include="scripts\d3dx12_resource_helpers.h" />
+    <ClInclude Include="scripts\d3dx12_root_signature.h" />
+    <ClInclude Include="scripts\d3dx12_state_object.h" />
     <ClInclude Include="scripts\Definition.h" />
-    <ClInclude Include="scripts\DungeonScene.h" />
-    <ClInclude Include="scripts\DungeonUI.h" />
-    <ClInclude Include="scripts\EndWindow.h" />
-    <ClInclude Include="scripts\EnemyComponent.h" />
-    <ClInclude Include="scripts\ExplorerMenu.h" />
-    <ClInclude Include="scripts\FireParticleComponent.h" />
-    <ClInclude Include="scripts\ForgeMenu.h" />
-    <ClInclude Include="scripts\GameOverScene.h" />
+    <ClInclude Include="scripts\FadeGenerator.h" />
     <ClInclude Include="scripts\GUIDebugger.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -353,54 +256,31 @@
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
     <ClInclude Include="scripts\json_fwd.hpp" />
     <ClInclude Include="scripts\myJson.h" />
-    <ClInclude Include="scripts\PerlinNoise1D.h" />
-    <ClInclude Include="scripts\PlayerMoveComponent.h" />
-    <ClInclude Include="scripts\Resource.h" />
-    <ClInclude Include="scripts\ItemManager.h" />
-    <ClInclude Include="scripts\json.hpp" />
-    <ClInclude Include="scripts\magic_enum.hpp" />
-    <ClInclude Include="scripts\MainMenu.h" />
-    <ClInclude Include="scripts\Menu.h" />
-    <ClInclude Include="scripts\MiniMap.h" />
-    <ClInclude Include="scripts\MyUtility.h" />
-    <ClInclude Include="scripts\InnMenu.h" />
     <ClInclude Include="scripts\Object.h" />
-    <ClInclude Include="scripts\Player.h" />
-    <ClInclude Include="scripts\CameraComponent.h" />
+    <ClInclude Include="scripts\pch.h" />
+    <ClInclude Include="scripts\PerlinNoise1D.h" />
+    <ClInclude Include="scripts\json.hpp" />
+    <ClInclude Include="scripts\MyUtility.h" />
     <ClInclude Include="scripts\Component.h" />
     <ClInclude Include="scripts\FBXConverter.h" />
     <ClInclude Include="scripts\BIN_FILE12.h" />
     <ClInclude Include="scripts\Game.h" />
     <ClInclude Include="scripts\Graphic.h" />
     <ClInclude Include="scripts\input.h" />
-    <ClInclude Include="scripts\MapGenerator.h" />
-    <ClInclude Include="scripts\MessageWindow.h" />
-    <ClInclude Include="scripts\PlayerManager.h" />
-    <ClInclude Include="scripts\PointLightComponent.h" />
     <ClInclude Include="scripts\Math.h" />
     <ClInclude Include="scripts\MeshComponent.h" />
     <ClInclude Include="scripts\Random.h" />
-    <ClInclude Include="scripts\Enemy.h" />
     <ClInclude Include="scripts\Scene.h" />
     <ClInclude Include="scripts\SceneManager.h" />
-    <ClInclude Include="scripts\ShopMenu.h" />
-    <ClInclude Include="scripts\SpotLightComponent.h" />
+    <ClInclude Include="scripts\SimulationScene.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
-    <ClInclude Include="scripts\StatusMenu.h" />
-    <ClInclude Include="scripts\TextureLoader.h" />
-    <ClInclude Include="scripts\ThreadPool.h" />
-    <ClInclude Include="scripts\TownUI.h" />
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\TitleScene.h" />
-    <ClInclude Include="scripts\TownScene.h" />
-    <ClInclude Include="scripts\Treasure.h" />
-    <ClInclude Include="scripts\TurnObserver.h" />
+    <ClInclude Include="scripts\UnorderedAccessBuffer.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="scripts\DTHeader.hlsli" />
     <None Include="scripts\FadeHeader.hlsli" />
     <None Include="scripts\Header.hlsli" />
   </ItemGroup>

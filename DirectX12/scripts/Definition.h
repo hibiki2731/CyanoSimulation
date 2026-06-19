@@ -19,12 +19,6 @@ enum LightStat {
     ACTIVE = 1,
 };
 
-enum class TurnType {
-	PLAYER,
-	ENEMY,
-	END,
-};
-
 struct PointLightData {
 	XMFLOAT4 position; //xyz:位置、w:有効無効
     XMFLOAT4 color; //xyzw:rgba

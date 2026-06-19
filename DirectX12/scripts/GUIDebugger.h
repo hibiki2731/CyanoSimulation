@@ -57,11 +57,6 @@ private:
 	void addPointLightComponent(class Object* object);
 	void savePointLightComponent(class Component* component, nlohmann::json& objJson);
 
-	//fireParticleComponent
-	void fireParticleComponentEditer(class Component* component);
-	void addFireParticleComponent(class Object* object);
-	void saveFireParticleComponent(class Component* component, nlohmann::json& objJson);
-
 	//SpriteComponent
 	void spriteComponentEditer(class Component* component);
 	void addSpriteComponent(class Object* object);

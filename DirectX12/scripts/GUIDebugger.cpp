@@ -7,15 +7,11 @@
 #include "Scene.h"
 #include "Actor.h"
 #include "Component.h"
-#include "PointLightComponent.h"
-#include "FireParticleComponent.h"
-#include "MeshComponent.h"
 #include "Imgui/imgui_stdlib.h"
 #include "MyUtility.h"
 #include "myJson.h"
 #include "unordered_map"
 #include "Object.h"
-#include "CameraComponent.h"
 
 //ImGUi用に必要なアロケーター
 struct ExampleDescriptorHeapAllocator
@@ -155,7 +151,7 @@ static int selectedIndex = -1;          //選択中のオブジェクトのイ�
 static bool showEditorWindow = false;   //エディタウィンドウを表示するかどうか
 
 //追加可能コンポーネント
-static std::vector<std::string> componentList = { "MeshComponent", "PointLightComponent", "FireParticleComponent", "SpriteComponent", "TextComponent"};
+static std::vector<std::string> componentList = {"SpriteComponent", "TextComponent"};
 static int selectedComponentIndex = 0;
 
 void GUIDebugger::drawObjectDebugGUI(std::vector<Object*>& objects)
@@ -268,10 +264,7 @@ void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objec
 		if (ImGui::Button("addComponent")) {
 			const std::string& componentName = componentList[selectedComponentIndex];
 
-			if (componentName == "MeshComponent")				addMeshComponent(object);
-			else if (componentName == "PointLightComponent")	addPointLightComponent(object);
-			else if (componentName == "FireParticleComponent")	addFireParticleComponent(object);
-			else if (componentName == "SpriteComponent")	addSpriteComponent(object);
+			if (componentName == "SpriteComponent")	addSpriteComponent(object);
 			else if (componentName == "TextComponent")	addTextComponent(object);
 		}
 
@@ -571,23 +564,8 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 		for (int i = 0; i < object->mComponents.size(); i++) {
 			std::string componentName = object->mComponents[i]->getComponentName();
 
-			//MeshComponent
-			if (componentName == "MeshComponent") {
-				saveMeshComponent(object->mComponents[i].get(), objJson["components"][componentIndex]);
-				componentIndex++;
-			}
-			//PointLightComponent
-			else if (componentName == "PointLightComponent") {
-				savePointLightComponent(object->mComponents[i].get(), objJson["components"][componentIndex]);
-				componentIndex++;
-			}
-			//FireParticleComponent
-			else if (componentName == "FireParticleComponent") {
-				saveFireParticleComponent(object->mComponents[i].get(), objJson["components"][componentIndex]);
-				componentIndex++;
-			}
 			//SpriteComponent
-			else if (componentName == "SpriteComponent") {
+			if (componentName == "SpriteComponent") {
 				saveSpriteComponent(object->mComponents[i].get(), objJson["components"][componentIndex]);
 				componentIndex++;
 			}
@@ -625,10 +603,7 @@ void GUIDebugger::componentEditer(Object* object)
 		ImGui::Separator();
 		ImGui::Text(component->getComponentName().c_str());
 		//各種コンポーネントの編集
-		if 		(componentName == "MeshComponent")				 meshComponentEditer(component);
-		else if (componentName == "PointLightComponent")	 pointLightComponentEditer(component);
-		else if (componentName == "FireParticleComponent")	 fireParticleComponentEditer(component);
-		else if (componentName == "SpriteComponent")		 spriteComponentEditer(component);
+		if (componentName == "SpriteComponent")		 spriteComponentEditer(component);
 		else if (componentName == "TextComponent")			 textComponentEditer(component);
 
 		//コンポーネントの除去
@@ -639,100 +614,6 @@ void GUIDebugger::componentEditer(Object* object)
 		//IDのポップ
 		ImGui::PopID();
 	}
-}
-
-void GUIDebugger::meshComponentEditer(Component* component)
-{
-			//コンポーネントをキャスト
-			MeshComponent* mesh = static_cast<MeshComponent*>(component);
-
-			std::string meshID = mesh->getMeshID();
-			//メッシュが設定されていない場合、MeshIDを入力できるようにする
-			if (meshID == "NONE") {
-				//メッシュIDの入力
-				static std::string preMeshID;
-				ImGui::InputText("##meshID", &preMeshID);
-				ImGui::SameLine();
-				if (ImGui::Button("Create")) {
-					mesh->create(preMeshID);
-				}
-
-			}
-			//メッシュが設定されている場合は何も変更できない
-			else ImGui::Text(meshID.c_str());
-}
-
-void GUIDebugger::addMeshComponent(Object* object)
-{
-	auto mesh = std::make_unique<MeshComponent>(*object);
-	object->addComponent(std::move(mesh));
-}
-
-void GUIDebugger::saveMeshComponent(Component* component, nlohmann::json& objJson)
-{
-	//キャスト
-	auto mesh = static_cast<MeshComponent*>(component);
-	objJson["name"] = component->getComponentName();
-	objJson["meshID"] = mesh->getMeshID();
-}
-
-void GUIDebugger::pointLightComponentEditer(Component* component)
-{
-	//コンポーネントをキャスト
-	PointLightComponent* light = static_cast<PointLightComponent*>(component);
-
-	//オフセット位置
-	ImGui::DragFloat4("LightOffsetPos", &light->mOffsetPos.x, 0.05f);
-	//色
-	ImGui::ColorEdit4("LightColor", &light->mColor.x);
-	//強度
-	ImGui::DragFloat("Intensity", &light->mIntensity);
-	//範囲
-	ImGui::DragFloat("Range", &light->mRange);
-}
-
-void GUIDebugger::addPointLightComponent(Object* object)
-{
-	auto light = std::make_unique<PointLightComponent>(*object);
-	light->setActive(true);
-	object->addComponent(std::move(light));
-}
-
-void GUIDebugger::savePointLightComponent(Component* component, nlohmann::json& objJson)
-{
-	//キャスト
-	auto light = static_cast<PointLightComponent*>(component);
-
-	//データの格納
-	objJson["name"] = component->getComponentName();
-	objJson["lightOffsetPos"] = light->mOffsetPos;
-	objJson["lightColor"] = light->mColor;
-	objJson["intensity"] = light->mIntensity;
-	objJson["range"] = light->mRange;
-}
-
-void GUIDebugger::fireParticleComponentEditer(Component* component)
-{
-	//コンポーネントをキャスト
-	FireParticleComponent* fire = static_cast<FireParticleComponent*>(component);
-
-	//エミット位置
-	ImGui::DragFloat3("ParticleEmitPos", &fire->mEmitterPosition.x);
-}
-
-void GUIDebugger::addFireParticleComponent(Object* object)
-{
-	auto fire = std::make_unique<FireParticleComponent>(*object);
-	object->addComponent(std::move(fire));
-}
-
-void GUIDebugger::saveFireParticleComponent(Component* component, nlohmann::json& objJson)
-{
-	auto fire = static_cast<FireParticleComponent*>(component);
-
-	//データの格納
-	objJson["name"] = component->getComponentName();
-	objJson["particleEmitPos"] = fire->mEmitterPosition;
 }
 
 void GUIDebugger::spriteComponentEditer(Component* component)

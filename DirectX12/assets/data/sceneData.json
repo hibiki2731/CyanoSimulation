@@ -1,16 +1,1 @@
-{
-    "DUNGEON": [
-        "TorchFront",
-        "TorchFront2",
-        "TorchBack",
-        "TorchRight",
-        "TorchLeft",
-        "TorchLeft2"
-    ],
-    "TITLE": [],
-    "TOWN": [
-        "Backgound",
-        "ControllDescriptor"
-    ],
-    "GAMEOVER":[]
-}
+{}

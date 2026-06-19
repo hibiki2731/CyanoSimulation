@@ -1,25 +1,21 @@
 ﻿#include <iostream>
 #include "SceneManager.h"
 #include "Game.h"
-#include "TownScene.h"
-#include "DungeonScene.h"
-#include "GameOverScene.h"
-#include "TitleScene.h"
 #include "json.hpp"
 #include "AssetManager.h"
+#include "Scene.h"
 #include "Object.h"
+#include "SimulationScene.h"
 
 SceneManager::SceneManager(Game& game)
 	:mGame(game)
 {
-	mCurrentSceneType = "TITLE";
+	mCurrentSceneType = "SIMULATION";
 	mNextSceneType = mCurrentSceneType;
+
+	mSceneMap["SIMULATION"] = std::make_unique<SimulationScene>(game);
 	
 	//シーンの登録
-	mSceneMap["TOWN"] = std::make_unique<TownScene>(game);
-	mSceneMap["DUNGEON"] = std::make_unique<DungeonScene>(game);
-	mSceneMap["GAME_OVER"] = std::make_unique<GameOverScene>(game); 
-	mSceneMap["TITLE"] = std::make_unique<TitleScene>(game);
 	mCurrentScene = mSceneMap[mCurrentSceneType].get();
 	mCurrentScene->onEnter();
 }
