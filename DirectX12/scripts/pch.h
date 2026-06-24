@@ -20,7 +20,6 @@
 #include <dxgiformat.h>	
 #include <dwrite.h>
 
-
 //よく使うスタンダードライブラリ
 #include <vector>
 #include <memory>

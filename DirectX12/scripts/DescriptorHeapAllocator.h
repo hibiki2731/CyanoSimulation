@@ -1,5 +1,4 @@
 ﻿#pragma once
-//ディスクリプタヒープのスロット数を表すクラス
 class NumSlots {
 public:
 	NumSlots(const int numSlots) : mNumSlots(numSlots) {
@@ -25,10 +24,6 @@ public:
 		return NumSlots(mNumSlots - other.mNumSlots);
 	}
 
-	NumSlots operator+(const NumSlots& other) const {
-		return NumSlots(mNumSlots + other.mNumSlots);
-	}
-
 	NumSlots operator=(const NumSlots& other) {
 		return NumSlots(other.mNumSlots);
 	}
@@ -37,10 +32,6 @@ private:
 	const int mNumSlots;
 };
 
-// 0スロットを表すNumSlotsの定数
-extern const NumSlots ZeroSlot;
-
-//ディスクリプタヒープのスロットインデックスを表すクラス
 class SlotIndex {
 public:
 	SlotIndex(const int index) : mIndex(index) {
@@ -54,15 +45,13 @@ public:
 		return SlotIndex(other.mIndex);
 	}
 
-	bool operator==(const SlotIndex& other) const {
-		return mIndex == other.mIndex;
-	}
-
 private:
 	const int mIndex;
 };
 
-// ディスクリプタヒープのスロット範囲を表すクラス
+// 0スロットを表すNumSlotsの定数
+extern const NumSlots ZeroSlot;
+
 class DescriptorAllocatorRange {
 public:
 	DescriptorAllocatorRange(const SlotIndex& startIndex, const NumSlots& numSlots)
@@ -76,17 +65,13 @@ public:
 
 		return SlotIndex(mStartIndex.getIndex() + offset);
 	}
-	
-	const NumSlots getNumSlots() const {
-		return mNumSlots;
-	}
 
 private:
 	const SlotIndex mStartIndex;
 	const NumSlots mNumSlots;
 };
 
-// ディスクリプタヒープのスロットを管理するアロケータ
+
 class DescriptorHeapAllocator
 {
 public:
@@ -101,33 +86,5 @@ private:
 	const NumSlots mNumAllSlots;
 	SlotIndex mLastUsedSlotIndex;
 	std::map<SlotIndex, NumSlots> mClearedHeap;
-};
-
-class DescriptorHeap
-{
-public:
-	DescriptorHeap(class Graphic& graphic, const NumSlots& numSlots);
-
-
-	//ビューを追加する前に、必要なスロット数を確保する
-	DescriptorAllocatorRange allocate(const NumSlots& numRequiredSlots);
-
-	//ビューを追加する
-	void addUAV(class UnorderedAccessBuffer& uav, const SlotIndex& slotIndex);
-	void addSRV(class ShaderResourceBuffer& srv, const SlotIndex& slotIndex);
-	void addCBV(class ConstantBuffer& cbv, const SlotIndex& slotIndex);
-
-private:
-	D3D12_DESCRIPTOR_HEAP_DESC getHeapDesc(const NumSlots& numSlots);
-	void createHeap(ID3D12Device& device, D3D12_DESCRIPTOR_HEAP_DESC& desc);
-	D3D12_CPU_DESCRIPTOR_HANDLE getCPUHandle(const SlotIndex& slotIndex);
-
-
-	ComPtr<ID3D12DescriptorHeap> mDescHeap;
-
-	//ディスクリプタヒープのスロットを管理するアロケータ
-	std::unique_ptr<DescriptorHeapAllocator> mHeapAllocator;
-
-	class Graphic& mGraphic;
 };
 

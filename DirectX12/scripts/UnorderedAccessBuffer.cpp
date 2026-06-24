@@ -6,6 +6,11 @@ UnorderedAccessBuffer::UnorderedAccessBuffer(Graphic& graphic, int sizeOfElement
 	:mSizeOfElement(sizeOfElement)
 	, mNumElement(numElement)
 {
+	if (sizeOfElement <= 0 || numElement <= 0) {
+		assert(false && "UnorderedAccessBufferの要素サイズと要素数は1以上である必要があります。");
+		return;
+	}
+
 	//バッファーの詳細設定
 	auto desc = getResourceDesc();
 	//ヒープ設定
@@ -16,12 +21,22 @@ UnorderedAccessBuffer::UnorderedAccessBuffer(Graphic& graphic, int sizeOfElement
 	createAndMapBuffers(*device, desc, prop);
 }
 
-const ID3D12Resource& UnorderedAccessBuffer::getBufferOnGPU() const
+UnorderedAccessBuffer::~UnorderedAccessBuffer()
 {
-	return *mBuffersOnGPU[Graphic::FrameCount].Get();
+	//アンマップ
+	CD3DX12_RANGE range(0, 0);
+	for (auto& buffer : mBuffersOnGPU) {
+		buffer->Unmap(0, &range);
+		buffer->Release();
+	}
 }
 
-const void* UnorderedAccessBuffer::getBufferOnCPU() const
+ID3D12Resource* UnorderedAccessBuffer::getBufferOnGPU() const
+{
+	return mBuffersOnGPU[Graphic::FrameCount].Get();
+}
+
+void* UnorderedAccessBuffer::getBufferOnCPU() const
 {
 	return mBuffersOnCPU[Graphic::FrameCount];
 }

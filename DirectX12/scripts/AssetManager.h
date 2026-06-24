@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
-#include "Graphic.h"
 #include "json.hpp"
 
 struct MeshData {

@@ -1,21 +1,6 @@
 ﻿#pragma once
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "dwrite.lib")
-#include <DirectXMath.h>
-#include <d3d12.h>
-#include <d3d11on12.h>
-#include <d2d1.h>
-#include <d2d1_3.h>
-#include <dxgi1_6.h>
-#include <dwrite.h>
-#include <wrl/client.h>
-#include <vector>
 #include "Definition.h"
 #include "BIN_FILE12.h"
-#include <winuser.h>
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
