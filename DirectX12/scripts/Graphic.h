@@ -1,12 +1,30 @@
 ﻿#pragma once
 #include "Definition.h"
 #include "BIN_FILE12.h"
+//Windows API
+#include <wrl/client.h>
+#include <winuser.h>
 
-using namespace DirectX;
-using Microsoft::WRL::ComPtr;
+///グラフィック
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dwrite.lib")
+#include <DirectXMath.h>
+#include "d3dx12.h"
+#include <d3d11on12.h>
+#include <d2d1.h>
+#include <d2d1_3.h>
+#include <dxgi1_6.h>
+#include <dxgitype.h>
+#include <dxgiformat.h>	
+#include <dwrite.h>
 
 //前方宣言
 class Game;
+class DescriptorHeap;
+class ConstantBuffer;
 
 //GraphicクラスでDirectX12の初期化、リソース管理、描画処理を行う
 /*
@@ -101,6 +119,8 @@ public:
 	UINT8* getConstantData(int frame);
 	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
+	DescriptorHeap& getDescriptorHeap() const { return *mDescriptorHeap; }
+	ConstantBuffer& getConstantBuffer() const{ return *mConstantBuffer; }
 
 	//Setter
 	void setRenderType(STATE state);	//描画するオブジェクトの種類に応じて、パイプラインステートやルートシグネチャを切り替える
@@ -196,6 +216,11 @@ private:
 
 	//遅延削除用のごみ箱
 	std::vector<ComPtr<IUnknown>> mTrashQueue[FrameCount];
+
+	//ディスクリプタヒープ
+	std::unique_ptr<DescriptorHeap> mDescriptorHeap;
+	//コンスタントバッファ
+	std::unique_ptr<ConstantBuffer> mConstantBuffer;
 
 	//参照
 	Game& mGame;

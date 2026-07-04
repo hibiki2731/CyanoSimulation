@@ -1,6 +1,10 @@
 ﻿#pragma once
+//Windows API
+#include <wrl/client.h>
 #include <DirectXMath.h>
+
 using namespace DirectX;
+using Microsoft::WRL::ComPtr;
 
 constexpr int MAX_LIGHT_NUM = 16;
 constexpr float MAPTIPSIZE = 2;

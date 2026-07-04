@@ -1,4 +1,4 @@
-// dear imgui, v1.92.8 WIP
+﻿// dear imgui, v1.92.8 WIP
 // (headers)
 
 // Help:
@@ -2795,7 +2795,7 @@ struct ImGuiStorage
     // [Internal]
     ImVector<ImGuiStoragePair>      Data;
 
-    // - Get***() functions find pair, never add/allocate. Pairs are sorted so a query is O(log N)
+    // - Get***() functions find pair, never add/setAddress. Pairs are sorted so a query is O(log N)
     // - Set***() functions find pair, insertion on demand if missing.
     // - Sorted insertion is costly, paid once. A typical frame shouldn't need to insert any new pair.
     void                Clear() { Data.clear(); }

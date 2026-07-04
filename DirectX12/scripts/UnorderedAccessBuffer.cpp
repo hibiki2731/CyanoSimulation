@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-#include "Graphic.h"
 #include "UnorderedAccessBuffer.h"
+#include "Graphic.h"
 
 UnorderedAccessBuffer::UnorderedAccessBuffer(Graphic& graphic, int sizeOfElement, int numElement)
 	:mSizeOfElement(sizeOfElement)

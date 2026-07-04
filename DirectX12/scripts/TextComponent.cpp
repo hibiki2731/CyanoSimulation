@@ -1,10 +1,14 @@
-﻿#include "TextComponent.h"
+﻿#include "pch.h"
+#include "TextCBSuballocation.h"
+#include "TextComponent.h"
 #include "Actor.h"
 #include "Game.h"
 #include "Scene.h"
 #include "AssetManager.h"
 #include "MyUtility.h"
 #include "myJson.h"
+#include "DescriptorHeap.h"
+#include "ConstantBuffer.h"
 #include <fstream>
 
 TextComponent::TextComponent(Actor& owner, float zDepth) 
@@ -153,22 +157,21 @@ void TextComponent::applyTextTexture()
 void TextComponent::draw()
 {
 	//z座標の更新
-	Cb3.world = XMMatrixIdentity()
+	auto world = XMMatrixIdentity()
 		*XMMatrixTranslation(0.0f, 0.0f, mPosition.z);
-	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
+
+	mCBSuballocation->updateWorld(world, mGraphic.getBackBufIdx());
 
 	//頂点をセット
 	mGraphic.getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView);
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
-	auto hCbvTbvHeap = mGraphic.getHeapHandle();
-	UINT CbvTbvSize = mGraphic.getCbvTbvIncSize();
-	hCbvTbvHeap.ptr += (mHeapIndex + mGraphic.getBackBufIdx()) * CbvTbvSize;
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	auto hDescHeap = descHeap.getGPUHandle(mDescriptorRange->getIndex(0) + SlotIndex(mGraphic.getBackBufIdx()));
+	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(0, hDescHeap);
 
-	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(0, hCbvTbvHeap);
-	hCbvTbvHeap = mGraphic.getHeapHandle();
-	hCbvTbvHeap.ptr += (mHeapIndex + 2) * CbvTbvSize;
-	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(1, hCbvTbvHeap);
+	hDescHeap = descHeap.getGPUHandle(mDescriptorRange->getIndex(2));
+	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(1, hDescHeap);
 	//描画。インデックスを使用
 	mGraphic.getCommandList()->IASetIndexBuffer(&mIndexBufView);
 	mGraphic.getCommandList()->DrawIndexedInstanced(mAssetManager.getSpriteIndicesSize(), 1, 0, 0, 0);
@@ -336,40 +339,39 @@ void TextComponent::wrapTexture()
 
 void TextComponent::createSprite(float zDepth)
 {
-	//コンスタントバッファとディスクリプタヒープのインデックスを取得
-	mCBSize = 256 * 2; //SpriteConstantBuf + テクスチャ
-	mHeapSize = 3;
-	mCBIndex = mAssetManager.getCBEndIndex(mCBSize);
-	mHeapIndex = mAssetManager.getHeapEndIndex(mHeapSize);
-
 	//各種Viewの取得
 	SpriteData spriteData = mAssetManager.getSpriteData();
 	mVertexBufView = spriteData.VertexBufView;
 	mIndexBufView = spriteData.IndexBufView;
 
+	//コンスタントバッファの作成
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	auto& constantBuffer = mGraphic.getConstantBuffer();
+	mCBSuballocation = constantBuffer.createSuballocation<TextCBSuballocation>(AlignedSizeInBytes(sizeof(TextCBSuballocationData)));
+
 	//SpriteConstantBufの初期化
-	Cb3.world = XMMatrixIdentity()
+	mCBSuballocation->mData.world = XMMatrixIdentity()
 		*XMMatrixTranslation(0.0f, 0.0f, zDepth);
-	Cb3.windowSize = XMFLOAT2(
+	mCBSuballocation->mData.windowSize = XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
 	);
-	Cb3.spriteSize = XMFLOAT2(
+	mCBSuballocation->mData.spriteSize = XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
 	);
-	Cb3.textureSize = XMFLOAT2(
+	mCBSuballocation->mData.textureSize = XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
 	);
-	Cb3.bordarSize = 0.0f;
-	memcpy(mGraphic.getConstantData(0) + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
-	memcpy(mGraphic.getConstantData(1) + mCBIndex, &Cb3, sizeof(SpriteConstBuf));
+	mCBSuballocation->mData.bordarSize = 0.0f;
+	mCBSuballocation->updateData();
 
 	//ディスクリプタヒープにViewを作成
-	int heapIndex = mHeapIndex;
-	mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, 1); heapIndex += 2;
-	mGraphic.createShaderResourceView(mTexture.Get(), heapIndex);
+	mDescriptorRange = std::make_unique<DescriptorAllocatorRange>(descHeap.allocate(NumSlots(3)));
+	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
+	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
+	descHeap.addSRV(*mTexture.Get(), mDescriptorRange->getIndex(2));
 }
 
 void TextComponent::applyTextFormat()

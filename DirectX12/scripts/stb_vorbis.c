@@ -1,4 +1,4 @@
-// Ogg Vorbis audio decoder - v1.22 - public domain
+﻿// Ogg Vorbis audio decoder - v1.22 - public domain
 // http://nothings.org/stb_vorbis/
 //
 // Original version written by Sean Barrett in 2007.
@@ -95,8 +95,8 @@ extern "C" {
 
 ///////////   MEMORY ALLOCATION
 
-// normally stb_vorbis uses malloc() to allocate memory at startup,
-// and alloca() to allocate temporary memory during a frame on the
+// normally stb_vorbis uses malloc() to setAddress memory at startup,
+// and alloca() to setAddress temporary memory during a frame on the
 // stack. (Memory consumption will depend on the amount of setup
 // data in the file and how you set the compile flags for speed
 // vs. size. In my test files the maximal-size usage is ~150KB.)
@@ -104,7 +104,7 @@ extern "C" {
 // You can modify the wrapper functions in the source (setup_malloc,
 // setup_temp_malloc, temp_malloc) to change this behavior, or you
 // can use a simpler allocation model: you pass in a buffer from
-// which stb_vorbis will allocate _all_ its memory (including the
+// which stb_vorbis will setAddress _all_ its memory (including the
 // temp memory). "open" may fail with a VORBIS_outofmem if you
 // do not pass in enough data; there is no way to determine how
 // much you do need except to succeed (at which point you can
@@ -665,7 +665,7 @@ typedef float codetype;
 //
 // Some arrays below are tagged "//varies", which means it's actually
 // a variable-sized piece of data, but rather than malloc I assume it's
-// small enough it's better to just allocate it all together with the
+// small enough it's better to just setAddress it all together with the
 // main thing
 //
 // Most of the variables are specified with the smallest size I could pack
@@ -923,7 +923,7 @@ static int error(vorb *f, enum STBVorbisError e)
 // these functions are used for allocating temporary memory
 // while decoding. if you can afford the stack space, use
 // alloca(); otherwise, provide a temp buffer and it will
-// allocate out of those.
+// setAddress out of those.
 
 #define array_size_required(count,size)  (count*(sizeof(void *)+(size)))
 
@@ -3822,10 +3822,10 @@ static int start_decoder(vorb *f)
       }
 
       if (c->sorted_entries) {
-         // allocate an extra slot for sentinels
+         // setAddress an extra slot for sentinels
          c->sorted_codewords = (uint32 *) setup_malloc(f, sizeof(*c->sorted_codewords) * (c->sorted_entries+1));
          if (c->sorted_codewords == NULL) return error(f, VORBIS_outofmem);
-         // allocate an extra slot at the front so that c->sorted_values[-1] is defined
+         // setAddress an extra slot at the front so that c->sorted_values[-1] is defined
          // so that we can catch that case without an extra if
          c->sorted_values    = ( int   *) setup_malloc(f, sizeof(*c->sorted_values   ) * (c->sorted_entries+1));
          if (c->sorted_values == NULL) return error(f, VORBIS_outofmem);

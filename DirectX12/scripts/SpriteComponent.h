@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <memory>
-#include <d3d12.h>
+#include "d3d12.h"
 #include <DirectXMath.h>
 #include "Component.h"
 #include "Graphic.h"

@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{28d46ee7-00a5-4b9c-8a9c-487d828ac62a}</ProjectGuid>
     <RootNamespace>DirectX12</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\visualStudioPrograms\cyanoSimulation\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -127,7 +127,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\visualStudioPrograms\cyanoSimulation\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -190,8 +190,8 @@
     <ClCompile Include="scripts\AssetManager.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\ComputeShader.cpp" />
+    <ClCompile Include="scripts\ConstantBuffer.cpp" />
     <ClCompile Include="scripts\DescriptorHeap.cpp" />
-    <ClCompile Include="scripts\DescriptorHeapAllocator.cpp" />
     <ClCompile Include="scripts\FadeGenerator.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -221,6 +221,7 @@
     <ClCompile Include="scripts\SceneManager.cpp" />
     <ClCompile Include="scripts\SimulationScene.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
+    <ClCompile Include="scripts\TextCBSuballocation.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
     <ClCompile Include="scripts\UnorderedAccessBuffer.cpp" />
@@ -231,20 +232,9 @@
     <ClInclude Include="scripts\AssetManager.h" />
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\ComputeShader.h" />
-    <ClInclude Include="scripts\d3dx12.h" />
-    <ClInclude Include="scripts\d3dx12_barriers.h" />
-    <ClInclude Include="scripts\d3dx12_check_feature_support.h" />
-    <ClInclude Include="scripts\d3dx12_core.h" />
-    <ClInclude Include="scripts\d3dx12_default.h" />
-    <ClInclude Include="scripts\d3dx12_pipeline_state_stream.h" />
-    <ClInclude Include="scripts\d3dx12_property_format_table.h" />
-    <ClInclude Include="scripts\d3dx12_render_pass.h" />
-    <ClInclude Include="scripts\d3dx12_resource_helpers.h" />
-    <ClInclude Include="scripts\d3dx12_root_signature.h" />
-    <ClInclude Include="scripts\d3dx12_state_object.h" />
+    <ClInclude Include="scripts\ConstantBuffer.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DescriptorHeap.h" />
-    <ClInclude Include="scripts\DescriptorHeapAllocator.h" />
     <ClInclude Include="scripts\FadeGenerator.h" />
     <ClInclude Include="scripts\GUIDebugger.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -279,6 +269,7 @@
     <ClInclude Include="scripts\SimulationScene.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\stb_image.h" />
+    <ClInclude Include="scripts\TextCBSuballocation.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
     <ClInclude Include="scripts\UnorderedAccessBuffer.h" />

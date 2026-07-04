@@ -1,4 +1,4 @@
-// dear imgui, v1.92.8 WIP
+﻿// dear imgui, v1.92.8 WIP
 // (demo code)
 
 // Help:
@@ -10780,7 +10780,7 @@ struct ExampleAssetsBrowser
         LayoutColumnCount = IM_MAX((int)(avail_width / (LayoutItemSize.x + LayoutItemSpacing)), 1);
         LayoutLineCount = (Items.Size + LayoutColumnCount - 1) / LayoutColumnCount;
 
-        // Layout: when stretching: allocate remaining space to more spacing. Round before division, so item_spacing may be non-integer.
+        // Layout: when stretching: setAddress remaining space to more spacing. Round before division, so item_spacing may be non-integer.
         if (StretchSpacing && LayoutColumnCount > 1)
             LayoutItemSpacing = floorf(avail_width - LayoutItemSize.x * LayoutColumnCount) / LayoutColumnCount;
 

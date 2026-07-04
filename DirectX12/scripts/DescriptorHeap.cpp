@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
-#include "Graphic.h"
 #include "DescriptorHeap.h"
+#include "Graphic.h"
+#include "ConstantBuffer.h"
 #include "UnorderedAccessBuffer.h"
 
 const NumSlots ZeroSlot(0);
@@ -20,14 +21,14 @@ DescriptorAllocatorRange DescriptorHeapAllocator::allocateRange(const NumSlots& 
 	for (auto& [EmptySlotIndex, numEmptySlots] : mClearedHeap) {
 		//要求サイズより、空いているサイズが大きければ使用する
 		if (numEmptySlots >= numRequiredSlots) {
-			const NumSlots numRemainedEmptySlots = numEmptySlots - numRequiredSlots;			//要求サイズ分空いているヒープを減らす
-			const SlotIndex newSlotIndex = EmptySlotIndex;
+			NumSlots numRemainedEmptySlots = numEmptySlots - numRequiredSlots;			//要求サイズ分空いているヒープを減らす
+			SlotIndex newSlotIndex = EmptySlotIndex;
 
 			//空いているスロットが0より大きい場合
 			if (numRemainedEmptySlots > ZeroSlot)
 			{
-				const SlotIndex remainedEmptySlotIndex(EmptySlotIndex.getIndex() + numRequiredSlots.getNumSlots());
-				mClearedHeap[remainedEmptySlotIndex] = numRemainedEmptySlots;
+				SlotIndex remainedEmptySlotIndex(EmptySlotIndex.getIndex() + numRequiredSlots.getNumSlots());
+				mClearedHeap.insert(std::map<SlotIndex, NumSlots>::value_type(std::move(remainedEmptySlotIndex), std::move(numRemainedEmptySlots)));
 			}
 			mClearedHeap.erase(EmptySlotIndex);
 
@@ -75,7 +76,7 @@ void DescriptorHeapAllocator::freeSlot(const DescriptorAllocatorRange& allocRang
 		}
 	}
 
-	mClearedHeap[initialIndex] = numFullSlots;
+	mClearedHeap.insert(std::map<SlotIndex, NumSlots>::value_type(std::move(initialIndex), std::move(numFullSlots)));
 	
 }
 
@@ -120,6 +121,43 @@ void DescriptorHeap::addUAV(UnorderedAccessBuffer& uav, const SlotIndex& slotInd
 		&desc,
 		cpuHandle
 	);
+}
+
+void DescriptorHeap::addSRV(ID3D12Resource& shaderResource, const SlotIndex& slotIndex)
+{
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	desc.Format = shaderResource.GetDesc().Format;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
+	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
+
+	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
+	hCbvTbvHeap.ptr += mGraphic.getCbvTbvIncSize() * slotIndex.getIndex();
+
+	mGraphic.getDevice()->CreateShaderResourceView(&shaderResource, &desc, hCbvTbvHeap);
+}
+
+void DescriptorHeap::addCBV(IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame)
+{
+	//二つのコンスタントバッファ分ビューを作成する
+	//フレーム分のビューを連続したスロットに作成
+	D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
+	desc.BufferLocation = cbv.getVirtualAddressOnGPU(frame);
+	desc.SizeInBytes = static_cast<UINT>(cbv.getSizeInBytes().get()); //256バイトアライメント
+
+	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
+	hCbvTbvHeap.ptr += mGraphic.getCbvTbvIncSize() * (slotIndex.getIndex());
+
+	mGraphic.getDevice()->CreateConstantBufferView(&desc, hCbvTbvHeap);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::getGPUHandle(const SlotIndex& slotIndex)
+{
+	auto hDescHeap = mDescHeap->GetGPUDescriptorHandleForHeapStart();
+	UINT CbvTbvSize = mGraphic.getCbvTbvIncSize();
+	hDescHeap.ptr += (slotIndex.getIndex()) * CbvTbvSize;
+	return hDescHeap;
 }
 
 D3D12_DESCRIPTOR_HEAP_DESC DescriptorHeap::getHeapDesc(const NumSlots& numSlots)

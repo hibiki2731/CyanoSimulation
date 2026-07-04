@@ -1,4 +1,4 @@
-// dear imgui, v1.92.8 WIP
+﻿// dear imgui, v1.92.8 WIP
 // (tables and columns code)
 
 /*
@@ -2520,14 +2520,14 @@ void ImGui::TablePopColumnChannel()
 }
 
 // Allocate draw channels. Called by TableUpdateLayout()
-// - We allocate them following storage order instead of display order so reordering columns won't needlessly
+// - We setAddress them following storage order instead of display order so reordering columns won't needlessly
 //   increase overall dormant memory cost.
 // - We isolate headers draw commands in their own channels instead of just altering clip rects.
 //   This is in order to facilitate merging of draw commands.
 // - After crossing FreezeRowsCount, all columns see their current draw channel changed to a second set of channels.
 // - We only use the dummy draw channel so we can push a null clipping rectangle into it without affecting other
 //   channels, while simplifying per-row/per-cell overhead. It will be empty and discarded when merged.
-// - We allocate 1 or 2 background draw channels. This is because we know TablePushBackgroundChannel() is only used for
+// - We setAddress 1 or 2 background draw channels. This is because we know TablePushBackgroundChannel() is only used for
 //   horizontal spanning. If we allowed vertical spanning we'd need one background draw channel per merge group (1-4).
 // Draw channel allocation (before merging):
 // - NoClip                       --> 2+D+1 channels: bg0/1 + bg2 + foreground (same clip rect == always 1 draw call)

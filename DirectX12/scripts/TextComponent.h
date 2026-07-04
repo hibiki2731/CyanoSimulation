@@ -90,6 +90,10 @@ private:
 	void applyTextFormat();
 	void initDWriteFactory();
 
+	//コンスタントバッファサブアロケータ
+	std::shared_ptr<class TextCBSuballocation> mCBSuballocation;
+	std::unique_ptr<class DescriptorAllocatorRange> mDescriptorRange;
+
 #ifdef _DEBUG
 	friend class GUIDebugger;
 	std::string mTextBuffer;

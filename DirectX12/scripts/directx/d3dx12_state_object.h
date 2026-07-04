@@ -34,7 +34,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <map>
 #ifndef D3DX12_USE_ATL
 #include <wrl/client.h>
 #define D3DX12_COM_PTR Microsoft::WRL::ComPtr
@@ -111,8 +110,8 @@ public:
                     for (UINT s = 0; s < originalGenericProgramDesc->NumSubobjects; s++)
                     {
                         auto pWrapper =
-                                    static_cast<const SUBOBJECT_WRAPPER*>(originalGenericProgramDesc->ppSubobjects[s]);
-                       repointedGenericProgramSubobjects[s] = pWrapper->pSubobjectArrayLocation;
+                            static_cast<const SUBOBJECT_WRAPPER*>(originalGenericProgramDesc->ppSubobjects[s]);
+                        repointedGenericProgramSubobjects[s] = pWrapper->pSubobjectArrayLocation;
                     }
                     // Below: using ugly way to get pointer in case .data() is not defined
                     Repointed.ppSubobjects = &repointedGenericProgramSubobjects[0];
@@ -122,7 +121,6 @@ public:
             }
 #endif
         }
-
         // Below: using ugly way to get pointer in case .data() is not defined
         m_Desc.pSubobjects = m_Desc.NumSubobjects ? &m_SubobjectArray[0] : nullptr;
         return m_Desc;
@@ -834,8 +832,6 @@ private:
     void* Data() noexcept override { return D3DX12_COM_PTR_ADDRESSOF(m_pRootSig); }
     D3DX12_COM_PTR<ID3D12RootSignature> m_pRootSig;
 };
-
-
 
 
 //------------------------------------------------------------------------------------------------
@@ -2567,7 +2563,8 @@ inline D3D12_NODE * CD3DX12_NODE_HELPER_BASE::GetNode() const
 }
 #endif // D3D12_SDK_VERSION >= 612
 
-
 #undef D3DX12_COM_PTR
 #undef D3DX12_COM_PTR_GET
 #undef D3DX12_COM_PTR_ADDRESSOF
+
+

@@ -1,4 +1,5 @@
-﻿#include "Actor.h"
+﻿#include "pch.h"
+#include "Actor.h"
 #include "Component.h"
 #include "Game.h"
 #include "Math.h"

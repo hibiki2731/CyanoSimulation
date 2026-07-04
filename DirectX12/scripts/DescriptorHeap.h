@@ -1,4 +1,10 @@
 ﻿#pragma once
+#include "Definition.h"
+#include "d3dx12.h"
+#include <map>
+class UnorderedAccessBuffer;
+
+
 //ディスクリプタヒープのスロット数を表すクラス
 class NumSlots {
 public:
@@ -9,17 +15,7 @@ public:
 	}
 	int getNumSlots() const { return mNumSlots; }
 
-	bool operator>(const NumSlots& other) const {
-		return mNumSlots > other.mNumSlots;
-	}
-
-	bool operator>=(const NumSlots& other) const {
-		return mNumSlots >= other.mNumSlots;
-	}
-
-	bool operator==(const NumSlots& other) const {
-		return mNumSlots == other.mNumSlots;
-	}
+	auto operator<=>(const NumSlots& other) const = default;
 
 	NumSlots operator-(const NumSlots& other) const {
 		return NumSlots(mNumSlots - other.mNumSlots);
@@ -34,7 +30,7 @@ public:
 	}
 
 private:
-	const int mNumSlots;
+	int mNumSlots;
 };
 
 // 0スロットを表すNumSlotsの定数
@@ -54,12 +50,14 @@ public:
 		return SlotIndex(other.mIndex);
 	}
 
-	bool operator==(const SlotIndex& other) const {
-		return mIndex == other.mIndex;
+	SlotIndex operator+(const SlotIndex& other) const {
+		return SlotIndex(mIndex + other.getIndex());
 	}
 
+	auto operator<=>(const SlotIndex& other) const = default;
+
 private:
-	const int mIndex;
+	int mIndex;
 };
 
 // ディスクリプタヒープのスロット範囲を表すクラス
@@ -113,9 +111,13 @@ public:
 	DescriptorAllocatorRange allocate(const NumSlots& numRequiredSlots);
 
 	//ビューを追加する
-	void addUAV(class UnorderedAccessBuffer& uav, const SlotIndex& slotIndex);
-	void addSRV(class ShaderResourceBuffer& srv, const SlotIndex& slotIndex);
-	void addCBV(class ConstantBuffer& cbv, const SlotIndex& slotIndex);
+	void addUAV(UnorderedAccessBuffer& uav, const SlotIndex& slotIndex);
+	void addSRV(ID3D12Resource& shaderResource, const SlotIndex& slotIndex);
+	void addCBV(class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame);
+
+	//アドレスの取得
+	ID3D12DescriptorHeap* const* getAddress() const { return mDescHeap.GetAddressOf(); }
+	D3D12_GPU_DESCRIPTOR_HANDLE getGPUHandle(const SlotIndex& slotIndex);
 
 private:
 	D3D12_DESCRIPTOR_HEAP_DESC getHeapDesc(const NumSlots& numSlots);

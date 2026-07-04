@@ -1,4 +1,4 @@
-// dear imgui: Renderer Backend for DirectX12
+﻿// dear imgui: Renderer Backend for DirectX12
 // This needs to be used along with a Platform Backend (e.g. Win32)
 
 // Implemented features:
@@ -22,7 +22,7 @@
 #include "imgui.h"      // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 #include <dxgiformat.h> // DXGI_FORMAT
-#include <d3d12.h>      // D3D12_CPU_DESCRIPTOR_HANDLE
+#include "d3d12.h"      // D3D12_CPU_DESCRIPTOR_HANDLE
 
 // Clang/GCC warnings with -Weverything
 #if defined(__clang__)
@@ -41,7 +41,7 @@ struct ImGui_ImplDX12_InitInfo
     void*                       UserData;
 
     // Allocating SRV descriptors for textures is up to the application, so we provide callbacks.
-    // (current version of the backend will only allocate one descriptor, from 1.92 the backend will need to allocate more)
+    // (current version of the backend will only setAddress one descriptor, from 1.92 the backend will need to setAddress more)
     ID3D12DescriptorHeap*       SrvDescriptorHeap;
     void                        (*SrvDescriptorAllocFn)(ImGui_ImplDX12_InitInfo* info, D3D12_CPU_DESCRIPTOR_HANDLE* out_cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE* out_gpu_desc_handle);
     void                        (*SrvDescriptorFreeFn)(ImGui_ImplDX12_InitInfo* info, D3D12_CPU_DESCRIPTOR_HANDLE cpu_desc_handle, D3D12_GPU_DESCRIPTOR_HANDLE gpu_desc_handle);

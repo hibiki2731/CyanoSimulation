@@ -5,6 +5,10 @@
 #include <memory>
 #include <algorithm>
 #include "json.hpp"
+#include "Definition.h"
+#include "directx/d3d12.h"
+
+class Graphic;
 
 struct MeshData {
 	int NumParts;

@@ -609,3 +609,4 @@ inline bool D3DX12GetCopyableFootprints(
 
 #endif // D3D12_SDK_VERSION >= 606
 
+

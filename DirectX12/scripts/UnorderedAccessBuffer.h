@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <vector>
+#include "Definition.h"
+#include "d3dx12.h"
 class UnorderedAccessBuffer
 {
 public:

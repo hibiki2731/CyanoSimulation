@@ -7,6 +7,8 @@
 #include "AssetManager.h"
 #include <comdef.h>
 #include <iostream>
+#include "ConstantBuffer.h"
+#include "DescriptorHeap.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -602,17 +604,20 @@ HRESULT Graphic::createD2D()
 
 HRESULT Graphic::createCbvAndHeap()
 {
-	HRESULT hr = createCbvTbvHeap(mCbvTbvHeap, 10000); //共有用のヒープを作成
-	for(int frame = 0; frame < FrameCount; frame++) {
-		hr = createBuf(1 << 20, mConstantBuf[frame]);	//コンスタントバッファを1MB作成
-		assert(SUCCEEDED(hr));
-	}
-	for (int frame = 0; frame < FrameCount; frame++) {
-		hr = mConstantBuf[frame]->Map(0, nullptr, reinterpret_cast<void**>(&mConstantData[frame]));	//マップする
-		assert(SUCCEEDED(hr));
-	}
+	mDescriptorHeap = std::make_unique<DescriptorHeap>(*this, 10000);
+	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1 << 20);
 
-	return hr;
+	//HRESULT hr = createCbvTbvHeap(mCbvTbvHeap, 10000); //共有用のヒープを作成
+	//for(int frame = 0; frame < FrameCount; frame++) {
+	//	hr = createBuf(1 << 20, mConstantBuf[frame]);	//コンスタントバッファを1MB作成
+	//	assert(SUCCEEDED(hr));
+	//}
+	//for (int frame = 0; frame < FrameCount; frame++) {
+	//	hr = mConstantBuf[frame]->Map(0, nullptr, reinterpret_cast<void**>(&mConstantData[frame]));	//マップする
+	//	assert(SUCCEEDED(hr));
+	//}
+
+	return S_OK;
 }
 
 HRESULT Graphic::createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer)
@@ -1044,7 +1049,7 @@ void Graphic::beginRender()
 
 	//ディスクリプタヒープをＧＰＵにセット
 	UINT numDescriptorHeaps = 1;
-	mCommandList->SetDescriptorHeaps(numDescriptorHeaps, mCbvTbvHeap.GetAddressOf());
+	mCommandList->SetDescriptorHeaps(numDescriptorHeaps, mDescriptorHeap->getAddress());
 
 }
 

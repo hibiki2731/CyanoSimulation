@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-#include "Graphic.h"
 #include "AssetManager.h"
+#include "Graphic.h"
 #include <string>
 #include <fstream>
 #include "FBXConverter.h"

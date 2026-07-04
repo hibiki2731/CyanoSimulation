@@ -2,7 +2,7 @@
 
 //#define USE_INDEX
 #include <memory>
-#include <d3d12.h>
+#include "d3d12.h"
 #include <DirectXMath.h>
 #include "Graphic.h"
 #include "AssetManager.h"

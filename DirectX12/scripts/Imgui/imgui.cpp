@@ -1,4 +1,4 @@
-// dear imgui, v1.92.8 WIP
+﻿// dear imgui, v1.92.8 WIP
 // (main code and documentation)
 
 // Help:
@@ -397,7 +397,7 @@ IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
 
  - 2026/03/19 (1.92.7) - MultiSelect: renamed ImGuiMultiSelectFlags_SelectOnClick to ImGuiMultiSelectFlags_SelectOnAuto.
  - 2026/02/26 (1.92.7) - Separator: fixed a legacy quirk where Separator() was submitting a zero-height item for layout purpose, even though it draws a 1-pixel separator.
-                         The fix could affect code e.g. computing height from multiple widgets in order to allocate vertical space for a footer or multi-line status bar. (#2657, #9263)
+                         The fix could affect code e.g. computing height from multiple widgets in order to setAddress vertical space for a footer or multi-line status bar. (#2657, #9263)
                          The "Console" example had such a bug:
                             float footer_height = style.ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
                             BeginChild("ScrollingRegion", { 0, -footer_height });
@@ -4062,7 +4062,7 @@ void ImGui::RenderMouseCursor(ImVec2 base_pos, float base_scale, ImGuiMouseCurso
 // [SECTION] INITIALIZATION, SHUTDOWN
 //-----------------------------------------------------------------------------
 
-// Internal state access - if you want to share Dear ImGui state between modules (e.g. DLL) or allocate it yourself
+// Internal state access - if you want to share Dear ImGui state between modules (e.g. DLL) or setAddress it yourself
 // Note that we still point to some static data and members (such as GFontAtlas), so the state instance you end up using will point to the static data within its module
 ImGuiContext* ImGui::GetCurrentContext()
 {
