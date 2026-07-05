@@ -55,7 +55,7 @@ public:
 	const void* getVirtualAddressOnCPU(const int frame) const;
 	const D3D12_GPU_VIRTUAL_ADDRESS getVirtualAddressOnGPU(const int frame) const;
 
-	virtual void updateData() {};
+	virtual void applyChanges(const int frame) = 0;
 
 protected:
 	const AlignedSizeInBytes mSizeInBytes;

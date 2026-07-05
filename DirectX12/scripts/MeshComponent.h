@@ -11,7 +11,7 @@
 class MeshComponent : public Component
 {
 public:
-	MeshComponent(Actor& owner, int updateOrder = 100);
+	MeshComponent(Actor& owner, std::shared_ptr<class MeshBaseCBSuballocation>& baseSuballocation, int updateOrder = 100);
     DECLARE_COMPONENT_NAME(MeshComponent)
     void loadFromJson(const nlohmann::json& json) override;
 
@@ -27,15 +27,9 @@ public:
     const std::string& getMeshID();
 
 private:
-
-    HRESULT Hr;
-
     //コマンドリスト
     Graphic& mGraphic;
     ID3D12GraphicsCommandList* mCommandList;
-
-    //コンスタントバッファ1(World Matrix)
-    World3DConstBuf Cb1;
 
     //メッシュパーツ
     int NumParts;
@@ -44,7 +38,7 @@ private:
         UINT NumVertices;
         D3D12_VERTEX_BUFFER_VIEW VertexBufView;
         //コンスタントバッファ2(マテリアル)
-        MaterialConstBuf Cb2;//マップしたアドレスを入れる
+        std::shared_ptr<class MeshMaterialCBSuballocation> MaterialSuballocation;
         //テクスチャバッファ
         ID3D12Resource* TextureBuf;
     };
@@ -52,14 +46,14 @@ private:
 	std::vector<PARTS> Parts;
 
     //ディスクリプタヒープ
-    UINT CbvTbvSize;//ビューのサイズ
     const UINT NumDescriptors = 4;//ひとつのパーツで使用するディスクリプタの数
+    UINT NumAllPartsDescriptors;
 
-    //使用するディスクリプタヒープおよびコンスタントバッファのインデックス
-    int mHeapIndex;
-    int mHeapSize;
-    int mCBIndex;
-    int mCBSize;
+    //デスクリプタヒープのレンジ
+    std::unique_ptr<class DescriptorSlotRange> mDescRange;
+	//コンスタントバッファのサブアロケータ
+    std::shared_ptr<class MeshWorldCBSuballocation> mWorldSuballocation;
+    std::weak_ptr<class MeshBaseCBSuballocation> mBaseSuballocation;
 
     //メッシュのID
     std::string mMeshID;

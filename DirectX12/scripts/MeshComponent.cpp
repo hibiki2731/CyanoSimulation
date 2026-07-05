@@ -6,14 +6,19 @@
 #include "Scene.h"
 #include "Game.h"
 #include "myJson.h"
+#include "DescriptorHeap.h"
+#include "ConstantBuffer.h"
+#include "MeshWorldCBSuballocation.h"
+#include "MeshBaseCBSuballocation.h"
+#include "MeshMaterialCBSuballocation.h"
 
-MeshComponent::MeshComponent(Actor& owner, int updateOrder) 
+MeshComponent::MeshComponent(Actor& owner, std::shared_ptr<class MeshBaseCBSuballocation>& baseSuballocation, int updateOrder) 
 	: Component(owner, updateOrder),
 	mGraphic(owner.getScene().getGame().getGraphic())
 {
 	mCommandList = mGraphic.getCommandList();
 	mOwner.getScene().addMesh(this);
-	CbvTbvSize = mGraphic.getCbvTbvIncSize();
+	mBaseSuballocation = baseSuballocation;
 	mMeshID = "NONE";
 }
 
@@ -27,8 +32,16 @@ void MeshComponent::endProcess()
 {
 	//Gameからメッシュを削除
 	mOwner.getScene().removeMesh(this);
-	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
-	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize * 2);
+
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	auto& constBuffer = mGraphic.getConstantBuffer();
+
+	//ディスクリプタヒープのスロットを解放
+	descHeap.deleteRange(*mDescRange);
+	//コンスタントバッファのサブアロケーションを解放
+	constBuffer.deleteSuballocation(*mWorldSuballocation);
+	for (auto& part : Parts) constBuffer.deleteSuballocation(*part.MaterialSuballocation);
+
 }
 
 void MeshComponent::create(const std::string& meshID)
@@ -44,19 +57,22 @@ void MeshComponent::create(const MeshData * meshData)
 {	
 	if (meshData == nullptr) return;
 
-	//コンスタントバッファのインデックスを取得
-	mCBSize = (meshData->NumParts + 1) * 256;
-	mCBIndex = mOwner.getScene().getGame().getAssetManager().getCBEndIndex(mCBSize);
-	mHeapSize = NumDescriptors * meshData->NumParts;
-	mHeapIndex = mOwner.getScene().getGame().getAssetManager().getHeapEndIndex(mHeapSize * 2); //二つ分Viewを作る必要がある
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	auto& constBuf = mGraphic.getConstantBuffer();
 
 	//メッシュパーツ数を読み込み、メモリを確保
 	NumParts = meshData->NumParts;
+	NumAllPartsDescriptors = NumParts * NumDescriptors;
 	Parts.resize(NumParts);
 
+	//ディスクリプタヒープのスロットを確保
+	const int NumAllPartsDescriptors = NumParts * NumDescriptors;
+	mDescRange = std::make_unique<DescriptorSlotRange>(descHeap.allocate(NumSlots(NumAllPartsDescriptors * Graphic::FrameCount))); //パーツごとのディスクリプタ * フレーム分
+
 	//フラッシュ用バッファの初期化
-	Cb1.flashColor = XMFLOAT3(1.0f, 1.0f, 1.0f);	//白く光る
-	Cb1.flashIntensity = 0.0f;				//最初は光らない
+	mWorldSuballocation = constBuf.createSuballocation<MeshWorldCBSuballocation>(sizeof(MeshWorldCBSuballocationData));
+	mWorldSuballocation->updateFlashColor(XMFLOAT3(1.0f, 1.0f, 1.0f));	//白く光る
+	mWorldSuballocation->updateFlashIntensity(0.0f);				//最初は光らない
 
 	//パーツごとに各バッファ情報を取得
 	for (int k = 0; k < NumParts; k++) {
@@ -67,33 +83,28 @@ void MeshComponent::create(const MeshData * meshData)
 		}
 		//マテリアル用コンスタントバッファ
 		{
-			Parts[k].Cb2.ambient = meshData->Material[k * 3];
-			Parts[k].Cb2.diffuse = meshData->Material[k * 3 + 1];
-			Parts[k].Cb2.specular = meshData->Material[k * 3 + 2];
+			Parts[k].MaterialSuballocation = constBuf.createSuballocation<MeshMaterialCBSuballocation>(sizeof(MeshMaterialCBSuballocationData));
+			Parts[k].MaterialSuballocation->updateAmbient(meshData->Material[k * 3]);
+			Parts[k].MaterialSuballocation->updateDiffuse(meshData->Material[k * 3 + 1]);
+			Parts[k].MaterialSuballocation->updateSpecular(meshData->Material[k * 3 + 2]);
+			Parts[k].MaterialSuballocation->apllyChanges();
+
 		}
 		{
 			Parts[k].TextureBuf = mOwner.getScene().getGame().getAssetManager().getShaderResource(meshData->TextureName[k]);
 		}
-	}
 
-	//コンスタントバッファへデータをコピー
-	for (int i = 0; i < NumParts; i++) {
-		memcpy(mGraphic.getConstantData(0) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
-		memcpy(mGraphic.getConstantData(1) + mCBIndex + 256 * (i + 1), &Parts[i].Cb2, sizeof(MaterialConstBuf));
+		//ビューの作成
+		//Baseデータ
+		descHeap.addCBVFrameCounts(*mBaseSuballocation.lock(), mDescRange->getIndex(k), NumAllPartsDescriptors);
+		//Worldデータ
+		auto& ptr2 = *mWorldSuballocation;
+		descHeap.addCBVFrameCounts(*mWorldSuballocation, mDescRange->getIndex(k + 1), NumAllPartsDescriptors);
+		//Materialデータ
+		descHeap.addCBVFrameCounts(*Parts[k].MaterialSuballocation, mDescRange->getIndex(k + 2), NumAllPartsDescriptors);
+		//テクスチャデータ
+		descHeap.addSRVFrameCounts(*Parts[k].TextureBuf, mDescRange->getIndex(k + 3), NumAllPartsDescriptors);
 
-	}
-
-
-
-	int heapIndex = mHeapIndex;
-	//コンスタントバッファビューを作成
-	for (int k = 0; k < NumParts; k++) {
-		mGraphic.createBase3DBufferView(heapIndex, mHeapSize); heapIndex++;
-		mGraphic.createConstantBufferView(mCBIndex, 256, heapIndex, mHeapSize); heapIndex++;
-		mGraphic.createConstantBufferView(mCBIndex + 256 * (k + 1), 256, heapIndex, mHeapSize); heapIndex++;
-		mGraphic.createShaderResourceView(Parts[k].TextureBuf, heapIndex); 
-		mGraphic.createShaderResourceView(Parts[k].TextureBuf, heapIndex + mHeapSize); 
-		heapIndex++;
 	}
 
 	//スケールを設定
@@ -104,20 +115,19 @@ void MeshComponent::create(const MeshData * meshData)
 void MeshComponent::draw()
 {
 	//ワールドマトリックス
-	XMMATRIX world = XMMatrixIdentity()
+	mWorldSuballocation->updateWorld(XMMatrixIdentity()
 		* XMMatrixScaling(mOwner.getScale().x, mOwner.getScale().y, mOwner.getScale().z)
 		* XMMatrixRotationX(mOwner.getRotation().x)
 		* XMMatrixRotationY(mOwner.getRotation().y)
 		* XMMatrixRotationZ(mOwner.getRotation().z)
-		* XMMatrixTranslation(mOwner.getPosition().x, mOwner.getPosition().y, mOwner.getPosition().z)
+		* XMMatrixTranslation(mOwner.getPosition().x, mOwner.getPosition().y, mOwner.getPosition().z))
 		;
-	Cb1.world = world;
 
-	memcpy(mGraphic.getConstantData() + mCBIndex, &Cb1, sizeof(World3DConstBuf));
+	//CPU上のヴァーチャルアドレスへコピー
+	mWorldSuballocation->apllyChanges(mGraphic.getBackBufIdx());
 
-	auto hCbvTbvHeap = mGraphic.getHeapHandle();
-	hCbvTbvHeap.ptr += CbvTbvSize * (mHeapIndex + mGraphic.getBackBufIdx() * mHeapSize);
-
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	int backBufIdx = mGraphic.getBackBufIdx();
 	//パーツごとに描画
 	for (int k = 0; k < NumParts; ++k)
 	{
@@ -125,8 +135,7 @@ void MeshComponent::draw()
 		mCommandList->IASetVertexBuffers(0, 1, &Parts[k].VertexBufView);
 
 		//ディスクリプタヒープをディスクリプタテーブルにセット
-		mCommandList->SetGraphicsRootDescriptorTable(0, hCbvTbvHeap);
-		hCbvTbvHeap.ptr += CbvTbvSize * NumDescriptors;
+		mCommandList->SetGraphicsRootDescriptorTable(0, descHeap.getGPUHandle(mDescRange->getIndex(k * NumDescriptors + backBufIdx * NumAllPartsDescriptors)));
 
 		//描画。インデックスを使用しない
 		mCommandList->DrawInstanced(Parts[k].NumVertices, 1, 0, 0);
@@ -136,7 +145,7 @@ void MeshComponent::draw()
 
 void MeshComponent::updateFlashIntensity(float intensity)
 {
-	Cb1.flashIntensity = intensity;
+	mWorldSuballocation->updateFlashIntensity(intensity);
 }
 
 const std::string& MeshComponent::getMeshID()

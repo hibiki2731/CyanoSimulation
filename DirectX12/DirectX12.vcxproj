@@ -204,6 +204,9 @@
     <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="scripts\MeshBaseCBSuballocation.cpp" />
+    <ClCompile Include="scripts\MeshMaterialCBSuballocation.cpp" />
+    <ClCompile Include="scripts\MeshWorldCBSuballocation.cpp" />
     <ClCompile Include="scripts\myJson.cpp" />
     <ClCompile Include="scripts\MyUtility.cpp" />
     <ClCompile Include="scripts\Component.cpp" />
@@ -249,6 +252,9 @@
     <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
     <ClInclude Include="scripts\json_fwd.hpp" />
+    <ClInclude Include="scripts\MeshBaseCBSuballocation.h" />
+    <ClInclude Include="scripts\MeshMaterialCBSuballocation.h" />
+    <ClInclude Include="scripts\MeshWorldCBSuballocation.h" />
     <ClInclude Include="scripts\myJson.h" />
     <ClInclude Include="scripts\Object.h" />
     <ClInclude Include="scripts\pch.h" />

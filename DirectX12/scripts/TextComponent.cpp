@@ -160,7 +160,8 @@ void TextComponent::draw()
 	auto world = XMMatrixIdentity()
 		*XMMatrixTranslation(0.0f, 0.0f, mPosition.z);
 
-	mCBSuballocation->updateWorld(world, mGraphic.getBackBufIdx());
+	mCBSuballocation->updateWorld(world);
+	mCBSuballocation->applyChanges(mGraphic.getBackBufIdx());
 
 	//頂点をセット
 	mGraphic.getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView);
@@ -180,8 +181,11 @@ void TextComponent::draw()
 void TextComponent::endProcess()
 {
 	mOwner.getScene().removeText(this);
-	mOwner.getScene().getGame().getAssetManager().deleteMemory(mCBIndex, mCBSize);
-	mOwner.getScene().getGame().getAssetManager().deleteHeap(mHeapIndex, mHeapSize);
+	auto& descHeap = mGraphic.getDescriptorHeap();
+	auto& constantBuffer = mGraphic.getConstantBuffer();
+
+	descHeap.deleteRange(*mDescriptorRange);
+	constantBuffer.deleteSuballocation(*mCBSuballocation);
 
 	if (mGraphic.getD2DDeviceContext()) {
         mGraphic.getD2DDeviceContext()->SetTarget(nullptr);
@@ -350,25 +354,26 @@ void TextComponent::createSprite(float zDepth)
 	mCBSuballocation = constantBuffer.createSuballocation<TextCBSuballocation>(AlignedSizeInBytes(sizeof(TextCBSuballocationData)));
 
 	//SpriteConstantBufの初期化
-	mCBSuballocation->mData.world = XMMatrixIdentity()
-		*XMMatrixTranslation(0.0f, 0.0f, zDepth);
-	mCBSuballocation->mData.windowSize = XMFLOAT2(
+	mCBSuballocation->updateWorld(XMMatrixIdentity()
+		*XMMatrixTranslation(0.0f, 0.0f, zDepth));
+	mCBSuballocation->updateWindowSize(XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
-	);
-	mCBSuballocation->mData.spriteSize = XMFLOAT2(
+	));
+	mCBSuballocation->updateSpriteSize(XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
-	);
-	mCBSuballocation->mData.textureSize = XMFLOAT2(
+	));
+	mCBSuballocation->updateTextureSize(XMFLOAT2(
 		(float)Graphic::ClientWidth,
 		(float)Graphic::ClientHeight
-	);
-	mCBSuballocation->mData.bordarSize = 0.0f;
-	mCBSuballocation->updateData();
+	));
+	mCBSuballocation->updateBordarSize(0.0f);
+	mCBSuballocation->applyChanges(0);
+	mCBSuballocation->applyChanges(1);
 
 	//ディスクリプタヒープにViewを作成
-	mDescriptorRange = std::make_unique<DescriptorAllocatorRange>(descHeap.allocate(NumSlots(3)));
+	mDescriptorRange = std::make_unique<DescriptorSlotRange>(descHeap.allocate(NumSlots(3)));
 	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
 	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
 	descHeap.addSRV(*mTexture.Get(), mDescriptorRange->getIndex(2));

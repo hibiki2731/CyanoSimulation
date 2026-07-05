@@ -92,7 +92,7 @@ private:
 
 	//コンスタントバッファサブアロケータ
 	std::shared_ptr<class TextCBSuballocation> mCBSuballocation;
-	std::unique_ptr<class DescriptorAllocatorRange> mDescriptorRange;
+	std::unique_ptr<class DescriptorSlotRange> mDescriptorRange;
 
 #ifdef _DEBUG
 	friend class GUIDebugger;

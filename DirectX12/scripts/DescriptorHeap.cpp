@@ -11,7 +11,7 @@ DescriptorHeapAllocator::DescriptorHeapAllocator(const NumSlots& numSlots)
 {
 }
 
-DescriptorAllocatorRange DescriptorHeapAllocator::allocateRange(const NumSlots& numRequiredSlots)
+DescriptorSlotRange DescriptorHeapAllocator::allocateRange(const NumSlots& numRequiredSlots)
 {
 	if (numRequiredSlots.getNumSlots() + mLastUsedSlotIndex.getIndex() >= mNumAllSlots.getNumSlots()) {
 		assert(false && "DescriptorHeapAllocatorのスロットが不足しています。");
@@ -32,23 +32,23 @@ DescriptorAllocatorRange DescriptorHeapAllocator::allocateRange(const NumSlots& 
 			}
 			mClearedHeap.erase(EmptySlotIndex);
 
-			return DescriptorAllocatorRange(newSlotIndex, numRequiredSlots);
+			return DescriptorSlotRange(newSlotIndex, numRequiredSlots);
 		}
 	}
 
 	//解放されたヒープがなければ、最後尾のインデックスを取得
 	const SlotIndex newSlotIndex = mLastUsedSlotIndex;
 	mLastUsedSlotIndex = SlotIndex(newSlotIndex.getIndex() + numRequiredSlots.getNumSlots());
-	return DescriptorAllocatorRange(newSlotIndex, numRequiredSlots);
+	return DescriptorSlotRange(newSlotIndex, numRequiredSlots);
 }
 
-DescriptorAllocatorRange DescriptorHeapAllocator::allocate()
+DescriptorSlotRange DescriptorHeapAllocator::allocate()
 {
 	const NumSlots numRequiredSlots(1);
 	return allocateRange(numRequiredSlots);
 }
 
-void DescriptorHeapAllocator::freeSlot(const DescriptorAllocatorRange& allocRange)
+void DescriptorHeapAllocator::freeSlot(const DescriptorSlotRange& allocRange)
 {
 	SlotIndex initialIndex = allocRange.getIndex(0);
 	NumSlots numFullSlots = allocRange.getNumSlots();
@@ -95,12 +95,17 @@ DescriptorHeap::DescriptorHeap(Graphic& graphic, const NumSlots& numSlots)
 	mHeapAllocator = std::make_unique<DescriptorHeapAllocator>(numSlots);
 }
 
-DescriptorAllocatorRange DescriptorHeap::allocate(const NumSlots& numRequiredSlots)
+DescriptorSlotRange DescriptorHeap::allocate(const NumSlots& numRequiredSlots)
 {
 	return mHeapAllocator->allocateRange(numRequiredSlots);
 }
 
-void DescriptorHeap::addUAV(UnorderedAccessBuffer& uav, const SlotIndex& slotIndex)
+void DescriptorHeap::deleteRange(const DescriptorSlotRange& allocRange)
+{
+	mHeapAllocator->freeSlot(allocRange);
+}
+
+void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex)
 {
 	auto device = mGraphic.getDevice();
 
@@ -138,7 +143,14 @@ void DescriptorHeap::addSRV(ID3D12Resource& shaderResource, const SlotIndex& slo
 	mGraphic.getDevice()->CreateShaderResourceView(&shaderResource, &desc, hCbvTbvHeap);
 }
 
-void DescriptorHeap::addCBV(IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame)
+void DescriptorHeap::addSRVFrameCounts(ID3D12Resource& shaderResource, const SlotIndex& slotIndex, const int numDescriptors)
+{
+	for(int i = 0 ; i < Graphic::FrameCount; ++i){
+		addSRV(shaderResource, slotIndex + SlotIndex(i * numDescriptors));
+	}
+}
+
+void DescriptorHeap::addCBV(const IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame)
 {
 	//二つのコンスタントバッファ分ビューを作成する
 	//フレーム分のビューを連続したスロットに作成
@@ -150,6 +162,13 @@ void DescriptorHeap::addCBV(IConstantBufferSuballocation& cbv, const SlotIndex& 
 	hCbvTbvHeap.ptr += mGraphic.getCbvTbvIncSize() * (slotIndex.getIndex());
 
 	mGraphic.getDevice()->CreateConstantBufferView(&desc, hCbvTbvHeap);
+}
+
+void DescriptorHeap::addCBVFrameCounts(const IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int numDescriptors)
+{
+	for(int i = 0 ; i < Graphic::FrameCount; ++i){
+		addCBV(cbv, slotIndex + SlotIndex(i * numDescriptors), i);
+	}
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::getGPUHandle(const SlotIndex& slotIndex)

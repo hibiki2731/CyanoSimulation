@@ -8,15 +8,32 @@ TextCBSuballocation::TextCBSuballocation(const AlignedSizeInBytes& sizeInBytes, 
 
 }
 
-void TextCBSuballocation::updateWorld(const XMMATRIX& world, const int frame)
+void TextCBSuballocation::updateWorld(const XMMATRIX& world)
 {
-
 	mData.world = world;
-	memcpy(mBuffersOnCPU[frame], &mData, mSizeInBytes.get());
 }
 
-void TextCBSuballocation::updateData()
+void TextCBSuballocation::updateWindowSize(const XMFLOAT2& windowSize)
 {
-	memcpy(mBuffersOnCPU[0], &mData, mSizeInBytes.get());
-	memcpy(mBuffersOnCPU[1], &mData, mSizeInBytes.get());
+	mData.windowSize = windowSize;
+}
+
+void TextCBSuballocation::updateSpriteSize(const XMFLOAT2& spriteSize)
+{
+	mData.spriteSize = spriteSize;
+}
+
+void TextCBSuballocation::updateTextureSize(const XMFLOAT2& textureSize)
+{
+	mData.textureSize = textureSize;
+}
+
+void TextCBSuballocation::updateBordarSize(const float bordarSize)
+{
+	mData.bordarSize = bordarSize;
+}
+
+void TextCBSuballocation::applyChanges(const int frame)
+{
+	memcpy(mBuffersOnCPU[frame], &mData, mSizeInBytes.get());
 }

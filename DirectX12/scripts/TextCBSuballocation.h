@@ -18,12 +18,16 @@ class TextCBSuballocation : public IConstantBufferSuballocation
 public:
 	TextCBSuballocation(const AlignedSizeInBytes& sizeInBytes, const ConstantBufferAddress& address, std::vector<void*>&& buffersOnCPU, std::vector<D3D12_GPU_VIRTUAL_ADDRESS>&& virtualAddressOnGPU);
 
-	TextCBSuballocationData mData;
+	void updateWorld(const XMMATRIX& world);
+	void updateWindowSize(const XMFLOAT2& windowSize);
+	void updateSpriteSize(const XMFLOAT2& spriteSize);
+	void updateTextureSize(const XMFLOAT2& textureSize);
+	void updateBordarSize(const float bordarSize);
 
-	void updateData() override;
-	void updateWorld(const XMMATRIX& world, const int frame);
+	void applyChanges(const int frame) override;
 
 private:
+	TextCBSuballocationData mData;
 
 };
 

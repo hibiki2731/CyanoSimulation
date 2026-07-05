@@ -50,7 +50,7 @@ struct Base3DData {
 };
 
 //3Dオブジェクトのワールド行列
-struct World3DConstBuf {
+struct MeshWorldCBSuballocationData {
 	XMMATRIX world;  //ワールド行列
 	XMFLOAT3 flashColor;
 	float flashIntensity;

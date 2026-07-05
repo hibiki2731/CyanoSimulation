@@ -71,8 +71,6 @@ public:
 	~Graphic();
 
 	void init();				//初期化
-	//---ディスクリプタヒープの作成---
-	HRESULT createCbvTbvHeap(ComPtr<ID3D12DescriptorHeap>& cbvTbvHeap, UINT numDescriptors);	//CBVとSRV用のディスクリプタヒープの作成
 	//---リソースの作成、更新、マッピング---
 	HRESULT  createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);				//バッファの作成
 	HRESULT  updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);	//バッファの更新
@@ -83,9 +81,6 @@ public:
 	//---バッファビューの作成---
 	void createVertexBufferView(ComPtr<ID3D12Resource>& vertexBuf, UINT sizeInBytes, UINT strideInBytes, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView);	//頂点バッファビューの作成
 	void createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeInBytes, D3D12_INDEX_BUFFER_VIEW& indexBufferView);	//インデックスバッファビューの作成
-	void createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize);	//コンスタントバッファビューの作成(2フレーム分コンスタントバッファ内の領域を確保するため、heapSize間隔で2つビューを作成)
-	void createBase3DBufferView(int heapIndex, int heapSize);								//3Dオブジェクトが共通して使うコンスタントバッファビューの作成(2フレーム分)
-	void createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex);			//シェーダーリソースビューの作成
 	
 
 	//---描画処理---
@@ -115,9 +110,6 @@ public:
 	ID2D1DeviceContext* getD2DDeviceContext();
 	IDWriteFactory* getDWriteFactory();
 	ID2D1Bitmap1* getD2DRenderTarget();
-	UINT8* getConstantData();
-	UINT8* getConstantData(int frame);
-	D3D12_GPU_DESCRIPTOR_HANDLE getHeapHandle();
 	int getBackBufIdx();
 	DescriptorHeap& getDescriptorHeap() const { return *mDescriptorHeap; }
 	ConstantBuffer& getConstantBuffer() const{ return *mConstantBuffer; }
@@ -132,9 +124,6 @@ public:
 	static constexpr float	 Aspect = static_cast<float>(ClientWidth) / ClientHeight;
 	static constexpr int	 FrameCount = 2;
 
-#ifdef _DEBUG
-	void setShareDescriptor();
-#endif
 private:
 	//初期化関数
 	HRESULT createDevice();
@@ -196,10 +185,6 @@ private:
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
-	//共有して使用するヒープ、コンスタントバッファ
-	ComPtr<ID3D12DescriptorHeap> mCbvTbvHeap;
-	ComPtr<ID3D12Resource> mConstantBuf[FrameCount];
-	UINT8* mConstantData[FrameCount];	//生データ
 
 	//Direct2D
 	ComPtr<ID3D11On12Device> mD3D11On12Device;

@@ -25,7 +25,6 @@ Graphic::Graphic(Game& game)
 
 Graphic::~Graphic()
 {
-	for (int i = 0; i < FrameCount; i++) mConstantBuf[i]->Unmap(0, nullptr);
 	waitGPU();
 }
 
@@ -72,15 +71,6 @@ void Graphic::init() {
 
 	ShowWindow(hWnd, SW_SHOW);
 }
-
-#ifdef _DEBUG
-void Graphic::setShareDescriptor()
-{
-	//ディスクリプタヒープをＧＰＵにセット
-	UINT numDescriptorHeaps = 1;
-	mCommandList->SetDescriptorHeaps(numDescriptorHeaps, mCbvTbvHeap.GetAddressOf());
-}
-#endif
 
 HRESULT Graphic::createDevice() {
 	UINT dxgiFactoryFlags = 0;
@@ -607,16 +597,6 @@ HRESULT Graphic::createCbvAndHeap()
 	mDescriptorHeap = std::make_unique<DescriptorHeap>(*this, 10000);
 	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1 << 20);
 
-	//HRESULT hr = createCbvTbvHeap(mCbvTbvHeap, 10000); //共有用のヒープを作成
-	//for(int frame = 0; frame < FrameCount; frame++) {
-	//	hr = createBuf(1 << 20, mConstantBuf[frame]);	//コンスタントバッファを1MB作成
-	//	assert(SUCCEEDED(hr));
-	//}
-	//for (int frame = 0; frame < FrameCount; frame++) {
-	//	hr = mConstantBuf[frame]->Map(0, nullptr, reinterpret_cast<void**>(&mConstantData[frame]));	//マップする
-	//	assert(SUCCEEDED(hr));
-	//}
-
 	return S_OK;
 }
 
@@ -949,17 +929,6 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 	return XMFLOAT2((float)width, (float)height);
 }
 
-HRESULT Graphic::createCbvTbvHeap(ComPtr<ID3D12DescriptorHeap>& cbvTbvHeap, UINT numDescriptors)
-{
-	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	desc.NumDescriptors = numDescriptors;
-	desc.NodeMask = 0;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	return Device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(cbvTbvHeap.ReleaseAndGetAddressOf()));
-	
-}
-
 void Graphic::createVertexBufferView(ComPtr<ID3D12Resource>& vertexBuf, UINT sizeInBytes, UINT strideInBytes, D3D12_VERTEX_BUFFER_VIEW& vertexBufferView)
 {
 	vertexBufferView.BufferLocation = vertexBuf->GetGPUVirtualAddress();
@@ -973,40 +942,6 @@ void Graphic::createIndexBufferView(ComPtr<ID3D12Resource>& indexBuf, UINT sizeI
 	indexBufferView.BufferLocation = indexBuf->GetGPUVirtualAddress();
 	indexBufferView.SizeInBytes = sizeInBytes; //全バイト数
 	indexBufferView.Format = DXGI_FORMAT_R16_UINT; //1頂点のバイト数
-}
-
-void Graphic::createConstantBufferView(int cbIndex, int cbSize, int heapIndex, int heapSize)
-{
-	//二つのコンスタントバッファ分ビューを作成する
-	for (int frame = 0; frame < FrameCount; frame++) {
-		D3D12_CONSTANT_BUFFER_VIEW_DESC desc = {};
-		desc.BufferLocation = mConstantBuf[frame]->GetGPUVirtualAddress() + cbIndex;
-		desc.SizeInBytes = static_cast<UINT>(cbSize); //256バイトアライメント
-
-		auto hCbvTbvHeap = mCbvTbvHeap->GetCPUDescriptorHandleForHeapStart();
-		hCbvTbvHeap.ptr += getCbvTbvIncSize() * (heapIndex + frame * heapSize);
-
-		Device->CreateConstantBufferView(&desc, hCbvTbvHeap);
-	}
-}
-
-void Graphic::createBase3DBufferView(int heapIndex, int heapSize)
-{
-	createConstantBufferView(0, alignedSize(sizeof(Base3DData)), heapIndex, heapSize);
-}
-
-void Graphic::createShaderResourceView(ID3D12Resource* shaderResource, int heapIndex)
-{
-	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-	desc.Format = shaderResource->GetDesc().Format;
-	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	desc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;//2Dテクスチャ
-	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
-
-	auto hCbvTbvHeap = mCbvTbvHeap->GetCPUDescriptorHandleForHeapStart();
-	hCbvTbvHeap.ptr += getCbvTbvIncSize() * heapIndex;
-
-	Device->CreateShaderResourceView(shaderResource, &desc, hCbvTbvHeap);
 }
 
 void Graphic::clearColor(float r, float g, float b)
@@ -1207,21 +1142,6 @@ IDWriteFactory* Graphic::getDWriteFactory()
 ID2D1Bitmap1* Graphic::getD2DRenderTarget()
 {
 	return mD2DRenderTargets[BackBufIdx].Get();
-}
-
-UINT8* Graphic::getConstantData()
-{
-	return mConstantData[BackBufIdx];
-}
-
-UINT8* Graphic::getConstantData(int frame)
-{
-	return mConstantData[frame];
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE Graphic::getHeapHandle()
-{
-	return mCbvTbvHeap->GetGPUDescriptorHandleForHeapStart();
 }
 
 int Graphic::getBackBufIdx()
