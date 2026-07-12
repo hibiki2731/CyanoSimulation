@@ -29,6 +29,7 @@ struct PointLightData {
     XMFLOAT4 setValue; //x:有効無効、y:光強度、z:光の届く範囲
 };
 
+
 struct SpotLightData {
 
     XMFLOAT4 position; //xyz:座標
@@ -38,41 +39,6 @@ struct SpotLightData {
     XMFLOAT4 attAngle; //x:角度減衰が起こらない範囲 y:ライトがあたる範囲
 
 };
-
-//3D用バッファ
-struct Base3DData {
-	XMMATRIX viewProj;  //ビュー射影行列
-	XMFLOAT4 cameraPos; //xyz:カメラ位置、w:未使用
-	PointLightData pointLights[MAX_LIGHT_NUM];  //ポイントライト配列
-	SpotLightData spotLights[MAX_LIGHT_NUM];  //スポットライト配列
-	float playerFlashIntensity; //ダメージを受けたときの点滅フラグ
-	XMFLOAT3 playerFlashColor;
-};
-
-//3Dオブジェクトのワールド行列
-struct MeshWorldCBSuballocationData {
-	XMMATRIX world;  //ワールド行列
-	XMFLOAT3 flashColor;
-	float flashIntensity;
-};
-
-//メッシュごとのマテリアル情報
-struct MaterialConstBuf {
-    XMFLOAT4 ambient;
-    XMFLOAT4 diffuse;
-    XMFLOAT4 specular;
-};
-
-//2D用バッファ
-struct SpriteConstBuf {
-	XMMATRIX world;
-	XMFLOAT2 windowSize; //xy:ウィンドウサイズ
-	XMFLOAT2 spriteSize; //xy:サイズ (px)
-	XMFLOAT2 textureSize; //xy:テクスチャサイズ (px)
-	float bordarSize; //9スライス用ボーダーサイズ (px)
-	float padding; //パディング
-};
-
 //フォント用バッファ
 struct FontConstBuffer {
 	XMMATRIX world;

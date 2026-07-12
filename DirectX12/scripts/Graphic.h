@@ -6,13 +6,8 @@
 #include <winuser.h>
 
 ///グラフィック
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "d3d11.lib")
-#pragma comment(lib, "d2d1.lib")
-#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "dwrite.lib")
 #include <DirectXMath.h>
-#include "d3dx12.h"
+#include "directx/d3dx12.h"
 #include <d3d11on12.h>
 #include <d2d1.h>
 #include <d2d1_3.h>
@@ -72,10 +67,6 @@ public:
 
 	void init();				//初期化
 	//---リソースの作成、更新、マッピング---
-	HRESULT  createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);				//バッファの作成
-	HRESULT  updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer);	//バッファの更新
-	HRESULT  mapBuf(void** mappedBuffer, ComPtr<ID3D12Resource>& buffer);				//バッファのマッピング
-	void     unmapBuf(ComPtr<ID3D12Resource>& buffer);									//バッファのマッピング解除
 	HRESULT  createShaderResource(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);	//テクスチャの作成
 	XMFLOAT2 createShaderResourceGetSize(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource);	//テクスチャの作成とサイズの取得
 	//---バッファビューの作成---
@@ -113,6 +104,7 @@ public:
 	int getBackBufIdx();
 	DescriptorHeap& getDescriptorHeap() const { return *mDescriptorHeap; }
 	ConstantBuffer& getConstantBuffer() const{ return *mConstantBuffer; }
+	const std::shared_ptr<class MeshBaseCBSuballocation>& getMeshBaseCBSuballocation() const { return mMeshBaseCBSuballocation; }
 
 	//Setter
 	void setRenderType(STATE state);	//描画するオブジェクトの種類に応じて、パイプラインステートやルートシグネチャを切り替える
@@ -181,6 +173,8 @@ private:
 	ComPtr<ID3D12Resource> DepthStencilBuf;
 	ComPtr<ID3D12DescriptorHeap> DsvHeap; //DepthStencilBufView
 	//パイプライン
+	ComPtr<ID3D12RootSignature> RootSignature3D;
+	ComPtr<ID3D12PipelineState> PipelineState3D;
 	ComPtr<ID3D12RootSignature> RootSignature2D;
 	ComPtr<ID3D12PipelineState> PipelineState2D;
 	D3D12_VIEWPORT Viewport;
@@ -206,6 +200,9 @@ private:
 	std::unique_ptr<DescriptorHeap> mDescriptorHeap;
 	//コンスタントバッファ
 	std::unique_ptr<ConstantBuffer> mConstantBuffer;
+
+	//3Dメッシュの基礎データ
+	std::shared_ptr<class MeshBaseCBSuballocation> mMeshBaseCBSuballocation;
 
 	//参照
 	Game& mGame;

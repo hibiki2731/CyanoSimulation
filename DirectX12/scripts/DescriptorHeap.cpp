@@ -11,7 +11,7 @@ DescriptorHeapAllocator::DescriptorHeapAllocator(const NumSlots& numSlots)
 {
 }
 
-DescriptorSlotRange DescriptorHeapAllocator::allocateRange(const NumSlots& numRequiredSlots)
+std::unique_ptr<DescriptorSlotRange> DescriptorHeapAllocator::allocateRange(const NumSlots& numRequiredSlots)
 {
 	if (numRequiredSlots.getNumSlots() + mLastUsedSlotIndex.getIndex() >= mNumAllSlots.getNumSlots()) {
 		assert(false && "DescriptorHeapAllocatorのスロットが不足しています。");
@@ -32,17 +32,17 @@ DescriptorSlotRange DescriptorHeapAllocator::allocateRange(const NumSlots& numRe
 			}
 			mClearedHeap.erase(EmptySlotIndex);
 
-			return DescriptorSlotRange(newSlotIndex, numRequiredSlots);
+			return std::make_unique<DescriptorSlotRange>(newSlotIndex, numRequiredSlots);
 		}
 	}
 
 	//解放されたヒープがなければ、最後尾のインデックスを取得
 	const SlotIndex newSlotIndex = mLastUsedSlotIndex;
 	mLastUsedSlotIndex = SlotIndex(newSlotIndex.getIndex() + numRequiredSlots.getNumSlots());
-	return DescriptorSlotRange(newSlotIndex, numRequiredSlots);
+	return std::make_unique<DescriptorSlotRange>(newSlotIndex, numRequiredSlots);
 }
 
-DescriptorSlotRange DescriptorHeapAllocator::allocate()
+std::unique_ptr<DescriptorSlotRange> DescriptorHeapAllocator::allocate()
 {
 	const NumSlots numRequiredSlots(1);
 	return allocateRange(numRequiredSlots);
@@ -95,7 +95,7 @@ DescriptorHeap::DescriptorHeap(Graphic& graphic, const NumSlots& numSlots)
 	mHeapAllocator = std::make_unique<DescriptorHeapAllocator>(numSlots);
 }
 
-DescriptorSlotRange DescriptorHeap::allocate(const NumSlots& numRequiredSlots)
+std::unique_ptr<DescriptorSlotRange> DescriptorHeap::allocate(const NumSlots& numRequiredSlots)
 {
 	return mHeapAllocator->allocateRange(numRequiredSlots);
 }

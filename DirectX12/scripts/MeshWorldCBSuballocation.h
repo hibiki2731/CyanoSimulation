@@ -17,7 +17,7 @@ public:
 	void updateFlashColor(const XMFLOAT3& flashColor);
 	void updateFlashIntensity(float flashIntensity);
 
-	void apllyChanges(const int frame);
+	void applyChanges(const int frame) override;
 
 private:
 	MeshWorldCBSuballocationData mData;

@@ -62,21 +62,20 @@ private:
     //コマンドリスト
     ID3D12GraphicsCommandList* mCommandList;
 
-    //コンスタントバッファ1(World Matrix)
-    //使用するディスクリプタヒープおよびコンスタントバッファのインデックス
-    int mHeapIndex;
-    int mHeapSize;
-    int mCBIndex;
-    int mCBSize;
-    int mNumSprites;
-
-    SpriteConstBuf Cb3;
-
     //頂点バッファ
     D3D12_VERTEX_BUFFER_VIEW mVertexBufView;
     D3D12_INDEX_BUFFER_VIEW mIndexBufView;
     //テクスチャバッファ
     ID3D12Resource* mTextureBuf;
+
+    //コンスタントバッファ
+    class ConstantBuffer& mConstantBuffer;
+    std::shared_ptr<class SpriteCBSuballocation> mSpriteCBSubData;
+	bool isInitialized = false;
+
+    //デスクリプタヒープ
+    class DescriptorHeap& mDescriptorHeap;
+	std::unique_ptr<class DescriptorSlotRange> mDescRange;
 
     //デバッグ用
 #ifdef _DEBUG

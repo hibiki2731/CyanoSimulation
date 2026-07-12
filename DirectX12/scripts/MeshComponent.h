@@ -11,7 +11,7 @@
 class MeshComponent : public Component
 {
 public:
-	MeshComponent(Actor& owner, std::shared_ptr<class MeshBaseCBSuballocation>& baseSuballocation, int updateOrder = 100);
+	MeshComponent(Actor& owner, const std::shared_ptr<class MeshBaseCBSuballocation>& baseSuballocation, int updateOrder = 100);
     DECLARE_COMPONENT_NAME(MeshComponent)
     void loadFromJson(const nlohmann::json& json) override;
 
@@ -46,15 +46,21 @@ private:
 	std::vector<PARTS> Parts;
 
     //ディスクリプタヒープ
+	class DescriptorHeap& mDescriptorHeap;
     const UINT NumDescriptors = 4;//ひとつのパーツで使用するディスクリプタの数
     UINT NumAllPartsDescriptors;
-
     //デスクリプタヒープのレンジ
     std::unique_ptr<class DescriptorSlotRange> mDescRange;
+
+    //コンスタントバッファ
+	class ConstantBuffer& mConstantBuffer;
 	//コンスタントバッファのサブアロケータ
     std::shared_ptr<class MeshWorldCBSuballocation> mWorldSuballocation;
     std::weak_ptr<class MeshBaseCBSuballocation> mBaseSuballocation;
 
     //メッシュのID
     std::string mMeshID;
+
+    //初期化フラグ
+    bool isInitialized;
 };

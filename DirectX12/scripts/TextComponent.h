@@ -40,7 +40,6 @@ public:
 
 private:
 	D2D1::ColorF mTextColor = D2D1::ColorF(0, 0, 0);
-	Graphic& mGraphic;
 	AssetManager& mAssetManager;
 	ComPtr<ID2D1SolidColorBrush> mTextBrush;
 	ComPtr<IDWriteTextFormat> mTextFormat;
@@ -48,12 +47,6 @@ private:
 	bool isTextureInitialized = false;
 	ComPtr<ID3D11Resource> mWrappedTexture;
 	ComPtr<ID2D1Bitmap1> mD2DTarget;
-	//コンスタントバッファ1(World Matrix)
-    SpriteConstBuf Cb3;
-	int mCBIndex;
-	int mCBSize;
-	int mHeapIndex;
-	int mHeapSize;
 
     //頂点バッファ
     D3D12_VERTEX_BUFFER_VIEW mVertexBufView;
@@ -89,6 +82,14 @@ private:
 	//テキストのフォーマットの初期化
 	void applyTextFormat();
 	void initDWriteFactory();
+
+	//グラフィック(今後、機能をカプセル化したクラスを取得する予定)
+	class Graphic& mGraphic;
+	
+	//コンスタントバッファ
+	class ConstantBuffer& mConstantBuffer;
+	//コンスタントバッファ
+	class DescriptorHeap& mDescriptorHeap;
 
 	//コンスタントバッファサブアロケータ
 	std::shared_ptr<class TextCBSuballocation> mCBSuballocation;

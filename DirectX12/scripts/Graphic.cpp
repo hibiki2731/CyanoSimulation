@@ -9,6 +9,7 @@
 #include <iostream>
 #include "ConstantBuffer.h"
 #include "DescriptorHeap.h"
+#include "MeshBaseCBSuballocation.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -343,6 +344,132 @@ HRESULT Graphic::createDSbv() {
 
 HRESULT Graphic::createPipeline()
 {
+	
+	//3D用パイプラインステート
+	{
+		//ルートシグネチャ
+		//ディスクリプタレンジ、ディスクリプタヒープとシェーダを紐づける役割を持つ
+		D3D12_DESCRIPTOR_RANGE range[2] = {};
+		UINT b0 = 0;
+		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV; //定数バッファビュー
+		range[0].BaseShaderRegister = b0;
+		range[0].NumDescriptors = 3; //b0,b1,b2
+		range[0].RegisterSpace = 0;
+		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //自動計算
+
+		UINT t0 = 0;
+		range[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //シェーダリソースビュー
+		range[1].BaseShaderRegister = t0;
+		range[1].NumDescriptors = 1; //t0だけ
+		range[1].RegisterSpace = 0;
+		range[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //自動計算
+
+		//ルートパラメタをディスクリプタテーブルとして使用
+		//rangeの入れ物
+		D3D12_ROOT_PARAMETER rootParam[1] = {};
+		rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParam[0].DescriptorTable.pDescriptorRanges = range;
+		rootParam[0].DescriptorTable.NumDescriptorRanges = _countof(range);
+		rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全てのシェーダから見える
+
+		//サンプラの記述
+		D3D12_STATIC_SAMPLER_DESC samplerDesc[1] = {};
+		samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; //補完しない
+		samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //U方向は繰り返し
+		samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //V方向は繰り返し
+		samplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //W方向は繰り返し
+		samplerDesc[0].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK; //ボーダーの時は黒
+		samplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX; //ミップマップ最大
+		samplerDesc[0].MinLOD = 0.0f; //ミップマップ最小
+		samplerDesc[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; //オーバーサンプリングの際リサンプリングしない
+		samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //ピクセルシェーダからのみ見える
+
+		//ルートシグネチャの設定
+		D3D12_ROOT_SIGNATURE_DESC desc = {};
+		desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; //入力アセンブラの入力レイアウトを許可
+		desc.pParameters = rootParam;
+		desc.NumParameters = _countof(rootParam);
+		desc.pStaticSamplers = samplerDesc;  //サンプラーの先頭アドレス
+		desc.NumStaticSamplers = _countof(samplerDesc); //サンプラーの数
+
+		//ルートシグネチャをシリアライズ(コンパイルするようなもの)
+		ComPtr<ID3DBlob> blob;
+		HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, blob.GetAddressOf(), nullptr);
+		assert(SUCCEEDED(hr));
+
+		//ルートシグネチャの作成
+		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
+			IID_PPV_ARGS(RootSignature3D.GetAddressOf()));
+		assert(SUCCEEDED(hr));
+		
+		
+		//シェーダの読み込み
+		BIN_FILE12 vs("assets\\VertexShader.cso");
+		assert(vs.succeeded());
+		BIN_FILE12 ps("assets\\PixelShader.cso");
+		assert(ps.succeeded());
+
+		//各種記述
+		UINT slot0 = 0;
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, slot0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    slot0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		};
+
+		D3D12_RASTERIZER_DESC rasterDesc = {};
+		rasterDesc.FrontCounterClockwise = true; //反時計回り
+		rasterDesc.CullMode = D3D12_CULL_MODE_BACK; //裏面描画するか？
+		rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
+		rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		rasterDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		rasterDesc.DepthClipEnable = TRUE;
+		rasterDesc.MultisampleEnable = FALSE;
+		rasterDesc.AntialiasedLineEnable = FALSE;
+		rasterDesc.ForcedSampleCount = 0;
+		rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+		D3D12_BLEND_DESC blendDesc = {};
+		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.IndependentBlendEnable = FALSE;
+		blendDesc.RenderTarget[0].BlendEnable = false;
+		blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+		D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //書き込み許可
+		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; //小さいほうが手前
+		depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
+
+		//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc = {};
+		pipelineDesc.pRootSignature = RootSignature3D.Get();
+		pipelineDesc.VS = { vs.code(), vs.size() };
+		pipelineDesc.PS = { ps.code(), ps.size() };
+		pipelineDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+		pipelineDesc.RasterizerState = rasterDesc;
+		pipelineDesc.BlendState = blendDesc;
+		pipelineDesc.DepthStencilState = depthStencilDesc;
+		pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		pipelineDesc.SampleMask = UINT_MAX;
+		pipelineDesc.SampleDesc.Count = 1;
+		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		pipelineDesc.NumRenderTargets = 1;
+		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		hr = Device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(PipelineState3D.GetAddressOf()));
+		assert(SUCCEEDED(hr));
+		
+	} {}
+
 	//2D用パイプラインステート
 	{
 		//2D用ルートシグネチャ
@@ -597,62 +724,9 @@ HRESULT Graphic::createCbvAndHeap()
 	mDescriptorHeap = std::make_unique<DescriptorHeap>(*this, 10000);
 	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1 << 20);
 
+	mMeshBaseCBSuballocation = mConstantBuffer->createSuballocation<MeshBaseCBSuballocation>(alignedSize(sizeof(MeshBaseCBSuballocationData)));
+
 	return S_OK;
-}
-
-HRESULT Graphic::createBuf(UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer)
-{
-	D3D12_HEAP_PROPERTIES prop = {};
-	prop.Type = D3D12_HEAP_TYPE_UPLOAD; //CPUからGPUへ書き込み
-	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
-	prop.CreationNodeMask = 1;
-	prop.VisibleNodeMask = 1;
-	D3D12_RESOURCE_DESC desc = {};
-	desc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER; //一次元配列
-	desc.Alignment = 0;
-	desc.Width = sizeInBytes; //バッファのサイズ
-	desc.Height = 1;
-	desc.DepthOrArraySize = 1;
-	desc.MipLevels = 1;
-	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.SampleDesc.Count = 1;
-	desc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-	desc.Flags = D3D12_RESOURCE_FLAG_NONE;
-	HRESULT hr = Device->CreateCommittedResource(
-		&prop,
-		D3D12_HEAP_FLAG_NONE,
-		&desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(buffer.ReleaseAndGetAddressOf())
-	);
-
-	return hr;
-}
-
-HRESULT Graphic::updateBuf(void* data, UINT sizeInBytes, ComPtr<ID3D12Resource>& buffer)
-{
-	UINT8* mappedBuf; //コピー先のアドレス
-	HRESULT hr = buffer->Map(0, nullptr, reinterpret_cast<void**>(&mappedBuf));
-	if (FAILED(hr))
-	{
-		return hr;
-	}
-	memcpy(mappedBuf, data, sizeInBytes);
-	buffer->Unmap(0, nullptr);
-	return hr;
-}
-
-HRESULT Graphic::mapBuf(void** mappedBuf, ComPtr<ID3D12Resource>& buffer)
-{
-	HRESULT hr = buffer->Map(0, nullptr, mappedBuf);
-	return hr;
-}
-
-void Graphic::unmapBuf(ComPtr<ID3D12Resource>& buffer)
-{
-	buffer->Unmap(0, nullptr);
 }
 
 UINT Graphic::alignedSize(UINT size)
@@ -1152,7 +1226,11 @@ int Graphic::getBackBufIdx()
 void Graphic::setRenderType(STATE state)
 {
 	//mStateに応じて3Dと2Dを切換え
-	if (state == Graphic::RENDER_2D) {
+	if (state == Graphic::RENDER_3D) {
+		mCommandList->SetPipelineState(PipelineState3D.Get());
+		mCommandList->SetGraphicsRootSignature(RootSignature3D.Get());
+	}
+	else if (state == Graphic::RENDER_2D) {
 		//パイプラインステートをセット
 		mCommandList->SetPipelineState(PipelineState2D.Get());
 		//ルートシグニチャをセット

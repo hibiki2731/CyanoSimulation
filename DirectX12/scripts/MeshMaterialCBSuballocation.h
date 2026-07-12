@@ -17,8 +17,8 @@ public:
 	void updateDiffuse(const XMFLOAT4& diffuse);
 	void updateSpecular(const XMFLOAT4& specular);
 	
-	void apllyChanges(const int frame);
-	void apllyChanges();
+	void applyChanges(const int frame) override;
+	void applyChanges();
 
 private:
 	MeshMaterialCBSuballocationData mData;

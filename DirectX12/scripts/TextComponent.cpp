@@ -14,7 +14,9 @@
 TextComponent::TextComponent(Actor& owner, float zDepth) 
 	: Component(owner),
 	mGraphic(owner.getScene().getGame().getGraphic()),
-	mAssetManager(owner.getScene().getGame().getAssetManager())
+	mAssetManager(owner.getScene().getGame().getAssetManager()),
+	mConstantBuffer(mGraphic.getConstantBuffer()),
+	mDescriptorHeap(mGraphic.getDescriptorHeap())
 {
 	mOwner.getScene().addText(this);
 
@@ -167,11 +169,10 @@ void TextComponent::draw()
 	mGraphic.getCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView);
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
-	auto& descHeap = mGraphic.getDescriptorHeap();
-	auto hDescHeap = descHeap.getGPUHandle(mDescriptorRange->getIndex(0) + SlotIndex(mGraphic.getBackBufIdx()));
+	auto hDescHeap = mDescriptorHeap.getGPUHandle(mDescriptorRange->getIndex(0) + SlotIndex(mGraphic.getBackBufIdx()));
 	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(0, hDescHeap);
 
-	hDescHeap = descHeap.getGPUHandle(mDescriptorRange->getIndex(2));
+	hDescHeap = mDescriptorHeap.getGPUHandle(mDescriptorRange->getIndex(2));
 	mGraphic.getCommandList()->SetGraphicsRootDescriptorTable(1, hDescHeap);
 	//描画。インデックスを使用
 	mGraphic.getCommandList()->IASetIndexBuffer(&mIndexBufView);
@@ -181,11 +182,9 @@ void TextComponent::draw()
 void TextComponent::endProcess()
 {
 	mOwner.getScene().removeText(this);
-	auto& descHeap = mGraphic.getDescriptorHeap();
-	auto& constantBuffer = mGraphic.getConstantBuffer();
 
-	descHeap.deleteRange(*mDescriptorRange);
-	constantBuffer.deleteSuballocation(*mCBSuballocation);
+	mDescriptorHeap.deleteRange(*mDescriptorRange);
+	mConstantBuffer.deleteSuballocation(*mCBSuballocation);
 
 	if (mGraphic.getD2DDeviceContext()) {
         mGraphic.getD2DDeviceContext()->SetTarget(nullptr);
@@ -349,9 +348,7 @@ void TextComponent::createSprite(float zDepth)
 	mIndexBufView = spriteData.IndexBufView;
 
 	//コンスタントバッファの作成
-	auto& descHeap = mGraphic.getDescriptorHeap();
-	auto& constantBuffer = mGraphic.getConstantBuffer();
-	mCBSuballocation = constantBuffer.createSuballocation<TextCBSuballocation>(AlignedSizeInBytes(sizeof(TextCBSuballocationData)));
+	mCBSuballocation = mConstantBuffer.createSuballocation<TextCBSuballocation>(AlignedSizeInBytes(sizeof(TextCBSuballocationData)));
 
 	//SpriteConstantBufの初期化
 	mCBSuballocation->updateWorld(XMMatrixIdentity()
@@ -373,10 +370,10 @@ void TextComponent::createSprite(float zDepth)
 	mCBSuballocation->applyChanges(1);
 
 	//ディスクリプタヒープにViewを作成
-	mDescriptorRange = std::make_unique<DescriptorSlotRange>(descHeap.allocate(NumSlots(3)));
-	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
-	descHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
-	descHeap.addSRV(*mTexture.Get(), mDescriptorRange->getIndex(2));
+	mDescriptorRange = mDescriptorHeap.allocate(NumSlots(3));
+	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
+	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
+	mDescriptorHeap.addSRV(*mTexture.Get(), mDescriptorRange->getIndex(2));
 }
 
 void TextComponent::applyTextFormat()

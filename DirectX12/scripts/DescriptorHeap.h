@@ -91,8 +91,8 @@ public:
 	DescriptorHeapAllocator(const NumSlots& numSlots);
 
 	//スロットを確保する
-	DescriptorSlotRange allocateRange(const NumSlots& numRequiredSlots);
-	DescriptorSlotRange allocate();
+	std::unique_ptr<DescriptorSlotRange> allocateRange(const NumSlots& numRequiredSlots);
+	std::unique_ptr<DescriptorSlotRange> allocate();
 	void freeSlot(const DescriptorSlotRange& allocRange);
 
 private:
@@ -108,7 +108,7 @@ public:
 
 
 	//ビューを追加する前に、必要なスロット数を確保する
-	DescriptorSlotRange allocate(const NumSlots& numRequiredSlots);
+	std::unique_ptr<DescriptorSlotRange> allocate(const NumSlots& numRequiredSlots);
 	void deleteRange(const DescriptorSlotRange& allocRange);
 
 	//ビューを追加する

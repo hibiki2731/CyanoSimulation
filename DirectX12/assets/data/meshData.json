@@ -1,1 +1,11 @@
-{}
+{
+    "ROCK_WALL" : {
+        "fbxPath" : "assets/3DModels/rockObj/rockWall.fbx",
+        "jsonPath" : "assets/3DModels/rockObj/rockWall.json"
+    },
+
+    "ROCK_FLOOR" : {
+        "fbxPath" : "assets/3DModels/rockObj/rockFloor.fbx",
+        "jsonPath" : "assets/3DModels/rockObj/rockFloor.json"
+    }
+}

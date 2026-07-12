@@ -204,6 +204,7 @@
     <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
     <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
+    <ClCompile Include="scripts\IndexBuffer.cpp" />
     <ClCompile Include="scripts\MeshBaseCBSuballocation.cpp" />
     <ClCompile Include="scripts\MeshMaterialCBSuballocation.cpp" />
     <ClCompile Include="scripts\MeshWorldCBSuballocation.cpp" />
@@ -223,11 +224,13 @@
     <ClCompile Include="scripts\Scene.cpp" />
     <ClCompile Include="scripts\SceneManager.cpp" />
     <ClCompile Include="scripts\SimulationScene.cpp" />
+    <ClCompile Include="scripts\SpriteCBSuballocation.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
     <ClCompile Include="scripts\TextCBSuballocation.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
     <ClCompile Include="scripts\UnorderedAccessBuffer.cpp" />
+    <ClCompile Include="scripts\VertexBuffer.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -251,6 +254,7 @@
     <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
     <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
     <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
+    <ClInclude Include="scripts\IndexBuffer.h" />
     <ClInclude Include="scripts\json_fwd.hpp" />
     <ClInclude Include="scripts\MeshBaseCBSuballocation.h" />
     <ClInclude Include="scripts\MeshMaterialCBSuballocation.h" />
@@ -273,12 +277,14 @@
     <ClInclude Include="scripts\Scene.h" />
     <ClInclude Include="scripts\SceneManager.h" />
     <ClInclude Include="scripts\SimulationScene.h" />
+    <ClInclude Include="scripts\SpriteCBSuballocation.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\stb_image.h" />
     <ClInclude Include="scripts\TextCBSuballocation.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
     <ClInclude Include="scripts\UnorderedAccessBuffer.h" />
+    <ClInclude Include="scripts\VertexBuffer.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>
   <ItemGroup>

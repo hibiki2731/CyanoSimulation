@@ -5,8 +5,10 @@
 #include <fstream>
 #include "FBXConverter.h"
 #include "json.hpp"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
-static float spriteVertices[] = {
+static std::vector<float> spriteVertices = {
 	0.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 0.3333f, 0.0f, 0.3333f,
 	 0.3333f, 0.0f, 0.3333f, 0.0f,
@@ -25,7 +27,7 @@ static float spriteVertices[] = {
 	 1.0f,  1.0f, 1.0f, 1.0f,
 };
 
-static UINT16 spriteIndices[] = {
+static std::vector<UINT16> spriteIndices = {
 	0, 1, 2,
 	2, 1, 3,
 	2, 3, 4,
@@ -52,8 +54,6 @@ AssetManager::AssetManager(Graphic& graphic)
 	: mGraphic(graphic)
 {
 	//Base3DDataが先頭のメモリを使用する
-	mCBEndIndex = mGraphic.alignedSize(sizeof(Base3DData));
-	mHeapEndIndex = 0;
 	createSpriteBuffers();
 
 	std::fstream file("assets/data/MeshData.json");
@@ -81,6 +81,8 @@ AssetManager::AssetManager(Graphic& graphic)
 	loadJson();
 }
 
+AssetManager::~AssetManager() = default;
+
 void AssetManager::createMeshData(const std::string& meshID, const MeshFileData& meshFileData)
 {
 	if (mLoadData.contains(meshID)) return; //すでに読み込まれたオブジェクトはスルー
@@ -97,9 +99,7 @@ void AssetManager::createMeshData(const std::string& meshID, const MeshFileData&
 	//メッシュパーツ数を読み込み、メモリを確保
 	int numParts = json["numParts"].get<int>();
 	meshData->NumParts = numParts;
-	meshData->NumVertices.resize(numParts);
-	meshData->VertexBuf.resize(numParts);
-	meshData->VertexBufView.resize(numParts);
+	meshData->VertexBuf.reserve(numParts);
 	meshData->Material.resize(3 * numParts); 
 	meshData->TextureName.resize(numParts);
 	meshData->Scale = XMFLOAT3(meshFileData.scale[0], meshFileData.scale[1], meshFileData.scale[2]);
@@ -130,22 +130,10 @@ void AssetManager::createMeshData(const std::string& meshID, const MeshFileData&
 				vertices[i * NumElementsPerVertex + 7] = texcoords[i * 2 + 1];
 			}
 
-			//インデックスを使用しない描画の時に、これを使用するので取っておく
-			meshData->NumVertices[k] = numVertices;
-
 			//頂点バッファをつくる
-			UINT sizeInByte = sizeof(float) * vertices.size();//全バイト数
-			HRESULT hr = mGraphic.createBuf(sizeInByte,meshData->VertexBuf[k]);
-			assert(SUCCEEDED(hr));
+			VertexBufferDescription desc = {numVertices, NumElementsPerVertex};
+			meshData->VertexBuf.emplace_back(*mGraphic.getDevice(), desc, vertices);
 
-			//頂点バッファに生データをコピー
-			hr = mGraphic.updateBuf(vertices.data(), sizeInByte, meshData->VertexBuf[k]);
-			assert(SUCCEEDED(hr));
-
-			//位置バッファのビューを初期化しておく。（ディスクリプタヒープに作らなくてよい）
-			meshData->VertexBufView[k].BufferLocation = meshData->VertexBuf[k]->GetGPUVirtualAddress();
-			meshData->VertexBufView[k].SizeInBytes = sizeInByte;//全バイト数
-			meshData->VertexBufView[k].StrideInBytes = sizeof(float) * NumElementsPerVertex;//１頂点のバイト数
 		}
 		//マテリアル
 		{
@@ -227,71 +215,6 @@ UINT AssetManager::getSpriteIndicesSize() {
 	return std::size(spriteIndices);
 }
 
-int AssetManager::getCBEndIndex(int size)
-{
-	int index = 0;
-	
-	//解放されたメモリがあれば優先して使う
-	if (!mClearedMemory.empty()) {
-		for (auto& [key, value] : mClearedMemory) {
-			//要求サイズより、空いているサイズが大きければ使用する
-			if (value >= size) {
-				index = key;
-				int newSize = value - size;			//要求サイズ分空いているメモリを減らす
-
-				//空いているメモリが0になった場合
-				if (newSize == 0) {
-					mClearedMemory.erase(key);
-				}
-				//空いているメモリが0より大きい場合
-				else {
-					mClearedMemory[index + size] = newSize;
-					mClearedMemory.erase(key);
-				}
-
-				return index;
-			}
-		}
-	}
-	
-	//解放されたメモリがなければ、最後尾のインデックスを取得
-	index = mCBEndIndex;
-	mCBEndIndex += size;
-	return index;
-}
-
-int AssetManager::getHeapEndIndex(int size)
-{
-	int index = 0;
-	//解放されたヒープがあれば優先して使う
-	if (!mClearedHeap.empty()) {
-		for (auto& [key, value] : mClearedHeap) {
-			//要求サイズより、空いているサイズが大きければ使用する
-			if (value >= size) {
-				index = key;
-				int newSize = value - size;			//要求サイズ分空いているヒープを減らす
-
-				//空いているヒープが0になった場合
-				if (newSize == 0) {
-					mClearedHeap.erase(key);
-				}
-				//空いているヒープが0より大きい場合
-				else {
-					mClearedHeap[index + size] = newSize;
-					mClearedHeap.erase(key);
-				}
-
-				return index;
-			}
-		}
-	}
-
-	//解放されたヒープがなければ、最後尾のインデックスを取得
-	index = mHeapEndIndex;
-	mHeapEndIndex += size;
-	return index;
-}
-
 MeshData* AssetManager::getMeshData(const std::string& meshID)
 {
 	auto iter = mLoadData.find(meshID);
@@ -321,126 +244,22 @@ MeshData* AssetManager::getMeshData(const std::string& meshID)
 SpriteData AssetManager::getSpriteData()
 {
 	SpriteData spriteData = {
-		mSpriteVertexBufView,
-		mSpriteIndexBufView
+		mSpriteVertexBuf->getView(),
+		mSpriteIndexBuf->getView()
 	};
 
 	return spriteData;
-}
-
-void AssetManager::deleteMemory(int index, int size)
-{
-	int resultIndex = index;
-	int resultSize = size;
-
-	auto iter = mClearedMemory.lower_bound(index);
-	auto preIter = iter;
-
-	//解放するメモリの直前に連続する解放されたメモリがあるか確認
-	if (preIter != mClearedMemory.begin()) {
-		preIter--;
-		int preEndIndex = preIter->first + preIter->second;
-
-		//連続していた場合
-		if (preEndIndex == index) {
-			resultIndex = preIter->first;
-			resultSize += preIter->second;
-			preIter->second = resultSize;
-		}
-		//連続していない場合
-		else {
-			mClearedMemory[resultIndex] = resultSize;
-			preIter++;
-		}
-	}
-	else {
-		mClearedMemory[resultIndex] = resultSize;
-		preIter--;
-	}
-
-	//解放するメモリの直後に連続する解放されたメモリがあるか確認
-	if (iter != mClearedMemory.end()) {
-		if (iter->first == resultIndex + resultSize) {
-			//連続していた場合
-			preIter->second += iter->second;
-			mClearedMemory.erase(iter);
-		}
-	}
-	
-}
-
-void AssetManager::deleteHeap(int index, int size)
-{
-	int resultIndex = index;
-	int resultSize = size;
-
-	auto iter = mClearedHeap.lower_bound(index);
-	auto preIter = iter;
-
-	//解放するヒープの直前に連続する解放されたヒープがあるか確認
-	if (preIter != mClearedHeap.begin()) {
-		preIter--;
-		int preEndIndex = preIter->first + preIter->second;
-
-		//連続していた場合
-		if (preEndIndex == index) {
-			resultIndex = preIter->first;
-			resultSize += preIter->second;
-			preIter->second = resultSize;
-		}
-		//連続していない場合
-		else {
-			mClearedHeap[resultIndex] = resultSize;
-			preIter++;
-		}
-	}
-	else {
-		mClearedHeap[resultIndex] = resultSize;
-		preIter--;
-	}
-
-	//解放するヒープの直後に連続する解放されたヒープがあるか確認
-	if (iter != mClearedHeap.end()) {
-		if (iter->first == resultIndex + resultSize) {
-			//連続していた場合
-			preIter->second += iter->second;
-			mClearedHeap.erase(iter);
-		}
-	}
-	
 }
 
 void AssetManager::createSpriteBuffers()
 {
 	{
 		//頂点バッファの作成
-		UINT sizeInByte = sizeof(spriteVertices);
-		HRESULT hr = mGraphic.createBuf(sizeInByte, mSpriteVertexBuf);
-		assert(SUCCEEDED(hr));
-
-		//頂点バッファに生データをコピー
-		hr = mGraphic.updateBuf(spriteVertices, sizeInByte, mSpriteVertexBuf);
-		assert(SUCCEEDED(hr));
-
-		//位置バッファのビューを初期化しておく。（ディスクリプタヒープに作らなくてよい）
-		mSpriteVertexBufView.BufferLocation = mSpriteVertexBuf->GetGPUVirtualAddress();
-		mSpriteVertexBufView.SizeInBytes = sizeInByte;//全バイト数
-		mSpriteVertexBufView.StrideInBytes = sizeof(float) * 4;//１頂点のバイト数
-	}
-	{
+		VertexBufferDescription desc = { spriteVertices.size(), 4};
+		mSpriteVertexBuf = std::make_unique<VertexBuffer>(*mGraphic.getDevice(), desc, spriteVertices);
+	
 		//インデックスバッファの作成
-		UINT sizeInByte = sizeof(spriteIndices);
-		HRESULT hr = mGraphic.createBuf(sizeInByte, mSpriteIndexBuf);
-		assert(SUCCEEDED(hr));
-
-		//インデックスバッファに生データをコピー
-		hr = mGraphic.updateBuf(spriteIndices, sizeInByte, mSpriteIndexBuf);
-		assert(SUCCEEDED(hr));
-
-		//インデックスバッファービューを作る
-		mSpriteIndexBufView.BufferLocation = mSpriteIndexBuf->GetGPUVirtualAddress();
-		mSpriteIndexBufView.SizeInBytes = sizeInByte;//全バイト数
-		mSpriteIndexBufView.Format = DXGI_FORMAT_R16_UINT;//UINT16
+		mSpriteIndexBuf = std::make_unique<IndexBuffer>(*mGraphic.getDevice(), sizeof(spriteIndices), spriteIndices);
 	}
 }
 

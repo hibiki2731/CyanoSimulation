@@ -20,7 +20,7 @@ void MeshWorldCBSuballocation::updateFlashIntensity(float flashIntensity)
 	mData.flashIntensity = flashIntensity;
 }
 
-void MeshWorldCBSuballocation::apllyChanges(const int frame)
+void MeshWorldCBSuballocation::applyChanges(const int frame)
 {
 	memcpy(mBuffersOnCPU[frame], &mData, mSizeInBytes.get());
 }

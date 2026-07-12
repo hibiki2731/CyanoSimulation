@@ -15,7 +15,7 @@ Object::Object(Scene& scene, const std::string& name, const std::string& meshID,
 	mPosition = XMFLOAT3(x, 0, z);
 
 	//メッシュコンポーネントの作成
-	auto mesh = std::make_unique<MeshComponent>(*this);
+	auto mesh = std::make_unique<MeshComponent>(*this, scene.getGame().getGraphic().getMeshBaseCBSuballocation());
 	mesh->create(meshID);
 	//所有権をActorに渡す
 	addComponent(std::move(mesh));

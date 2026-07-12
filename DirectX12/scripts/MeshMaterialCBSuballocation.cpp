@@ -20,12 +20,12 @@ void MeshMaterialCBSuballocation::updateSpecular(const XMFLOAT4& specular)
 	mData.specular = specular;
 }
 
-void MeshMaterialCBSuballocation::apllyChanges(const int frame)
+void MeshMaterialCBSuballocation::applyChanges(const int frame)
 {
 	memcpy(mBuffersOnCPU[frame], &mData, mSizeInBytes.get());
 }
 
-void MeshMaterialCBSuballocation::apllyChanges()
+void MeshMaterialCBSuballocation::applyChanges()
 {
 	memcpy(mBuffersOnCPU[0], &mData, mSizeInBytes.get());
 	memcpy(mBuffersOnCPU[1], &mData, mSizeInBytes.get());
