@@ -10,6 +10,7 @@
 #include "AudioManager.h"
 #include "Scene.h"
 #include "GUIDebugger.h"
+#include "CyanoSimulator.h"
 
 Game::Game(){
 	mUpdatingActors = false;

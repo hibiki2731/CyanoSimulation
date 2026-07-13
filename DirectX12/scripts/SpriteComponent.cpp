@@ -163,6 +163,11 @@ void SpriteComponent::setPosition(const XMFLOAT3& position)
 	mPosition = position;
 }
 
+void SpriteComponent::setPosition(const XMFLOAT2& position)
+{
+	mPosition = XMFLOAT3(position.x, position.y, mPosition.z);
+}
+
 void SpriteComponent::setScale(const XMFLOAT2& scale)
 {
 	mScale = scale;

@@ -32,8 +32,8 @@ public:
 
 	auto operator<=>(const ConstantBufferAddress& other) const = default;
 
-	ConstantBufferAddress operator=(const ConstantBufferAddress& other) {
-		return ConstantBufferAddress(other.mAddress);
+	void operator=(const ConstantBufferAddress& other) {
+		mAddress = other.mAddress;
 	}
 
 private:

@@ -197,6 +197,7 @@
     <ClCompile Include="scripts\AudioManager.cpp" />
     <ClCompile Include="scripts\ComputeShader.cpp" />
     <ClCompile Include="scripts\ConstantBuffer.cpp" />
+    <ClCompile Include="scripts\CyanoSimulator.cpp" />
     <ClCompile Include="scripts\DescriptorHeap.cpp" />
     <ClCompile Include="scripts\FadeGenerator.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
@@ -245,6 +246,7 @@
     <ClInclude Include="scripts\AudioManager.h" />
     <ClInclude Include="scripts\ComputeShader.h" />
     <ClInclude Include="scripts\ConstantBuffer.h" />
+    <ClInclude Include="scripts\CyanoSimulator.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DescriptorHeap.h" />
     <ClInclude Include="scripts\FadeGenerator.h" />

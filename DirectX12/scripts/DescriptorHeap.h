@@ -46,8 +46,8 @@ public:
 	}
 	int getIndex() const { return mIndex; }
 
-	SlotIndex operator=(const SlotIndex& other) {
-		return SlotIndex(other.mIndex);
+	void operator=(const SlotIndex& other) {
+		mIndex = other.getIndex();
 	}
 
 	SlotIndex operator+(const SlotIndex& other) const {

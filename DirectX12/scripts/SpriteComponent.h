@@ -26,6 +26,7 @@ public:
 
 	//描画範囲のセッター
 	void setPosition(const XMFLOAT3& position);
+    void setPosition(const XMFLOAT2& position);
 	void setScale(const XMFLOAT2& scale);
 	void setRotation(const float rotation);
     void setSpriteSize(const XMFLOAT2& size);

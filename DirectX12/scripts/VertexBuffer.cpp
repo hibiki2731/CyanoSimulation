@@ -7,6 +7,10 @@ VertexBuffer::VertexBuffer(ID3D12Device& device, const VertexBufferDescription& 
 	mSizeInBytes(desc.numVertices * desc.numElementsPerVertex * sizeof(float)),
 	mStrideInBytes(desc.numElementsPerVertex * sizeof(float))
 {
+	//入力されたdescとdataの整合性がとれているか確認
+	assert(desc.numElementsPerVertex * desc.numVertices == data.size()
+		&& "入力された頂点数、1頂点あたりの要素数とデータのサイズが一致しません");
+
 	//バッファの確保
 	createBuf(device);
 

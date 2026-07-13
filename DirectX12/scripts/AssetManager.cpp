@@ -258,7 +258,7 @@ void AssetManager::createSpriteBuffers()
 		mSpriteVertexBuf = std::make_unique<VertexBuffer>(*mGraphic.getDevice(), desc, spriteVertices);
 	
 		//インデックスバッファの作成
-		mSpriteIndexBuf = std::make_unique<IndexBuffer>(*mGraphic.getDevice(), spriteIndices.size() * sizeof(UINT16), spriteIndices);
+		mSpriteIndexBuf = std::make_unique<IndexBuffer>(*mGraphic.getDevice(), spriteIndices);
 	}
 }
 

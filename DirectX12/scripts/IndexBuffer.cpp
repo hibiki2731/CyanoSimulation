@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 #include "IndexBuffer.h"
 
-IndexBuffer::IndexBuffer(ID3D12Device& device, const UINT sizeInBytes, const std::vector<UINT16>& data) 
-	:mSizeInBytes(sizeInBytes)
+IndexBuffer::IndexBuffer(ID3D12Device& device, const std::vector<UINT16>& data) 
+	:mSizeInBytes(data.size() * sizeof(UINT16))
 {
 	//バッファの確保
 	createBuf(device);

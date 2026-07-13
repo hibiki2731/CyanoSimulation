@@ -7,8 +7,8 @@
 #include "directx/d3dx12.h"
 
 //バッファの確保
-//ビュー作成
-//ビュー取得
+
+//全頂点数と1頂点あたりの要素数を保管
 struct VertexBufferDescription {
 	UINT numVertices;	//全頂点数
 	UINT numElementsPerVertex;		//1頂点あたりの要素数

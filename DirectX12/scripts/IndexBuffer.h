@@ -9,7 +9,7 @@
 class IndexBuffer
 {
 public:
-	IndexBuffer(ID3D12Device& device, const UINT sizeInBytes, const std::vector<UINT16>& data);
+	IndexBuffer(ID3D12Device& device, const std::vector<UINT16>& data);
 
 	const D3D12_INDEX_BUFFER_VIEW& getView() const { return mIndexBufferView; }
 	
