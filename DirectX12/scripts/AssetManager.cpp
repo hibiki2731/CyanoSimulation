@@ -8,7 +8,7 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
-static std::vector<float> spriteVertices = {
+std::vector<float> spriteVertices = {
 	0.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 0.3333f, 0.0f, 0.3333f,
 	 0.3333f, 0.0f, 0.3333f, 0.0f,
@@ -27,7 +27,7 @@ static std::vector<float> spriteVertices = {
 	 1.0f,  1.0f, 1.0f, 1.0f,
 };
 
-static std::vector<UINT16> spriteIndices = {
+std::vector<UINT16> spriteIndices = {
 	0, 1, 2,
 	2, 1, 3,
 	2, 3, 4,
@@ -48,12 +48,11 @@ static std::vector<UINT16> spriteIndices = {
 	14, 13, 15,
 };
 
-static const int NumElementsPerVertex = 8;
+static const int NumElementsPerMeshVertex = 8;
 
 AssetManager::AssetManager(Graphic& graphic)
 	: mGraphic(graphic)
 {
-	//Base3DDataが先頭のメモリを使用する
 	createSpriteBuffers();
 
 	std::fstream file("assets/data/MeshData.json");
@@ -118,20 +117,20 @@ void AssetManager::createMeshData(const std::string& meshID, const MeshFileData&
 			int numVertices = positions.size() / 3;
 
 			//一つのvector配列に格納
-			std::vector<float> vertices(numVertices * NumElementsPerVertex);
+			std::vector<float> vertices(numVertices * NumElementsPerMeshVertex);
 			for (int i = 0; i < numVertices; i++) {
-				vertices[i * NumElementsPerVertex] = positions[i * 3];
-				vertices[i * NumElementsPerVertex + 1] = positions[i * 3 + 1];
-				vertices[i * NumElementsPerVertex + 2] = positions[i * 3 + 2];
-				vertices[i * NumElementsPerVertex + 3] = normals[i * 3];
-				vertices[i * NumElementsPerVertex + 4] = normals[i * 3 + 1];
-				vertices[i * NumElementsPerVertex + 5] = normals[i * 3 + 2];
-				vertices[i * NumElementsPerVertex + 6] = texcoords[i * 2];
-				vertices[i * NumElementsPerVertex + 7] = texcoords[i * 2 + 1];
+				vertices[i * NumElementsPerMeshVertex] = positions[i * 3];
+				vertices[i * NumElementsPerMeshVertex + 1] = positions[i * 3 + 1];
+				vertices[i * NumElementsPerMeshVertex + 2] = positions[i * 3 + 2];
+				vertices[i * NumElementsPerMeshVertex + 3] = normals[i * 3];
+				vertices[i * NumElementsPerMeshVertex + 4] = normals[i * 3 + 1];
+				vertices[i * NumElementsPerMeshVertex + 5] = normals[i * 3 + 2];
+				vertices[i * NumElementsPerMeshVertex + 6] = texcoords[i * 2];
+				vertices[i * NumElementsPerMeshVertex + 7] = texcoords[i * 2 + 1];
 			}
 
 			//頂点バッファをつくる
-			VertexBufferDescription desc = {numVertices, NumElementsPerVertex};
+			VertexBufferDescription desc = {numVertices, NumElementsPerMeshVertex};
 			meshData->VertexBuf.emplace_back(*mGraphic.getDevice(), desc, vertices);
 
 		}
@@ -208,11 +207,11 @@ ID3D12Resource* AssetManager::getShaderResource(const std::string& textureName)
 
 UINT AssetManager::getSpriteVerticesSize()
 {
-	return std::size(spriteVertices);
+	return spriteVertices.size();
 }
 
 UINT AssetManager::getSpriteIndicesSize() {
-	return std::size(spriteIndices);
+	return spriteIndices.size();
 }
 
 MeshData* AssetManager::getMeshData(const std::string& meshID)
@@ -255,11 +254,11 @@ void AssetManager::createSpriteBuffers()
 {
 	{
 		//頂点バッファの作成
-		VertexBufferDescription desc = { spriteVertices.size(), 4};
+		VertexBufferDescription desc = { spriteVertices.size() / 4, 4};
 		mSpriteVertexBuf = std::make_unique<VertexBuffer>(*mGraphic.getDevice(), desc, spriteVertices);
 	
 		//インデックスバッファの作成
-		mSpriteIndexBuf = std::make_unique<IndexBuffer>(*mGraphic.getDevice(), sizeof(spriteIndices), spriteIndices);
+		mSpriteIndexBuf = std::make_unique<IndexBuffer>(*mGraphic.getDevice(), spriteIndices.size() * sizeof(UINT16), spriteIndices);
 	}
 }
 

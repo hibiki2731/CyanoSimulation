@@ -7,6 +7,7 @@ SpriteCBSuballocation::SpriteCBSuballocation(const AlignedSizeInBytes& sizeInByt
 
 void SpriteCBSuballocation::applyChanges(int frame)
 {
+	memcpy(mBuffersOnCPU[frame], &mData, mSizeInBytes.get());
 }
 
 void SpriteCBSuballocation::updateWorld(const XMMATRIX& world)

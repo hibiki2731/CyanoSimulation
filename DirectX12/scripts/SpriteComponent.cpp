@@ -131,6 +131,8 @@ void SpriteComponent::loadFileAndCreate(const std::string& structName)
 
 void SpriteComponent::draw()
 {
+	if (!isInitialized) return;
+
 	//コンスタントバッファの更新
 	//ワールドマトリックス
 	mSpriteCBSubData->updateWorld(XMMatrixIdentity()

@@ -67,6 +67,7 @@ private:
 	//スプライト用
 	std::unique_ptr<VertexBuffer> mSpriteVertexBuf;
 	std::unique_ptr<IndexBuffer> mSpriteIndexBuf;
+
 	std::unordered_map<std::string, XMFLOAT2> mTextureSizeData;
 
 	//json
