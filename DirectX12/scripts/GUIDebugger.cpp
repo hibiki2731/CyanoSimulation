@@ -13,6 +13,7 @@
 #include "unordered_map"
 #include "Object.h"
 #include "MeshComponent.h"
+#include "CyanoSimulator.h"
 
 //ImGUi用に必要なアロケーター
 struct ExampleDescriptorHeapAllocator
@@ -109,6 +110,7 @@ GUIDebugger::GUIDebugger(Game& game)
 	ImGui_ImplDX12_Init(&init_info);
 
 	mCameraPos = { 0.0f, 0.0f, 0.0f };
+	mCyanoIdx = 0;
 }
 
 GUIDebugger::~GUIDebugger()
@@ -146,6 +148,47 @@ void GUIDebugger::drawCameraPos()
 
 	ImGui::End();
 
+}
+
+void GUIDebugger::setCyanoSimulator(CyanoSimulator* cyanoSim)
+{
+	mCyanoSimulator = cyanoSim;
+}
+
+void GUIDebugger::drawCyanoHeadPos()
+{
+	if (!mCyanoSimulator) return;
+
+	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_Appearing);
+	ImGui::Begin("HeadPos");
+
+	//シアノのインデックスを設定
+	ImGui::InputInt("Cyano Idx:", &mCyanoIdx);
+
+	//インデックスが範囲内か判定
+	const int maxIdx = mCyanoSimulator->mIndivisual_headPointIdx.size() - 1;
+	if (mCyanoIdx > maxIdx || mCyanoIdx < 0) {
+		ImGui::End();
+		return;
+	}
+
+	//頭の位置を表示
+	const XMFLOAT2 cyanoPos = mCyanoSimulator->mPoints_pos[mCyanoSimulator->mIndivisual_headPointIdx[mCyanoIdx]];
+	std::string text = "x: " + std::to_string(cyanoPos.x) + " y: " + std::to_string(cyanoPos.y) + "\n";
+	ImGui::Text(text.c_str());
+
+	//角度を表示
+	const float angle = mCyanoSimulator->mIndivisual_angle[mCyanoIdx];
+	text = "angle: " + std::to_string(angle) + "\n";
+	ImGui::Text(text.c_str());
+
+	//セルインデックスを表示
+	const int cellIdx = mCyanoSimulator->calcCellIdx(cyanoPos);
+	text = "cellIdx: " + std::to_string(cellIdx) + "\n";
+	ImGui::Text(text.c_str());
+
+	ImGui::End();
+	
 }
 
 static int selectedIndex = -1;          //選択中のオブジェクトのインデックス

@@ -17,6 +17,9 @@ public:
 	void end();
 	//プレイヤーの現在位置を表示
 	void drawCameraPos();
+	//シアノの位置を表示
+	void setCyanoSimulator(class CyanoSimulator* cyanoSim);
+	void drawCyanoHeadPos();
 	//オブジェクトの各種パラメータを操作するためのGUIを描画
 	void drawObjectDebugGUI(std::vector<class Object*>& objects);
 
@@ -75,5 +78,8 @@ private:
 	std::string 					mSpriteFilePathBuffer = "default.png";
 	//カメラの位置
 	XMFLOAT3 						mCameraPos;
+	//シアノの頭の位置
+	int								mCyanoIdx;
+	class CyanoSimulator*			mCyanoSimulator;
 	
 };

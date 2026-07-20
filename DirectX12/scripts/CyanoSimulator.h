@@ -7,12 +7,23 @@ public:
 	CyanoSimulator(Scene& scene);
 	void inputActor() override;
 
+	void updateActor() override;
 	void addCyano(const XMFLOAT2& headPos, float length, float speed);
 
 	const std::string getClassName() const { return "CyanoSimulator"; }
 
 private:
 	void addCell(const XMFLOAT2& pos, int idx);
+	void deleteCell(int idx);
+	void createHead();
+	int calcCellIdx(const XMFLOAT2& pos);
+
+	//壁との衝突判定
+	bool isNearWall(const int cellIdx);
+	XMVECTOR calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHeadVec, const float speed);
+
+	//角度の更新
+	float calcNewAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
 	static const int GRID_WIDTH;
 	static const int GRID_HEIGHT;
@@ -28,11 +39,17 @@ private:
 
 	//個体ごとのデータ
 	std::vector<int> mIndivisual_headPointIdx;	//頭のインデックス
+	std::vector<float> mIndivisual_angle;		//個体の頭の角度
+	std::vector<float> mIndivisual_speed;
 	//シアノバクテリアの各個体のpositionsの占有領域
 	std::vector<int> mIndivisual_beginPointIdx;	//占有領域の先頭インデックス
 	std::vector<int> mIndivisual_size;				//占有領域のサイズ
 
 	std::vector<class SpriteComponent*> mPoints_sprites;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
 
 };
 

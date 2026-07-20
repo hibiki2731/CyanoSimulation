@@ -175,8 +175,8 @@ void Scene::drawDebugGUI()
 {
 
 	if (mDebugFlag) {
-		//カメラ位置の表示
-		mGame.getGUIDebugger().drawCameraPos();
+		//シアノの位置を可視化
+		mGame.getGUIDebugger().drawCyanoHeadPos();
 		//オブジェクトの編集
 		mGame.getGUIDebugger().drawObjectDebugGUI(mDebugObjects);
 	}
