@@ -14,6 +14,7 @@
 #include "Object.h"
 #include "MeshComponent.h"
 #include "CyanoSimulator.h"
+#include "timer.h"
 
 //ImGUi用に必要なアロケーター
 struct ExampleDescriptorHeapAllocator
@@ -160,7 +161,10 @@ void GUIDebugger::drawCyanoHeadPos()
 	if (!mCyanoSimulator) return;
 
 	ImGui::SetNextWindowSize(ImVec2(400, 300), ImGuiCond_Appearing);
-	ImGui::Begin("HeadPos");
+	ImGui::Begin("Cyano");
+
+	//シアノの更新間隔の設定
+	ImGui::InputFloat("update rate", &mCyanoSimulator->mUpdateInterval);
 
 	//シアノのインデックスを設定
 	ImGui::InputInt("Cyano Idx:", &mCyanoIdx);
@@ -180,6 +184,10 @@ void GUIDebugger::drawCyanoHeadPos()
 	//角度を表示
 	const float angle = mCyanoSimulator->mIndivisual_angle[mCyanoIdx];
 	text = "angle: " + std::to_string(angle) + "\n";
+	ImGui::Text(text.c_str());
+
+	const float angularVelocity = mCyanoSimulator->mIndivisual_angularVelocity[mCyanoIdx];
+	text = "angular velocity: " + std::to_string(angularVelocity) + "\n";
 	ImGui::Text(text.c_str());
 
 	//セルインデックスを表示
@@ -207,6 +215,16 @@ void GUIDebugger::drawObjectDebugGUI(std::vector<Object*>& objects)
 	//エディタウィンドウ
 	if (showEditorWindow && selectedIndex >= 0 && selectedIndex < objects.size()) 
 		objectEditer(objects[selectedIndex], objects);
+
+}
+
+void GUIDebugger::draeFrameRate()
+{
+	ImGui::SetNextWindowSize(ImVec2(150, 50), ImGuiCond_Appearing);
+	ImGui::Begin("FrameRate");
+	std::string text = "frame rate: " + std::to_string(getFrameRate()) + "\n";
+	ImGui::Text(text.c_str());
+	ImGui::End();
 
 }
 

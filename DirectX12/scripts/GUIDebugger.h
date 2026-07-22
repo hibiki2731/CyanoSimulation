@@ -22,7 +22,8 @@ public:
 	void drawCyanoHeadPos();
 	//オブジェクトの各種パラメータを操作するためのGUIを描画
 	void drawObjectDebugGUI(std::vector<class Object*>& objects);
-
+	//フレームレートの表示
+	void draeFrameRate();
 	//カメラ位置の更新
 	void updateCameraPos(XMFLOAT3& position);
 

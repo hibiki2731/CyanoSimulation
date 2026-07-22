@@ -26,6 +26,8 @@ void Game::runLoop()
 		input();
 		update();
 		draw();
+
+		adjustFrameRate(60);
 	}
 }
 

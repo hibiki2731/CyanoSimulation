@@ -24,3 +24,14 @@ float Random::dist(float l, float r)
 	std::uniform_real_distribution<> dist(l, r);
 	return dist(mt);
 }
+
+float Random::normalDist(float l, float r)
+{
+	static std::random_device seed_gen;
+	static unsigned seed = seed_gen();
+	static std::mt19937 mt(seed);
+
+	//正規分布に基づく乱数を取得
+	std::normal_distribution<float> normalDist{ l, r };
+	return normalDist(mt);
+}

@@ -2,7 +2,8 @@
 #include "Math.h"
 #include "SpriteComponent.h"
 #include "input.h"
-#include <iostream>
+#include "Random.h"
+#include "timer.h"
 
 const int CyanoSimulator::CELL_SIZE = 40;
 const int CyanoSimulator::GRID_WIDTH = Graphic::ClientWidth / CELL_SIZE;
@@ -20,25 +21,32 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 void CyanoSimulator::inputActor()
 {
 	if (isKeyJustPressed('I'))
-		addCyano(XMFLOAT2(500.0f, 300.0f), 100, 10);
+		addCyano(XMFLOAT2(500.0f, 300.0f), 100, 5);
+
+	if (isKeyJustPressed('O'))
+		add100Cyano();
 }
 
 void CyanoSimulator::updateActor()
 {
+	if (!adjustUpdateRate()) return;
+
+	updateAngle();
 	createHead();
 }
 
 void CyanoSimulator::addCyano(const XMFLOAT2& headPos, float length, float speed)
 {
+	//個体のサイズ
+	const int size = static_cast<int>(length / speed);
 	//個体の点配列の先頭インデックス
 	int beginIdx = mPoints_pos.size();
 	mIndivisual_beginPointIdx.push_back(beginIdx);
-	mIndivisual_headPointIdx.push_back(beginIdx);
-	//個体のサイズ
-	const int size = static_cast<int>(length / speed);
+	mIndivisual_headPointIdx.push_back(beginIdx + size - 1);
 	mIndivisual_size.push_back(size);
 	//個体の先頭の角度
-	mIndivisual_angle.push_back(-XM_PIDIV2);
+	mIndivisual_angle.push_back(0.0f);
+	mIndivisual_angularVelocity.push_back(0.0f);
 	mIndivisual_speed.push_back(speed);
 
 	//点配列への追加
@@ -47,7 +55,6 @@ void CyanoSimulator::addCyano(const XMFLOAT2& headPos, float length, float speed
 	mPoints_sprites.resize(mPoints_sprites.size() + size);
 	mCellNext.resize(mCellNext.size() + size);
 	mCellPrev.resize(mCellPrev.size() + size);
-	mIndivisual_angle.resize(mIndivisual_angle.size() + size);
 	for (int i = 0; i < size; i++) {
 		//点の位置を算出
 		auto pos = headPos + XMFLOAT2(speed * i, 0);
@@ -69,13 +76,25 @@ void CyanoSimulator::addCyano(const XMFLOAT2& headPos, float length, float speed
 
 }
 
+//何秒に一回更新するのか
+bool CyanoSimulator::adjustUpdateRate()
+{
+	mUpdateTimer += deltaTime;
+	if (mUpdateTimer > mUpdateInterval) {
+		mUpdateTimer = mUpdateTimer - mUpdateInterval;
+		return true;
+	}
+
+	return false;
+}
+
 void CyanoSimulator::addCell(const XMFLOAT2& pos, int idx)
 {
 	//セル番号を計算
 	const int cellIdx = calcCellIdx(pos);
 
 	int oldHead = -1;
-	int it = mCellHeads[idx];
+	int it = mCellHeads[cellIdx];
 	if (it != -1) oldHead = it;
 
 	mCellNext[idx] = oldHead;
@@ -117,8 +136,6 @@ void CyanoSimulator::createHead()
 		XMVECTOR xVec = XMVectorSet(1.0f, 0.0f, 0.0f, 1.0f);
 		XMVECTOR newHeadVec = XMVectorAdd(XMVectorScale(XMVector2TransformNormal(xVec, rotX), speed), preHeadVec);
 
-		//衝突判定
-
 		//壁との衝突反転
 		XMVECTOR correctedHeadVec = calcWallHit(preHeadPos, newHeadVec, speed);
 
@@ -126,21 +143,19 @@ void CyanoSimulator::createHead()
 		//セルの変更
 
 		//新たな角度の算出
-		const float newAngle = calcNewAngle(preHeadVec, correctedHeadVec, angle);
-
-		XMFLOAT2 completedNewHeadPos;
-		XMStoreFloat2(&completedNewHeadPos, correctedHeadVec);
-
+		const float newAngle = calcDeltaHeadAngle(preHeadVec, correctedHeadVec, angle);
+		mIndivisual_angle[indivisualIdx] = newAngle;
 
 		//新たな頭のインデックスを計算
 		const int newHeadIdx = preHeadIdx + 1 >= mIndivisual_beginPointIdx[indivisualIdx] + mIndivisual_size[indivisualIdx] ? mIndivisual_beginPointIdx[indivisualIdx] : preHeadIdx + 1;
 		//最後尾をセルから削除
 		deleteCell(newHeadIdx);
 		//点の更新
+		XMFLOAT2 completedNewHeadPos;
+		XMStoreFloat2(&completedNewHeadPos, correctedHeadVec);
 		mIndivisual_headPointIdx[indivisualIdx] = newHeadIdx;
 		mPoints_pos[newHeadIdx] = completedNewHeadPos;
 		mPoints_sprites[newHeadIdx]->setPosition(completedNewHeadPos);
-		mIndivisual_angle[indivisualIdx] = newAngle;
 
 		//新たな点をセルに追加
 		addCell(completedNewHeadPos, newHeadIdx);
@@ -154,6 +169,12 @@ int CyanoSimulator::calcCellIdx(const XMFLOAT2& pos)
 	int cellIdx = static_cast<int>(pos.x) / CELL_SIZE + static_cast<int>(pos.y) / CELL_SIZE * GRID_WIDTH;
 
 	return cellIdx;
+}
+
+void CyanoSimulator::add100Cyano()
+{
+	for(int i = 0; i < 100; i++) 
+		addCyano(XMFLOAT2(500.0f, 300.0f), 100, 5);
 }
 
 bool CyanoSimulator::isNearWall(const int cellIdx)
@@ -189,7 +210,37 @@ XMVECTOR CyanoSimulator::calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHe
 
 }
 
-float CyanoSimulator::calcNewAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle)
+//角度の更新
+constexpr float INTERACTION_INTENSITY = 2.0f;
+constexpr float PECLET_NUMBER = 4.0f;
+constexpr float ROOT2 = 1.41421356;
+constexpr float NOISE_INTENSITY = ROOT2 / PECLET_NUMBER;
+
+void CyanoSimulator::updateAngle()
+{
+	for (int indivisualIdx = 0; indivisualIdx < mIndivisual_headPointIdx.size(); indivisualIdx++) {
+		//角度の変位を計算
+		const float preTheta = mIndivisual_angle[indivisualIdx];
+		const float preOmega = mIndivisual_angularVelocity[indivisualIdx];
+		const float deltaTheta = preOmega - INTERACTION_INTENSITY * calcInteractionValue();
+
+		//各速度の変位を計算
+		const float noise = NOISE_INTENSITY * Random::normalDist(0.0f, 1.0f);
+		const float deltaOmega = -deltaTheta + noise;
+		
+		//角度、角速度を更新
+		mIndivisual_angle[indivisualIdx] += deltaTheta;
+		mIndivisual_angularVelocity[indivisualIdx] += deltaOmega;
+
+	}
+}
+
+float CyanoSimulator::calcInteractionValue()
+{
+	return 0.0f;
+}
+
+float CyanoSimulator::calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle)
 {
 	//移動方向ベクトルを算出
 	XMVECTOR moveVec = XMVectorSubtract(newHeadVec, preHeadVec);
@@ -201,22 +252,14 @@ float CyanoSimulator::calcNewAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, f
 	//lenSq < epsilonの場合、maskを全ビット1にする
 	XMVECTOR mask = XMVectorLess(lenSq, epsilon);
 
-
-	//moveVecの大きさが十分に大きい場合の角度を取得
-	XMVECTOR moveDir = XMVector2Normalize(moveVec);
-	//x軸との角度を求める
-	XMVECTOR dirtAngle = XMVector2AngleBetweenNormals(moveDir, XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
-	XMVECTOR upVec = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	XMVECTOR positiveAngle = XMVector2AngleBetweenNormals(moveDir, upVec);
-	XMVECTOR positiveMask = XMVectorLess(positiveAngle, epsilon);
-	XMVECTOR newAngle = XMVectorSelect(XMVectorScale(dirtAngle, -1), dirtAngle, positiveMask);
-
+	//現在の角度
+	XMVECTOR currentAngle = XMVectorSet(preAngle, 0.0f, 0.0f, 0.0f);
 
 	//moveVecの大きさが0に小さい場合の角度を取得
 	XMVECTOR rotatedAngle = XMVectorSet(preAngle + XM_PIDIV2, 0.0f, 0.0f, 0.0f);
 
 	//マスクの値から、出力する角度を選択
-	XMVECTOR result = XMVectorSelect(newAngle, rotatedAngle, mask);
+	XMVECTOR result = XMVectorSelect(currentAngle, rotatedAngle, mask);
 
 	return XMVectorGetX(result);
 

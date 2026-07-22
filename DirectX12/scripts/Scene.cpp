@@ -175,6 +175,8 @@ void Scene::drawDebugGUI()
 {
 
 	if (mDebugFlag) {
+		//フレームレートを可視化
+		mGame.getGUIDebugger().draeFrameRate();
 		//シアノの位置を可視化
 		mGame.getGUIDebugger().drawCyanoHeadPos();
 		//オブジェクトの編集

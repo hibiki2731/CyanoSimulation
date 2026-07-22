@@ -7,3 +7,6 @@ void setDeltaTime();
 float getDeltaTime();
 bool timer(int number, float interval);
 void resetTimer(int number);
+
+void adjustFrameRate(int frameRate);
+int getFrameRate();

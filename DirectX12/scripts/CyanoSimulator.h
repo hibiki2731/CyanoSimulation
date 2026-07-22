@@ -13,21 +13,30 @@ public:
 	const std::string getClassName() const { return "CyanoSimulator"; }
 
 private:
+	bool adjustUpdateRate();
 	void addCell(const XMFLOAT2& pos, int idx);
 	void deleteCell(int idx);
 	void createHead();
 	int calcCellIdx(const XMFLOAT2& pos);
+	void add100Cyano();
 
 	//壁との衝突判定
 	bool isNearWall(const int cellIdx);
 	XMVECTOR calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHeadVec, const float speed);
 
 	//角度の更新
-	float calcNewAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
+	void updateAngle();
+	float calcInteractionValue();
+	float calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
+	//空間分割法に用いるパラメータ
 	static const int GRID_WIDTH;
 	static const int GRID_HEIGHT;
 	static const int CELL_SIZE;
+
+	//更新頻度調整用のタイマー
+	float mUpdateInterval = 0.01f;
+	float mUpdateTimer = 0.0f;
 
 	//点毎のデータ
 	std::vector<XMFLOAT2> mPoints_pos;	//各点の位置
@@ -40,6 +49,7 @@ private:
 	//個体ごとのデータ
 	std::vector<int> mIndivisual_headPointIdx;	//頭のインデックス
 	std::vector<float> mIndivisual_angle;		//個体の頭の角度
+	std::vector<float> mIndivisual_angularVelocity;		//個体の頭の角速度
 	std::vector<float> mIndivisual_speed;
 	//シアノバクテリアの各個体のpositionsの占有領域
 	std::vector<int> mIndivisual_beginPointIdx;	//占有領域の先頭インデックス
