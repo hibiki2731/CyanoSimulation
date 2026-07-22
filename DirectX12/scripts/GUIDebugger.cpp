@@ -182,7 +182,8 @@ void GUIDebugger::drawCyanoHeadPos()
 	ImGui::Text(text.c_str());
 
 	//角度を表示
-	const float angle = mCyanoSimulator->mIndivisual_angle[mCyanoIdx];
+	const int headIdx = mCyanoSimulator->mIndivisual_headPointIdx[mCyanoIdx];
+	const float angle = mCyanoSimulator->mPoints_angle[headIdx];
 	text = "angle: " + std::to_string(angle) + "\n";
 	ImGui::Text(text.c_str());
 

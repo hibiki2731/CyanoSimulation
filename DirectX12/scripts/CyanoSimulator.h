@@ -25,11 +25,19 @@ private:
 	XMVECTOR calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHeadVec, const float speed);
 
 	//角度の更新
+	struct InteractParamater {
+		int interactNum = 0;
+		float interactValue = 0.0f;
+	};
+
 	void updateAngle();
-	float calcInteractionValue();
+	float calcInteractionValue(const int indivisualIdx, const XMFLOAT2& basePos, const float baseoAngle);
+	InteractParamater calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const InteractParamater& refParam, const XMFLOAT2& basePos, const float baseAngle);
 	float calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
 	//空間分割法に用いるパラメータ
+	static const float AREA_WIDTH;
+	static const float AREA_HEIGHT;
 	static const int GRID_WIDTH;
 	static const int GRID_HEIGHT;
 	static const int CELL_SIZE;
@@ -48,7 +56,7 @@ private:
 
 	//個体ごとのデータ
 	std::vector<int> mIndivisual_headPointIdx;	//頭のインデックス
-	std::vector<float> mIndivisual_angle;		//個体の頭の角度
+	std::vector<float> mPoints_angle;		//個体の頭の角度
 	std::vector<float> mIndivisual_angularVelocity;		//個体の頭の角速度
 	std::vector<float> mIndivisual_speed;
 	//シアノバクテリアの各個体のpositionsの占有領域

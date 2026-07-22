@@ -26,6 +26,10 @@ XMFLOAT2 operator/(const XMFLOAT2& v1, const float& val);
 
 class Math {
 public:
+	static float length(const XMFLOAT2& v);
+	static float distance(const XMFLOAT2& v1, const XMFLOAT2& v2);
+
+
 	static float length(const XMFLOAT3& v);
 	static XMFLOAT3 rotateY(const XMFLOAT3& v1, const float& rot);
 	static XMFLOAT3 rotateX(const XMFLOAT3& v1, const float& rot);

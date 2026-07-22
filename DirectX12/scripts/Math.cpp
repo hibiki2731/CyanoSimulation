@@ -122,9 +122,29 @@ XMFLOAT2 operator/(const XMFLOAT2& v1, const float& val)
 	return std::move(result);
 }
 
+float Math::length(const XMFLOAT2& v)
+{
+	XMVECTOR vec = XMLoadFloat2(&v);
+	XMVECTOR length = XMVector2Length(vec);
+	
+	return XMVectorGetX(length);
+}
+
+float Math::distance(const XMFLOAT2& v1, const XMFLOAT2& v2)
+{
+	XMVECTOR vec1 = XMLoadFloat2(&v1);
+	XMVECTOR vec2 = XMLoadFloat2(&v2);
+	XMVECTOR sub = XMVectorSubtract(vec1, vec2);
+	XMVECTOR length = XMVector2Length(sub);
+	return XMVectorGetX(length);
+}
+
 float Math::length(const XMFLOAT3& v)
 {
-	return  std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	XMVECTOR vec = XMLoadFloat3(&v);
+	XMVECTOR length = XMVector3Length(vec);
+	
+	return XMVectorGetX(length);
 }
 
 XMFLOAT3 Math::rotateY(const XMFLOAT3& v1, const float& rot)
