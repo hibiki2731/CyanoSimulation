@@ -227,6 +227,7 @@
     <ClCompile Include="scripts\MeshComponent.cpp" />
     <ClCompile Include="scripts\Object.cpp" />
     <ClCompile Include="scripts\pch.cpp" />
+    <ClCompile Include="scripts\Pipeline.cpp" />
     <ClCompile Include="scripts\Random.cpp" />
     <ClCompile Include="scripts\Scene.cpp" />
     <ClCompile Include="scripts\SceneManager.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="scripts\input.h" />
     <ClInclude Include="scripts\Math.h" />
     <ClInclude Include="scripts\MeshComponent.h" />
+    <ClInclude Include="scripts\Pipeline.h" />
     <ClInclude Include="scripts\Random.h" />
     <ClInclude Include="scripts\Scene.h" />
     <ClInclude Include="scripts\SceneManager.h" />
