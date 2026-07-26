@@ -165,6 +165,9 @@ void GUIDebugger::drawCyanoHeadPos()
 
 	//シアノの更新間隔の設定
 	ImGui::InputFloat("update rate", &mCyanoSimulator->mUpdateInterval);
+	ImGui::InputFloat("Interaction Intensity", &mCyanoSimulator->mInteractionIntensity);
+	ImGui::InputFloat("Interaction Range", &mCyanoSimulator->mInteractionRange);
+	ImGui::InputFloat("Peclet Number", &mCyanoSimulator->mPecletNumber);
 
 	//シアノのインデックスを設定
 	ImGui::InputInt("Cyano Idx:", &mCyanoIdx);

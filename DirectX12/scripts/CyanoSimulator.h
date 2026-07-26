@@ -25,6 +25,11 @@ private:
 	int calcCellIdx(const XMFLOAT4& pos);
 	void add100Cyano();
 
+	//シアノの特性パラメータ
+	float mInteractionIntensity = 4.0f;
+	float mInteractionRange = 1.0f;
+	float mPecletNumber = 3.0f;
+
 	//壁との衝突判定
 	bool isNearWall(const int cellIdx);
 	XMVECTOR calcWallHit(const XMFLOAT4& preHeadPos, FXMVECTOR newHeadVec, const float speed);

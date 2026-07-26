@@ -17,9 +17,9 @@ Graphic::Graphic(Game& game)
 	:mGame(game)
 {
 	//画面クリア時の色を設定
-	ClearColor[0] = 1.0f;
-	ClearColor[1] = 0.4f;
-	ClearColor[2] = 0.45f;
+	ClearColor[0] = 0.0f;
+	ClearColor[1] = 0.0f;
+	ClearColor[2] = 0.0f;
 	ClearColor[3] = 1.0f;
 
 	//初期のバックバッファのインデックスは0
@@ -471,7 +471,7 @@ HRESULT Graphic::createPipeline()
 		blendDesc.AlphaToCoverageEnable = true;
 		blendDesc.RenderTarget[0].BlendEnable = true;
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
 
 		auto pipelineStateCyano = PipelineStateBuilder()
 			.setRootSignature(rootSignatureCyano.Get())

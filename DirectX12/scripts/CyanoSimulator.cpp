@@ -20,7 +20,7 @@ const float CyanoSimulator::AREA_HEIGHT = Graphic::ClientWidth * 0.5f;
 
 const int CyanoSimulator::GRID_WIDTH =  AREA_WIDTH / CELL_SIZE;
 const int CyanoSimulator::GRID_HEIGHT = AREA_HEIGHT / CELL_SIZE;
-const float CyanoSpeed = 8;
+const float CyanoSpeed = 1.0f;
 
 std::vector<float> vertices = {
 	0.0f, 0.0f, 0.0f, 0.0f,
@@ -109,11 +109,12 @@ void CyanoSimulator::addCyano(const XMFLOAT4& headPos, float length, float speed
 	mPoints_sprites.resize(mPoints_sprites.size() + size);
 	mCellNext.resize(mCellNext.size() + size);
 	mCellPrev.resize(mCellPrev.size() + size);
+	const float angle = Random::normalDist(0.0f, 6.283184f);
 	for (int i = 0; i < size; i++) {
 		//点の位置を算出
-		auto pos = headPos + XMFLOAT4(speed * i, 0.0f, 0.0f, 0.0f);
+		auto pos = headPos;
 		mPoints_pos[beginIdx + i] = pos;
-		mPoints_angle[beginIdx + i] = 0.0f;
+		mPoints_angle[beginIdx + i] = angle;
 
 		//グリッドに追加
 		addCell(pos, beginIdx + i);
@@ -262,28 +263,26 @@ XMVECTOR CyanoSimulator::calcWallHit(const XMFLOAT4& preHeadPos, FXMVECTOR newHe
 }
 
 //角度の更新
-constexpr float INTERACTION_INTENSITY = 4.0f;
-constexpr float PECLET_NUMBER = 2.0f;
 constexpr float ROOT2 = 1.41421356;
-constexpr float NOISE_INTENSITY = ROOT2 / PECLET_NUMBER;
 
 void CyanoSimulator::updateAngle()
 {
+	const float noiseIntensity = ROOT2 / mPecletNumber;
 	for (int indivisualIdx = 0; indivisualIdx < mIndivisual_headPointIdx.size(); indivisualIdx++) {
 		const int preHeadIdx = mIndivisual_headPointIdx[indivisualIdx];
 		const int newHeadIdx = preHeadIdx + 1 >= mIndivisual_beginPointIdx[indivisualIdx] + mIndivisual_size[indivisualIdx] ? mIndivisual_beginPointIdx[indivisualIdx] : preHeadIdx + 1;
 		//角度の変位を計算
 		const float preTheta = mPoints_angle[preHeadIdx];
 		const float preOmega = mIndivisual_angularVelocity[indivisualIdx];
-		const float deltaTheta = preOmega - INTERACTION_INTENSITY * calcInteractionValue(indivisualIdx, mPoints_pos[preHeadIdx], preTheta);
+		const float deltaTheta = preOmega - mInteractionIntensity * calcInteractionValue(indivisualIdx, mPoints_pos[preHeadIdx], preTheta);
 
 		//各速度の変位を計算
-		const float noise = NOISE_INTENSITY * Random::normalDist(0.0f, 1.0f);
+		const float noise = noiseIntensity * Random::normalDist(0.0f, 1.0f);
 		const float deltaOmega = -deltaTheta + noise;
 		
 		//角度、角速度を更新
-		mPoints_angle[newHeadIdx] += deltaTheta;
-		mIndivisual_angularVelocity[indivisualIdx] += deltaOmega;
+		mPoints_angle[newHeadIdx] = preTheta + deltaTheta;
+		mIndivisual_angularVelocity[indivisualIdx] = preOmega + deltaOmega;
 
 	}
 }
@@ -362,10 +361,10 @@ CyanoSimulator::InteractParamater CyanoSimulator::calcInteractInCell(const int s
 
 		const float distance = Math::distance(basePos, otherPos);
 
-		if (distance < CyanoSpeed) {
+		if (distance < mInteractionRange) {
 			const float otherAngle = mPoints_angle[pointIdx];
 
-			newParam.interactValue += cosf(baseAngle - otherAngle);
+			newParam.interactValue += -sinf(baseAngle - otherAngle);
 			newParam.interactNum++;
 		}
 
@@ -414,7 +413,7 @@ void CyanoSimulator::initBuffer(ID3D12Device& device)
 	mIndexBuffer = std::make_unique<IndexBuffer>(device, indices);
 
 	//テクスチャの取得
-	mTexture = mAssetManager.getShaderResource("assets/picture/UI2/PNG/Default/checkbox_grey_empty.png");
+	mTexture = mAssetManager.getShaderResource("assets/picture/white.png");
 
 	//ディスクリプタヒープに登録
 	mDescRange = mDescriptorHeap.allocate(NumSlots(3));

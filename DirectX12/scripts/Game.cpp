@@ -41,7 +41,7 @@ int Game::endProcess()
 void Game::init() {
 	mGraphic = std::make_unique<Graphic>(*this);
 	mGraphic->init();
-	mGraphic->clearColor(0.25f, 0.5f, 0.9f);
+	mGraphic->clearColor(0.0f, 0.0f, 0.0f);
 
 #ifdef _DEBUG
 	//GUIControllerの初期化
