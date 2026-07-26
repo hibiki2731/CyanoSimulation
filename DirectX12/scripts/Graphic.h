@@ -15,6 +15,7 @@
 #include <dxgitype.h>
 #include <dxgiformat.h>	
 #include <dwrite.h>
+#include <array>
 
 //前方宣言
 class Game;
@@ -58,8 +59,7 @@ public:
 	enum STATE {
 		RENDER_3D,	//3Dオブジェクトの描画
 		RENDER_2D,	//UIなどの2D描画
-		RENDER_DT,	//ダメージテキストの描画
-		RENDER_FP	//炎パーティクルの描画
+		RENDER_CYANO,	//シアノの描画
 	};
 
 	Graphic(Game& game);
@@ -173,10 +173,9 @@ private:
 	ComPtr<ID3D12Resource> DepthStencilBuf;
 	ComPtr<ID3D12DescriptorHeap> DsvHeap; //DepthStencilBufView
 	//パイプライン
-	ComPtr<ID3D12RootSignature> RootSignature3D;
-	ComPtr<ID3D12PipelineState> PipelineState3D;
-	ComPtr<ID3D12RootSignature> RootSignature2D;
-	ComPtr<ID3D12PipelineState> PipelineState2D;
+	std::array<ComPtr<ID3D12RootSignature>, 4> mRootSignatures;
+	std::array<ComPtr<ID3D12PipelineState>, 4> mPipelineStates;
+
 	D3D12_VIEWPORT Viewport;
 	D3D12_RECT ScissorRect;
 

@@ -177,7 +177,7 @@ void GUIDebugger::drawCyanoHeadPos()
 	}
 
 	//頭の位置を表示
-	const XMFLOAT2 cyanoPos = mCyanoSimulator->mPoints_pos[mCyanoSimulator->mIndivisual_headPointIdx[mCyanoIdx]];
+	const XMFLOAT4 cyanoPos = mCyanoSimulator->mPoints_pos[mCyanoSimulator->mIndivisual_headPointIdx[mCyanoIdx]];
 	std::string text = "x: " + std::to_string(cyanoPos.x) + " y: " + std::to_string(cyanoPos.y) + "\n";
 	ImGui::Text(text.c_str());
 

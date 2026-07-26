@@ -6,11 +6,12 @@ class UnorderedAccessBuffer
 {
 public:
 	//要素のサイズと数を入力
-	UnorderedAccessBuffer(class Graphic& graphic, int sizeOfElement, int numElement);
+	UnorderedAccessBuffer(ID3D12Device& device, int sizeOfElement, int numElement);
 	~UnorderedAccessBuffer();
 
-	ID3D12Resource* getBufferOnGPU() const;
-	void* getBufferOnCPU() const;
+	void copyData(const void* resource, const size_t resourceSize, const int frame);
+	ID3D12Resource* getBufferOnGPU(const int frame) const;
+	void* getBufferOnCPU(const int frame) const;
 	const int getSizeOfElement() const { return mSizeOfElement; }
 	const int getNumElements() const { return mNumElement; }
 

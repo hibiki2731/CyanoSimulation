@@ -16,6 +16,7 @@ void SimulationScene::onEnter()
 	mGame.getGUIDebugger().setCyanoSimulator(simulator.get());
 #endif
 
+	mSimulator = simulator.get();
 	addActor(std::move(simulator));
 
 #ifdef _DEBUG
@@ -26,4 +27,9 @@ void SimulationScene::onEnter()
 
 void SimulationScene::onExit()
 {
+}
+
+void SimulationScene::drawScene()
+{
+	mSimulator->draw();
 }

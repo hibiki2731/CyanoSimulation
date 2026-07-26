@@ -1,9 +1,18 @@
-﻿#include "CyanoSimulator.h"
+﻿#include "pch.h"
+#include "CyanoSimulator.h"
 #include "Math.h"
 #include "SpriteComponent.h"
 #include "input.h"
 #include "Random.h"
 #include "timer.h"
+#include "UnorderedAccessBuffer.h"
+#include "Scene.h"
+#include "Game.h"
+#include "Graphic.h"
+#include "AssetManager.h"
+#include "DescriptorHeap.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 const int CyanoSimulator::CELL_SIZE = 20;
 const float CyanoSimulator::AREA_WIDTH = Graphic::ClientWidth * 0.5f;
@@ -13,22 +22,45 @@ const int CyanoSimulator::GRID_WIDTH =  AREA_WIDTH / CELL_SIZE;
 const int CyanoSimulator::GRID_HEIGHT = AREA_HEIGHT / CELL_SIZE;
 const float CyanoSpeed = 8;
 
+std::vector<float> vertices = {
+	0.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f, 1.0f,
+	1.0f, 0.0f, 1.0f, 0.0f,
+	1.0f, 1.0f, 1.0f, 1.0f,
+};
+
+std::vector<UINT16> indices = {
+	0, 1, 2,
+	2, 1, 3
+};
+
 CyanoSimulator::CyanoSimulator(Scene& scene):
-	Actor(scene)
+	Actor(scene),
+	mGraphic(scene.getGame().getGraphic()),
+	mCommandList(*mGraphic.getCommandList()),
+	mAssetManager(scene.getGame().getAssetManager()),
+	mDescriptorHeap(mGraphic.getDescriptorHeap())
 {
 	//セルの数だけ確保
 	mCellHeads.resize(GRID_WIDTH * GRID_HEIGHT);
 	for (auto& head : mCellHeads) head = -1;
+
+	initBuffer(*scene.getGame().getGraphic().getDevice());
 
 }
 
 void CyanoSimulator::inputActor()
 {
 	if (isKeyJustPressed('I'))
-		addCyano(XMFLOAT2(200.0f, 300.0f), 100, CyanoSpeed);
+		addCyano(XMFLOAT4(200.0f, 300.0f, 0.0f, 1.0f), 100, CyanoSpeed);
 
 	if (isKeyJustPressed('O'))
 		add100Cyano();
+}
+
+void CyanoSimulator::endProcessActor()
+{
+	mDescriptorHeap.deleteRange(*mDescRange);
 }
 
 void CyanoSimulator::updateActor()
@@ -37,9 +69,27 @@ void CyanoSimulator::updateActor()
 
 	updateAngle();
 	createHead();
+	copyPointsToGPU();
 }
 
-void CyanoSimulator::addCyano(const XMFLOAT2& headPos, float length, float speed)
+void CyanoSimulator::draw() {
+
+	mGraphic.setRenderType(Graphic::RENDER_CYANO);
+
+	//頂点をセット
+	mCommandList.IASetVertexBuffers(0, 1, &mVertexBuffer->getView());
+
+	//ディスクリプタヒープをディスクリプタテーブルにセット
+	mCommandList.SetGraphicsRoot32BitConstants(0, 3, &mRenderDesc, 0);
+	mCommandList.SetGraphicsRootDescriptorTable(1, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(mGraphic.getBackBufIdx())));
+	mCommandList.SetGraphicsRootDescriptorTable(2, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(2)));
+	//描画。インデックスを使用
+	mCommandList.IASetIndexBuffer(&mIndexBuffer->getView());
+	mCommandList.DrawIndexedInstanced(indices.size(), mPoints_pos.size(), 0, 0, 0);
+
+}
+
+void CyanoSimulator::addCyano(const XMFLOAT4& headPos, float length, float speed)
 {
 	//個体のサイズ
 	const int size = static_cast<int>(length / speed);
@@ -61,21 +111,12 @@ void CyanoSimulator::addCyano(const XMFLOAT2& headPos, float length, float speed
 	mCellPrev.resize(mCellPrev.size() + size);
 	for (int i = 0; i < size; i++) {
 		//点の位置を算出
-		auto pos = headPos + XMFLOAT2(speed * i, 0);
+		auto pos = headPos + XMFLOAT4(speed * i, 0.0f, 0.0f, 0.0f);
 		mPoints_pos[beginIdx + i] = pos;
 		mPoints_angle[beginIdx + i] = 0.0f;
 
 		//グリッドに追加
 		addCell(pos, beginIdx + i);
-
-		//スプライトの生成
-		auto sprite = std::make_unique<SpriteComponent>(*this);
-		sprite->create("assets/picture/UI2/PNG/Default/checkbox_grey_empty.png");
-		sprite->setPosition(pos);
-		sprite->setSpriteSize(XMFLOAT2(speed, speed));
-		mPoints_sprites[beginIdx + i] = sprite.get();
-
-		addComponent(std::move(sprite));
 
 	}
 
@@ -93,7 +134,7 @@ bool CyanoSimulator::adjustUpdateRate()
 	return false;
 }
 
-void CyanoSimulator::addCell(const XMFLOAT2& pos, int idx)
+void CyanoSimulator::addCell(const XMFLOAT4& pos, int idx)
 {
 	//セル番号を計算
 	const int cellIdx = calcCellIdx(pos);
@@ -132,8 +173,8 @@ void CyanoSimulator::createHead()
 	for (int indivisualIdx = 0; indivisualIdx < mIndivisual_headPointIdx.size(); indivisualIdx++) {
 		const int preHeadIdx = mIndivisual_headPointIdx[indivisualIdx];
 		const int newHeadIdx = preHeadIdx + 1 >= mIndivisual_beginPointIdx[indivisualIdx] + mIndivisual_size[indivisualIdx] ? mIndivisual_beginPointIdx[indivisualIdx] : preHeadIdx + 1;
-		const XMFLOAT2& preHeadPos = mPoints_pos[preHeadIdx];
-		const XMVECTOR preHeadVec = XMLoadFloat2(&preHeadPos);
+		const XMFLOAT4& preHeadPos = mPoints_pos[preHeadIdx];
+		const XMVECTOR preHeadVec = XMLoadFloat4(&preHeadPos);
 		const float& speed = mIndivisual_speed[indivisualIdx];
 		const float& angle = mPoints_angle[newHeadIdx];
 
@@ -155,11 +196,10 @@ void CyanoSimulator::createHead()
 		//最後尾をセルから削除
 		deleteCell(newHeadIdx);
 		//点の更新
-		XMFLOAT2 completedNewHeadPos;
-		XMStoreFloat2(&completedNewHeadPos, correctedHeadVec);
+		XMFLOAT4 completedNewHeadPos;
+		XMStoreFloat4(&completedNewHeadPos, correctedHeadVec);
 		mIndivisual_headPointIdx[indivisualIdx] = newHeadIdx;
 		mPoints_pos[newHeadIdx] = completedNewHeadPos;
-		mPoints_sprites[newHeadIdx]->setPosition(completedNewHeadPos);
 
 		//新たな点をセルに追加
 		addCell(completedNewHeadPos, newHeadIdx);
@@ -168,7 +208,14 @@ void CyanoSimulator::createHead()
 	
 }
 
-int CyanoSimulator::calcCellIdx(const XMFLOAT2& pos)
+void CyanoSimulator::copyPointsToGPU()
+{
+	auto upload = mUploadBuffer->getBufferOnCPU(mGraphic.getBackBufIdx());
+	memcpy(upload, mPoints_pos.data(), mPoints_pos.size() * sizeof(XMFLOAT4));
+	//mUploadBuffer->copyData(reinterpret_cast<void*>(mPoints_pos.data()), mPoints_pos.size() * sizeof(XMFLOAT4), mGraphic.getBackBufIdx());
+}
+
+int CyanoSimulator::calcCellIdx(const XMFLOAT4& pos)
 {
 	int cellIdx = static_cast<int>(pos.x) / CELL_SIZE + static_cast<int>(pos.y) / CELL_SIZE * GRID_WIDTH;
 
@@ -178,7 +225,7 @@ int CyanoSimulator::calcCellIdx(const XMFLOAT2& pos)
 void CyanoSimulator::add100Cyano()
 {
 	for(int i = 0; i < 100; i++) 
-		addCyano(XMFLOAT2(200.0f, 300.0f), 200, CyanoSpeed);
+		addCyano(XMFLOAT4(200.0f, 300.0f, 0.0f, 1.0f), 200, CyanoSpeed);
 }
 
 bool CyanoSimulator::isNearWall(const int cellIdx)
@@ -198,7 +245,7 @@ bool CyanoSimulator::isNearWall(const int cellIdx)
 	return false;
 }
 
-XMVECTOR CyanoSimulator::calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHeadVec, const float speed)
+XMVECTOR CyanoSimulator::calcWallHit(const XMFLOAT4& preHeadPos, FXMVECTOR newHeadVec, const float speed)
 {
 	//点が画面端にあるかを判定
 	const int cellIdx = calcCellIdx(preHeadPos);
@@ -241,7 +288,7 @@ void CyanoSimulator::updateAngle()
 	}
 }
 
-float CyanoSimulator::calcInteractionValue(const int indivisualIdx, const XMFLOAT2& basePos, const float baseAngle)
+float CyanoSimulator::calcInteractionValue(const int indivisualIdx, const XMFLOAT4& basePos, const float baseAngle)
 {
 	const int cellIdx = calcCellIdx(basePos);
 	const int selfBeginIdx = mIndivisual_beginPointIdx[indivisualIdx];
@@ -301,7 +348,7 @@ float CyanoSimulator::calcInteractionValue(const int indivisualIdx, const XMFLOA
 	return interactParam.interactValue / interactParam.interactNum;
 }
 
-CyanoSimulator::InteractParamater CyanoSimulator::calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const CyanoSimulator::InteractParamater& refParam, const XMFLOAT2& basePos, const float baseAngle)
+CyanoSimulator::InteractParamater CyanoSimulator::calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const CyanoSimulator::InteractParamater& refParam, const XMFLOAT4& basePos, const float baseAngle)
 {
 	int pointIdx = mCellHeads[cellIdx];
 	InteractParamater newParam = refParam;
@@ -311,7 +358,7 @@ CyanoSimulator::InteractParamater CyanoSimulator::calcInteractInCell(const int s
 			continue;
 		}
 
-		const XMFLOAT2& otherPos = mPoints_pos[pointIdx];
+		const XMFLOAT4& otherPos = mPoints_pos[pointIdx];
 
 		const float distance = Math::distance(basePos, otherPos);
 
@@ -352,6 +399,31 @@ float CyanoSimulator::calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHead
 
 	return XMVectorGetX(result);
 
+
+}
+
+void CyanoSimulator::initBuffer(ID3D12Device& device)
+{
+	//GPUで更新する用のバッファ
+	mUploadBuffer = std::make_unique<UnorderedAccessBuffer>(device, sizeof(UploadStructure), MaxPointNum);
+
+	//スプライト用バッファ
+	VertexBufferDescription vertexDesc = { 4, 4 };
+	mVertexBuffer = std::make_unique<VertexBuffer>(device, vertexDesc, vertices);
+
+	mIndexBuffer = std::make_unique<IndexBuffer>(device, indices);
+
+	//テクスチャの取得
+	mTexture = mAssetManager.getShaderResource("assets/picture/UI2/PNG/Default/checkbox_grey_empty.png");
+
+	//ディスクリプタヒープに登録
+	mDescRange = mDescriptorHeap.allocate(NumSlots(3));
+	mDescriptorHeap.addUAV(*mUploadBuffer.get(), mDescRange->getIndex(0), 0);
+	mDescriptorHeap.addUAV(*mUploadBuffer.get(), mDescRange->getIndex(1), 1);
+	mDescriptorHeap.addSRV(*mTexture, mDescRange->getIndex(2));
+
+	mRenderDesc.cyanoSize = CyanoSpeed;
+	mRenderDesc.WindowSize = {Graphic::ClientWidth, Graphic::ClientHeight};
 
 }
 

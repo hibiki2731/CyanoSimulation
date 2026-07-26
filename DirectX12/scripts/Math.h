@@ -38,6 +38,8 @@ public:
 	static XMFLOAT3 normalize(const XMFLOAT3& v);
 	static XMFLOAT3 lerp(const XMFLOAT3& start, const XMFLOAT3& end, const float& ratio);
 
+	static float distance(const XMFLOAT4& v1, const XMFLOAT4& v2);
+
 	static FbxVector4 translate(const FbxVector4& v, const FbxVector4& translation);
 
 	static FbxVector4 rotateX(const FbxVector4& v1, const FbxDouble& rot);

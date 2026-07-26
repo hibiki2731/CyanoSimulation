@@ -233,6 +233,15 @@ XMFLOAT3 Math::lerp(const XMFLOAT3& start, const XMFLOAT3& end, const float& rat
 	return XMFLOAT3(std::lerp(start.x, end.x, ratio), std::lerp(start.y, end.y, ratio), std::lerp(start.z, end.z, ratio));
 }
 
+float Math::distance(const XMFLOAT4& v1, const XMFLOAT4& v2)
+{
+	XMVECTOR vec1 = XMLoadFloat4(&v1);
+	XMVECTOR vec2 = XMLoadFloat4(&v2);
+	XMVECTOR sub = XMVectorSubtract(vec1, vec2);
+	XMVECTOR length = XMVector4Length(sub);
+	return XMVectorGetX(length);
+}
+
 FbxVector4 Math::translate(const FbxVector4& v, const FbxVector4& translation)
 {
 	return FbxVector4(v[0] + translation[0], v[1] + translation[1], v[2] + translation[2], v[3]);

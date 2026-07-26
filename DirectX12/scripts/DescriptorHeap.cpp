@@ -105,7 +105,7 @@ void DescriptorHeap::deleteRange(const DescriptorSlotRange& allocRange)
 	mHeapAllocator->freeSlot(allocRange);
 }
 
-void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex)
+void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex, const int frame)
 {
 	auto device = mGraphic.getDevice();
 
@@ -121,7 +121,7 @@ void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& s
 
 	//UAVを作成
 	device->CreateUnorderedAccessView(
-		uav.getBufferOnGPU(),
+		uav.getBufferOnGPU(frame),
 		nullptr,
 		&desc,
 		cpuHandle

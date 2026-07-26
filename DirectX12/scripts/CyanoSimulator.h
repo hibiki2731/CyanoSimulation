@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
+#include "directx/d3dx12.h"
 
 class CyanoSimulator : public Actor
 {
@@ -7,22 +8,26 @@ public:
 	CyanoSimulator(Scene& scene);
 	void inputActor() override;
 
+	void endProcessActor() override;
+
 	void updateActor() override;
-	void addCyano(const XMFLOAT2& headPos, float length, float speed);
+	void draw();
+	void addCyano(const XMFLOAT4& headPos, float length, float speed);
 
 	const std::string getClassName() const { return "CyanoSimulator"; }
 
 private:
 	bool adjustUpdateRate();
-	void addCell(const XMFLOAT2& pos, int idx);
+	void addCell(const XMFLOAT4& pos, int idx);
 	void deleteCell(int idx);
 	void createHead();
-	int calcCellIdx(const XMFLOAT2& pos);
+	void copyPointsToGPU();
+	int calcCellIdx(const XMFLOAT4& pos);
 	void add100Cyano();
 
 	//壁との衝突判定
 	bool isNearWall(const int cellIdx);
-	XMVECTOR calcWallHit(const XMFLOAT2& preHeadPos, FXMVECTOR newHeadVec, const float speed);
+	XMVECTOR calcWallHit(const XMFLOAT4& preHeadPos, FXMVECTOR newHeadVec, const float speed);
 
 	//角度の更新
 	struct InteractParamater {
@@ -31,8 +36,8 @@ private:
 	};
 
 	void updateAngle();
-	float calcInteractionValue(const int indivisualIdx, const XMFLOAT2& basePos, const float baseoAngle);
-	InteractParamater calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const InteractParamater& refParam, const XMFLOAT2& basePos, const float baseAngle);
+	float calcInteractionValue(const int indivisualIdx, const XMFLOAT4& basePos, const float baseoAngle);
+	InteractParamater calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const InteractParamater& refParam, const XMFLOAT4& basePos, const float baseAngle);
 	float calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
 	//空間分割法に用いるパラメータ
@@ -47,7 +52,7 @@ private:
 	float mUpdateTimer = 0.0f;
 
 	//点毎のデータ
-	std::vector<XMFLOAT2> mPoints_pos;	//各点の位置
+	std::vector<XMFLOAT4> mPoints_pos;	//各点の位置
 	std::vector<int> mCellNext;			//各点の同じグリッド内の次の点のインデックス
 	std::vector<int> mCellPrev;			//各点の同じグリッド内の前の点のインデックス
 
@@ -64,6 +69,28 @@ private:
 	std::vector<int> mIndivisual_size;				//占有領域のサイズ
 
 	std::vector<class SpriteComponent*> mPoints_sprites;
+
+	//描画用バッファ
+	struct UploadStructure {
+		XMFLOAT4 position;
+	};
+	struct RenderDesc {
+		float cyanoSize;
+		XMFLOAT2 WindowSize;
+	};
+	RenderDesc mRenderDesc;
+	const UINT MaxPointNum = 1 << 20;
+	std::unique_ptr<class UnorderedAccessBuffer> mUploadBuffer;
+	std::unique_ptr<class VertexBuffer> mVertexBuffer;
+	std::unique_ptr<class IndexBuffer> mIndexBuffer;
+	class Graphic& mGraphic;
+	ID3D12GraphicsCommandList& mCommandList;
+	class AssetManager& mAssetManager;
+	ID3D12Resource* mTexture;
+	class DescriptorHeap& mDescriptorHeap;
+	std::unique_ptr<class DescriptorSlotRange> mDescRange;
+
+	void initBuffer(ID3D12Device& device);
 
 #ifdef _DEBUG
 	friend class GUIDebugger;

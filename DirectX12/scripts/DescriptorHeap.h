@@ -112,7 +112,7 @@ public:
 	void deleteRange(const DescriptorSlotRange& allocRange);
 
 	//ビューを追加する
-	void addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex);
+	void addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex, const int frame);
 	void addSRV(ID3D12Resource& shaderResource, const SlotIndex& slotIndex);
 	void addSRVFrameCounts(ID3D12Resource& shaderResource, const SlotIndex& slotIndex, const int numDescriptors);
 	void addCBV(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame);

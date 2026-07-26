@@ -10,6 +10,8 @@
 #include "ConstantBuffer.h"
 #include "DescriptorHeap.h"
 #include "MeshBaseCBSuballocation.h"
+#include "RootSignatureBuilder.h"
+#include "PipelineStateBuilder.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -349,7 +351,7 @@ HRESULT Graphic::createPipeline()
 	{
 		//ルートシグネチャ
 		//ディスクリプタレンジ、ディスクリプタヒープとシェーダを紐づける役割を持つ
-		D3D12_DESCRIPTOR_RANGE range[2] = {};
+		std::vector<D3D12_DESCRIPTOR_RANGE> range(2);
 		UINT b0 = 0;
 		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV; //定数バッファビュー
 		range[0].BaseShaderRegister = b0;
@@ -364,237 +366,126 @@ HRESULT Graphic::createPipeline()
 		range[1].RegisterSpace = 0;
 		range[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //自動計算
 
-		//ルートパラメタをディスクリプタテーブルとして使用
-		//rangeの入れ物
-		D3D12_ROOT_PARAMETER rootParam[1] = {};
-		rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParam[0].DescriptorTable.pDescriptorRanges = range;
-		rootParam[0].DescriptorTable.NumDescriptorRanges = _countof(range);
-		rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全てのシェーダから見える
-
-		//サンプラの記述
-		D3D12_STATIC_SAMPLER_DESC samplerDesc[1] = {};
-		samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; //補完しない
-		samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //U方向は繰り返し
-		samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //V方向は繰り返し
-		samplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //W方向は繰り返し
-		samplerDesc[0].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK; //ボーダーの時は黒
-		samplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX; //ミップマップ最大
-		samplerDesc[0].MinLOD = 0.0f; //ミップマップ最小
-		samplerDesc[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; //オーバーサンプリングの際リサンプリングしない
-		samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //ピクセルシェーダからのみ見える
-
-		//ルートシグネチャの設定
-		D3D12_ROOT_SIGNATURE_DESC desc = {};
-		desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; //入力アセンブラの入力レイアウトを許可
-		desc.pParameters = rootParam;
-		desc.NumParameters = _countof(rootParam);
-		desc.pStaticSamplers = samplerDesc;  //サンプラーの先頭アドレス
-		desc.NumStaticSamplers = _countof(samplerDesc); //サンプラーの数
-
-		//ルートシグネチャをシリアライズ(コンパイルするようなもの)
-		ComPtr<ID3DBlob> blob;
-		HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, blob.GetAddressOf(), nullptr);
-		assert(SUCCEEDED(hr));
-
-		//ルートシグネチャの作成
-		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
-			IID_PPV_ARGS(RootSignature3D.GetAddressOf()));
-		assert(SUCCEEDED(hr));
+		auto rootSignature3D = RootSignatureBuilder()
+			.addDescriptorTable(range, D3D12_SHADER_VISIBILITY_ALL)
+			.addStaticSampler(0, D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_WRAP, D3D12_SHADER_VISIBILITY_PIXEL)
+			.setFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
+			.build(*Device.Get());
 		
-		
-		//シェーダの読み込み
-		BIN_FILE12 vs("assets\\VertexShader.cso");
-		assert(vs.succeeded());
-		BIN_FILE12 ps("assets\\PixelShader.cso");
-		assert(ps.succeeded());
-
 		//各種記述
 		UINT slot0 = 0;
-		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 			{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, slot0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    slot0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		};
 
-		D3D12_RASTERIZER_DESC rasterDesc = {};
+		D3D12_RASTERIZER_DESC rasterDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		rasterDesc.FrontCounterClockwise = true; //反時計回り
-		rasterDesc.CullMode = D3D12_CULL_MODE_BACK; //裏面描画するか？
-		rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-		rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-		rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-		rasterDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-		rasterDesc.DepthClipEnable = TRUE;
-		rasterDesc.MultisampleEnable = FALSE;
-		rasterDesc.AntialiasedLineEnable = FALSE;
-		rasterDesc.ForcedSampleCount = 0;
-		rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 
-		D3D12_BLEND_DESC blendDesc = {};
+		D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		blendDesc.AlphaToCoverageEnable = true;
-		blendDesc.IndependentBlendEnable = FALSE;
 		blendDesc.RenderTarget[0].BlendEnable = false;
 		blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 
-		D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //書き込み許可
-		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; //小さいほうが手前
-		depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
+		auto pipelineState3D = PipelineStateBuilder()
+			.setRootSignature(rootSignature3D.Get())
+			.setInputLayout(inputElementDescs)
+			.setRasterizerState(rasterDesc)
+			.setBlendState(blendDesc)
+			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
+			.setVertexShader("assets\\VertexShader.cso")
+			.setPixelShader("assets\\PixelShader.cso")
+			.build(*Device.Get());
 
-		//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc = {};
-		pipelineDesc.pRootSignature = RootSignature3D.Get();
-		pipelineDesc.VS = { vs.code(), vs.size() };
-		pipelineDesc.PS = { ps.code(), ps.size() };
-		pipelineDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
-		pipelineDesc.RasterizerState = rasterDesc;
-		pipelineDesc.BlendState = blendDesc;
-		pipelineDesc.DepthStencilState = depthStencilDesc;
-		pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-		pipelineDesc.SampleMask = UINT_MAX;
-		pipelineDesc.SampleDesc.Count = 1;
-		pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-		pipelineDesc.NumRenderTargets = 1;
-		pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		hr = Device->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(PipelineState3D.GetAddressOf()));
-		assert(SUCCEEDED(hr));
+		mRootSignatures[RENDER_3D] = rootSignature3D;
+		mPipelineStates[RENDER_3D] = pipelineState3D;
+
 		
 	} {}
 
 	//2D用パイプラインステート
 	{
-		//2D用ルートシグネチャ
-		//ディスクリプタレンジ、ディスクリプタヒープとシェーダを紐づける役割を持つ
-		D3D12_DESCRIPTOR_RANGE range[2] = {};
-		UINT b0 = 0;
-		range[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV; //定数バッファビュー
-		range[0].BaseShaderRegister = b0;
-		range[0].NumDescriptors = 1;
-		range[0].RegisterSpace = 0;
-		range[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //自動計算
+		UINT b0 = 0, t0 = 0;
+		auto rootSignature2D = RootSignatureBuilder()
+			.addCBVTable(b0, 1, D3D12_SHADER_VISIBILITY_ALL)
+			.addSRVTable(t0, 1, D3D12_SHADER_VISIBILITY_PIXEL)
+			.addStaticSampler(0, D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_WRAP, D3D12_SHADER_VISIBILITY_PIXEL)
+			.setFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
+			.build(*Device.Get());
 
-		UINT t0 = 0;
-		range[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; //シェーダリソースビュー
-		range[1].BaseShaderRegister = t0;
-		range[1].NumDescriptors = 1; //t0だけ
-		range[1].RegisterSpace = 0;
-		range[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; //自動計算
+		//各種記述
+		UINT slot0 = 0;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescs2D = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		};
 
-		D3D12_ROOT_PARAMETER rootParam[2] = {};
-		rootParam[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParam[0].DescriptorTable.pDescriptorRanges = &range[0];
-		rootParam[0].DescriptorTable.NumDescriptorRanges = 1;
-		rootParam[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL; //全てのシェーダから見える
-		rootParam[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-		rootParam[1].DescriptorTable.pDescriptorRanges = &range[1];
-		rootParam[1].DescriptorTable.NumDescriptorRanges = 1;
-		rootParam[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //全てのシェーダから見える
+		D3D12_RASTERIZER_DESC rasterDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		rasterDesc.FrontCounterClockwise = true; //反時計回り
 
-		//サンプラの記述
-		D3D12_STATIC_SAMPLER_DESC samplerDesc[1] = {};
-		samplerDesc[0].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; //補完しない
-		samplerDesc[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //U方向は繰り返し
-		samplerDesc[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //V方向は繰り返し
-		samplerDesc[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP; //W方向は繰り返し
-		samplerDesc[0].BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK; //ボーダーの時は黒
-		samplerDesc[0].MaxLOD = D3D12_FLOAT32_MAX; //ミップマップ最大
-		samplerDesc[0].MinLOD = 0.0f; //ミップマップ最小
-		samplerDesc[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; //オーバーサンプリングの際リサンプリングしない
-		samplerDesc[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; //ピクセルシェーダからのみ見える
+		D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
 
-		//ルートシグネチャの設定
-		D3D12_ROOT_SIGNATURE_DESC desc = {};
-		desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; //入力アセンブラの入力レイアウトを許可
-		desc.pParameters = rootParam;
-		desc.NumParameters = _countof(rootParam);
-		desc.pStaticSamplers = samplerDesc;  //サンプラーの先頭アドレス
-		desc.NumStaticSamplers = _countof(samplerDesc); //サンプラーの数
+		auto pipelineState2D = PipelineStateBuilder()
+			.setRootSignature(rootSignature2D.Get())
+			.setInputLayout(inputElementDescs2D)
+			.setVertexShader("assets\\2DVertexShader.cso")
+			.setPixelShader("assets\\2DPixelShader.cso")
+			.setRasterizerState(rasterDesc)
+			.setBlendState(blendDesc)
+			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
+			.build(*Device.Get());
 
-		//ルートシグネチャをシリアライズ(コンパイルするようなもの)
-		ComPtr<ID3DBlob> blob;
-		HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, blob.GetAddressOf(), nullptr);
-		assert(SUCCEEDED(hr));
-
-		//ルートシグネチャの作成
-		hr = Device->CreateRootSignature(0, blob->GetBufferPointer(), blob->GetBufferSize(),
-			IID_PPV_ARGS(RootSignature2D.GetAddressOf()));
-		assert(SUCCEEDED(hr));
-
-		{
-			//シェーダの読み込み
-			BIN_FILE12 vs2D("assets\\2DVertexShader.cso");
-			assert(vs2D.succeeded());
-			BIN_FILE12 ps2D("assets\\2DPixelShader.cso");
-			assert(ps2D.succeeded());
-
-			//各種記述
-			UINT slot0 = 0;
-			D3D12_INPUT_ELEMENT_DESC inputElementDescs2D[] = {
-				{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			};
-
-			D3D12_RASTERIZER_DESC rasterDesc = {};
-			rasterDesc.FrontCounterClockwise = true; //反時計回り
-			rasterDesc.CullMode = D3D12_CULL_MODE_BACK; //裏面描画するか？
-			rasterDesc.FillMode = D3D12_FILL_MODE_SOLID;
-			rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-			rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-			rasterDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-			rasterDesc.DepthClipEnable = TRUE;
-			rasterDesc.MultisampleEnable = FALSE;
-			rasterDesc.AntialiasedLineEnable = FALSE;
-			rasterDesc.ForcedSampleCount = 0;
-			rasterDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-
-			D3D12_BLEND_DESC blendDesc = {};
-			blendDesc.AlphaToCoverageEnable = true;
-			blendDesc.IndependentBlendEnable = FALSE;
-			blendDesc.RenderTarget[0].BlendEnable = true;
-			blendDesc.RenderTarget[0].LogicOpEnable = FALSE;
-			blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-			blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-			blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-			blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
-			blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
-			blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-			blendDesc.RenderTarget[0].LogicOp = D3D12_LOGIC_OP_NOOP;
-			blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-			D3D12_DEPTH_STENCIL_DESC depthStencilDesc = {};
-			depthStencilDesc.DepthEnable = true;
-			depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; //書き込み許可
-			depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; //小さいほうが手前
-			depthStencilDesc.StencilEnable = FALSE; //ステンシルしない
-			//ここまでの記述をまとめてパイプラインステートオブジェクトを作成
-			D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineDesc2D = {};
-			pipelineDesc2D.pRootSignature = RootSignature2D.Get();
-			pipelineDesc2D.VS = { vs2D.code(), vs2D.size() };
-			pipelineDesc2D.PS = { ps2D.code(), ps2D.size() };
-			pipelineDesc2D.InputLayout = { inputElementDescs2D, _countof(inputElementDescs2D) };
-			pipelineDesc2D.RasterizerState = rasterDesc;
-			pipelineDesc2D.BlendState = blendDesc;
-			pipelineDesc2D.DepthStencilState = depthStencilDesc;
-			pipelineDesc2D.DSVFormat = DXGI_FORMAT_D32_FLOAT;
-			pipelineDesc2D.SampleMask = UINT_MAX;
-			pipelineDesc2D.SampleDesc.Count = 1;
-			pipelineDesc2D.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-			pipelineDesc2D.NumRenderTargets = 1;
-			pipelineDesc2D.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-			HRESULT hr = Device->CreateGraphicsPipelineState(&pipelineDesc2D, IID_PPV_ARGS(PipelineState2D.GetAddressOf()));
-			assert(SUCCEEDED(hr));
-		}
+		mRootSignatures[RENDER_2D] = rootSignature2D;
+		mPipelineStates[RENDER_2D] = pipelineState2D;
 	} {}
 
+	//シアノ用パイプラインステート
+	{
+		UINT b0 = 0, u0 = 0, t0 = 0;
+		auto rootSignatureCyano = RootSignatureBuilder()
+			.addRootConstants(0, 3, D3D12_SHADER_VISIBILITY_VERTEX)
+			.addUAVTable(u0, 2, D3D12_SHADER_VISIBILITY_ALL)
+			.addSRVTable(t0, 1, D3D12_SHADER_VISIBILITY_PIXEL)
+			.addStaticSampler(0, D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_WRAP, D3D12_SHADER_VISIBILITY_PIXEL)
+			.setFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
+			.build(*Device.Get());
+
+		//各種記述
+		UINT slot0 = 0;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescsCyano = {
+			{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+		};
+
+		D3D12_RASTERIZER_DESC rasterDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		rasterDesc.FrontCounterClockwise = true; //反時計回り
+
+		D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.RenderTarget[0].BlendEnable = true;
+		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+
+		auto pipelineStateCyano = PipelineStateBuilder()
+			.setRootSignature(rootSignatureCyano.Get())
+			.setInputLayout(inputElementDescsCyano)
+			.setVertexShader("assets\\CyanoVertexShader.cso")
+			.setPixelShader("assets\\CyanoPixelShader.cso")
+			.setRasterizerState(rasterDesc)
+			.setBlendState(blendDesc)
+			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
+			.build(*Device.Get());
+
+		mRootSignatures[RENDER_CYANO] = rootSignatureCyano;
+		mPipelineStates[RENDER_CYANO] = pipelineStateCyano;
+	}
 
 	//出力領域を設定
 	Viewport.TopLeftX = 0.0f;
@@ -1225,17 +1116,9 @@ int Graphic::getBackBufIdx()
 
 void Graphic::setRenderType(STATE state)
 {
-	//mStateに応じて3Dと2Dを切換え
-	if (state == Graphic::RENDER_3D) {
-		mCommandList->SetPipelineState(PipelineState3D.Get());
-		mCommandList->SetGraphicsRootSignature(RootSignature3D.Get());
-	}
-	else if (state == Graphic::RENDER_2D) {
-		//パイプラインステートをセット
-		mCommandList->SetPipelineState(PipelineState2D.Get());
-		//ルートシグニチャをセット
-		mCommandList->SetGraphicsRootSignature(RootSignature2D.Get());
-	}
+	//Stateに応じて3Dと2Dを切換え
+	mCommandList->SetPipelineState(mPipelineStates[state].Get());
+	mCommandList->SetGraphicsRootSignature(mRootSignatures[state].Get());
 }
 
 #ifdef _DEBUG

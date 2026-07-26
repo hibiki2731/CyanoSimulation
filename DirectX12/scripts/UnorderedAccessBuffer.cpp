@@ -2,7 +2,7 @@
 #include "UnorderedAccessBuffer.h"
 #include "Graphic.h"
 
-UnorderedAccessBuffer::UnorderedAccessBuffer(Graphic& graphic, int sizeOfElement, int numElement)
+UnorderedAccessBuffer::UnorderedAccessBuffer(ID3D12Device& device, int sizeOfElement, int numElement)
 	:mSizeOfElement(sizeOfElement)
 	, mNumElement(numElement)
 {
@@ -17,8 +17,7 @@ UnorderedAccessBuffer::UnorderedAccessBuffer(Graphic& graphic, int sizeOfElement
 	auto prop = getHeapProperties();
 
 	//バッファーの作成とマッピング
-	auto device = graphic.getDevice();
-	createAndMapBuffers(*device, desc, prop);
+	createAndMapBuffers(device, desc, prop);
 }
 
 UnorderedAccessBuffer::~UnorderedAccessBuffer()
@@ -27,18 +26,22 @@ UnorderedAccessBuffer::~UnorderedAccessBuffer()
 	CD3DX12_RANGE range(0, 0);
 	for (auto& buffer : mBuffersOnGPU) {
 		buffer->Unmap(0, &range);
-		buffer->Release();
 	}
 }
 
-ID3D12Resource* UnorderedAccessBuffer::getBufferOnGPU() const
+void UnorderedAccessBuffer::copyData(const void* resource, const size_t resourceSize, const int frame)
 {
-	return mBuffersOnGPU[Graphic::FrameCount].Get();
+	memcpy(mBuffersOnCPU[frame], &resource, resourceSize);
 }
 
-void* UnorderedAccessBuffer::getBufferOnCPU() const
+ID3D12Resource* UnorderedAccessBuffer::getBufferOnGPU(const int frame) const
 {
-	return mBuffersOnCPU[Graphic::FrameCount];
+	return mBuffersOnGPU[frame].Get();
+}
+
+void* UnorderedAccessBuffer::getBufferOnCPU(const int frame) const
+{
+	return mBuffersOnCPU[frame];
 }
 
 D3D12_RESOURCE_DESC UnorderedAccessBuffer::getResourceDesc()
