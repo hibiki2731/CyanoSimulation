@@ -23,12 +23,24 @@ private:
 	void createHead();
 	void copyPointsToGPU();
 	int calcCellIdx(const XMFLOAT4& pos);
-	void add100Cyano();
+	int wrapCellIdx(const int cellX, const int cellY);
+	void applyParamaterToPicselScale();
+
+	//シアノの追加関数
+	void addCyanos(const int num);
 
 	//シアノの特性パラメータ
-	float mInteractionIntensity = 4.0f;
-	float mInteractionRange = 1.0f;
-	float mPecletNumber = 3.0f;
+	float mInteractionIntensity;
+	float mInteractionRange;
+	float mPecletNumber;
+	float mCyanoSpeed;
+	float mCyanoLength;
+	float mDeltaT;
+	float mDeltaTSqrt;
+	float mAreaWidth;
+	float mAreaHeight;
+	float mPixelParamRatio;
+
 
 	//壁との衝突判定
 	bool isNearWall(const int cellIdx);
@@ -46,8 +58,8 @@ private:
 	float calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
 	//空間分割法に用いるパラメータ
-	static const float AREA_WIDTH;
-	static const float AREA_HEIGHT;
+	static const float PIXEL_AREA_WIDTH;
+	static const float PIXEL_AREA_HEIGHT;
 	static const int GRID_WIDTH;
 	static const int GRID_HEIGHT;
 	static const int CELL_SIZE;
@@ -84,7 +96,7 @@ private:
 		XMFLOAT2 WindowSize;
 	};
 	RenderDesc mRenderDesc;
-	const UINT MaxPointNum = 1 << 20;
+	const UINT MaxPointNum = 1 << 24;
 	std::unique_ptr<class UnorderedAccessBuffer> mUploadBuffer;
 	std::unique_ptr<class VertexBuffer> mVertexBuffer;
 	std::unique_ptr<class IndexBuffer> mIndexBuffer;

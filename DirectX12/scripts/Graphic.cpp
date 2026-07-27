@@ -468,10 +468,19 @@ HRESULT Graphic::createPipeline()
 		rasterDesc.FrontCounterClockwise = true; //反時計回り
 
 		D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		blendDesc.AlphaToCoverageEnable = true;
+		blendDesc.AlphaToCoverageEnable = false;
+		blendDesc.RenderTarget[0].LogicOpEnable = false;
 		blendDesc.RenderTarget[0].BlendEnable = true;
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
 		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlendAlpha  = D3D12_BLEND_ONE;                  // 1.0
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;       // 1 - ソースのアルファ値
+		blendDesc.RenderTarget[0].BlendOpAlpha   = D3D12_BLEND_OP_ADD;              // 加算
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+		D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 
 		auto pipelineStateCyano = PipelineStateBuilder()
 			.setRootSignature(rootSignatureCyano.Get())
@@ -480,6 +489,7 @@ HRESULT Graphic::createPipeline()
 			.setPixelShader("assets\\CyanoPixelShader.cso")
 			.setRasterizerState(rasterDesc)
 			.setBlendState(blendDesc)
+			.setDepthStencilState(depthStencilDesc)
 			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
 			.build(*Device.Get());
 

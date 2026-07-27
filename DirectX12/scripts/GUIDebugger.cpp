@@ -169,6 +169,12 @@ void GUIDebugger::drawCyanoHeadPos()
 	ImGui::InputFloat("Interaction Range", &mCyanoSimulator->mInteractionRange);
 	ImGui::InputFloat("Peclet Number", &mCyanoSimulator->mPecletNumber);
 
+	std::string text = "filament num: " + std::to_string(mCyanoSimulator->mIndivisual_headPointIdx.size()) + "\n";
+	ImGui::Text(text.c_str());
+
+	text = "points num: " + std::to_string(mCyanoSimulator->mPoints_pos.size()) + "\n";
+	ImGui::Text(text.c_str());
+
 	//シアノのインデックスを設定
 	ImGui::InputInt("Cyano Idx:", &mCyanoIdx);
 
@@ -181,7 +187,7 @@ void GUIDebugger::drawCyanoHeadPos()
 
 	//頭の位置を表示
 	const XMFLOAT4 cyanoPos = mCyanoSimulator->mPoints_pos[mCyanoSimulator->mIndivisual_headPointIdx[mCyanoIdx]];
-	std::string text = "x: " + std::to_string(cyanoPos.x) + " y: " + std::to_string(cyanoPos.y) + "\n";
+	text = "x: " + std::to_string(cyanoPos.x) + " y: " + std::to_string(cyanoPos.y) + "\n";
 	ImGui::Text(text.c_str());
 
 	//角度を表示
