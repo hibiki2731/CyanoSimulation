@@ -107,12 +107,12 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>C:\visualStudioPrograms\cyanoSimulation\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -130,13 +130,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\visualStudioPrograms\cyanoSimulation\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -173,6 +173,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="scripts\CellIdxHistogramCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="scripts\CyanoVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -212,6 +224,18 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
+    <FxCompile Include="scripts\ScatterCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
     <FxCompile Include="scripts\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -223,11 +247,14 @@
     <ClCompile Include="scripts\Actor.cpp" />
     <ClCompile Include="scripts\AssetManager.cpp" />
     <ClCompile Include="scripts\AudioManager.cpp" />
+    <ClCompile Include="scripts\ComputePipelineStateBuilder.cpp" />
     <ClCompile Include="scripts\ComputeShader.cpp" />
     <ClCompile Include="scripts\ConstantBuffer.cpp" />
+    <ClCompile Include="scripts\CyanoCalculator.cpp" />
     <ClCompile Include="scripts\CyanoSimulator.cpp" />
     <ClCompile Include="scripts\DescriptorHeap.cpp" />
     <ClCompile Include="scripts\FadeGenerator.cpp" />
+    <ClCompile Include="scripts\Fence.cpp" />
     <ClCompile Include="scripts\GUIDebugger.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -257,16 +284,18 @@
     <ClCompile Include="scripts\pch.cpp" />
     <ClCompile Include="scripts\PipelineStateBuilder.cpp" />
     <ClCompile Include="scripts\Random.cpp" />
+    <ClCompile Include="scripts\ReadBackBuffer.cpp" />
     <ClCompile Include="scripts\RootSignatureBuilder.cpp" />
     <ClCompile Include="scripts\Scene.cpp" />
     <ClCompile Include="scripts\SceneManager.cpp" />
     <ClCompile Include="scripts\SimulationScene.cpp" />
     <ClCompile Include="scripts\SpriteCBSuballocation.cpp" />
     <ClCompile Include="scripts\SpriteComponent.cpp" />
+    <ClCompile Include="scripts\StructuredBuffer.cpp" />
     <ClCompile Include="scripts\TextCBSuballocation.cpp" />
     <ClCompile Include="scripts\TextComponent.cpp" />
     <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\UnorderedAccessBuffer.cpp" />
+    <ClCompile Include="scripts\RWStructuredBuffer.cpp" />
     <ClCompile Include="scripts\VertexBuffer.cpp" />
     <ClCompile Include="scripts\WinMain.cpp" />
   </ItemGroup>
@@ -274,12 +303,15 @@
     <ClInclude Include="scripts\Actor.h" />
     <ClInclude Include="scripts\AssetManager.h" />
     <ClInclude Include="scripts\AudioManager.h" />
+    <ClInclude Include="scripts\ComputePipelineStateBuilder.h" />
     <ClInclude Include="scripts\ComputeShader.h" />
     <ClInclude Include="scripts\ConstantBuffer.h" />
+    <ClInclude Include="scripts\CyanoCalculator.h" />
     <ClInclude Include="scripts\CyanoSimulator.h" />
     <ClInclude Include="scripts\Definition.h" />
     <ClInclude Include="scripts\DescriptorHeap.h" />
     <ClInclude Include="scripts\FadeGenerator.h" />
+    <ClInclude Include="scripts\Fence.h" />
     <ClInclude Include="scripts\GUIDebugger.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -313,6 +345,7 @@
     <ClInclude Include="scripts\MeshComponent.h" />
     <ClInclude Include="scripts\PipelineStateBuilder.h" />
     <ClInclude Include="scripts\Random.h" />
+    <ClInclude Include="scripts\ReadBackBuffer.h" />
     <ClInclude Include="scripts\RootSignatureBuilder.h" />
     <ClInclude Include="scripts\Scene.h" />
     <ClInclude Include="scripts\SceneManager.h" />
@@ -320,10 +353,11 @@
     <ClInclude Include="scripts\SpriteCBSuballocation.h" />
     <ClInclude Include="scripts\SpriteComponent.h" />
     <ClInclude Include="scripts\stb_image.h" />
+    <ClInclude Include="scripts\StructuredBuffer.h" />
     <ClInclude Include="scripts\TextCBSuballocation.h" />
     <ClInclude Include="scripts\TextComponent.h" />
     <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\UnorderedAccessBuffer.h" />
+    <ClInclude Include="scripts\RWStructuredBuffer.h" />
     <ClInclude Include="scripts\VertexBuffer.h" />
     <ClInclude Include="scripts\WinMain.h" />
   </ItemGroup>

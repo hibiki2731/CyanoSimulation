@@ -91,7 +91,7 @@ void SpriteComponent::create(const std::string filename)
 
 	//ディスクリプタヒープにViewを作る
 	mDescriptorHeap.addCBVFrameCounts(*mSpriteCBSubData, mDescRange->getIndex(0), 1);
-	mDescriptorHeap.addSRV(*mTextureBuf, mDescRange->getIndex(2));
+	mDescriptorHeap.addTextureView(*mTextureBuf, mDescRange->getIndex(2));
 
 	mTextureFilePath = filename;
 }

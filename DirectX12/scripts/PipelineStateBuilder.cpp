@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "PipelineStateBuilder.h"
 #include "BIN_FILE12.h"
+#include "ComputePipelineStateBuilder.h"
 
 PipelineStateBuilder::PipelineStateBuilder()
 {	

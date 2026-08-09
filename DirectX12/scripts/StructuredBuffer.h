@@ -2,16 +2,16 @@
 #include <vector>
 #include "Definition.h"
 #include "d3dx12.h"
-class UnorderedAccessBuffer
+
+class StructuredBuffer
 {
 public:
 	//要素のサイズと数を入力
-	UnorderedAccessBuffer(ID3D12Device& device, int sizeOfElement, int numElement);
-	~UnorderedAccessBuffer();
+	StructuredBuffer(ID3D12Device& device, int sizeOfElement, int numElement);
+	~StructuredBuffer();
 
-	void copyData(const void* resource, const size_t resourceSize, const int frame);
-	ID3D12Resource* getBufferOnGPU(const int frame) const;
-	void* getBufferOnCPU(const int frame) const;
+	void setData(ID3D12GraphicsCommandList& commandList, const void* resource);
+	ID3D12Resource* getBufferOnGPU() const;
 	const int getSizeOfElement() const { return mSizeOfElement; }
 	const int getNumElements() const { return mNumElement; }
 
@@ -22,7 +22,8 @@ private:
 
 	const int mSizeOfElement;
 	const int mNumElement;
-	std::vector<ComPtr<ID3D12Resource>> mBuffersOnGPU;
-	std::vector<void*> mBuffersOnCPU;
+	ComPtr<ID3D12Resource> mBuffersOnGPU;
+	ID3D12Device& mDevice;
 };
+
 

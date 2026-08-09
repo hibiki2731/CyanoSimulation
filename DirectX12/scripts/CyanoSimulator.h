@@ -2,6 +2,11 @@
 #include "Actor.h"
 #include "directx/d3dx12.h"
 
+//描画用バッファ
+struct RenderData {
+	XMFLOAT4 position;
+};
+
 class CyanoSimulator : public Actor
 {
 public:
@@ -87,17 +92,13 @@ private:
 
 	std::vector<class SpriteComponent*> mPoints_sprites;
 
-	//描画用バッファ
-	struct UploadStructure {
-		XMFLOAT4 position;
-	};
 	struct RenderDesc {
 		float cyanoSize;
 		XMFLOAT2 WindowSize;
 	};
 	RenderDesc mRenderDesc;
 	const UINT MaxPointNum = 1 << 24;
-	std::unique_ptr<class UnorderedAccessBuffer> mUploadBuffer;
+	std::unique_ptr<class RWStructuredBuffer> mUploadBuffer;
 	std::unique_ptr<class VertexBuffer> mVertexBuffer;
 	std::unique_ptr<class IndexBuffer> mIndexBuffer;
 	class Graphic& mGraphic;
@@ -109,6 +110,7 @@ private:
 
 	void initBuffer(ID3D12Device& device);
 
+	std::unique_ptr<class CyanoCalculator> mCalculator;
 #ifdef _DEBUG
 	friend class GUIDebugger;
 #endif

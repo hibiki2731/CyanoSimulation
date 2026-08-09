@@ -2,7 +2,8 @@
 #include "DescriptorHeap.h"
 #include "Graphic.h"
 #include "ConstantBuffer.h"
-#include "UnorderedAccessBuffer.h"
+#include "RWStructuredBuffer.h"
+#include "StructuredBuffer.h"
 
 const NumSlots ZeroSlot(0);
 
@@ -13,7 +14,7 @@ DescriptorHeapAllocator::DescriptorHeapAllocator(const NumSlots& numSlots)
 
 std::unique_ptr<DescriptorSlotRange> DescriptorHeapAllocator::allocateRange(const NumSlots& numRequiredSlots)
 {
-	if (numRequiredSlots.getNumSlots() + mLastUsedSlotIndex.getIndex() >= mNumAllSlots.getNumSlots()) {
+	if (numRequiredSlots.getNumSlots() + mLastUsedSlotIndex.getIndex() > mNumAllSlots.getNumSlots()) {
 		assert(false && "DescriptorHeapAllocatorのスロットが不足しています。");
 	}
 
@@ -80,16 +81,15 @@ void DescriptorHeapAllocator::freeSlot(const DescriptorSlotRange& allocRange)
 	
 }
 
-DescriptorHeap::DescriptorHeap(Graphic& graphic, const NumSlots& numSlots)
-	: mGraphic(graphic)
+DescriptorHeap::DescriptorHeap(ID3D12Device& device, const NumSlots& numSlots, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+	: mDevice(device)
 {
 
 	//ディスクリプタヒープの詳細設定
-	auto desc = getHeapDesc(numSlots);
+	auto desc = getHeapDesc(numSlots, flags);
 
 	//ディスクリプタヒープの作成
-	auto device = graphic.getDevice();
-	createHeap(*device, desc);
+	createHeap(desc);
 
 	//アロケータの作成
 	mHeapAllocator = std::make_unique<DescriptorHeapAllocator>(numSlots);
@@ -105,9 +105,8 @@ void DescriptorHeap::deleteRange(const DescriptorSlotRange& allocRange)
 	mHeapAllocator->freeSlot(allocRange);
 }
 
-void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex, const int frame)
+void DescriptorHeap::addUAV(const RWStructuredBuffer& uav, const SlotIndex& slotIndex)
 {
-	auto device = mGraphic.getDevice();
 
 	//UAVのディスクリプタを作成
 	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
@@ -120,15 +119,15 @@ void DescriptorHeap::addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& s
 	auto cpuHandle = getCPUHandle(slotIndex);
 
 	//UAVを作成
-	device->CreateUnorderedAccessView(
-		uav.getBufferOnGPU(frame),
+	mDevice.CreateUnorderedAccessView(
+		uav.getBufferOnGPU(),
 		nullptr,
 		&desc,
 		cpuHandle
 	);
 }
 
-void DescriptorHeap::addSRV(ID3D12Resource& shaderResource, const SlotIndex& slotIndex)
+void DescriptorHeap::addTextureView(ID3D12Resource& shaderResource, const SlotIndex& slotIndex)
 {
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
@@ -138,15 +137,16 @@ void DescriptorHeap::addSRV(ID3D12Resource& shaderResource, const SlotIndex& slo
 	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
 
 	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
-	hCbvTbvHeap.ptr += mGraphic.getCbvTbvIncSize() * slotIndex.getIndex();
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
 
-	mGraphic.getDevice()->CreateShaderResourceView(&shaderResource, &desc, hCbvTbvHeap);
+	mDevice.CreateShaderResourceView(&shaderResource, &desc, hCbvTbvHeap);
 }
 
 void DescriptorHeap::addSRVFrameCounts(ID3D12Resource& shaderResource, const SlotIndex& slotIndex, const int numDescriptors)
 {
 	for(int i = 0 ; i < Graphic::FrameCount; ++i){
-		addSRV(shaderResource, slotIndex + SlotIndex(i * numDescriptors));
+		addTextureView(shaderResource, slotIndex + SlotIndex(i * numDescriptors));
 	}
 }
 
@@ -159,9 +159,10 @@ void DescriptorHeap::addCBV(const IConstantBufferSuballocation& cbv, const SlotI
 	desc.SizeInBytes = static_cast<UINT>(cbv.getSizeInBytes().get()); //256バイトアライメント
 
 	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
-	hCbvTbvHeap.ptr += mGraphic.getCbvTbvIncSize() * (slotIndex.getIndex());
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	hCbvTbvHeap.ptr += cbvTbvIncSize* (slotIndex.getIndex());
 
-	mGraphic.getDevice()->CreateConstantBufferView(&desc, hCbvTbvHeap);
+	mDevice.CreateConstantBufferView(&desc, hCbvTbvHeap);
 }
 
 void DescriptorHeap::addCBVFrameCounts(const IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int numDescriptors)
@@ -171,35 +172,55 @@ void DescriptorHeap::addCBVFrameCounts(const IConstantBufferSuballocation& cbv, 
 	}
 }
 
+void DescriptorHeap::addSRV(const StructuredBuffer& resource, const SlotIndex& slotIndex)
+{
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	desc.Format = resource.getBufferOnGPU()->GetDesc().Format;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = resource.getNumElements();
+	desc.Buffer.StructureByteStride = resource.getSizeOfElement();
+	desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
+
+	mDevice.CreateShaderResourceView(resource.getBufferOnGPU(), &desc, hCbvTbvHeap);
+}
+
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::getGPUHandle(const SlotIndex& slotIndex)
 {
 	auto hDescHeap = mDescHeap->GetGPUDescriptorHandleForHeapStart();
-	UINT CbvTbvSize = mGraphic.getCbvTbvIncSize();
-	hDescHeap.ptr += (slotIndex.getIndex()) * CbvTbvSize;
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	hDescHeap.ptr += (slotIndex.getIndex()) * cbvTbvIncSize;
 	return hDescHeap;
 }
 
-D3D12_DESCRIPTOR_HEAP_DESC DescriptorHeap::getHeapDesc(const NumSlots& numSlots)
+D3D12_DESCRIPTOR_HEAP_DESC DescriptorHeap::getHeapDesc(const NumSlots& numSlots, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 {
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	desc.NumDescriptors = numSlots.getNumSlots();
 	desc.NodeMask = 0;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	desc.Flags = flags;
 
 	return desc;
 }
 
-void DescriptorHeap::createHeap(ID3D12Device& device, D3D12_DESCRIPTOR_HEAP_DESC& desc)
+void DescriptorHeap::createHeap(D3D12_DESCRIPTOR_HEAP_DESC& desc)
 {
-	HRESULT hr = device.CreateDescriptorHeap(&desc, IID_PPV_ARGS(mDescHeap.ReleaseAndGetAddressOf()));
+	HRESULT hr = mDevice.CreateDescriptorHeap(&desc, IID_PPV_ARGS(mDescHeap.ReleaseAndGetAddressOf()));
 	assert(SUCCEEDED(hr));
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DescriptorHeap::getCPUHandle(const SlotIndex& slotIndex)
 {
 	auto cpuHandle = mDescHeap->GetCPUDescriptorHandleForHeapStart();
-	cpuHandle.ptr += slotIndex.getIndex() * mGraphic.getCbvTbvIncSize();
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	cpuHandle.ptr += slotIndex.getIndex() * cbvTbvIncSize;
 	return cpuHandle;
 }
 

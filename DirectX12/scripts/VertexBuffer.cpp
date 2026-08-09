@@ -31,7 +31,7 @@ void VertexBuffer::createBuf(ID3D12Device& device)
 		&prop,
 		D3D12_HEAP_FLAG_NONE,
 		&desc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER,
 		nullptr,
 		IID_PPV_ARGS(mVertexBuffer.ReleaseAndGetAddressOf())
 	);

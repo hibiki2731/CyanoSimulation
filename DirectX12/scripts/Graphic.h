@@ -104,6 +104,8 @@ public:
 	int getBackBufIdx();
 	DescriptorHeap& getDescriptorHeap() const { return *mDescriptorHeap; }
 	ConstantBuffer& getConstantBuffer() const{ return *mConstantBuffer; }
+	ID3D12RootSignature& getRootSignature(STATE state);
+	ID3D12PipelineState& getPipelineState(STATE state);
 	const std::shared_ptr<class MeshBaseCBSuballocation>& getMeshBaseCBSuballocation() const { return mMeshBaseCBSuballocation; }
 
 	//Setter

@@ -12,6 +12,7 @@
 #include "MeshBaseCBSuballocation.h"
 #include "RootSignatureBuilder.h"
 #include "PipelineStateBuilder.h"
+#include "ComputePipelineStateBuilder.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game)
@@ -622,10 +623,10 @@ HRESULT Graphic::createD2D()
 
 HRESULT Graphic::createCbvAndHeap()
 {
-	mDescriptorHeap = std::make_unique<DescriptorHeap>(*this, 10000);
-	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1 << 20);
+	mDescriptorHeap = std::make_unique<DescriptorHeap>(*Device.Get(), 10);
+	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1024);
 
-	mMeshBaseCBSuballocation = mConstantBuffer->createSuballocation<MeshBaseCBSuballocation>(alignedSize(sizeof(MeshBaseCBSuballocationData)));
+	//mMeshBaseCBSuballocation = mConstantBuffer->createSuballocation<MeshBaseCBSuballocation>(alignedSize(sizeof(MeshBaseCBSuballocationData)));
 
 	return S_OK;
 }
@@ -1122,6 +1123,25 @@ ID2D1Bitmap1* Graphic::getD2DRenderTarget()
 int Graphic::getBackBufIdx()
 {
 	return BackBufIdx;
+}
+
+ID3D12RootSignature& Graphic::getRootSignature(STATE state)
+{
+	if (state >= mRootSignatures.size()) {
+		assert("取得しようとしているルートシグネチャのインデックスが不正な値です\n");
+	}
+
+	return *mRootSignatures[state].Get();
+}
+
+ID3D12PipelineState& Graphic::getPipelineState(STATE state)
+{
+	if (state >= mPipelineStates.size()) {
+		assert("取得しようとしているパイプラインステートのインデックスが不正な値です\n");
+	}
+
+	return *mPipelineStates[state].Get();
+
 }
 
 void Graphic::setRenderType(STATE state)

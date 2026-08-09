@@ -2,7 +2,7 @@
 #include "Definition.h"
 #include "d3dx12.h"
 #include <map>
-class UnorderedAccessBuffer;
+class RWStructuredBuffer;
 
 
 //ディスクリプタヒープのスロット数を表すクラス
@@ -104,7 +104,7 @@ private:
 class DescriptorHeap
 {
 public:
-	DescriptorHeap(class Graphic& graphic, const NumSlots& numSlots);
+	DescriptorHeap(ID3D12Device& device, const NumSlots& numSlots, D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
 
 
 	//ビューを追加する前に、必要なスロット数を確保する
@@ -112,27 +112,27 @@ public:
 	void deleteRange(const DescriptorSlotRange& allocRange);
 
 	//ビューを追加する
-	void addUAV(const UnorderedAccessBuffer& uav, const SlotIndex& slotIndex, const int frame);
-	void addSRV(ID3D12Resource& shaderResource, const SlotIndex& slotIndex);
+	void addUAV(const RWStructuredBuffer& uav, const SlotIndex& slotIndex);
+	void addTextureView(ID3D12Resource& shaderResource, const SlotIndex& slotIndex);
 	void addSRVFrameCounts(ID3D12Resource& shaderResource, const SlotIndex& slotIndex, const int numDescriptors);
 	void addCBV(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame);
 	void addCBVFrameCounts(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int numDescriptors);
+	void addSRV(const class StructuredBuffer& resource, const SlotIndex& slotIndex);
 
 	//アドレスの取得
 	ID3D12DescriptorHeap* const* getAddress() const { return mDescHeap.GetAddressOf(); }
 	D3D12_GPU_DESCRIPTOR_HANDLE getGPUHandle(const SlotIndex& slotIndex);
-
-private:
-	D3D12_DESCRIPTOR_HEAP_DESC getHeapDesc(const NumSlots& numSlots);
-	void createHeap(ID3D12Device& device, D3D12_DESCRIPTOR_HEAP_DESC& desc);
 	D3D12_CPU_DESCRIPTOR_HANDLE getCPUHandle(const SlotIndex& slotIndex);
 
+private:
+	D3D12_DESCRIPTOR_HEAP_DESC getHeapDesc(const NumSlots& numSlots, D3D12_DESCRIPTOR_HEAP_FLAGS flags);
+	void createHeap(D3D12_DESCRIPTOR_HEAP_DESC& desc);
 
 	ComPtr<ID3D12DescriptorHeap> mDescHeap;
 
 	//ディスクリプタヒープのスロットを管理するアロケータ
 	std::unique_ptr<DescriptorHeapAllocator> mHeapAllocator;
 
-	class Graphic& mGraphic;
+	ID3D12Device& mDevice;
 };
 

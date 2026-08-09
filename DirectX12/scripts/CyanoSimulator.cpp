@@ -5,7 +5,7 @@
 #include "input.h"
 #include "Random.h"
 #include "timer.h"
-#include "UnorderedAccessBuffer.h"
+#include "RWStructuredBuffer.h"
 #include "Scene.h"
 #include "Game.h"
 #include "Graphic.h"
@@ -13,6 +13,7 @@
 #include "DescriptorHeap.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "CyanoCalculator.h"
 
 const int CyanoSimulator::CELL_SIZE = 10;
 const float CyanoSimulator::PIXEL_AREA_WIDTH = Graphic::ClientWidth * 0.5f;
@@ -43,14 +44,14 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 	mDescriptorHeap(mGraphic.getDescriptorHeap())
 {
 	//パラメータの初期化
-	mInteractionIntensity = 2.0f;
-	mInteractionRange = 0.005f;
+	mInteractionIntensity = -4.0f;
+	mInteractionRange = 0.05f;
 	mPecletNumber = 5.0f;
 	mCyanoSpeed = 1.0f;
 	mCyanoLength = 1.0f;
 	mDeltaT = 0.001f;
 	mDeltaTSqrt = sqrtf(mDeltaT);
-	mAreaWidth = 10.0f;
+	mAreaWidth = 2.0f;
 	mAreaHeight = 10.0f;
 	mPixelParamRatio = PIXEL_AREA_WIDTH / mAreaWidth;
 
@@ -59,7 +60,10 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 	for (auto& head : mCellHeads) head = -1;
 
 	//バッファーの初期化
-	initBuffer(*scene.getGame().getGraphic().getDevice());
+	//initBuffer(*scene.getGame().getGraphic().getDevice());
+	mCalculator = std::make_unique<CyanoCalculator>(scene.getGame().getGraphic(), MaxPointNum);
+
+
 }
 
 void CyanoSimulator::inputActor()
@@ -86,12 +90,14 @@ void CyanoSimulator::updateActor()
 {
 	if (!adjustUpdateRate()) return;
 
-	updateAngle();
-	createHead();
-	copyPointsToGPU();
+	mCalculator->startCalculation(mPoints_pos);
+	//updateAngle();
+	//createHead();
+	//copyPointsToGPU();
 }
 
 void CyanoSimulator::draw() {
+	return;
 
 	mGraphic.setRenderType(Graphic::RENDER_CYANO);
 
@@ -100,8 +106,8 @@ void CyanoSimulator::draw() {
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
 	mCommandList.SetGraphicsRoot32BitConstants(0, 3, &mRenderDesc, 0);
-	mCommandList.SetGraphicsRootDescriptorTable(1, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(mGraphic.getBackBufIdx())));
-	mCommandList.SetGraphicsRootDescriptorTable(2, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(2)));
+	mCommandList.SetGraphicsRootDescriptorTable(1, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(0)));
+	mCommandList.SetGraphicsRootDescriptorTable(2, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(1)));
 	//描画。インデックスを使用
 	mCommandList.IASetIndexBuffer(&mIndexBuffer->getView());
 	mCommandList.DrawIndexedInstanced(indices.size(), mPoints_pos.size(), 0, 0, 0);
@@ -233,9 +239,8 @@ void CyanoSimulator::createHead()
 
 void CyanoSimulator::copyPointsToGPU()
 {
-	auto upload = mUploadBuffer->getBufferOnCPU(mGraphic.getBackBufIdx());
+	auto upload = mUploadBuffer->getBufferOnCPU();
 	memcpy(upload, mPoints_pos.data(), mPoints_pos.size() * sizeof(XMFLOAT4));
-	//mUploadBuffer->copyData(reinterpret_cast<void*>(mPoints_pos.data()), mPoints_pos.size() * sizeof(XMFLOAT4), mGraphic.getBackBufIdx());
 }
 
 int CyanoSimulator::calcCellIdx(const XMFLOAT4& pos)
@@ -398,7 +403,7 @@ float CyanoSimulator::calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHead
 void CyanoSimulator::initBuffer(ID3D12Device& device)
 {
 	//GPUで更新する用のバッファ
-	mUploadBuffer = std::make_unique<UnorderedAccessBuffer>(device, sizeof(UploadStructure), MaxPointNum);
+	mUploadBuffer = std::make_unique<RWStructuredBuffer>(device, sizeof(RenderData), MaxPointNum);
 
 	//スプライト用バッファ
 	VertexBufferDescription vertexDesc = { 4, 4 };
@@ -410,10 +415,9 @@ void CyanoSimulator::initBuffer(ID3D12Device& device)
 	mTexture = mAssetManager.getShaderResource("assets/picture/white.png");
 
 	//ディスクリプタヒープに登録
-	mDescRange = mDescriptorHeap.allocate(NumSlots(3));
-	mDescriptorHeap.addUAV(*mUploadBuffer.get(), mDescRange->getIndex(0), 0);
-	mDescriptorHeap.addUAV(*mUploadBuffer.get(), mDescRange->getIndex(1), 1);
-	mDescriptorHeap.addSRV(*mTexture, mDescRange->getIndex(2));
+	mDescRange = mDescriptorHeap.allocate(NumSlots(2));
+	mDescriptorHeap.addUAV(*mUploadBuffer.get(), mDescRange->getIndex(0));
+	mDescriptorHeap.addTextureView(*mTexture, mDescRange->getIndex(1));
 
 	mRenderDesc.cyanoSize = mCyanoSpeed * mDeltaT * mPixelParamRatio;
 	mRenderDesc.WindowSize = {Graphic::ClientWidth, Graphic::ClientHeight};

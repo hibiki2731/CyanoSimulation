@@ -373,7 +373,7 @@ void TextComponent::createSprite(float zDepth)
 	mDescriptorRange = mDescriptorHeap.allocate(NumSlots(3));
 	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
 	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
-	mDescriptorHeap.addSRV(*mTexture.Get(), mDescriptorRange->getIndex(2));
+	mDescriptorHeap.addTextureView(*mTexture.Get(), mDescriptorRange->getIndex(2));
 }
 
 void TextComponent::applyTextFormat()

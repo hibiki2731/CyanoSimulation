@@ -120,7 +120,7 @@
     <ClCompile Include="scripts\ComputeShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\UnorderedAccessBuffer.cpp">
+    <ClCompile Include="scripts\RWStructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\DescriptorHeap.cpp">
@@ -157,6 +157,21 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="scripts\RootSignatureBuilder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\ComputePipelineStateBuilder.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\CyanoCalculator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\StructuredBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\ReadBackBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="scripts\Fence.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,7 +296,7 @@
     <ClInclude Include="scripts\ComputeShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\UnorderedAccessBuffer.h">
+    <ClInclude Include="scripts\RWStructuredBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="scripts\DescriptorHeap.h">
@@ -320,6 +335,21 @@
     <ClInclude Include="scripts\RootSignatureBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="scripts\ComputePipelineStateBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\CyanoCalculator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\StructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\ReadBackBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="scripts\Fence.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="scripts\2DPixelShader.hlsl">
@@ -344,6 +374,12 @@
       <Filter>hlsl</Filter>
     </FxCompile>
     <FxCompile Include="scripts\CyanoPixelShader.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\CellIdxHistogramCS.hlsl">
+      <Filter>hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="scripts\ScatterCS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
