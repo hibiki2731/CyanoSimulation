@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -59,23 +59,34 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)</OutDir>
+    <ExternalIncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(ProjectDir)\External\Audio\;$(ProjectDir)\External\Json\;$(ProjectDir)\External\Imgui\;$(ProjectDir)\External\Image\;$(ProjectDir)\External\DirectX\;$(ExternalIncludePath)</ExternalIncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)</OutDir>
+    <ExternalIncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(ProjectDir)\External\Audio\;$(ProjectDir)\External\Json\;$(ProjectDir)\External\Imgui\;$(ProjectDir)\External\Image\;$(ProjectDir)\External\DirectX\;$(ExternalIncludePath)</ExternalIncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -111,17 +122,23 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Source\pch;$(ProjectDir)\Source\Game\include;$(ProjectDir)\Source\Engine\include;$(ProjectDir)\External\DirectX\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <FxCompile />
     <FxCompile>
@@ -136,21 +153,28 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)\Source\pch;$(ProjectDir)\Source\Game\include;$(ProjectDir)\Source\Engine\include;$(ProjectDir)\External\DirectX\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <FxCompile />
     <FxCompile>
@@ -158,23 +182,27 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <FxCompile Include="scripts\2DPixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\2DPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\2DVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\2DVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\CellIdxHistogramCS.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
@@ -185,46 +213,58 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\CyanoVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CyanoVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\CyanoPixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CyanoPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\FadePixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\FadePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\FadeVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\FadeVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\PixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\ScatterCS.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\ScatterCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
@@ -235,136 +275,207 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="scripts\VertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</EnableDebuggingInformation>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</EnableDebuggingInformation>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scripts\Actor.cpp" />
-    <ClCompile Include="scripts\AssetManager.cpp" />
-    <ClCompile Include="scripts\AudioManager.cpp" />
-    <ClCompile Include="scripts\ComputePipelineStateBuilder.cpp" />
-    <ClCompile Include="scripts\ComputeShader.cpp" />
-    <ClCompile Include="scripts\ConstantBuffer.cpp" />
-    <ClCompile Include="scripts\CyanoCalculator.cpp" />
-    <ClCompile Include="scripts\CyanoSimulator.cpp" />
-    <ClCompile Include="scripts\DescriptorHeap.cpp" />
-    <ClCompile Include="scripts\FadeGenerator.cpp" />
-    <ClCompile Include="scripts\Fence.cpp" />
-    <ClCompile Include="scripts\GUIDebugger.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Actor.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\AssetManager.cpp" />
+    <ClCompile Include="Source\Engine\src\Audio\AudioManager.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\ComputePipelineStateBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\ConstantBuffer.cpp" />
+    <ClCompile Include="Source\Game\src\CyanoCalculator.cpp" />
+    <ClCompile Include="Source\Game\src\CyanoSimulator.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\DescriptorHeap.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Effect\FadeGenerator.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\Fence.cpp" />
+    <ClCompile Include="Source\Engine\src\Editer\GUIDebugger.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_demo.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_draw.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="scripts\IndexBuffer.cpp" />
-    <ClCompile Include="scripts\MeshBaseCBSuballocation.cpp" />
-    <ClCompile Include="scripts\MeshMaterialCBSuballocation.cpp" />
-    <ClCompile Include="scripts\MeshWorldCBSuballocation.cpp" />
-    <ClCompile Include="scripts\myJson.cpp" />
-    <ClCompile Include="scripts\MyUtility.cpp" />
-    <ClCompile Include="scripts\Component.cpp" />
-    <ClCompile Include="scripts\FBXConverter.cpp" />
-    <ClCompile Include="scripts\BIN_FILE12.cpp" />
-    <ClCompile Include="scripts\Game.cpp" />
-    <ClCompile Include="scripts\Graphic.cpp" />
-    <ClCompile Include="scripts\input.cpp" />
-    <ClCompile Include="scripts\Math.cpp" />
-    <ClCompile Include="scripts\MeshComponent.cpp" />
-    <ClCompile Include="scripts\Object.cpp" />
-    <ClCompile Include="scripts\pch.cpp" />
-    <ClCompile Include="scripts\PipelineStateBuilder.cpp" />
-    <ClCompile Include="scripts\Random.cpp" />
-    <ClCompile Include="scripts\ReadBackBuffer.cpp" />
-    <ClCompile Include="scripts\RootSignatureBuilder.cpp" />
-    <ClCompile Include="scripts\Scene.cpp" />
-    <ClCompile Include="scripts\SceneManager.cpp" />
-    <ClCompile Include="scripts\SimulationScene.cpp" />
-    <ClCompile Include="scripts\SpriteCBSuballocation.cpp" />
-    <ClCompile Include="scripts\SpriteComponent.cpp" />
-    <ClCompile Include="scripts\StructuredBuffer.cpp" />
-    <ClCompile Include="scripts\TextCBSuballocation.cpp" />
-    <ClCompile Include="scripts\TextComponent.cpp" />
-    <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\RWStructuredBuffer.cpp" />
-    <ClCompile Include="scripts\VertexBuffer.cpp" />
-    <ClCompile Include="scripts\WinMain.cpp" />
+    <ClCompile Include="External\Imgui\imgui.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_demo.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_draw.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_impl_dx12.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_impl_win32.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_stdlib.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_tables.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="External\Imgui\imgui_widgets.cpp">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TurnOffAllWarnings</WarningLevel>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\src\Memory\IndexBuffer.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\MeshBaseCBSuballocation.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\MeshMaterialCBSuballocation.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\MeshWorldCBSuballocation.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\myJson.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\MyUtility.cpp" />
+    <ClCompile Include="Source\Engine\src\GameObject\Component\Component.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\FBXConverter.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\BIN_FILE12.cpp" />
+    <ClCompile Include="Source\Engine\src\GameLoopCore\Game.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\Graphic.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\Input\input.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\Math\Math.cpp" />
+    <ClCompile Include="Source\Engine\src\GameObject\Component\MeshComponent.cpp" />
+    <ClCompile Include="Source\Engine\src\Editer\Object.cpp" />
+    <ClCompile Include="Source\pch\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\src\Graphic\Core\PipelineStateBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\Math\Random.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\ReadBackBuffer.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\RootSignatureBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Scene\Scene.cpp" />
+    <ClCompile Include="Source\Engine\src\Scene\SceneManager.cpp" />
+    <ClCompile Include="Source\Game\src\SimulationScene.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\SpriteCBSuballocation.cpp" />
+    <ClCompile Include="Source\Engine\src\GameObject\Component\SpriteComponent.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\StructuredBuffer.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\TextCBSuballocation.cpp" />
+    <ClCompile Include="Source\Engine\src\GameObject\Component\TextComponent.cpp" />
+    <ClCompile Include="Source\Engine\src\Utility\Time\timer.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\RWStructuredBuffer.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\VertexBuffer.cpp" />
+    <ClCompile Include="Source\Engine\src\GameLoopCore\WinMain.cpp" />
+    <ClCompile Include="Source\Engine\src\Memory\UploadHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scripts\Actor.h" />
-    <ClInclude Include="scripts\AssetManager.h" />
-    <ClInclude Include="scripts\AudioManager.h" />
-    <ClInclude Include="scripts\ComputePipelineStateBuilder.h" />
-    <ClInclude Include="scripts\ComputeShader.h" />
-    <ClInclude Include="scripts\ConstantBuffer.h" />
-    <ClInclude Include="scripts\CyanoCalculator.h" />
-    <ClInclude Include="scripts\CyanoSimulator.h" />
-    <ClInclude Include="scripts\Definition.h" />
-    <ClInclude Include="scripts\DescriptorHeap.h" />
-    <ClInclude Include="scripts\FadeGenerator.h" />
-    <ClInclude Include="scripts\Fence.h" />
-    <ClInclude Include="scripts\GUIDebugger.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Actor.h" />
+    <ClInclude Include="Source\Engine\include\Memory\AssetManager.h" />
+    <ClInclude Include="Source\Engine\include\Audio\AudioManager.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\ComputePipelineStateBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Memory\ConstantBuffer.h" />
+    <ClInclude Include="Source\Game\include\CyanoCalculator.h" />
+    <ClInclude Include="Source\Game\include\CyanoSimulator.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Definition.h" />
+    <ClInclude Include="Source\Engine\include\Memory\DescriptorHeap.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Effect\FadeGenerator.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Fence.h" />
+    <ClInclude Include="Source\Engine\include\Editer\GUIDebugger.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imconfig.h" />
-    <ClInclude Include="scripts\Imgui\imgui.h" />
-    <ClInclude Include="scripts\Imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="scripts\Imgui\imgui_impl_win32.h" />
-    <ClInclude Include="scripts\Imgui\imgui_internal.h" />
-    <ClInclude Include="scripts\Imgui\imgui_stdlib.h" />
-    <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
-    <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
-    <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
-    <ClInclude Include="scripts\IndexBuffer.h" />
-    <ClInclude Include="scripts\json_fwd.hpp" />
-    <ClInclude Include="scripts\MeshBaseCBSuballocation.h" />
-    <ClInclude Include="scripts\MeshMaterialCBSuballocation.h" />
-    <ClInclude Include="scripts\MeshWorldCBSuballocation.h" />
-    <ClInclude Include="scripts\myJson.h" />
-    <ClInclude Include="scripts\Object.h" />
-    <ClInclude Include="scripts\pch.h" />
-    <ClInclude Include="scripts\PerlinNoise1D.h" />
-    <ClInclude Include="scripts\json.hpp" />
-    <ClInclude Include="scripts\MyUtility.h" />
-    <ClInclude Include="scripts\Component.h" />
-    <ClInclude Include="scripts\FBXConverter.h" />
-    <ClInclude Include="scripts\BIN_FILE12.h" />
-    <ClInclude Include="scripts\Game.h" />
-    <ClInclude Include="scripts\Graphic.h" />
-    <ClInclude Include="scripts\input.h" />
-    <ClInclude Include="scripts\Math.h" />
-    <ClInclude Include="scripts\MeshComponent.h" />
-    <ClInclude Include="scripts\PipelineStateBuilder.h" />
-    <ClInclude Include="scripts\Random.h" />
-    <ClInclude Include="scripts\ReadBackBuffer.h" />
-    <ClInclude Include="scripts\RootSignatureBuilder.h" />
-    <ClInclude Include="scripts\Scene.h" />
-    <ClInclude Include="scripts\SceneManager.h" />
-    <ClInclude Include="scripts\SimulationScene.h" />
-    <ClInclude Include="scripts\SpriteCBSuballocation.h" />
-    <ClInclude Include="scripts\SpriteComponent.h" />
-    <ClInclude Include="scripts\stb_image.h" />
-    <ClInclude Include="scripts\StructuredBuffer.h" />
-    <ClInclude Include="scripts\TextCBSuballocation.h" />
-    <ClInclude Include="scripts\TextComponent.h" />
-    <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\RWStructuredBuffer.h" />
-    <ClInclude Include="scripts\VertexBuffer.h" />
-    <ClInclude Include="scripts\WinMain.h" />
+    <ClInclude Include="Source\Engine\include\Memory\IndexBuffer.h" />
+    <ClInclude Include="External\Json\json_fwd.hpp" />
+    <ClInclude Include="Source\Engine\include\Memory\MeshBaseCBSuballocation.h" />
+    <ClInclude Include="Source\Engine\include\Memory\MeshMaterialCBSuballocation.h" />
+    <ClInclude Include="Source\Engine\include\Memory\MeshWorldCBSuballocation.h" />
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\myJson.h" />
+    <ClInclude Include="Source\Engine\include\Editer\Object.h" />
+    <ClInclude Include="Source\pch\pch.h" />
+    <ClInclude Include="Source\Engine\include\Utility\Math\PerlinNoise1D.h" />
+    <ClInclude Include="External\Json\json.hpp" />
+    <ClInclude Include="Source\Engine\include\Utility\MyUtility.h" />
+    <ClInclude Include="Source\Engine\include\GameObject\Component\Component.h" />
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\FBXConverter.h" />
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\BIN_FILE12.h" />
+    <ClInclude Include="Source\Engine\include\GameLoopCore\Game.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Graphic.h" />
+    <ClInclude Include="Source\Engine\include\Utility\Input\input.h" />
+    <ClInclude Include="Source\Engine\include\Utility\Math\Math.h" />
+    <ClInclude Include="Source\Engine\include\GameObject\Component\MeshComponent.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\PipelineStateBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Utility\Math\Random.h" />
+    <ClInclude Include="Source\Engine\include\Memory\ReadBackBuffer.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\RootSignatureBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Scene\Scene.h" />
+    <ClInclude Include="Source\Engine\include\Scene\SceneManager.h" />
+    <ClInclude Include="Source\Game\include\SimulationScene.h" />
+    <ClInclude Include="Source\Engine\include\Memory\SpriteCBSuballocation.h" />
+    <ClInclude Include="Source\Engine\include\GameObject\Component\SpriteComponent.h" />
+    <ClInclude Include="Source\Engine\include\Memory\StructuredBuffer.h" />
+    <ClInclude Include="Source\Engine\include\Memory\TextCBSuballocation.h" />
+    <ClInclude Include="Source\Engine\include\GameObject\Component\TextComponent.h" />
+    <ClInclude Include="Source\Engine\include\Utility\Time\timer.h" />
+    <ClInclude Include="Source\Engine\include\Memory\RWStructuredBuffer.h" />
+    <ClInclude Include="Source\Engine\include\Memory\VertexBuffer.h" />
+    <ClInclude Include="Source\Engine\include\GameLoopCore\WinMain.h" />
+    <ClInclude Include="Source\Engine\include\Memory\UploadHeap.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="scripts\CyanoHeader.hlsli" />
-    <None Include="scripts\FadeHeader.hlsli" />
-    <None Include="scripts\Header.hlsli" />
+    <None Include="Content\Shader\hlsl\CyanoHeader.hlsli" />
+    <None Include="Content\Shader\hlsl\FadeHeader.hlsli" />
+    <None Include="Content\Shader\hlsl\Header.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

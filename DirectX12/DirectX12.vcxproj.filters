@@ -18,379 +18,349 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scripts\BIN_FILE12.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\BIN_FILE12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\FBXConverter.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\FBXConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Graphic.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Core\Graphic.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Actor.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Actor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Game.cpp">
+    <ClCompile Include="Source\Engine\src\GameLoopCore\Game.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\input.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\Input\input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\timer.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\Time\timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Component.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Component\Component.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MeshComponent.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Component\MeshComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Math.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\Math\Math.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\SpriteComponent.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Component\SpriteComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\TextComponent.cpp">
+    <ClCompile Include="Source\Engine\src\GameObject\Component\TextComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\AssetManager.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\AssetManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Random.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\Math\Random.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\SceneManager.cpp">
+    <ClCompile Include="Source\Engine\src\Scene\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MyUtility.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\MyUtility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\AudioManager.cpp">
+    <ClCompile Include="Source\Engine\src\Audio\AudioManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Scene.cpp">
+    <ClCompile Include="Source\Engine\src\Scene\Scene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\GUIDebugger.cpp">
+    <ClCompile Include="Source\Engine\src\Editer\GUIDebugger.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui.cpp">
+    <ClCompile Include="External\Imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_demo.cpp">
+    <ClCompile Include="External\Imgui\imgui_demo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_draw.cpp">
+    <ClCompile Include="External\Imgui\imgui_draw.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_impl_dx12.cpp">
+    <ClCompile Include="External\Imgui\imgui_impl_dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_impl_win32.cpp">
+    <ClCompile Include="External\Imgui\imgui_impl_win32.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_widgets.cpp">
+    <ClCompile Include="External\Imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_tables.cpp">
+    <ClCompile Include="External\Imgui\imgui_tables.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp">
+    <ClCompile Include="External\Imgui\imgui_stdlib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\myJson.cpp">
+    <ClCompile Include="Source\Engine\src\Utility\FileConverter\myJson.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Object.cpp">
+    <ClCompile Include="Source\Engine\src\Editer\Object.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\WinMain.cpp">
+    <ClCompile Include="Source\Engine\src\GameLoopCore\WinMain.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\FadeGenerator.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Effect\FadeGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\pch.cpp">
+    <ClCompile Include="Source\pch\pch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\SimulationScene.cpp">
+    <ClCompile Include="Source\Game\src\SimulationScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\ComputeShader.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\RWStructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\RWStructuredBuffer.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\DescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\DescriptorHeap.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\ConstantBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\ConstantBuffer.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\TextCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\TextCBSuballocation.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\MeshBaseCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MeshBaseCBSuballocation.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\MeshMaterialCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MeshMaterialCBSuballocation.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\MeshWorldCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\MeshWorldCBSuballocation.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\SpriteCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\SpriteCBSuballocation.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\VertexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\VertexBuffer.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\IndexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\IndexBuffer.cpp">
+    <ClCompile Include="Source\Game\src\CyanoSimulator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\CyanoSimulator.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Core\PipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\PipelineStateBuilder.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Core\RootSignatureBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\RootSignatureBuilder.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Core\ComputePipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\ComputePipelineStateBuilder.cpp">
+    <ClCompile Include="Source\Game\src\CyanoCalculator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\CyanoCalculator.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\StructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\StructuredBuffer.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\ReadBackBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\ReadBackBuffer.cpp">
+    <ClCompile Include="Source\Engine\src\Graphic\Core\Fence.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="scripts\Fence.cpp">
+    <ClCompile Include="Source\Engine\src\Memory\UploadHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scripts\BIN_FILE12.h">
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\BIN_FILE12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\WinMain.h">
+    <ClInclude Include="Source\Engine\include\GameLoopCore\WinMain.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\stb_image.h">
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\FBXConverter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\FBXConverter.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Actor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Actor.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Definition.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Definition.h">
+    <ClInclude Include="Source\Engine\include\GameLoopCore\Game.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Game.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Graphic.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Graphic.h">
+    <ClInclude Include="Source\Engine\include\Utility\Input\input.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\input.h">
+    <ClInclude Include="Source\Engine\include\Utility\Time\timer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\timer.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Component\Component.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Component.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Component\MeshComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MeshComponent.h">
+    <ClInclude Include="Source\Engine\include\Utility\Math\Math.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Math.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Component\SpriteComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\SpriteComponent.h">
+    <ClInclude Include="Source\Engine\include\GameObject\Component\TextComponent.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\TextComponent.h">
+    <ClInclude Include="Source\Engine\include\Memory\AssetManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\AssetManager.h">
+    <ClInclude Include="Source\Engine\include\Utility\Math\Random.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Random.h">
+    <ClInclude Include="External\Json\json.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\json.hpp">
+    <ClInclude Include="Source\Engine\include\Scene\SceneManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\SceneManager.h">
+    <ClInclude Include="Source\Engine\include\Utility\MyUtility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MyUtility.h">
+    <ClInclude Include="Source\Engine\include\Audio\AudioManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\AudioManager.h">
+    <ClInclude Include="Source\Engine\include\Utility\Math\PerlinNoise1D.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\PerlinNoise1D.h">
+    <ClInclude Include="Source\Engine\include\Scene\Scene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Scene.h">
+    <ClInclude Include="Source\Engine\include\Editer\GUIDebugger.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\GUIDebugger.h">
+    <ClInclude Include="Source\Engine\include\Utility\FileConverter\myJson.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imconfig.h">
+    <ClInclude Include="External\Json\json_fwd.hpp">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imgui.h">
+    <ClInclude Include="Source\Engine\include\Editer\Object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imgui_impl_dx12.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Effect\FadeGenerator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imgui_impl_win32.h">
+    <ClInclude Include="Source\pch\pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imgui_internal.h">
+    <ClInclude Include="Source\Game\include\SimulationScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imstb_rectpack.h">
+    <ClInclude Include="Source\Engine\include\Memory\RWStructuredBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imstb_textedit.h">
+    <ClInclude Include="Source\Engine\include\Memory\DescriptorHeap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imstb_truetype.h">
+    <ClInclude Include="Source\Engine\include\Memory\ConstantBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Imgui\imgui_stdlib.h">
+    <ClInclude Include="Source\Engine\include\Memory\TextCBSuballocation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\myJson.h">
+    <ClInclude Include="Source\Engine\include\Memory\MeshBaseCBSuballocation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\json_fwd.hpp">
+    <ClInclude Include="Source\Engine\include\Memory\MeshMaterialCBSuballocation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\Object.h">
+    <ClInclude Include="Source\Engine\include\Memory\MeshWorldCBSuballocation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\FadeGenerator.h">
+    <ClInclude Include="Source\Engine\include\Memory\SpriteCBSuballocation.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\pch.h">
+    <ClInclude Include="Source\Engine\include\Memory\VertexBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\SimulationScene.h">
+    <ClInclude Include="Source\Engine\include\Memory\IndexBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\ComputeShader.h">
+    <ClInclude Include="Source\Game\include\CyanoSimulator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\RWStructuredBuffer.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\PipelineStateBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\DescriptorHeap.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\RootSignatureBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\ConstantBuffer.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\ComputePipelineStateBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\TextCBSuballocation.h">
+    <ClInclude Include="Source\Game\include\CyanoCalculator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MeshBaseCBSuballocation.h">
+    <ClInclude Include="Source\Engine\include\Memory\StructuredBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MeshMaterialCBSuballocation.h">
+    <ClInclude Include="Source\Engine\include\Memory\ReadBackBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\MeshWorldCBSuballocation.h">
+    <ClInclude Include="Source\Engine\include\Graphic\Core\Fence.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="scripts\SpriteCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\VertexBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\IndexBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\CyanoSimulator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\PipelineStateBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\RootSignatureBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\ComputePipelineStateBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\CyanoCalculator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\StructuredBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\ReadBackBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="scripts\Fence.h">
+    <ClInclude Include="Source\Engine\include\Memory\UploadHeap.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="scripts\2DPixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\2DPixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\2DVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\2DVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\FadePixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\FadePixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\FadeVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\FadeVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\PixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\PixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\VertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\VertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\CyanoVertexShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CyanoVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\CyanoPixelShader.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CyanoPixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\CellIdxHistogramCS.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="scripts\ScatterCS.hlsl">
+    <FxCompile Include="Content\Shader\hlsl\ScatterCS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="scripts\Header.hlsli">
+    <None Include="Content\Shader\hlsl\Header.hlsli">
       <Filter>hlsl</Filter>
     </None>
-    <None Include="scripts\FadeHeader.hlsli">
+    <None Include="Content\Shader\hlsl\FadeHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
-    <None Include="scripts\CyanoHeader.hlsli">
+    <None Include="Content\Shader\hlsl\CyanoHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
   </ItemGroup>
