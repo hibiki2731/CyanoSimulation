@@ -13,9 +13,13 @@
 #include "Graphic/Core/RootSignatureBuilder.h"
 #include "Graphic/Core/PipelineStateBuilder.h"
 #include "Graphic/Core/ComputePipelineStateBuilder.h"
-
+#include "Graphic/Core/GraphicDeviceBuilder.h"
+#include "Graphic/Core/CommandAllocatorBuilder.h"
+#include "Graphic/Core/CommandListBuilder.h"
+#include "Graphic/Core/CommandQueueBuilder.h"
 Graphic::Graphic(Game& game)
-	:mGame(game)
+	:mGame(game),
+	Device(GraphicDeviceBuilder().build())
 {
 	//画面クリア時の色を設定
 	ClearColor[0] = 0.0f;
@@ -37,9 +41,6 @@ void Graphic::init() {
 	HRESULT hr;
 	//ウィンドウの作成
 	hr = createWindow();
-	assert(SUCCEEDED(hr));
-	//デバイスの作成
-	hr = createDevice();
 	assert(SUCCEEDED(hr));
 	//コマンド作成
 	hr = createCommand();
@@ -76,113 +77,29 @@ void Graphic::init() {
 	ShowWindow(hWnd, SW_SHOW);
 }
 
-HRESULT Graphic::createDevice() {
-	UINT dxgiFactoryFlags = 0;
-#ifdef _DEBUG
-	{
-		//デバッグレイヤーをオンに
-		ComPtr<ID3D12Debug> debug;
-		HRESULT hr = D3D12GetDebugInterface(IID_PPV_ARGS(&debug));
-		assert(SUCCEEDED(hr));
-		debug->EnableDebugLayer();
-		dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-	}
-#endif
-
-	//対応する機能レベルの配列を用意
-	D3D_FEATURE_LEVEL featureLevels[] = {
-		D3D_FEATURE_LEVEL_12_2,
-		D3D_FEATURE_LEVEL_12_1,
-		D3D_FEATURE_LEVEL_12_0,
-		D3D_FEATURE_LEVEL_11_1,
-		D3D_FEATURE_LEVEL_11_0
-	};
-
-	//デバイスを作成するためのfactoryを作成
-	ComPtr<IDXGIFactory6> factory;
-	HRESULT factoryHr = CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&factory));
-	assert(SUCCEEDED(factoryHr));
-
-	ComPtr<IDXGIAdapter1> adapter;
-	//性能の良いハードウェアアダプタから取得して、DirectX12に対応しているか確認。対応しているアダプタが見つかったらループを抜ける。
-	for (int adapterIndex = 0;
-		SUCCEEDED(factory->EnumAdapterByGpuPreference(adapterIndex,
-				DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
-				IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf())));
-		adapterIndex++)
-	{
-
-		bool isDeviceCreated = false;
-		for (auto level : featureLevels) {
-			//実際にデバイスを作成せず、サポートしているかのみ確認
-			HRESULT hr = D3D12CreateDevice(adapter.Get(), level, _uuidof(ID3D12Device), nullptr);
-
-			if (SUCCEEDED(hr)) {
-				//サポートが確認できたら、実際にデバイスを作成してループを抜ける
-				hr = D3D12CreateDevice(adapter.Get(), level, IID_PPV_ARGS(Device.GetAddressOf()));
-				assert(SUCCEEDED(hr));
-				isDeviceCreated = true;
-				break;
-			}
-		}
-
-		//デバイスが作成できていたらループを抜ける
-		if (isDeviceCreated) break;
-	}
-
-#ifdef _DEBUG
-	//誤検知エラーを無視するフィルタの作成
-	ComPtr<ID3D12InfoQueue> infoQueue;
-	if (SUCCEEDED(Device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
-
-		D3D12_MESSAGE_ID denyIds[] = {
-			D3D12_MESSAGE_ID_REFLECTSHAREDPROPERTIES_INVALIDOBJECT
-		};
-
-		D3D12_INFO_QUEUE_FILTER filter = {};
-		filter.DenyList.NumIDs = _countof(denyIds);
-		filter.DenyList.pIDList = denyIds;
-
-		//フィルタを適用
-		infoQueue->PushStorageFilter(&filter);
-	}
-
-#endif
-	return S_OK;
-}
-
 HRESULT Graphic::createCommand() {
 	//コマンドアロケータ作成 (GPU、CPUの非同期処理のためにフレーム数分確保)
 	for (int i = 0; i < FrameCount; i++) {
-		HRESULT hr = Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-			IID_PPV_ARGS(mCommandAllocator[i].GetAddressOf()));
-		if (FAILED(hr))	return hr;
-		
+		mCommandAllocator[i] = CommandAllocatorBuilder().build(*Device.Get());
 	}
 
 	//コマンドリスト作成
-	HRESULT hr = Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-		mCommandAllocator[0].Get(), nullptr, IID_PPV_ARGS(mCommandList.GetAddressOf())
-	);
-	assert(SUCCEEDED(hr));
+	mCommandList = CommandListBuilder().
+		setCommandAllocator(mCommandAllocator[0]).
+		build(*Device.Get());
 
 	//---リソース読み込み用---
 	//リソースの読み込み用コマンドアロケータの作成
-	hr = Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		IID_PPV_ARGS(mLoadAllocator.GetAddressOf()));
-	assert(SUCCEEDED(hr));
+	mLoadAllocator = CommandAllocatorBuilder().build(*Device.Get());
 	//リソースの読み込み用コマンドリストの作成
-	hr = Device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-		mLoadAllocator.Get(), nullptr, IID_PPV_ARGS(mLoadList.GetAddressOf())
-	);
-	assert(SUCCEEDED(hr));
+	mLoadList = CommandListBuilder().
+		setCommandAllocator(mLoadAllocator).
+		build(*Device.Get());
 
 	//コマンドキュー作成
-	D3D12_COMMAND_QUEUE_DESC desc = {};
-	desc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;	//GPUタイムアウトが有効
-	desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT; //直接コマンドキュー
-	hr = Device->CreateCommandQueue(&desc, IID_PPV_ARGS(mCommandQueue.GetAddressOf()));
-	return hr;
+	mCommandQueue = CommandQueueBuilder().build(*Device.Get());
+
+	return S_OK;
 }
 
 HRESULT Graphic::createFence() {

@@ -120,7 +120,6 @@ public:
 
 private:
 	//初期化関数
-	HRESULT createDevice();
 	HRESULT createCommand();
 	HRESULT createFence();
 	HRESULT createWindow();

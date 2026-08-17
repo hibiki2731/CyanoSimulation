@@ -289,6 +289,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\src\GameObject\Actor.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandAllocatorBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandListBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandQueueBuilder.cpp" />
+    <ClCompile Include="Source\Engine\src\Graphic\Core\GraphicDeviceBuilder.cpp" />
     <ClCompile Include="Source\Engine\src\Memory\AssetManager.cpp" />
     <ClCompile Include="Source\Engine\src\Audio\AudioManager.cpp" />
     <ClCompile Include="Source\Engine\src\Graphic\Core\ComputePipelineStateBuilder.cpp" />
@@ -422,6 +426,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\include\GameObject\Actor.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandAllocatorBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandListBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandQueueBuilder.h" />
+    <ClInclude Include="Source\Engine\include\Graphic\Core\GraphicDeviceBuilder.h" />
     <ClInclude Include="Source\Engine\include\Memory\AssetManager.h" />
     <ClInclude Include="Source\Engine\include\Audio\AudioManager.h" />
     <ClInclude Include="Source\Engine\include\Graphic\Core\ComputePipelineStateBuilder.h" />
