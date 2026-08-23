@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <ExternalIncludePath>$(SolutionDir)\DirectX12\External\DirectX;$(SolutionDir)\DirectX12\External\Image\;$(SolutionDir)\DirectX12\External\Imgui\;$(SolutionDir)\DirectX12\External\Json\;$(SolutionDir)\DirectX12\External\Audio\;$(SolutionDir)\DirectX12\External\fbxsdk\include\;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)DirectX12\private\External\DirectX;$(SolutionDir)DirectX12\private\External\Image\;$(SolutionDir)DirectX12\private\External\Imgui\;$(SolutionDir)DirectX12\private\External\Json\;$(SolutionDir)DirectX12\private\External\Audio\;$(SolutionDir)DirectX12\private\External\fbxsdk\include\;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -19,9 +19,14 @@
     <ClCompile>
       <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
       <WarningLevel>Level4</WarningLevel>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\public\Source\include\;$(ProjectDir)\Source\pch\;$(ProjectDir)\Source\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)\DirectX12\External\fbxsdk\lib\x64\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)DirectX12\private\External\fbxsdk\lib\x64\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

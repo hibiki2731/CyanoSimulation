@@ -1,24 +1,55 @@
 ﻿#pragma warning(disable: 26495)
 #include "pch.h"
-#include <Memory/UploadHeap.h>
+#include <Memory/UploadBuffer.h>
 #include <vector>
 #include "HeapTest/HeapTest.h"
+#include "Graphic/Core/EngineResourceFactory.h"
+#include "Memory/StructuredBuffer.h"
+#include "Memory/RWStructuredBuffer.h"
 
 namespace HeapTest {
 	TEST_F(GraphicCoreTest, TestEmptyData) {
-		UploadHeap uploadHeap(nullptr, nullptr);
-
-		uploadHeap.uploadData(nullptr, 1);
-
-		EXPECT_EQ(nullptr, uploadHeap.getGPUResource());
+		EXPECT_DEATH(uploadBuffer->upload(nullptr, 0, sizeof(int)), "");
 	}
 
 	TEST_F(GraphicCoreTest, TestUploadData) {
-		UploadHeap uploadHeap(mDevice.Get(), mCommandList.Get());
 
 		std::vector<int> data = { 1, 2, 3, 5 };
-		uploadHeap.uploadData(data.data(), data.size() * sizeof(int));
+		uploadBuffer->upload(data.data(), 0, data.size() * sizeof(int));
+
+		int* check = static_cast<int*>(uploadBuffer->getCPUResource());
+
+		EXPECT_EQ(1, *check); ++check;
+		EXPECT_EQ(2, *check); ++check;
+		EXPECT_EQ(3, *check); ++check;
+		EXPECT_EQ(5, *check); ++check;
 
 	}
+
+	TEST_F(GraphicCoreTest, TestCopyToDefaultBuffer) {
+		std::vector<int> data = { 1,2,3,5 };
+		uploadBuffer->upload(data.data(), 0, data.size() * sizeof(int));
+
+		defaultBuffer->copyFromUploadBuffer(*uploadBuffer.get());
+		readbackBuffer->read(*defaultBuffer.get());
+
+		int* check = static_cast<int*>(readbackBuffer->getCPUResource());
+
+		EXPECT_EQ(1, *check); ++check;
+		EXPECT_EQ(2, *check); ++check;
+		EXPECT_EQ(3, *check); ++check;
+		EXPECT_EQ(5, *check); ++check;
+	}
+
+	TEST_F(GameSideTest, TestStructuredBuffer) {
+		std::shared_ptr<IStructuredBuffer> structuredBuffer = mFactory->createStructuredBuffer(5, sizeof(int));
+
+		std::vector<int> data = { 1,2,3,5 };
+		//アップロードバッファが解放されないようにしなければならない！！
+		structuredBuffer->upload(data.data(), sizeof(int) * data.size());
+
+		EXPECT_FALSE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResource());
+	}
+
 
 }

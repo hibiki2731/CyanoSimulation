@@ -1,28 +1,49 @@
 ﻿#pragma once
+#include <memory>
 #include "gtest/gtest.h"
 #include <d3dx12.h>
 #include <DirectXMath.h>
-#include "Memory/UploadHeap.h"
+#include "Memory/UploadBuffer.h"
+#include "Memory/LinearDefaultBuffer.h"
+#include "Memory/ReadBackBuffer.h"
 #include "Graphic/Core/GraphicDeviceBuilder.h"
-#include "Graphic/Core/CommandAllocatorBuilder.h"
-#include "Graphic/Core/CommandListBuilder.h"
-#include "Graphic/Core/CommandQueueBuilder.h"
+#include "Graphic/Core/EngineResourceFactory.h"
+#include "Command/Command.h"
+#include "GameLoopCore/Game.h"
 
 class GraphicCoreTest : public ::testing::Test {
+	friend class UploadBuffer;
 protected:
 	virtual void SetUp() {
 		mDevice = GraphicDeviceBuilder().build();
-		mCommandAllocator = CommandAllocatorBuilder().build(*mDevice.Get());
-		mCommandList = CommandListBuilder().setCommandAllocator(mCommandAllocator).build(*mDevice.Get());
-		mCommandQueue = CommandQueueBuilder().build(*mDevice.Get());
+		mCommand = std::make_unique<Command>(*mDevice.Get(), 1);
+
+		uploadBuffer = std::make_unique<UploadBuffer>(*mDevice.Get(), sizeof(int) * 8);
+		defaultBuffer = std::make_unique<LinearDefaultBuffer>(*mDevice.Get(), *mCommand->getList().Get(), sizeof(int) * 8, D3D12_RESOURCE_STATE_COMMON);
+		readbackBuffer = std::make_unique<ReadBackBuffer>(*mDevice.Get(), *mCommand.get(), sizeof(int) * 8);
 	}
 
 	ComPtr<ID3D12Device> mDevice;
-	ComPtr<ID3D12CommandAllocator> mCommandAllocator;
-	ComPtr<ID3D12GraphicsCommandList> mCommandList;
-	ComPtr<ID3D12CommandQueue> mCommandQueue;
+	std::unique_ptr<Command> mCommand;
+
+	std::unique_ptr<UploadBuffer> uploadBuffer;
+	std::unique_ptr<LinearDefaultBuffer> defaultBuffer;
+	std::unique_ptr<ReadBackBuffer> readbackBuffer;
+	
 
 
 };
 
+class GameSideTest : public ::testing::Test {
+protected:
+	virtual void SetUp() {
+		mGame = std::make_unique<Game>();
+		mGame->init();
 
+		mFactory = std::make_unique<EngineResourceFactory>(mGame->createFactory());
+	}
+
+	std::unique_ptr<Game> mGame;
+	std::unique_ptr<EngineResourceFactory> mFactory;
+
+};

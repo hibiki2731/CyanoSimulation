@@ -1,0 +1,423 @@
+﻿
+#include "Memory/TextCBSuballocation.h"
+#include "GameObject/Component/TextComponent.h"
+#include "GameObject/Actor.h"
+#include "GameLoopCore/Game.h"
+#include "Scene/Scene.h"
+#include "Memory/AssetManager.h"
+#include "Utility/MyUtility.h"
+#include "Utility/FileConverter/myJson.h"
+#include "Memory/DescriptorHeap.h"
+#include "Memory/ConstantBuffer.h"
+#include <fstream>
+
+TextComponent::TextComponent(Actor& owner, float zDepth) 
+	: Component(owner),
+	mGraphic(owner.getScene().getGame().getGraphic()),
+	mAssetManager(owner.getScene().getGame().getAssetManager()),
+	mConstantBuffer(mGraphic.getConstantBuffer()),
+	mDescriptorHeap(mGraphic.getDescriptorHeap())
+{
+	mOwner.getScene().addText(this);
+
+	//各種パラメータの初期化
+	isActive = true;
+	mPosition = { 0.0f, 0.0f, zDepth };
+	mFontSize = 32;
+	mFontName = L"MS Gothic";
+	mMaxRow = 20;
+	mTextColor = D2D1::ColorF(D2D1::ColorF::White);
+	mText = L"empty";
+	isLineSpaceDefault = true;
+	mLineSpace = 60.0f;
+	mBaseLineSpace = 0;
+	isCenter = false;
+	mTextMaxWidth = 10000.0f;
+
+	//ブラシの初期化
+    HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
+	assert(SUCCEEDED(hr));
+
+	//テクスチャの初期化
+	createEmptyTexture();
+	wrapTexture();
+	createSprite(zDepth);
+
+	//テキストフォーマットの初期化
+	initDWriteFactory();
+	applyTextFormat();
+}
+
+void TextComponent::loadFileAndCreate(const std::string& structName)
+{
+	//テキストデータの取得
+	nlohmann::json textJson;
+	std::ifstream textfile("Content\\data\\textData.json");
+	textfile >> textJson;
+
+	//構造体が存在しない場合、作成する
+	if (!textJson.contains(structName)) {
+		textJson[structName] = {
+			{"x", mPosition.x},
+			{"y", mPosition.y},
+			{"fontSize", mFontSize},
+			{"lineSpace", mLineSpace},
+			{"text", Utility::wstringToString(mText)}
+		};
+		std::ofstream textfileOut("Content\\data\\textData.json");
+		textfileOut << textJson.dump(4);
+	}
+
+	mFontSize = textJson[structName].value("fontSize", mFontSize);
+	setLineSpace(textJson[structName].value("lineSpace", mLineSpace));	//ここでテキストフォーマットが更新される
+	mPosition.x = textJson[structName].value("x", mPosition.x);
+	mPosition.y = textJson[structName].value("y", mPosition.y);
+	mText = Utility::stringToWString(textJson[structName].value("text", "empty"));
+	std::vector<float> defaultColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	if (!textJson["color"].is_null()) {
+		mTextColor.r = textJson.at("color").at(0).get<float>();
+		mTextColor.g = textJson.at("color").at(1).get<float>();
+		mTextColor.b = textJson.at("color").at(2).get<float>();
+		mTextColor.a = textJson.at("color").at(3).get<float>();
+		setTextColor(mTextColor);
+	}
+
+	applyTextTexture();
+}
+
+void TextComponent::loadFromJson(const nlohmann::json& json)
+{
+	mFontSize = json.value("fontSize", mFontSize);
+	setLineSpace(json.value("lineSpace", mLineSpace));	//ここでテキストフォーマットが更新される
+	mPosition = json.value("position", mPosition);
+	mText = Utility::stringToWString(json.value("text", "empty"));
+	if (!json["color"].is_null()) {
+		mTextColor.r = json.at("color").at(0).get<float>();
+		mTextColor.g = json.at("color").at(1).get<float>();
+		mTextColor.b = json.at("color").at(2).get<float>();
+		mTextColor.a = json.at("color").at(3).get<float>();
+		setTextColor(mTextColor);
+	}
+
+	applyTextTexture();
+
+}
+
+//要マルチスレッド化
+void TextComponent::applyTextTexture()  
+{  
+	//テクスチャの状態をshader resourceに遷移
+	D3D12_RESOURCE_BARRIER barrier;
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = mTexture.Get();
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	mGraphic.getGraphicsCommandList()->ResourceBarrier(1, &barrier);
+
+	//テキストレイアウトの更新	
+	HRESULT hr = mDWriteFactory->CreateTextLayout(
+    mText.c_str(),								//描画する文字列
+    (UINT32)mText.length(),						//文字列の長さ
+    mTextFormat.Get(),							//使用するテキストフォーマット
+    mTextMaxWidth,									//最大高さ
+    10000.0f,									//最大幅
+    mTextLayout.ReleaseAndGetAddressOf()		//出力先
+	);
+	assert(SUCCEEDED(hr));
+
+	//テキストレイアウトからテキストの実際のサイズを取得
+	DWRITE_TEXT_METRICS textMetrics;
+	hr = mTextLayout->GetMetrics(&textMetrics);
+	assert(SUCCEEDED(hr));
+	mTextWidth = textMetrics.width;
+	mTextHeight = textMetrics.height;
+
+	mGraphic.getD3D11On12Device()->AcquireWrappedResources(mWrappedTexture.GetAddressOf(), 1);
+	mGraphic.getD2DDeviceContext()->SetTarget(mD2DTarget.Get());
+	mGraphic.getD2DDeviceContext()->BeginDraw();
+
+	mGraphic.getD2DDeviceContext()->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+
+	mGraphic.getD2DDeviceContext()->SetTransform(D2D1::Matrix3x2F::Identity());  
+	mGraphic.getD2DDeviceContext()->DrawTextLayout(
+		D2D1::Point2F(mPosition.x, mPosition.y),
+		mTextLayout.Get(),
+		mTextBrush.Get()
+	);
+
+	mGraphic.getD2DDeviceContext()->EndDraw();
+	//バックバッファを表示用に切り替えてくれる
+	mGraphic.getD3D11On12Device()->ReleaseWrappedResources(mWrappedTexture.GetAddressOf(), 1);
+
+	mGraphic.getD3D11DeviceContext()->Flush();
+
+	mGraphic.waitGPU();
+}
+
+void TextComponent::draw()
+{
+	//z座標の更新
+	auto world = XMMatrixIdentity()
+		*XMMatrixTranslation(0.0f, 0.0f, mPosition.z);
+
+	mCBSuballocation->updateWorld(world);
+	mCBSuballocation->applyChanges(mGraphic.getBackBufIdx());
+
+	//頂点をセット
+	mGraphic.getGraphicsCommandList()->IASetVertexBuffers(0, 1, &mVertexBufView);
+
+	//ディスクリプタヒープをディスクリプタテーブルにセット
+	auto hDescHeap = mDescriptorHeap.getGPUHandle(mDescriptorRange->getIndex(0) + SlotIndex(mGraphic.getBackBufIdx()));
+	mGraphic.getGraphicsCommandList()->SetGraphicsRootDescriptorTable(0, hDescHeap);
+
+	hDescHeap = mDescriptorHeap.getGPUHandle(mDescriptorRange->getIndex(2));
+	mGraphic.getGraphicsCommandList()->SetGraphicsRootDescriptorTable(1, hDescHeap);
+	//描画。インデックスを使用
+	mGraphic.getGraphicsCommandList()->IASetIndexBuffer(&mIndexBufView);
+	mGraphic.getGraphicsCommandList()->DrawIndexedInstanced(mAssetManager.getSpriteIndicesSize(), 1, 0, 0, 0);
+}
+
+void TextComponent::endProcess()
+{
+	mOwner.getScene().removeText(this);
+
+	mDescriptorHeap.deleteRange(*mDescriptorRange);
+	mConstantBuffer.deleteSuballocation(*mCBSuballocation);
+
+	if (mGraphic.getD2DDeviceContext()) {
+        mGraphic.getD2DDeviceContext()->SetTarget(nullptr);
+        mGraphic.getD3D11DeviceContext()->Flush();
+	}
+
+	//GPUの処理が終わってから削除する
+	ComPtr<IUnknown> tex, wrap, target;
+	if (mTexture) mTexture.As(&tex);
+	if (mWrappedTexture) mWrappedTexture.As(&wrap);
+	if (mD2DTarget) mD2DTarget.As(&target);
+
+	if (tex) mGraphic.delayRelease(tex);
+	if (wrap) mGraphic.delayRelease(wrap);
+	if (target) mGraphic.delayRelease(target);
+
+}
+
+void TextComponent::closeText()
+{
+	isActive = false;
+}
+
+void TextComponent::setText(const std::wstring& text)
+{
+	mText = text;
+	applyTextTexture();
+}
+
+void TextComponent::setPosition(float x, float y)
+{
+	mPosition.x = x;
+	mPosition.y = y;
+	applyTextTexture();
+}
+
+void TextComponent::setPosZ(float z)
+{
+	mPosition.z = z;
+}
+
+void TextComponent::setFontSize(FLOAT size)
+{
+	mFontSize = size;
+	applyTextFormat();
+}
+
+void TextComponent::setTextColor(const D2D1::ColorF& color)
+{
+	mTextColor = color;
+
+	//ブラシを更新
+    HRESULT hr = mGraphic.getD2DDeviceContext()->CreateSolidColorBrush(mTextColor, &mTextBrush);
+	assert(SUCCEEDED(hr));
+	applyTextTexture();
+}
+
+void TextComponent::setLineSpace(float space)
+{
+	isLineSpaceDefault = false;
+	mLineSpace = space; //行間の大きさ
+	mBaseLineSpace = mLineSpace * 0.8f; //文字のベースライン
+	applyTextFormat();
+}
+
+void TextComponent::alignCenter(float width)
+{
+	isCenter = true;
+	mTextMaxWidth = width;
+	applyTextFormat();
+}
+
+bool TextComponent::getIsActive()
+{
+	return isActive;
+}
+
+float TextComponent::getLineSpace()
+{
+	return mLineSpace;
+}
+
+
+void TextComponent::createEmptyTexture()
+{
+	//キャンバスのサイズ
+	UINT textWidth = Graphic::ClientWidth;
+	UINT textHeight = Graphic::ClientHeight;
+
+	D3D12_RESOURCE_DESC textDesc = {};
+	textDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	textDesc.Width = textWidth;
+	textDesc.Height = textHeight;
+	textDesc.DepthOrArraySize = 1;
+	textDesc.MipLevels = 1;
+	textDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textDesc.SampleDesc.Count = 1;
+	textDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	textDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; //D2Dが書き込めるような設定
+
+	//背景を透明にするための設定
+	D3D12_CLEAR_VALUE clearValue = {};
+	clearValue.Format = textDesc.Format;
+	clearValue.Color[0] = 0.0f, clearValue.Color[1] = 0.0f;
+	clearValue.Color[2] = 0.0f, clearValue.Color[3] = 0.0f;
+
+	D3D12_HEAP_PROPERTIES prop = {};
+	prop.Type = D3D12_HEAP_TYPE_DEFAULT;
+	prop.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	prop.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	prop.CreationNodeMask = 1;
+	prop.VisibleNodeMask = 1;
+
+	HRESULT hr =mGraphic.getDevice()->CreateCommittedResource(
+		&prop,
+		D3D12_HEAP_FLAG_NONE,
+		&textDesc,
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		&clearValue,
+		IID_PPV_ARGS(mTexture.ReleaseAndGetAddressOf())
+	);
+	assert(SUCCEEDED(hr));
+	
+}
+
+void TextComponent::wrapTexture()
+{
+	//D3D11のリソースとしてラップ（変換）
+	D3D11_RESOURCE_FLAGS d3d11Flags = { D3D11_BIND_RENDER_TARGET };
+	HRESULT hr = mGraphic.getD3D11On12Device()->CreateWrappedResource(
+		mTexture.Get(),
+		&d3d11Flags,
+		D3D12_RESOURCE_STATE_RENDER_TARGET,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
+		IID_PPV_ARGS(mWrappedTexture.ReleaseAndGetAddressOf())
+	);
+	assert(SUCCEEDED(hr));
+
+	//ラップしたテクスチャをDirect2Dのレンダーターゲットにする
+	ComPtr<IDXGISurface> surface;
+	mWrappedTexture.As(&surface);
+
+	D2D1_BITMAP_PROPERTIES1 bitmapProps = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+		D2D1::PixelFormat(DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
+	);
+
+	hr = mGraphic.getD2DDeviceContext()->CreateBitmapFromDxgiSurface(
+		surface.Get(),
+		&bitmapProps,
+		mD2DTarget.ReleaseAndGetAddressOf()
+	);
+	assert(SUCCEEDED(hr));
+}
+
+void TextComponent::createSprite(float zDepth)
+{
+	//各種Viewの取得
+	SpriteData spriteData = mAssetManager.getSpriteData();
+	mVertexBufView = spriteData.VertexBufView;
+	mIndexBufView = spriteData.IndexBufView;
+
+	//コンスタントバッファの作成
+	mCBSuballocation = mConstantBuffer.createSuballocation<TextCBSuballocation>(AlignedSizeInBytes(sizeof(TextCBSuballocationData)));
+
+	//SpriteConstantBufの初期化
+	mCBSuballocation->updateWorld(XMMatrixIdentity()
+		*XMMatrixTranslation(0.0f, 0.0f, zDepth));
+	mCBSuballocation->updateWindowSize(XMFLOAT2(
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
+	));
+	mCBSuballocation->updateSpriteSize(XMFLOAT2(
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
+	));
+	mCBSuballocation->updateTextureSize(XMFLOAT2(
+		(float)Graphic::ClientWidth,
+		(float)Graphic::ClientHeight
+	));
+	mCBSuballocation->updateBordarSize(0.0f);
+	mCBSuballocation->applyChanges(0);
+	mCBSuballocation->applyChanges(1);
+
+	//ディスクリプタヒープにViewを作成
+	mDescriptorRange = mDescriptorHeap.allocate(NumSlots(3));
+	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(0), 0);
+	mDescriptorHeap.addCBV(*mCBSuballocation.get(), mDescriptorRange->getIndex(1), 1);
+	mDescriptorHeap.addTextureView(*mTexture.Get(), mDescriptorRange->getIndex(2));
+}
+
+void TextComponent::applyTextFormat()
+{
+	//テキストフォーマットの初期化
+    HRESULT hr = mGraphic.getDWriteFactory()->CreateTextFormat(
+        mFontName,
+        NULL,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        mFontSize,
+        L"en-us",
+        &mTextFormat
+    );
+    assert(SUCCEEDED(hr));
+
+	//テキストの配置を設定
+	if (!isCenter)
+		hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING); //左揃え
+	else
+		hr = mTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER); //中央ぞろえ
+	assert(SUCCEEDED(hr));
+	hr = mTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR); //上揃え
+	assert(SUCCEEDED(hr));
+	
+
+	//行間の設定
+	if(!isLineSpaceDefault)
+	hr = mTextFormat->SetLineSpacing(
+		DWRITE_LINE_SPACING_METHOD_UNIFORM,
+		mLineSpace,
+		mBaseLineSpace
+	);
+
+	applyTextTexture();
+}
+
+void TextComponent::initDWriteFactory()
+{
+	HRESULT hr = DWriteCreateFactory(
+		DWRITE_FACTORY_TYPE_SHARED, //ファクトリのタイプ
+		__uuidof(IDWriteFactory),   //取得したいインターフェースのIID
+		reinterpret_cast<IUnknown**>(mDWriteFactory.ReleaseAndGetAddressOf()) //出力先のポインタ
+	);
+	assert(SUCCEEDED(hr));
+}

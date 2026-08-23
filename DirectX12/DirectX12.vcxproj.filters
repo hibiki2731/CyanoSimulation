@@ -18,373 +18,676 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\src\Utility\FileConverter\BIN_FILE12.cpp">
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxalloc.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxarch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxarray.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxbitset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxcharptrset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxcontainerallocators.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\math\fbxaffinematrix.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\sync\fbxatomic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\sync\fbxclock.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\fbxclassid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\fbxconnectionpoint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaanimationelement.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaelement.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaiostream.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladanamespace.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladatokens.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladautils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\fbxbase64coder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\fbxcallbacks.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurve.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvebase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvefilters.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvenode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevalclassic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevalstate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevaluator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimlayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimstack.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimutilities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacternodename.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacterpose.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraint.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintaim.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintcustom.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintparent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintposition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintrotation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintscale.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintsinglechainik.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintutils.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcontrolset.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxblendshape.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxblendshapechannel.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcache.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcachedeffect.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcamera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcamerastereo.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcameraswitcher.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcluster.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingoperator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingsentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtable.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtablebase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtableentry.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxconstantentryview.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaudio.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaudiolayer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaxissystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcollection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcollectionexclusive.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcontainer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcontainertemplate.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\utils\fbxclonemanager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\encoding.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\entities.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\list.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\nanoftp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\nanohttp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\parser.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\parserInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\pattern.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\relaxng.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\SAX.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\SAX2.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\schemasInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\schematron.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\threads.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\tree.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\uri.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\valid.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xinclude.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xlink.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlautomata.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlerror.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlexports.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlIO.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlmemory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlmodule.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlreader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlregexp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlsave.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlschemas.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlschemastypes.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlstring.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlunicode.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlversion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlwriter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpath.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpathInternals.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpointer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Editer\GUIDebugger.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Editer\Object.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameObject\Component\MeshComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameObject\Component\SpriteComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameObject\Component\TextComponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameObject\Actor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\EngineResourceFactory.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\GraphicDeviceBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\PipelineStateBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\RootSignatureBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Effect\FadeGenerator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\ConstantBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\LinearDefaultBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\DescriptorHeap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\IndexBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\MeshBaseCBSuballocation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\MeshMaterialCBSuballocation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\MeshWorldCBSuballocation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\ReadBackBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\RWStructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\SpriteCBSuballocation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\StructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\TextCBSuballocation.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\UploadBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\VertexBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Scene\Scene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Scene\SceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\FileConverter\myJson.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\Input\input.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\Math\Math.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\Math\PerlinNoise1D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\Math\Random.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\Time\timer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\MyUtility.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\pch\pch.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Audio\AudioManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameLoopCore\Game.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\GameObject\Component\Component.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Command\CommandAllocatorBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Command\CommandListBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Command\CommandQueueBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\ComputePipelineStateBuilder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\Definition.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Graphic\Core\Fence.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Memory\AssetManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\FileConverter\FBXConverter.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\FileConverter\BIN_FILE12.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Command\Command.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Source\include\Memory\IStructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Source\include\Memory\IRWStructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="private\External\Imgui\imgui.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\FileConverter\FBXConverter.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_demo.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\Graphic.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_draw.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameObject\Actor.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_impl_dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameLoopCore\Game.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_impl_win32.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\Input\input.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_stdlib.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\Time\timer.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_tables.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameObject\Component\Component.cpp">
+    <ClCompile Include="private\External\Imgui\imgui_widgets.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameObject\Component\MeshComponent.cpp">
+    <ClCompile Include="private\Source\pch\pch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\Math\Math.cpp">
+    <ClCompile Include="private\Source\src\Audio\AudioManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameObject\Component\SpriteComponent.cpp">
+    <ClCompile Include="private\Source\src\Editer\GUIDebugger.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameObject\Component\TextComponent.cpp">
+    <ClCompile Include="private\Source\src\GameObject\Component\Component.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\AssetManager.cpp">
+    <ClCompile Include="private\Source\src\GameObject\Component\SpriteComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\Math\Random.cpp">
+    <ClCompile Include="private\Source\src\GameObject\Actor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Scene\SceneManager.cpp">
+    <ClCompile Include="private\Source\src\Commands\CommandAllocatorBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\MyUtility.cpp">
+    <ClCompile Include="private\Source\src\Commands\CommandListBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Audio\AudioManager.cpp">
+    <ClCompile Include="private\Source\src\Commands\CommandQueueBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Scene\Scene.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\ComputePipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Editer\GUIDebugger.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\RootSignatureBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui.cpp">
+    <ClCompile Include="private\Source\src\Memory\AssetManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_demo.cpp">
+    <ClCompile Include="private\Source\src\Memory\LinearDefaultBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_draw.cpp">
+    <ClCompile Include="private\Source\src\Memory\DescriptorHeap.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_impl_dx12.cpp">
+    <ClCompile Include="private\Source\src\Memory\IndexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_impl_win32.cpp">
+    <ClCompile Include="private\Source\src\Memory\MeshBaseCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_widgets.cpp">
+    <ClCompile Include="private\Source\src\Memory\MeshMaterialCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_tables.cpp">
+    <ClCompile Include="private\Source\src\Memory\StructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="External\Imgui\imgui_stdlib.cpp">
+    <ClCompile Include="private\Source\src\Memory\TextCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Utility\FileConverter\myJson.cpp">
+    <ClCompile Include="private\Source\src\Scene\Scene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Editer\Object.cpp">
+    <ClCompile Include="private\Source\src\Scene\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\GameLoopCore\WinMain.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileConverter\BIN_FILE12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Effect\FadeGenerator.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileConverter\FBXConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\pch\pch.cpp">
+    <ClCompile Include="private\Source\src\Utility\Input\input.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\src\SimulationScene.cpp">
+    <ClCompile Include="private\Source\src\Utility\Math\Math.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\RWStructuredBuffer.cpp">
+    <ClCompile Include="private\Source\src\Utility\Math\Random.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\DescriptorHeap.cpp">
+    <ClCompile Include="private\Source\src\Editer\Object.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\ConstantBuffer.cpp">
+    <ClCompile Include="private\Source\src\GameLoopCore\Game.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\TextCBSuballocation.cpp">
+    <ClCompile Include="private\Source\src\GameObject\Component\MeshComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\MeshBaseCBSuballocation.cpp">
+    <ClCompile Include="private\Source\src\GameObject\Component\TextComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\MeshMaterialCBSuballocation.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\EngineResourceFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\MeshWorldCBSuballocation.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\Fence.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\SpriteCBSuballocation.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\Graphic.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\VertexBuffer.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\GraphicDeviceBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\IndexBuffer.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Core\PipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\src\CyanoSimulator.cpp">
+    <ClCompile Include="private\Source\src\Graphic\Effect\FadeGenerator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\PipelineStateBuilder.cpp">
+    <ClCompile Include="private\Source\src\Memory\ConstantBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\RootSignatureBuilder.cpp">
+    <ClCompile Include="private\Source\src\Memory\MeshWorldCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\ComputePipelineStateBuilder.cpp">
+    <ClCompile Include="private\Source\src\Memory\ReadBackBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\src\CyanoCalculator.cpp">
+    <ClCompile Include="private\Source\src\Memory\SpriteCBSuballocation.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\StructuredBuffer.cpp">
+    <ClCompile Include="private\Source\src\Memory\RWStructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\ReadBackBuffer.cpp">
+    <ClCompile Include="private\Source\src\Memory\UploadBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\Fence.cpp">
+    <ClCompile Include="private\Source\src\Memory\VertexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Memory\UploadHeap.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileConverter\myJson.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\GraphicDeviceBuilder.cpp">
+    <ClCompile Include="private\Source\src\Utility\Time\timer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandAllocatorBuilder.cpp">
+    <ClCompile Include="private\Source\src\Utility\MyUtility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandListBuilder.cpp">
+    <ClCompile Include="private\Source\src\Commands\Command.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\src\Graphic\Core\CommandQueueBuilder.cpp">
+    <ClCompile Include="public\Source\src\Memory\IStructuredBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="public\Source\src\Memory\IRWStructuredBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Engine\include\Utility\FileConverter\BIN_FILE12.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameLoopCore\WinMain.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\FileConverter\FBXConverter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameObject\Actor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\Definition.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameLoopCore\Game.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\Graphic.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\Input\input.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\Time\timer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameObject\Component\Component.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameObject\Component\MeshComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\Math\Math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameObject\Component\SpriteComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\GameObject\Component\TextComponent.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\AssetManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\Math\Random.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="External\Json\json.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Scene\SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\MyUtility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Audio\AudioManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\Math\PerlinNoise1D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Scene\Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Editer\GUIDebugger.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Utility\FileConverter\myJson.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="External\Json\json_fwd.hpp">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Editer\Object.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Effect\FadeGenerator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\pch\pch.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\include\SimulationScene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\RWStructuredBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\DescriptorHeap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\ConstantBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\TextCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\MeshBaseCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\MeshMaterialCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\MeshWorldCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\SpriteCBSuballocation.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\VertexBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\IndexBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\include\CyanoSimulator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\PipelineStateBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\RootSignatureBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\ComputePipelineStateBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\include\CyanoCalculator.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\StructuredBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\ReadBackBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\Fence.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Memory\UploadHeap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\GraphicDeviceBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandAllocatorBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandListBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\include\Graphic\Core\CommandQueueBuilder.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Content\Shader\hlsl\2DPixelShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\2DPixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\2DVertexShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\2DVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\FadePixelShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\FadeVertexShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\CyanoPixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\PixelShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\CyanoVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\VertexShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\FadePixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\CyanoVertexShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\FadeVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\CyanoPixelShader.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\PixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\ScatterCS.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="Content\Shader\hlsl\ScatterCS.hlsl">
+    <FxCompile Include="private\Content\Shader\hlsl\VertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Shader\hlsl\Header.hlsli">
+    <None Include="private\Content\Shader\hlsl\CyanoHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
-    <None Include="Content\Shader\hlsl\FadeHeader.hlsli">
+    <None Include="private\Content\Shader\hlsl\FadeHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>
-    <None Include="Content\Shader\hlsl\CyanoHeader.hlsli">
+    <None Include="private\Content\Shader\hlsl\Header.hlsli">
       <Filter>hlsl</Filter>
     </None>
   </ItemGroup>
