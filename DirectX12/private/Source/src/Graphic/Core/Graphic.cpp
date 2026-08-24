@@ -15,6 +15,7 @@
 #include "Graphic/Core/ComputePipelineStateBuilder.h"
 #include "Graphic/Core/GraphicDeviceBuilder.h"
 #include "Command/Command.h"
+#include "Utility/FileSystem/EngineFileSystem.h"
 Graphic::Graphic(Game& game)
 	:mGame(game),
 	mDevice(GraphicDeviceBuilder().build())
@@ -36,6 +37,7 @@ Graphic::~Graphic()
 
 
 void Graphic::init() {
+	EngineFileSystem::initialize("../../DirectX12/private/");
 	HRESULT hr;
 	//ウィンドウの作成
 	hr = createWindow();
@@ -294,8 +296,8 @@ HRESULT Graphic::createPipeline()
 			.setRasterizerState(rasterDesc)
 			.setBlendState(blendDesc)
 			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
-			.setVertexShader("Content/Shader/cso/VertexShader.cso")
-			.setPixelShader("Content/Shader/cso/PixelShader.cso")
+			.setVertexShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/VertexShader.cso"))
+			.setPixelShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/PixelShader.cso"))
 			.build(*mDevice.Get());
 
 		mRootSignatures[RENDER_3D] = rootSignature3D;
@@ -333,8 +335,8 @@ HRESULT Graphic::createPipeline()
 		auto pipelineState2D = PipelineStateBuilder()
 			.setRootSignature(rootSignature2D.Get())
 			.setInputLayout(inputElementDescs2D)
-			.setVertexShader("Content/Shader/cso/2DVertexShader.cso")
-			.setPixelShader("Content/Shader/cos/2DPixelShader.cso")
+			.setVertexShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/2DVertexShader.cso"))
+			.setPixelShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/2DPixelShader.cso"))
 			.setRasterizerState(rasterDesc)
 			.setBlendState(blendDesc)
 			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
@@ -383,8 +385,8 @@ HRESULT Graphic::createPipeline()
 		auto pipelineStateCyano = PipelineStateBuilder()
 			.setRootSignature(rootSignatureCyano.Get())
 			.setInputLayout(inputElementDescsCyano)
-			.setVertexShader("Content/Shader/cso/CyanoVertexShader.cso")
-			.setPixelShader("Content/Shader/cso/CyanoPixelShader.cso")
+			.setVertexShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/CyanoVertexShader.cso"))
+			.setPixelShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/CyanoPixelShader.cso"))
 			.setRasterizerState(rasterDesc)
 			.setBlendState(blendDesc)
 			.setDepthStencilState(depthStencilDesc)

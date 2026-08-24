@@ -1,9 +1,10 @@
-﻿#include "Utility/FileConverter/FBXConverter.h"
+﻿#include "Utility/FileSystem/FBXConverter.h"
 #include "Utility/Math/Math.h"
 #include <cassert>
 #include <algorithm>
 #include <fstream>
 #include <json.hpp>
+#include "Utility/FileSystem/EngineFileSystem.h"
 
 FBXConverter::FBXConverter() {
 	//初期化
@@ -265,7 +266,7 @@ void FBXConverter::LoadPartsMaterial(FbxMesh* mesh, const std::string& filePath,
 	//マテリアルが無ければ終了
 	if (mesh->GetElementMaterialCount() == 0) {
 		mParts[k].materials.assign(12, 1.0f);
-		mParts[k].texturePath = "Content/picture/white.png";
+		mParts[k].texturePath = EngineFileSystem::getEngineFilePath("Content/picture/white.png");
 		return;
 	}
 
@@ -291,7 +292,7 @@ void FBXConverter::LoadPartsMaterial(FbxMesh* mesh, const std::string& filePath,
 
 	//テクスチャ名がなかったら、white.pngにする
 	if (textureFilename == "") {
-		mParts[k].texturePath = "Content/picture/white.png";
+		mParts[k].texturePath = EngineFileSystem::getEngineFilePath("Content/picture/white.png");
 		return;
 	}
 

@@ -9,6 +9,7 @@
 #include <stb_vorbis.h>
 #include <thread>
 #include <chrono>
+#include "Utility/FileSystem/EngineFileSystem.h"
 
 #define MINIMP3_IMPLEMENTATION
 #include <minimp3_ex.h>
@@ -78,7 +79,7 @@ void AudioManager::initXAudio()
 void AudioManager::loadSoundFiles()
 {
 	//サウンドデータファイルを開く
-	std::fstream file("Content/data/soundData.json");
+	std::fstream file(EngineFileSystem::getEngineFilePath("Content/data/soundData.json"));
 	nlohmann::json json;
 	file >> json;
 

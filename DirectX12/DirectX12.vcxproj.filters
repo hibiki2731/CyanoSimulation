@@ -405,7 +405,7 @@
     <ClInclude Include="private\Source\include\Scene\SceneManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Utility\FileConverter\myJson.h">
+    <ClInclude Include="private\Source\include\Utility\FileSystem\myJson.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Utility\Input\input.h">
@@ -459,10 +459,10 @@
     <ClInclude Include="private\Source\include\Memory\AssetManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Utility\FileConverter\FBXConverter.h">
+    <ClInclude Include="private\Source\include\Utility\FileSystem\FBXConverter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Utility\FileConverter\BIN_FILE12.h">
+    <ClInclude Include="private\Source\include\Utility\FileSystem\BIN_FILE12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Command\Command.h">
@@ -472,6 +472,9 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="public\Source\include\Memory\IRWStructuredBuffer.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Utility\FileSystem\EngineFileSystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -563,10 +566,10 @@
     <ClCompile Include="private\Source\src\Scene\SceneManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Utility\FileConverter\BIN_FILE12.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileSystem\BIN_FILE12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Utility\FileConverter\FBXConverter.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileSystem\FBXConverter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Utility\Input\input.cpp">
@@ -629,7 +632,7 @@
     <ClCompile Include="private\Source\src\Memory\VertexBuffer.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Utility\FileConverter\myJson.cpp">
+    <ClCompile Include="private\Source\src\Utility\FileSystem\myJson.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Utility\Time\timer.cpp">
@@ -645,6 +648,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="public\Source\src\Memory\IRWStructuredBuffer.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Source\src\Utility\FileSystem\EngineFileSystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

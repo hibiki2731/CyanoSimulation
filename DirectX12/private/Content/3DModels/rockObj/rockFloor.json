@@ -78,7 +78,7 @@
                 0.9998999238014221,
                 0.00010013580322265625
             ],
-            "texturePath": "assets/3DModels/rockObj/Rock058_1K-JPG_Color.jpg"
+            "texturePath": "../../DirectX12/private/Content/3DModels/rockObj/Rock058_1K-JPG_Color.jpg"
         }
     ]
 }

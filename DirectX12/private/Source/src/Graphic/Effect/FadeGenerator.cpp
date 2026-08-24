@@ -1,7 +1,8 @@
 ﻿
 #include "Graphic/Effect/FadeGenerator.h"
-#include "Utility/FileConverter/BIN_FILE12.h"
+#include "Utility/FileSystem/BIN_FILE12.h"
 #include "Graphic/Core/Graphic.h"
+#include "Utility/FileSystem/EngineFileSystem.h"
 
 FadeGenerator::FadeGenerator(Graphic& graphic)
 	:mGraphic(graphic),
@@ -45,9 +46,9 @@ FadeGenerator::FadeGenerator(Graphic& graphic)
 
 		{
 			//シェーダの読み込み
-			BIN_FILE12 vsFade("Content/Shader/cso/FadeVertexShader.cso");
+			BIN_FILE12 vsFade(EngineFileSystem::getEngineFilePath("Content/Shader/cso/FadeVertexShader.cso").c_str());
 			assert(vsFade.succeeded());
-			BIN_FILE12 psFade("Content/Shader/cso/FadePixelShader.cso");
+			BIN_FILE12 psFade(EngineFileSystem::getEngineFilePath("Content/Shader/cso/FadePixelShader.cso").c_str());
 			assert(psFade.succeeded());
 
 			//各種記述

@@ -12,7 +12,8 @@
 #include "Editer/Object.h"
 #include "GameObject/Component/MeshComponent.h"
 #include "Utility/Time/timer.h"
-#include "Utility/FileConverter/myJson.h"
+#include "Utility/FileSystem/myJson.h"
+#include "Utility/FileSystem/EngineFileSystem.h"
 
 //ImGUi用に必要なアロケーター
 struct ExampleDescriptorHeapAllocator
@@ -357,7 +358,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 	if (ImGui::Button("apply")) {
 
 		//オブジェクトデータの取得
-		std::ifstream infile("Content/data/objectData.json");
+		std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 		nlohmann::json j;
 		infile >> j;
 		std::string sceneName = mGame.getSceneManager().getCurrentScene().getName();
@@ -372,7 +373,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 			isError = false;
 
 			//シーンの初期オブジェクトに含まれている場合、シーン初期化用のJSONのオブジェクトIDも変える必要がある
-			std::ifstream insceneFile("Content/data/sceneData.json");
+			std::ifstream insceneFile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 			nlohmann::json sceneJson;
 			insceneFile >> sceneJson;
 			std::vector<std::string> objectNames = sceneJson[sceneName].get<std::vector<std::string>>();
@@ -384,7 +385,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 					//JSONを変更
 					sceneJson[sceneName] = std::move(objectNames);
 
-					std::ofstream outsceneFile("Content/data/sceneData.json");
+					std::ofstream outsceneFile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 					outsceneFile << sceneJson.dump(4);
 					break;
 				}
@@ -397,7 +398,7 @@ void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 			obj->mName = newName;
 
 			//オブジェクトファイルに保存
-			std::ofstream outfile("Content/data/objectData.json");
+			std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 			outfile << j.dump(4);
 		}
 	}
@@ -462,16 +463,16 @@ void GUIDebugger::objectDeleteButton(Object* obj)
 		const std::string& sceneName = mGame.getSceneManager().getCurrentScene().getName();
 
 		//オブジェクトファイルから削除
-		std::ifstream infile("Content/data/objectData.json");
+		std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 		nlohmann::json j;
 		infile >> j;
 		j[sceneName].erase(obj->mName);
 
-		std::ofstream outfile("Content/data/objectData.json");
+		std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 		outfile << j.dump(4);
 
 		//シーンの初期に存在する場合、シーンファイルからも削除
-		std::ifstream insceneFile("Content/data/sceneData.json");
+		std::ifstream insceneFile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 		nlohmann::json sceneJson;
 		insceneFile >> sceneJson;
 		std::vector<std::string> objects = sceneJson[sceneName].get<std::vector<std::string>>();
@@ -482,7 +483,7 @@ void GUIDebugger::objectDeleteButton(Object* obj)
 				//配列から除去
 				objects.erase(objects.begin() + i);
 				sceneJson[sceneName] = objects;
-				std::ofstream outsceneFile("Content/data/sceneData.json");
+				std::ofstream outsceneFile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 				outsceneFile << sceneJson.dump(4);
 				break;
 			}
@@ -517,7 +518,7 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 
 	auto& scene = mGame.getSceneManager().getCurrentScene();
 	//現在、シーン中に同じ名前のオブジェクトが存在しているか判定
-	std::ifstream infile("Content/data/objectData.json");
+	std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 	nlohmann::json j;
 	infile >> j;
 	static bool dupFlag;
@@ -557,7 +558,7 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 			mGame.getSceneManager().getCurrentScene().addActor(std::move(newObj));
 
 			//オブジェクトファイルに保存
-			std::ofstream outfile("Content/data/objectData.json");
+			std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 			outfile << j.dump(4);
 
 			return;
@@ -576,7 +577,7 @@ void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 {
 	if (ImGui::Button("Save Scene")) {
 		//シーンファイルを開く
-		std::ifstream infile("Content/data/sceneData.json");
+		std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 		nlohmann::json j;
 		infile >> j;
 
@@ -588,7 +589,7 @@ void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 		}
 		j[sceneName] = objectIDs;
 
-		std::ofstream outfile("Content/data/sceneData.json");
+		std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 		outfile << j.dump(4); // 4はインデントスペースの数	
 	}
 }
@@ -599,7 +600,7 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 	ImGui::Separator();
 	if (ImGui::Button("Save Object")) {
 		//オブジェクトファイルを開く
-		std::ifstream infile("Content/data/objectData.json");
+		std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 		nlohmann::json j;
 		infile >> j;
 		std::string sceneName = mGame.getSceneManager().getCurrentScene().getName();
@@ -652,7 +653,7 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 		}
 
 		//ファイルに出力
-		std::ofstream outfile("Content/data/objectData.json");
+		std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
 		outfile << j.dump(4);
 		infile.close();
 		outfile.close();

@@ -48,7 +48,24 @@ namespace HeapTest {
 		//アップロードバッファが解放されないようにしなければならない！！
 		structuredBuffer->upload(data.data(), sizeof(int) * data.size());
 
-		EXPECT_FALSE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResource());
+		EXPECT_TRUE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResource());
+	}
+
+	TEST_F(GameSideTest, TestRWStructuredBuffer) {
+		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(5, sizeof(int));
+
+		std::vector<int> data = { 1,2,3,5 };
+		//アップロードバッファが解放されないようにしなければならない！！
+		rwBuffer->upload(data.data(), sizeof(int) * data.size());
+
+		int* check = static_cast<int*>(rwBuffer->read());
+		EXPECT_EQ(1, *check); ++check;
+		EXPECT_EQ(2, *check); ++check;
+		EXPECT_EQ(3, *check); ++check;
+		EXPECT_EQ(5, *check); ++check;
+
+
+
 	}
 
 

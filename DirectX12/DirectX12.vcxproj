@@ -123,7 +123,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(ProjectDir)private\;$(ProjectDir)public\Source\include\;$(ProjectDir)private\Source\include\;$(ProjectDir)private\Source\pch;$(ProjectDir)\Source\Game\include;$(ProjectDir)\Source\Engine\include;$(ProjectDir)\External\DirectX\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)private\;$(ProjectDir)public\Source\include\;$(ProjectDir)private\Source\include\;$(ProjectDir)private\Source\pch;$(ProjectDir)\External\DirectX\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -322,9 +322,10 @@
     <ClInclude Include="private\Source\include\Memory\VertexBuffer.h" />
     <ClInclude Include="private\Source\include\Scene\Scene.h" />
     <ClInclude Include="private\Source\include\Scene\SceneManager.h" />
-    <ClInclude Include="private\Source\include\Utility\FileConverter\BIN_FILE12.h" />
-    <ClInclude Include="private\Source\include\Utility\FileConverter\FBXConverter.h" />
-    <ClInclude Include="private\Source\include\Utility\FileConverter\myJson.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\BIN_FILE12.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\EngineFileSystem.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\FBXConverter.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\myJson.h" />
     <ClInclude Include="private\Source\include\Utility\Input\input.h" />
     <ClInclude Include="private\Source\include\Utility\Math\Math.h" />
     <ClInclude Include="private\Source\include\Utility\Math\PerlinNoise1D.h" />
@@ -410,9 +411,10 @@
     <ClCompile Include="private\Source\src\Memory\VertexBuffer.cpp" />
     <ClCompile Include="private\Source\src\Scene\Scene.cpp" />
     <ClCompile Include="private\Source\src\Scene\SceneManager.cpp" />
-    <ClCompile Include="private\Source\src\Utility\FileConverter\BIN_FILE12.cpp" />
-    <ClCompile Include="private\Source\src\Utility\FileConverter\FBXConverter.cpp" />
-    <ClCompile Include="private\Source\src\Utility\FileConverter\myJson.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\BIN_FILE12.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\EngineFileSystem.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\FBXConverter.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\myJson.cpp" />
     <ClCompile Include="private\Source\src\Utility\Input\input.cpp" />
     <ClCompile Include="private\Source\src\Utility\Math\Math.cpp" />
     <ClCompile Include="private\Source\src\Utility\Math\Random.cpp" />
@@ -426,51 +428,71 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\2DVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\CyanoPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\CyanoVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\FadePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\FadeVertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\ScatterCS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

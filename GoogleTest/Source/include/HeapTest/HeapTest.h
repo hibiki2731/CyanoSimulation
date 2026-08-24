@@ -37,6 +37,7 @@ protected:
 class GameSideTest : public ::testing::Test {
 protected:
 	virtual void SetUp() {
+		::testing::GTEST_FLAG(break_on_failure) = true;
 		mGame = std::make_unique<Game>();
 		mGame->init();
 
