@@ -9,10 +9,12 @@ StructuredBuffer::~StructuredBuffer() = default;
 
 void StructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 {
-	UploadBuffer uploadBuffer(mDevice, sizeInBytes);
-	uploadBuffer.upload(srcData, 0, sizeInBytes);
+	if (mUploadBuffer) mUploadBuffer.reset();
 
-	mDefaultBuffer->copyFromUploadBuffer(uploadBuffer);
+	mUploadBuffer = std::make_unique <UploadBuffer>(mDevice, sizeInBytes);
+	mUploadBuffer->upload(srcData, 0, sizeInBytes);
+
+	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer);
 }
 
 StructuredBuffer::StructuredBuffer(ID3D12Device& device, class Command& copyCommand, UINT numElements, UINT sizeOfElement)

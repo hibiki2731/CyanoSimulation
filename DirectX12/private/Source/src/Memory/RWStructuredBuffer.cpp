@@ -10,10 +10,12 @@ RWStructuredBuffer::~RWStructuredBuffer() = default;
 
 void RWStructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 {
-	UploadBuffer uploadBuffer(mDevice, sizeInBytes);
-	uploadBuffer.upload(srcData, 0, sizeInBytes);
+	if (mUploadBuffer) mUploadBuffer.reset();
 
-	mDefaultBuffer->copyFromUploadBuffer(uploadBuffer);
+	mUploadBuffer = std::make_unique <UploadBuffer>(mDevice, sizeInBytes);
+	mUploadBuffer->upload(srcData, 0, sizeInBytes);
+
+	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer);
 }
 
 void* RWStructuredBuffer::read()
