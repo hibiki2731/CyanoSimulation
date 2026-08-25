@@ -339,19 +339,19 @@
     <ClInclude Include="private\Source\include\GameObject\Actor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Graphic\Core\EngineResourceFactory.h">
+    <ClInclude Include="private\Source\include\Builder\EngineResourceFactory.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Graphic\Core\GraphicDeviceBuilder.h">
+    <ClInclude Include="private\Source\include\Builder\GraphicDeviceBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Graphic\Core\PipelineStateBuilder.h">
+    <ClInclude Include="private\Source\include\Builder\PipelineStateBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Graphic\Core\RootSignatureBuilder.h">
+    <ClInclude Include="private\Source\include\Builder\RootSignatureBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Graphic\Effect\FadeGenerator.h">
@@ -447,7 +447,7 @@
     <ClInclude Include="private\Source\include\Command\CommandQueueBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Graphic\Core\ComputePipelineStateBuilder.h">
+    <ClInclude Include="private\Source\include\Builder\ComputePipelineStateBuilder.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Graphic\Core\Definition.h">
@@ -475,6 +475,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Utility\FileSystem\EngineFileSystem.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Compute\ComputeShader.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="public\Source\include\Compute\IComputeShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -530,10 +536,10 @@
     <ClCompile Include="private\Source\src\Commands\CommandQueueBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Graphic\Core\ComputePipelineStateBuilder.cpp">
+    <ClCompile Include="private\Source\src\Builder\ComputePipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Graphic\Core\RootSignatureBuilder.cpp">
+    <ClCompile Include="private\Source\src\Builder\RootSignatureBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Memory\AssetManager.cpp">
@@ -593,7 +599,7 @@
     <ClCompile Include="private\Source\src\GameObject\Component\TextComponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Graphic\Core\EngineResourceFactory.cpp">
+    <ClCompile Include="private\Source\src\Builder\EngineResourceFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Graphic\Core\Fence.cpp">
@@ -602,10 +608,10 @@
     <ClCompile Include="private\Source\src\Graphic\Core\Graphic.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Graphic\Core\GraphicDeviceBuilder.cpp">
+    <ClCompile Include="private\Source\src\Builder\GraphicDeviceBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Graphic\Core\PipelineStateBuilder.cpp">
+    <ClCompile Include="private\Source\src\Builder\PipelineStateBuilder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Graphic\Effect\FadeGenerator.cpp">
@@ -651,6 +657,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="private\Source\src\Utility\FileSystem\EngineFileSystem.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Source\src\Compute\ComputeShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="public\Source\src\Compute\IComputeShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

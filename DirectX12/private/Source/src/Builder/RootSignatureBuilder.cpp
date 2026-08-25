@@ -1,4 +1,4 @@
-﻿#include "Graphic/Core/RootSignatureBuilder.h"
+﻿#include "Builder/RootSignatureBuilder.h"
 
 RootSignatureBuilder& RootSignatureBuilder::addDescriptorTable(const std::vector<D3D12_DESCRIPTOR_RANGE>& range, D3D12_SHADER_VISIBILITY visibility)
 {

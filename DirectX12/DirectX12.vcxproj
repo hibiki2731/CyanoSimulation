@@ -285,6 +285,7 @@
     <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpointer.h" />
     <ClInclude Include="private\Source\include\Audio\AudioManager.h" />
     <ClInclude Include="private\Source\include\Command\Command.h" />
+    <ClInclude Include="private\Source\include\Compute\ComputeShader.h" />
     <ClInclude Include="private\Source\include\Editer\GUIDebugger.h" />
     <ClInclude Include="private\Source\include\Editer\Object.h" />
     <ClInclude Include="private\Source\include\GameLoopCore\Game.h" />
@@ -296,14 +297,14 @@
     <ClInclude Include="private\Source\include\Command\CommandAllocatorBuilder.h" />
     <ClInclude Include="private\Source\include\Command\CommandListBuilder.h" />
     <ClInclude Include="private\Source\include\Command\CommandQueueBuilder.h" />
-    <ClInclude Include="private\Source\include\Graphic\Core\ComputePipelineStateBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\ComputePipelineStateBuilder.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Definition.h" />
-    <ClInclude Include="private\Source\include\Graphic\Core\EngineResourceFactory.h" />
+    <ClInclude Include="private\Source\include\Builder\EngineResourceFactory.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Fence.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h" />
-    <ClInclude Include="private\Source\include\Graphic\Core\GraphicDeviceBuilder.h" />
-    <ClInclude Include="private\Source\include\Graphic\Core\PipelineStateBuilder.h" />
-    <ClInclude Include="private\Source\include\Graphic\Core\RootSignatureBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\GraphicDeviceBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\PipelineStateBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\RootSignatureBuilder.h" />
     <ClInclude Include="private\Source\include\Graphic\Effect\FadeGenerator.h" />
     <ClInclude Include="private\Source\include\Memory\AssetManager.h" />
     <ClInclude Include="private\Source\include\Memory\ConstantBuffer.h" />
@@ -333,6 +334,7 @@
     <ClInclude Include="private\Source\include\Utility\MyUtility.h" />
     <ClInclude Include="private\Source\include\Utility\Time\timer.h" />
     <ClInclude Include="private\Source\pch\pch.h" />
+    <ClInclude Include="public\Source\include\Compute\IComputeShader.h" />
     <ClInclude Include="public\Source\include\Memory\IRWStructuredBuffer.h" />
     <ClInclude Include="public\Source\include\Memory\IStructuredBuffer.h" />
   </ItemGroup>
@@ -375,6 +377,7 @@
     </ClCompile>
     <ClCompile Include="private\Source\src\Audio\AudioManager.cpp" />
     <ClCompile Include="private\Source\src\Commands\Command.cpp" />
+    <ClCompile Include="private\Source\src\Compute\ComputeShader.cpp" />
     <ClCompile Include="private\Source\src\Editer\GUIDebugger.cpp" />
     <ClCompile Include="private\Source\src\Editer\Object.cpp" />
     <ClCompile Include="private\Source\src\GameLoopCore\Game.cpp" />
@@ -386,13 +389,13 @@
     <ClCompile Include="private\Source\src\Commands\CommandAllocatorBuilder.cpp" />
     <ClCompile Include="private\Source\src\Commands\CommandListBuilder.cpp" />
     <ClCompile Include="private\Source\src\Commands\CommandQueueBuilder.cpp" />
-    <ClCompile Include="private\Source\src\Graphic\Core\ComputePipelineStateBuilder.cpp" />
-    <ClCompile Include="private\Source\src\Graphic\Core\EngineResourceFactory.cpp" />
+    <ClCompile Include="private\Source\src\Builder\ComputePipelineStateBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\EngineResourceFactory.cpp" />
     <ClCompile Include="private\Source\src\Graphic\Core\Fence.cpp" />
     <ClCompile Include="private\Source\src\Graphic\Core\Graphic.cpp" />
-    <ClCompile Include="private\Source\src\Graphic\Core\GraphicDeviceBuilder.cpp" />
-    <ClCompile Include="private\Source\src\Graphic\Core\PipelineStateBuilder.cpp" />
-    <ClCompile Include="private\Source\src\Graphic\Core\RootSignatureBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\GraphicDeviceBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\PipelineStateBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\RootSignatureBuilder.cpp" />
     <ClCompile Include="private\Source\src\Graphic\Effect\FadeGenerator.cpp" />
     <ClCompile Include="private\Source\src\Memory\AssetManager.cpp" />
     <ClCompile Include="private\Source\src\Memory\ConstantBuffer.cpp" />
@@ -420,6 +423,7 @@
     <ClCompile Include="private\Source\src\Utility\Math\Random.cpp" />
     <ClCompile Include="private\Source\src\Utility\MyUtility.cpp" />
     <ClCompile Include="private\Source\src\Utility\Time\timer.cpp" />
+    <ClCompile Include="public\Source\src\Compute\IComputeShader.cpp" />
     <ClCompile Include="public\Source\src\Memory\IRWStructuredBuffer.cpp" />
     <ClCompile Include="public\Source\src\Memory\IStructuredBuffer.cpp" />
   </ItemGroup>

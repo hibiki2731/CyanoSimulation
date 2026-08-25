@@ -11,7 +11,7 @@
 #include "Scene/Scene.h"
 #include "Editer/GUIDebugger.h"
 
-#include "Graphic/Core/EngineResourceFactory.h"
+#include "Builder/EngineResourceFactory.h"
 Game::Game(){
 	mUpdatingActors = false;
 }

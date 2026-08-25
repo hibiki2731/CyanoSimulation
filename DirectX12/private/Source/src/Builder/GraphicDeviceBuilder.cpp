@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Graphic/Core/GraphicDeviceBuilder.h"
+#include "Builder/GraphicDeviceBuilder.h"
 
 ComPtr<ID3D12Device> GraphicDeviceBuilder::build()
 {

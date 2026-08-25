@@ -6,8 +6,8 @@
 #include "Memory/UploadBuffer.h"
 #include "Memory/LinearDefaultBuffer.h"
 #include "Memory/ReadBackBuffer.h"
-#include "Graphic/Core/GraphicDeviceBuilder.h"
-#include "Graphic/Core/EngineResourceFactory.h"
+#include "Builder/GraphicDeviceBuilder.h"
+#include "Builder/EngineResourceFactory.h"
 #include "Command/Command.h"
 #include "GameLoopCore/Game.h"
 

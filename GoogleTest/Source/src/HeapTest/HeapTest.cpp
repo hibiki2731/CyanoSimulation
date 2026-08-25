@@ -3,7 +3,7 @@
 #include <Memory/UploadBuffer.h>
 #include <vector>
 #include "HeapTest/HeapTest.h"
-#include "Graphic/Core/EngineResourceFactory.h"
+#include "Builder/EngineResourceFactory.h"
 #include "Memory/StructuredBuffer.h"
 #include "Memory/RWStructuredBuffer.h"
 
