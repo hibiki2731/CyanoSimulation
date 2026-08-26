@@ -14,7 +14,6 @@ protected:
 
 		mFactory = std::make_unique<EngineResourceFactory>(mGame->createFactory());
 
-		mComputeShader = mFactory->createComputeShader("Content/Shader/cso/TestComputeShader.cso");
 
 	}
 

@@ -11,10 +11,10 @@ void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 		D3D12_RESOURCE_STATE_COPY_DEST
 	);
 
-	mCommandList.ResourceBarrier(1, &barrierToCopyDesc);
+	mCommandList->ResourceBarrier(1, &barrierToCopyDesc);
 
 	//リソースのコピー
-	mCommandList.CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
+	mCommandList->CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
 
 	//本来のステートに戻す
 	D3D12_RESOURCE_BARRIER barrierToUsage = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -22,11 +22,11 @@ void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		mState
 	);
-	mCommandList.ResourceBarrier(1, &barrierToUsage);
+	mCommandList->ResourceBarrier(1, &barrierToUsage);
 }
 
 LinearDefaultBuffer::LinearDefaultBuffer(ID3D12Device& device,ID3D12GraphicsCommandList& commandList, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag)
-	:mCommandList(commandList),
+	:mCommandList(&commandList),
 	mSizeInBytes(sizeInBytes),
 	mState(state)
 {

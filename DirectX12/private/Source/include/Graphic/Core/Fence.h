@@ -19,6 +19,6 @@ private:
 	HANDLE mFenceEvent;
 	UINT64 mFenceValue;
 	std::vector<UINT64> mFrameFenceValues;
-	ID3D12CommandQueue& mCommandQueue;
+	ID3D12CommandQueue* mCommandQueue;
 };
 

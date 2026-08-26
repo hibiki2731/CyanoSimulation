@@ -19,7 +19,7 @@ private:
 	void createAndMapBuffers(ID3D12Device& device, D3D12_RESOURCE_DESC& desc, D3D12_HEAP_PROPERTIES& prop);
 
 	ComPtr<ID3D12Resource> mGPUResource;
-	class Command& mCopyCommand;
+	class Command* mCopyCommand;
 	void* mCPUResource;
 	UINT mSizeInBytes;
 	std::unique_ptr<class Fence> mFence;

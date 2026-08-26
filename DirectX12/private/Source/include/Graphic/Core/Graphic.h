@@ -97,6 +97,7 @@ public:
 	ID3D12CommandAllocator* getGraphicsCommandAllocator();
 	class Command& getGraphicsCommand();
 	class Command& getCopyCommand();
+	class Command& getComputeCommand();
 	ID3D12Device* getDevice();
 	ID3D11On12Device* getD3D11On12Device();
 	ID3D11DeviceContext* getD3D11DeviceContext();
@@ -105,6 +106,7 @@ public:
 	ID2D1Bitmap1* getD2DRenderTarget();
 	int getBackBufIdx();
 	DescriptorHeap& getDescriptorHeap() const { return *mDescriptorHeap; }
+	DescriptorHeap& gerShaderNonVisibleHeap() const { return *mShaderNonVisibleHeap; }
 	ConstantBuffer& getConstantBuffer() const{ return *mConstantBuffer; }
 	ID3D12RootSignature& getRootSignature(STATE state);
 	ID3D12PipelineState& getPipelineState(STATE state);
@@ -153,8 +155,9 @@ private:
 	//デバイス
 	ComPtr<ID3D12Device> mDevice;
 	//コマンド
-	std::shared_ptr<class Command> mGraphicsCommand;
-	std::shared_ptr<class Command> mCopyCommand;
+	std::unique_ptr<class Command> mGraphicsCommand;
+	std::unique_ptr<class Command> mCopyCommand;
+	std::unique_ptr<class Command> mComputeCommand;
 
 	//フェンス
 	ComPtr<ID3D12Fence> mFence;				//GPUの処理完了をチェックするフェンス
@@ -198,6 +201,7 @@ private:
 
 	//ディスクリプタヒープ
 	std::unique_ptr<DescriptorHeap> mDescriptorHeap;
+	std::unique_ptr<DescriptorHeap> mShaderNonVisibleHeap;
 	//コンスタントバッファ
 	std::unique_ptr<ConstantBuffer> mConstantBuffer;
 

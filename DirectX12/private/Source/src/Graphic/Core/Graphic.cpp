@@ -80,6 +80,7 @@ void Graphic::init() {
 HRESULT Graphic::createCommand() {
 	mGraphicsCommand = std::make_unique<Command>(*mDevice.Get(), 2);
 	mCopyCommand = std::make_unique<Command>(*mDevice.Get(), 1);
+	mComputeCommand = std::make_unique<Command>(*mDevice.Get(), 1);
 
 	return S_OK;
 }
@@ -522,10 +523,9 @@ HRESULT Graphic::createD2D()
 
 HRESULT Graphic::createCbvAndHeap()
 {
-	mDescriptorHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 10);
+	mDescriptorHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100);
 	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1024);
-
-	//mMeshBaseCBSuballocation = mConstantBuffer->createSuballocation<MeshBaseCBSuballocation>(alignedSize(sizeof(MeshBaseCBSuballocationData)));
+	mShaderNonVisibleHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100);
 
 	return S_OK;
 }
@@ -997,6 +997,11 @@ Command& Graphic::getGraphicsCommand()
 Command& Graphic::getCopyCommand()
 {
 	return *mCopyCommand.get();
+}
+
+Command& Graphic::getComputeCommand()
+{
+	return *mComputeCommand.get();
 }
 
 ID3D12Device* Graphic::getDevice()

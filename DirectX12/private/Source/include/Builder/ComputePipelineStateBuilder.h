@@ -9,7 +9,7 @@ class ComputePipelineStateBuilder
 {
 public:
 	ComputePipelineStateBuilder(); //CD3DX12_DEFAULTで妥当な既定値を入れておく
-	~ComputePipelineStateBuilder() = default;
+	~ComputePipelineStateBuilder();
 
 	ComputePipelineStateBuilder& setRootSignature(ID3D12RootSignature* rootSignature);
 	ComputePipelineStateBuilder& setComputeShader(const std::string& path);

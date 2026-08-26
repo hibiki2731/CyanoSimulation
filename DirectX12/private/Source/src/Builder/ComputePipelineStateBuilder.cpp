@@ -5,6 +5,8 @@
 ComputePipelineStateBuilder::ComputePipelineStateBuilder() {
 }
 
+ComputePipelineStateBuilder::~ComputePipelineStateBuilder() = default;
+
 ComputePipelineStateBuilder& ComputePipelineStateBuilder::setRootSignature(ID3D12RootSignature* rootSignature) {
 
 	mDesc.pRootSignature = rootSignature;

@@ -2,7 +2,7 @@
 #include "Graphic/Core/Fence.h"
 
 Fence::Fence(ID3D12Device& device, ID3D12CommandQueue& commandQueue, const int frameCount)
-	:mCommandQueue(commandQueue)
+	:mCommandQueue(&commandQueue)
 {
 	prepareFence(device, frameCount);
 }
@@ -11,7 +11,7 @@ void Fence::waitGPU()
 {
 	//現在のFence値がコマンド中菱後にFenceに書き込まれるようにス
 	UINT64 fvalue = mFenceValue;
-	mCommandQueue.Signal(mFence.Get(), fvalue);
+	mCommandQueue->Signal(mFence.Get(), fvalue);
 	mFenceValue++;
 
 	//まだコマンドキューが終了していないことを確認する
@@ -27,7 +27,7 @@ void Fence::waitCompleteNextFrame(const int currentFrame, const int nextFrame)
 {
 	//現フレームのフェンス値を記録
 	mFrameFenceValues[currentFrame] = mFenceValue;
-	mCommandQueue.Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
+	mCommandQueue->Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
 	mFenceValue++;
 
 	//次フレームのバッファをGPUがまだ使っていれば待機

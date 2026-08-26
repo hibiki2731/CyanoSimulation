@@ -11,6 +11,8 @@
 #include "Scene/Scene.h"
 #include "Editer/GUIDebugger.h"
 
+#include "Command/Command.h"
+#include "Memory/DescriptorHeap.h"
 #include "Builder/EngineResourceFactory.h"
 Game::Game(){
 	mUpdatingActors = false;
@@ -156,7 +158,7 @@ void Game::draw()
 
 EngineResourceFactory Game::createFactory()
 {
-	return EngineResourceFactory(*mGraphic->getDevice(), mGraphic->getGraphicsCommand(), mGraphic->getCopyCommand());
+	return EngineResourceFactory(*mGraphic->getDevice(), mGraphic->getDescriptorHeap(), mGraphic->gerShaderNonVisibleHeap(), mGraphic->getGraphicsCommand(), mGraphic->getCopyCommand(), mGraphic->getComputeCommand());
 }
 
 #ifdef _DEBUG

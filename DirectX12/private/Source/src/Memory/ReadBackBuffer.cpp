@@ -7,7 +7,7 @@
 
 ReadBackBuffer::ReadBackBuffer(ID3D12Device& device, Command& copyCommand, UINT sizeInBytes)
 	:mSizeInBytes(sizeInBytes),
-	mCopyCommand(copyCommand)
+	mCopyCommand(&copyCommand)
 {
 	//バッファーの詳細設定
 	auto desc = createResourceDesc();
@@ -36,10 +36,10 @@ void ReadBackBuffer::read(LinearDefaultBuffer& readSrc)
 		readSrc.getResourceState(),
 		D3D12_RESOURCE_STATE_COPY_SOURCE
 	);
-	mCopyCommand.getList()->ResourceBarrier(1, &barrierToCopySrc);
+	mCopyCommand->getList()->ResourceBarrier(1, &barrierToCopySrc);
 
 	//コピーの実行
-	mCopyCommand.getList()->CopyResource(mGPUResource.Get(), readSrc.getGPUResource());
+	mCopyCommand->getList()->CopyResource(mGPUResource.Get(), readSrc.getGPUResource());
 
 	//コピー元のステートを元の状態に戻す
 	D3D12_RESOURCE_BARRIER barrierToRestore = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -47,19 +47,19 @@ void ReadBackBuffer::read(LinearDefaultBuffer& readSrc)
 		D3D12_RESOURCE_STATE_COPY_SOURCE,
 		readSrc.getResourceState()
 	);
-	mCopyCommand.getList()->ResourceBarrier(1, &barrierToRestore);
+	mCopyCommand->getList()->ResourceBarrier(1, &barrierToRestore);
 
 	//GPUへ命令を送信
-	mCopyCommand.getList()->Close();
-	ID3D12CommandList* commandLists[] = { mCopyCommand.getList().Get() };
-	mCopyCommand.getQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
+	mCopyCommand->getList()->Close();
+	ID3D12CommandList* commandLists[] = { mCopyCommand->getList().Get() };
+	mCopyCommand->getQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
 	//GPUがコピー完了するまでCPUを待機
 	mFence->waitGPU();
 
 	//コピー用コマンドの初期化
-	mCopyCommand.getAllocator()->Reset();
-	mCopyCommand.getList()->Reset(mCopyCommand.getAllocator().Get(), nullptr);
+	mCopyCommand->getAllocator()->Reset();
+	mCopyCommand->getList()->Reset(mCopyCommand->getAllocator().Get(), nullptr);
 }
 
 void* ReadBackBuffer::getCPUResource() const
@@ -90,7 +90,7 @@ D3D12_HEAP_PROPERTIES ReadBackBuffer::createHeapProperties()
 void ReadBackBuffer::createFence(ID3D12Device& device)
 {
 	//フェンスを作成
-	mFence = std::make_unique<Fence>(device, *mCopyCommand.getQueue().Get(), 1);
+	mFence = std::make_unique<Fence>(device, *mCopyCommand->getQueue().Get(), 1);
 }
 
 void ReadBackBuffer::createAndMapBuffers(ID3D12Device& device, D3D12_RESOURCE_DESC& desc, D3D12_HEAP_PROPERTIES& prop)

@@ -12,24 +12,24 @@ void RWStructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 {
 	if (mUploadBuffer) mUploadBuffer.reset();
 
-	mUploadBuffer = std::make_unique <UploadBuffer>(mDevice, sizeInBytes);
+	mUploadBuffer = std::make_unique <UploadBuffer>(*mDevice, sizeInBytes);
 	mUploadBuffer->upload(srcData, 0, sizeInBytes);
 
-	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer);
+	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer.get());
 }
 
 void* RWStructuredBuffer::read()
 {
-	ReadBackBuffer readbackBuffer(mDevice, mCopyCommand, mNumElements * mSizeOfElement);
+	ReadBackBuffer readbackBuffer(*mDevice, *mCopyCommand, mNumElements * mSizeOfElement);
 	readbackBuffer.read(*mDefaultBuffer.get());
 
 	return readbackBuffer.getCPUResource();
 }
 
-RWStructuredBuffer::RWStructuredBuffer(ID3D12Device& device, class Command& copyCommand, UINT numElements, UINT sizeOfElement)
+RWStructuredBuffer::RWStructuredBuffer(ID3D12Device& device, Command& copyCommand, UINT numElements, UINT sizeOfElement)
 	:IRWStructuredBuffer(),
-	mDevice(device),
-	mCopyCommand(copyCommand),
+	mDevice(&device),
+	mCopyCommand(&copyCommand),
 	mNumElements(numElements),
 	mSizeOfElement(sizeOfElement)
 {
