@@ -95,9 +95,7 @@ public:
 	ID3D12GraphicsCommandList* getGraphicsCommandList();
 	ID3D12CommandQueue* getGraphicsCommandQueue();
 	ID3D12CommandAllocator* getGraphicsCommandAllocator();
-	class Command& getGraphicsCommand();
-	class Command& getCopyCommand();
-	class Command& getComputeCommand();
+	class CommandManager* getCommandManager();
 	ID3D12Device* getDevice();
 	ID3D11On12Device* getD3D11On12Device();
 	ID3D11DeviceContext* getD3D11DeviceContext();
@@ -134,6 +132,7 @@ private:
 	HRESULT createPipeline();
 	HRESULT createD2D();
 	HRESULT createCbvAndHeap();
+	void initComputeManager();
 
 	//---ウィンドウ---
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
@@ -155,9 +154,7 @@ private:
 	//デバイス
 	ComPtr<ID3D12Device> mDevice;
 	//コマンド
-	std::unique_ptr<class Command> mGraphicsCommand;
-	std::unique_ptr<class Command> mCopyCommand;
-	std::unique_ptr<class Command> mComputeCommand;
+	std::unique_ptr<class CommandManager> mCommandManager;
 
 	//フェンス
 	ComPtr<ID3D12Fence> mFence;				//GPUの処理完了をチェックするフェンス

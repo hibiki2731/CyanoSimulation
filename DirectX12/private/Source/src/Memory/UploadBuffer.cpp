@@ -21,6 +21,8 @@ void UploadBuffer::upload(void* sourceData, UINT offset, UINT sizeInBytes)
 	assert(sourceData != nullptr);
 
 	memcpy(static_cast<UINT*>(mCPUResource) + offset, sourceData, sizeInBytes);
+
+	int* check = static_cast<int*>(mCPUResource);
 }
 
 

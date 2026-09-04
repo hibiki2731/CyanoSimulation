@@ -6,7 +6,7 @@ class LinearDefaultBuffer
 {
 
 public:
-	LinearDefaultBuffer(ID3D12Device& device, ID3D12GraphicsCommandList& commandList, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag = D3D12_RESOURCE_FLAG_NONE);
+	LinearDefaultBuffer(ID3D12Device& device, class CommandManager& commandManager, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag = D3D12_RESOURCE_FLAG_NONE);
 
 	void copyFromUploadBuffer(class UploadBuffer& copySrc);
 
@@ -20,7 +20,7 @@ private:
 
 	void createBuffer(ID3D12Device& device, D3D12_HEAP_PROPERTIES prop, D3D12_RESOURCE_DESC desc, D3D12_RESOURCE_STATES state);
 
-	ID3D12GraphicsCommandList* mCommandList;
+	class CommandManager& mCommandManager;
 	ComPtr<ID3D12Resource> mGPUResource;
 	UINT mSizeInBytes;
 	D3D12_RESOURCE_STATES mState;

@@ -6,11 +6,11 @@
 class Fence
 {
 public:
-	Fence(ID3D12Device& device, ID3D12CommandQueue& commandQueue, const int frameCount = 1);
+	Fence(ID3D12Device& device, const int frameCount = 1);
 	~Fence() = default;
 
-	void waitGPU();
-	void waitCompleteNextFrame(const int currentFrame, const int nextFrame);
+	void waitGPU(ID3D12CommandQueue& commandQueue);
+	void waitCompleteNextFrame(ID3D12CommandQueue& commandQueue, const int currentFrame, const int nextFrame);
 
 private:
 	void prepareFence(ID3D12Device& device, const int frameCount);
@@ -19,6 +19,5 @@ private:
 	HANDLE mFenceEvent;
 	UINT64 mFenceValue;
 	std::vector<UINT64> mFrameFenceValues;
-	ID3D12CommandQueue* mCommandQueue;
 };
 

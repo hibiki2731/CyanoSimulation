@@ -8,7 +8,24 @@
 
 void ComputeShader::dispatch(UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ)
 {
-	mCommand->getList()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+	auto& list = mCommandManager->getComputeCommandList();
+
+	//ディスクリプタヒープをセット
+	list->SetDescriptorHeaps(1, mShaderVisibleHeap->getAddress());
+
+	//ルートシグネチャとPSOをセット
+	list->SetComputeRootSignature(mRootSignature);
+	list->SetPipelineState(mPSO.Get());
+
+	//ルートコンスタントを設定
+	list->SetComputeRoot32BitConstants(0, 4, &mUploadParams, 0);
+
+	//ディスクリプタテーブルの設定
+	list->SetComputeRootDescriptorTable(1, mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(0)));
+	list->SetComputeRootDescriptorTable(2, mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(4)));
+
+
+	list->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 
 }
 
@@ -28,6 +45,7 @@ void ComputeShader::setRWStructuredBuffer(IRWStructuredBuffer& buffer, UINT posi
 
 void ComputeShader::setRootConstants(void* dataSrc)
 {
+	mUploadParams = dataSrc;
 }
 
 void ComputeShader::waitWriteBuffer(IRWStructuredBuffer& buffer)
@@ -36,19 +54,20 @@ void ComputeShader::waitWriteBuffer(IRWStructuredBuffer& buffer)
 	std::array<D3D12_RESOURCE_BARRIER, 1> barrier = {};
 	barrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
 	barrier[0].UAV.pResource = static_cast<RWStructuredBuffer*>(&buffer)->getGPUResource();
-	mCommand->getList()->ResourceBarrier(1, barrier.data());
+	mCommandManager->getComputeCommandList()->ResourceBarrier(1, barrier.data());
 }
 
 void ComputeShader::clearRWStructuredBuffer(UINT position)
 {
 }
 
-ComputeShader::ComputeShader(ID3D12Device& device, ID3D12RootSignature& rootSignature, DescriptorHeap& shaderVisibleHeap, DescriptorHeap& shaderNonVisibleHeap, Command& command, const std::string& shaderFilePath)
+ComputeShader::ComputeShader(ID3D12Device& device, ID3D12RootSignature& rootSignature, DescriptorHeap& shaderVisibleHeap, DescriptorHeap& shaderNonVisibleHeap, CommandManager& commandManager, const std::string& shaderFilePath)
 	:
 	mRootSignature(&rootSignature),
 	mShaderVisibleHeap(&shaderVisibleHeap),
 	mShaderNonVisibleHeap(&shaderNonVisibleHeap),
-	mCommand(&command)
+	mCommandManager(&commandManager),
+	mUploadParams(nullptr)
 {
 	//パイプラインステートの初期化
 	mPSO = ComputePipelineStateBuilder()

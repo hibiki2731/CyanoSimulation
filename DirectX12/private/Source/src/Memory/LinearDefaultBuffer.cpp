@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Memory/LinearDefaultBuffer.h"
 #include "Memory/UploadBuffer.h"
+#include "Command/Command.h"
 
 void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 {
@@ -10,11 +11,12 @@ void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 		mState,
 		D3D12_RESOURCE_STATE_COPY_DEST
 	);
+	auto& list = mCommandManager.getComputeCommandList();
 
-	mCommandList->ResourceBarrier(1, &barrierToCopyDesc);
+	list->ResourceBarrier(1, &barrierToCopyDesc);
 
 	//リソースのコピー
-	mCommandList->CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
+	list->CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
 
 	//本来のステートに戻す
 	D3D12_RESOURCE_BARRIER barrierToUsage = CD3DX12_RESOURCE_BARRIER::Transition(
@@ -22,11 +24,11 @@ void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 		D3D12_RESOURCE_STATE_COPY_DEST,
 		mState
 	);
-	mCommandList->ResourceBarrier(1, &barrierToUsage);
+	list->ResourceBarrier(1, &barrierToUsage);
 }
 
-LinearDefaultBuffer::LinearDefaultBuffer(ID3D12Device& device,ID3D12GraphicsCommandList& commandList, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag)
-	:mCommandList(&commandList),
+LinearDefaultBuffer::LinearDefaultBuffer(ID3D12Device& device, CommandManager& commandManager, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag)
+	:mCommandManager(commandManager),
 	mSizeInBytes(sizeInBytes),
 	mState(state)
 {

@@ -17,12 +17,12 @@ public:
 
 private:
 	friend class EngineResourceFactory;
-	RWStructuredBuffer(ID3D12Device& device, class Command& CompyCommand, UINT numElements, UINT sizeOfElement);
+	RWStructuredBuffer(ID3D12Device& device, class CommandManager& commandManager, UINT numElements, UINT sizeOfElement);
 
 	std::unique_ptr<class UploadBuffer> mUploadBuffer;
 	std::unique_ptr<class LinearDefaultBuffer> mDefaultBuffer;
 	ID3D12Device* mDevice;
-	class Command* mCopyCommand;
+	class CommandManager& mCommandManager;
 	UINT mNumElements;
 	UINT mSizeOfElement;
 

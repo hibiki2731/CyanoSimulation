@@ -8,35 +8,17 @@
 
 std::shared_ptr<StructuredBuffer> EngineResourceFactory::createStructuredBuffer(UINT numElements, UINT sizeOfElement)
 {
-	return std::shared_ptr<StructuredBuffer>(new StructuredBuffer(*mDevice, *mCopyCommand, numElements, sizeOfElement));
+	return std::shared_ptr<StructuredBuffer>(new StructuredBuffer(*mDevice, mCommandManager, numElements, sizeOfElement));
 }
 
 std::shared_ptr<RWStructuredBuffer> EngineResourceFactory::createRWStructuredBuffer(UINT numElements, UINT sizeOfElement)
 {
-	return std::shared_ptr<RWStructuredBuffer>(new RWStructuredBuffer(*mDevice, *mCopyCommand, numElements, sizeOfElement));
+	return std::shared_ptr<RWStructuredBuffer>(new RWStructuredBuffer(*mDevice, mCommandManager, numElements, sizeOfElement));
 }
 
-std::shared_ptr<ComputeShader> EngineResourceFactory::createComputeShader(const std::string& shaderFilePath)
-{
-	return std::shared_ptr<ComputeShader>(new ComputeShader(*mDevice, *mComputeKit.getRootSignature(), *mShaderVisibleHeap, *mComputeKit.getDescriptorHeap(), *mComputeKit.getCommand(), shaderFilePath));
-}
-
-EngineResourceFactory::EngineResourceFactory(ID3D12Device& device, DescriptorHeap& shaderVisibleHeap, DescriptorHeap& shaderNonVisibleHeap, Command& graphicsCommand, Command& copyCommand, Command& computeCommand):
+EngineResourceFactory::EngineResourceFactory(ID3D12Device& device, DescriptorHeap& shaderVisibleHeap,  CommandManager& commandManager):
 	mDevice(&device),
 	mShaderVisibleHeap(&shaderVisibleHeap),
-	mGraphicsCommand(&graphicsCommand),
-	mCopyCommand(&copyCommand),
-	mComputeKit(device, shaderNonVisibleHeap, computeCommand)
+	mCommandManager(commandManager)
 {
-}
-
-void EngineResourceFactory::ComputeKit::createRootSignature()
-{
-	mRootSignature = RootSignatureBuilder()
-		.addRootConstants(0, 4, D3D12_SHADER_VISIBILITY_ALL)
-		.addSRVTable(0, 4, D3D12_SHADER_VISIBILITY_ALL)
-		.addUAVTable(0, 4, D3D12_SHADER_VISIBILITY_ALL)
-		.build(*mDevice);
-
-	isInitialized = true;
 }

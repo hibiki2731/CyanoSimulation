@@ -16,15 +16,15 @@ class GraphicCoreTest : public ::testing::Test {
 protected:
 	virtual void SetUp() {
 		mDevice = GraphicDeviceBuilder().build();
-		mCommand = std::make_unique<Command>(*mDevice.Get(), 1);
+		mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), 1);
 
 		uploadBuffer = std::make_unique<UploadBuffer>(*mDevice.Get(), sizeof(int) * 8);
-		defaultBuffer = std::make_unique<LinearDefaultBuffer>(*mDevice.Get(), *mCommand->getList().Get(), sizeof(int) * 8, D3D12_RESOURCE_STATE_COMMON);
-		readbackBuffer = std::make_unique<ReadBackBuffer>(*mDevice.Get(), *mCommand.get(), sizeof(int) * 8);
+		defaultBuffer = std::make_unique<LinearDefaultBuffer>(*mDevice.Get(), *mCommandManager.get(), sizeof(int) * 8, D3D12_RESOURCE_STATE_COMMON);
+		readbackBuffer = std::make_unique<ReadBackBuffer>(*mDevice.Get(), *mCommandManager.get(), sizeof(int) * 8);
 	}
 
 	ComPtr<ID3D12Device> mDevice;
-	std::unique_ptr<Command> mCommand;
+	std::unique_ptr<CommandManager> mCommandManager;
 
 	std::unique_ptr<UploadBuffer> uploadBuffer;
 	std::unique_ptr<LinearDefaultBuffer> defaultBuffer;

@@ -158,7 +158,7 @@ void Game::draw()
 
 EngineResourceFactory Game::createFactory()
 {
-	return EngineResourceFactory(*mGraphic->getDevice(), mGraphic->getDescriptorHeap(), mGraphic->gerShaderNonVisibleHeap(), mGraphic->getGraphicsCommand(), mGraphic->getCopyCommand(), mGraphic->getComputeCommand());
+	return EngineResourceFactory(*mGraphic->getDevice(), mGraphic->getDescriptorHeap(), *mGraphic->getCommandManager());
 }
 
 #ifdef _DEBUG

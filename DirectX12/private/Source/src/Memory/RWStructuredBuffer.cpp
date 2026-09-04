@@ -20,20 +20,20 @@ void RWStructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 
 void* RWStructuredBuffer::read()
 {
-	ReadBackBuffer readbackBuffer(*mDevice, *mCopyCommand, mNumElements * mSizeOfElement);
+	ReadBackBuffer readbackBuffer(*mDevice, mCommandManager, mNumElements * mSizeOfElement);
 	readbackBuffer.read(*mDefaultBuffer.get());
 
 	return readbackBuffer.getCPUResource();
 }
 
-RWStructuredBuffer::RWStructuredBuffer(ID3D12Device& device, Command& copyCommand, UINT numElements, UINT sizeOfElement)
+RWStructuredBuffer::RWStructuredBuffer(ID3D12Device& device, CommandManager& commandManager, UINT numElements, UINT sizeOfElement)
 	:IRWStructuredBuffer(),
 	mDevice(&device),
-	mCopyCommand(&copyCommand),
+	mCommandManager(commandManager),
 	mNumElements(numElements),
 	mSizeOfElement(sizeOfElement)
 {
-	mDefaultBuffer = std::make_unique<LinearDefaultBuffer>(device, *copyCommand.getList().Get(), numElements * sizeOfElement, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+	mDefaultBuffer = std::make_unique<LinearDefaultBuffer>(device, mCommandManager, numElements * sizeOfElement, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 }
 
 ID3D12Resource* RWStructuredBuffer::getGPUResource()  const{

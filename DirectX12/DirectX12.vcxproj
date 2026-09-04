@@ -95,6 +95,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -110,6 +111,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -287,6 +289,7 @@
     <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpointer.h" />
     <ClInclude Include="private\Source\include\Audio\AudioManager.h" />
     <ClInclude Include="private\Source\include\Command\Command.h" />
+    <ClInclude Include="private\Source\include\Compute\ComputeManager.h" />
     <ClInclude Include="private\Source\include\Compute\ComputeShader.h" />
     <ClInclude Include="private\Source\include\Editer\GUIDebugger.h" />
     <ClInclude Include="private\Source\include\Editer\Object.h" />
@@ -379,6 +382,7 @@
     </ClCompile>
     <ClCompile Include="private\Source\src\Audio\AudioManager.cpp" />
     <ClCompile Include="private\Source\src\Commands\Command.cpp" />
+    <ClCompile Include="private\Source\src\Compute\ComputeManager.cpp" />
     <ClCompile Include="private\Source\src\Compute\ComputeShader.cpp" />
     <ClCompile Include="private\Source\src\Editer\GUIDebugger.cpp" />
     <ClCompile Include="private\Source\src\Editer\Object.cpp" />

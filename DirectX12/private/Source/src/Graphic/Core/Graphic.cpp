@@ -16,6 +16,8 @@
 #include "Builder/GraphicDeviceBuilder.h"
 #include "Command/Command.h"
 #include "Utility/FileSystem/EngineFileSystem.h"
+#include "Compute/ComputeManager.h"
+
 Graphic::Graphic(Game& game)
 	:mGame(game),
 	mDevice(GraphicDeviceBuilder().build())
@@ -74,14 +76,14 @@ void Graphic::init() {
 	hr = createD2D();
 	assert(SUCCEEDED(hr));
 
+	//コンピュートマネージャーの初期化
+	initComputeManager();
+
 	ShowWindow(hWnd, SW_SHOW);
 }
 
 HRESULT Graphic::createCommand() {
-	mGraphicsCommand = std::make_unique<Command>(*mDevice.Get(), 2);
-	mCopyCommand = std::make_unique<Command>(*mDevice.Get(), 1);
-	mComputeCommand = std::make_unique<Command>(*mDevice.Get(), 1);
-
+	mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), FrameCount);
 	return S_OK;
 }
 
@@ -151,7 +153,7 @@ HRESULT Graphic::createSwapChain() {
 	desc.SampleDesc.Count = 1;
 	ComPtr<IDXGISwapChain1> swapChain1;
 	hr = dxgiFactory->CreateSwapChainForHwnd(
-		mGraphicsCommand->getQueue().Get(), hWnd, &desc, nullptr, nullptr, swapChain1.GetAddressOf()
+		mCommandManager->getCommandQueue().Get(), hWnd, &desc, nullptr, nullptr, swapChain1.GetAddressOf()
 	);
 	if (FAILED(hr)) {
 		return hr;
@@ -443,7 +445,7 @@ HRESULT Graphic::createD2D()
 		d3d11DeviceFlags,
 		featureLevels,
 		ARRAYSIZE(featureLevels),
-		reinterpret_cast<IUnknown**>(mGraphicsCommand->getQueue().GetAddressOf()),
+		reinterpret_cast<IUnknown**>(mCommandManager->getCommandQueue().GetAddressOf()),
 		1,
 		0,
 		d3d11Device.ReleaseAndGetAddressOf(),
@@ -528,6 +530,11 @@ HRESULT Graphic::createCbvAndHeap()
 	mShaderNonVisibleHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100);
 
 	return S_OK;
+}
+
+void Graphic::initComputeManager()
+{
+	ComputeManager::Initialize(mDevice.Get(), mDescriptorHeap.get(), mShaderNonVisibleHeap.get(), mCommandManager.get());
 }
 
 UINT Graphic::alignedSize(UINT size)
@@ -636,7 +643,7 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 	dst.SubresourceIndex = 0;
 
 	//コマンドリストでコピーを予約
-	mCopyCommand->getList()->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+	mCommandManager->getGraphicsCommandList()->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 	//コピー先からテクスチャリソースに切り替える
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -645,24 +652,24 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	mCopyCommand->getList()->ResourceBarrier(1, &barrier);
+	mCommandManager->getGraphicsCommandList()->ResourceBarrier(1, &barrier);
 	//コマンドリストを閉じて
-	mCopyCommand->getList()->Close();
+	mCommandManager->getGraphicsCommandList()->Close();
 	//実行
-	ID3D12CommandList* commandLists[] = { mCopyCommand->getList().Get()};
-	mCopyCommand->getQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
+	ID3D12CommandList* commandLists[] = { mCommandManager->getGraphicsCommandList().Get()};
+	mCommandManager->getCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
 	//リソースがGPUに転送されるまで待機する
 	UINT64 fenceValue = mFenceValue++;
-	mCopyCommand->getQueue()->Signal(mFence.Get(), fenceValue);
+	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fenceValue);
 	if (mFence->GetCompletedValue() < fenceValue) {
 		mFence->SetEventOnCompletion(fenceValue, mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
 
 	//テクスチャロード用の一次アロケータ
-	mCopyCommand->getAllocator()->Reset();
-	mCopyCommand->getList()->Reset(mCopyCommand->getAllocator().Get(), nullptr);
+	mCommandManager->getGraphicsCommandAllocator()->Reset();
+	mCommandManager->getGraphicsCommandList()->Reset(mCommandManager->getGraphicsCommandAllocator().Get(), nullptr);
 
 	//開放
 	stbi_image_free(pixels);
@@ -771,7 +778,8 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 	dst.SubresourceIndex = 0;
 
 	//コマンドリストでコピーを予約
-	mCopyCommand->getList()->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+	auto& list = mCommandManager->getGraphicsCommandList();
+	list->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 	//コピー先からテクスチャリソースに切り替える
 	D3D12_RESOURCE_BARRIER barrier = {};
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -780,23 +788,23 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	mCopyCommand->getList()->ResourceBarrier(1, &barrier);
+	list->ResourceBarrier(1, &barrier);
 	//コマンドリストを閉じて
-	mCopyCommand->getList()->Close();
+	list->Close();
 	//実行
-	ID3D12CommandList* commandLists[] = { mCopyCommand->getList().Get() };
-	mCopyCommand->getQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
+	ID3D12CommandList* commandLists[] = { list.Get() };
+	mCommandManager->getCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
 	UINT64 fenceValue = mFenceValue++;
-	mCopyCommand->getQueue()->Signal(mFence.Get(), fenceValue);
+	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fenceValue);
 	if (mFence->GetCompletedValue() < fenceValue) {
 		mFence->SetEventOnCompletion(fenceValue, mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
 
 	//テクスチャロード用の一次アロケータ
-	mCopyCommand->getAllocator()->Reset();
-	mCopyCommand->getList()->Reset(mCopyCommand->getAllocator().Get(), nullptr);
+	mCommandManager->getGraphicsCommandAllocator()->Reset();
+	list->Reset(mCommandManager->getGraphicsCommandAllocator().Get(), nullptr);
 
 	//開放
 	stbi_image_free(pixels);
@@ -826,6 +834,7 @@ void Graphic::clearColor(float r, float g, float b)
 
 void Graphic::beginRender()
 {
+	auto& list = mCommandManager->getGraphicsCommandList();
 	//バリアでバックバッファを描画ターゲットに切り替える
 	D3D12_RESOURCE_BARRIER barrier;
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;//このバリアは状態遷移タイプ
@@ -834,7 +843,7 @@ void Graphic::beginRender()
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;//遷移前はPresent
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;//遷移後は描画ターゲット
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	mGraphicsCommand->getList()->ResourceBarrier(1, &barrier);
+	list->ResourceBarrier(1, &barrier);
 
 	//バックバッファの場所を指すディスクリプタヒープハンドルを用意する
 	auto hBbvHeap = BbvHeap->GetCPUDescriptorHandleForHeapStart();
@@ -842,30 +851,30 @@ void Graphic::beginRender()
 	//デプスステンシルバッファのディスクリプタハンドルを用意する
 	auto hDsvHeap = DsvHeap->GetCPUDescriptorHandleForHeapStart();
 	//バックバッファとデプスステンシルバッファを描画ターゲットとして設定する
-	mGraphicsCommand->getList()->OMSetRenderTargets(1, &hBbvHeap, false, &hDsvHeap);
+	list->OMSetRenderTargets(1, &hBbvHeap, false, &hDsvHeap);
 
 	//描画ターゲットをクリアする
-	mGraphicsCommand->getList()->ClearRenderTargetView(hBbvHeap, ClearColor, 0, nullptr);
+	list->ClearRenderTargetView(hBbvHeap, ClearColor, 0, nullptr);
 
 	//デプスステンシルバッファをクリアする
-	mGraphicsCommand->getList()->ClearDepthStencilView(hDsvHeap, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	list->ClearDepthStencilView(hDsvHeap, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 
 	//ビューポートとシザー矩形をセット
-	mGraphicsCommand->getList()->RSSetViewports(1, &Viewport);
-	mGraphicsCommand->getList()->RSSetScissorRects(1, &ScissorRect);
+	list->RSSetViewports(1, &Viewport);
+	list->RSSetScissorRects(1, &ScissorRect);
 
-	mGraphicsCommand->getList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//三角形リスト
+	list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);//三角形リスト
 
 	//ディスクリプタヒープをＧＰＵにセット
 	UINT numDescriptorHeaps = 1;
-	mGraphicsCommand->getList()->SetDescriptorHeaps(numDescriptorHeaps, mDescriptorHeap->getAddress());
+	list->SetDescriptorHeaps(numDescriptorHeaps, mDescriptorHeap->getAddress());
 
 }
 
 void Graphic::endRender()
 {
-	
+	auto& list = mCommandManager->getGraphicsCommandList();
 	//バリアでバックバッファを表示用に切り替える
 	D3D12_RESOURCE_BARRIER barrier;
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;//このバリアは状態遷移タイプ
@@ -874,13 +883,13 @@ void Graphic::endRender()
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;//遷移前はPresent
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;//遷移後は描画ターゲット
 	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	mGraphicsCommand->getList()->ResourceBarrier(1, &barrier);
+	list->ResourceBarrier(1, &barrier);
 
 	//コマンドリストをクローズする
-	mGraphicsCommand->getList()->Close();
+	list->Close();
 	//コマンドリストを実行する
-	ID3D12CommandList* commandLists[] = { mGraphicsCommand->getList().Get()};
-	mGraphicsCommand->getQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
+	ID3D12CommandList* commandLists[] = { list.Get()};
+	mCommandManager->getCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
 }
 
@@ -891,7 +900,7 @@ void Graphic::moveToNextFrame()
 
 	//現フレームのフェンス値を記録
 	mFenceValues[BackBufIdx] = mFenceValue;
-	mGraphicsCommand->getQueue()->Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
+	mCommandManager->getCommandQueue()->Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
 	mFenceValue++;
 
 	//次フレームのバックバッファインデックスを取得
@@ -908,10 +917,10 @@ void Graphic::moveToNextFrame()
 	mTrashQueue[nextBufIdx].clear();
 
 	//コマンドアロケータをリセット
-	HRESULT hr = mGraphicsCommand->getAllocator(nextBufIdx)->Reset();
+	HRESULT hr = mCommandManager->getGraphicsCommandAllocator(nextBufIdx)->Reset();
 	assert(SUCCEEDED(hr));
 	//コマンドリストをリセット
-	hr = mGraphicsCommand->getList()->Reset(mGraphicsCommand->getAllocator(nextBufIdx).Get(), nullptr);
+	hr = mCommandManager->getGraphicsCommandList()->Reset(mCommandManager->getGraphicsCommandAllocator(nextBufIdx).Get(), nullptr);
 	assert(SUCCEEDED(hr));
 
 	BackBufIdx = nextBufIdx;
@@ -941,7 +950,7 @@ void Graphic::waitGPU()
 {
 	//現在のFence値がコマンド中菱後にFenceに書き込まれるようにス
 	UINT64 fvalue = mFenceValue;
-	mGraphicsCommand->getQueue()->Signal(mFence.Get(), fvalue);
+	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fvalue);
 	mFenceValue++;
 
 	//まだコマンドキューが終了していないことを確認する
@@ -976,32 +985,22 @@ UINT Graphic::getCbvTbvIncSize()
 
 ID3D12GraphicsCommandList* Graphic::getGraphicsCommandList()
 {
-	return mGraphicsCommand->getList().Get();
+	return mCommandManager->getGraphicsCommandList().Get();
 }
 
 ID3D12CommandQueue* Graphic::getGraphicsCommandQueue()
 {
-	return mGraphicsCommand->getQueue().Get();
+	return mCommandManager->getCommandQueue().Get();
 }
 
 ID3D12CommandAllocator* Graphic::getGraphicsCommandAllocator()
 {
-	return mGraphicsCommand->getAllocator(BackBufIdx).Get();
+	return mCommandManager->getGraphicsCommandAllocator(BackBufIdx).Get();
 }
 
-Command& Graphic::getGraphicsCommand()
+CommandManager* Graphic::getCommandManager()
 {
-	return *mGraphicsCommand.get();
-}
-
-Command& Graphic::getCopyCommand()
-{
-	return *mCopyCommand.get();
-}
-
-Command& Graphic::getComputeCommand()
-{
-	return *mComputeCommand.get();
+	return mCommandManager.get();
 }
 
 ID3D12Device* Graphic::getDevice()
@@ -1061,8 +1060,8 @@ ID3D12PipelineState& Graphic::getPipelineState(STATE state)
 void Graphic::setRenderType(STATE state)
 {
 	//Stateに応じて3Dと2Dを切換え
-	mGraphicsCommand->getList()->SetPipelineState(mPipelineStates[state].Get());
-	mGraphicsCommand->getList()->SetGraphicsRootSignature(mRootSignatures[state].Get());
+	mCommandManager->getGraphicsCommandList()->SetPipelineState(mPipelineStates[state].Get());
+	mCommandManager->getGraphicsCommandList()->SetGraphicsRootSignature(mRootSignatures[state].Get());
 }
 
 #ifdef _DEBUG

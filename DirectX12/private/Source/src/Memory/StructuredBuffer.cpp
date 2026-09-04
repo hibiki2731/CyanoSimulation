@@ -15,17 +15,18 @@ void StructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 	mUploadBuffer->upload(srcData, 0, sizeInBytes);
 
 	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer.get());
+
 }
 
-StructuredBuffer::StructuredBuffer(ID3D12Device& device, class Command& copyCommand, UINT numElements, UINT sizeOfElement)
+StructuredBuffer::StructuredBuffer(ID3D12Device& device, CommandManager& commandManager, UINT numElements, UINT sizeOfElement)
 	:
 	IStructuredBuffer(),
 	mDevice(&device),
-	mCopyCommand(&copyCommand),
+	mCommandManager(commandManager),
 	mNumElements(numElements),
 	mSizeOfElement(sizeOfElement)
 {
-	mDefaultBuffer = std::make_unique<LinearDefaultBuffer>(device, *copyCommand.getList().Get(), mSizeOfElement * mNumElements, D3D12_RESOURCE_STATE_COMMON);
+	mDefaultBuffer = std::make_unique<LinearDefaultBuffer>(device, mCommandManager, mSizeOfElement * mNumElements, D3D12_RESOURCE_STATE_COMMON);
 }
 
 ID3D12Resource* StructuredBuffer::getGPUResource() const{

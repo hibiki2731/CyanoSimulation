@@ -189,6 +189,7 @@ void DescriptorHeap::addSRV(const StructuredBuffer& resource, const SlotIndex& s
 	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
 
 	mDevice.CreateShaderResourceView(resource.getGPUResource(), &desc, hCbvTbvHeap);
+	
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::getGPUHandle(const SlotIndex& slotIndex)

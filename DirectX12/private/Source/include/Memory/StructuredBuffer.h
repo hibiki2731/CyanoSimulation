@@ -17,12 +17,12 @@ public:
 private:
 	friend class EngineResourceFactory;
 	//要素のサイズと数を入力
-	StructuredBuffer(ID3D12Device& device, class Command& copyCommand, UINT numElements, UINT sizeOfElement);
+	StructuredBuffer(ID3D12Device& device, class CommandManager& commandManager, UINT numElements, UINT sizeOfElement);
 
 	std::unique_ptr<class UploadBuffer> mUploadBuffer;
 	std::unique_ptr<class LinearDefaultBuffer> mDefaultBuffer;
 	ID3D12Device* mDevice;
-	class Command* mCopyCommand;
+	class CommandManager& mCommandManager;
 	UINT mNumElements;
 	UINT mSizeOfElement;
 

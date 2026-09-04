@@ -7,7 +7,7 @@ class ReadBackBuffer
 {
 public:
 	//要素のサイズと数を入力
-	ReadBackBuffer(ID3D12Device& device, class Command& copyCommand, UINT sizeInBytes);
+	ReadBackBuffer(ID3D12Device& device, class CommandManager& commandManager, UINT sizeInBytes);
 	~ReadBackBuffer();
 
 	void read(class LinearDefaultBuffer& readSrc);
@@ -19,8 +19,8 @@ private:
 	void createAndMapBuffers(ID3D12Device& device, D3D12_RESOURCE_DESC& desc, D3D12_HEAP_PROPERTIES& prop);
 
 	ComPtr<ID3D12Resource> mGPUResource;
-	class Command* mCopyCommand;
 	void* mCPUResource;
+	class CommandManager& mCommandManager;
 	UINT mSizeInBytes;
 	std::unique_ptr<class Fence> mFence;
 };

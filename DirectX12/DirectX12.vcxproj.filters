@@ -483,6 +483,9 @@
     <ClInclude Include="public\Source\include\Compute\IComputeShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="private\Source\include\Compute\ComputeManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="private\External\Imgui\imgui.cpp">
@@ -663,6 +666,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="public\Source\src\Compute\IComputeShader.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="private\Source\src\Compute\ComputeManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
