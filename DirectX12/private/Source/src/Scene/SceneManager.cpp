@@ -80,7 +80,7 @@ Scene& SceneManager::getCurrentScene()
 	return *mCurrentScene;
 }
 
-void SceneManager::addScene(const std::string& sceneName, std::unique_ptr<Scene>& scene)
+void SceneManager::addScene(const std::string& sceneName, std::unique_ptr<Scene> scene)
 {
 	mSceneMap.emplace(sceneName, std::move(scene));
 }

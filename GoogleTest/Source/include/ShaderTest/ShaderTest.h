@@ -1,4 +1,5 @@
 ﻿#pragma once
+#define _TEST
 #include <d3d12.h>
 #include "Compute/ComputeShader.h"
 #include "Builder/GraphicDeviceBuilder.h"
@@ -12,7 +13,7 @@ protected:
 	}
 
 	std::unique_ptr<Game> mGame;
-	std::unique_ptr<EngineResourceFactory> mFactory;
-	std::shared_ptr<ComputeShader> mComputeShader;
+	IEngineResourceFactory* mFactory;
+	std::shared_ptr<IComputeShader> mComputeShader;
 
 };

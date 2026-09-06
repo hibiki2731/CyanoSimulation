@@ -105,22 +105,47 @@ void DescriptorHeap::deleteRange(const DescriptorSlotRange& allocRange)
 	mHeapAllocator->freeSlot(allocRange);
 }
 
-void DescriptorHeap::addUAV(const RWStructuredBuffer& uav, const SlotIndex& slotIndex)
+void DescriptorHeap::addUAV(IRWStructuredBuffer& uav, const SlotIndex& slotIndex)
 {
-
+	RWStructuredBuffer& buffer = static_cast<RWStructuredBuffer&>(uav);
+	
 	//UAVのディスクリプタを作成
 	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
 	desc.Format = DXGI_FORMAT_UNKNOWN;
-	desc.Buffer.NumElements = static_cast<UINT>(uav.getNumElements());
-	desc.Buffer.StructureByteStride = static_cast<UINT>(uav.getSizeOfElement());
+	desc.Buffer.NumElements = static_cast<UINT>(buffer.getNumElements());
+	desc.Buffer.StructureByteStride = static_cast<UINT>(buffer.getSizeOfElement());
 
 	//ディスクリプタヒープのCPUハンドルを取得し、空きスロットにUAVを作成
 	auto cpuHandle = getCPUHandle(slotIndex);
 
 	//UAVを作成
 	mDevice.CreateUnorderedAccessView(
-		uav.getGPUResource(),
+		buffer.getGPUResource(),
+		nullptr,
+		&desc,
+		cpuHandle
+	);
+}
+
+void DescriptorHeap::addRawBuffer(IRWStructuredBuffer& buffer, const SlotIndex& slotIndex)
+{
+	RWStructuredBuffer& rwBuffer = static_cast<RWStructuredBuffer&>(buffer);
+	
+	//UAVのディスクリプタを作成
+	D3D12_UNORDERED_ACCESS_VIEW_DESC desc = {};
+	desc.ViewDimension = D3D12_UAV_DIMENSION_BUFFER;
+	desc.Format = DXGI_FORMAT_R32_TYPELESS;
+	desc.Buffer.NumElements = static_cast<UINT>(rwBuffer.getNumElements() * rwBuffer.getSizeOfElement()) / 4;
+	desc.Buffer.StructureByteStride = 0;
+	desc.Buffer.Flags = D3D12_BUFFER_UAV_FLAG_RAW;
+
+	//ディスクリプタヒープのCPUハンドルを取得し、空きスロットにUAVを作成
+	auto cpuHandle = getCPUHandle(slotIndex);
+
+	//UAVを作成
+	mDevice.CreateUnorderedAccessView(
+		rwBuffer.getGPUResource(),
 		nullptr,
 		&desc,
 		cpuHandle
@@ -172,23 +197,25 @@ void DescriptorHeap::addCBVFrameCounts(const IConstantBufferSuballocation& cbv, 
 	}
 }
 
-void DescriptorHeap::addSRV(const StructuredBuffer& resource, const SlotIndex& slotIndex)
+void DescriptorHeap::addSRV(IStructuredBuffer& resource, const SlotIndex& slotIndex)
 {
+	StructuredBuffer& buffer = dynamic_cast<StructuredBuffer&>(resource);
+
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-	desc.Format = resource.getGPUResource()->GetDesc().Format;
+	desc.Format = buffer.getGPUResource()->GetDesc().Format;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
 	desc.Buffer.FirstElement = 0;
-	desc.Buffer.NumElements = resource.getNumElements();
-	desc.Buffer.StructureByteStride = resource.getSizeOfElement();
+	desc.Buffer.NumElements = buffer.getNumElements();
+	desc.Buffer.StructureByteStride = buffer.getSizeOfElement();
 	desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
 
 	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
 	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
 
-	mDevice.CreateShaderResourceView(resource.getGPUResource(), &desc, hCbvTbvHeap);
+	mDevice.CreateShaderResourceView(buffer.getGPUResource(), &desc, hCbvTbvHeap);
 	
 }
 

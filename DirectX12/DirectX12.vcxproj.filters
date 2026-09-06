@@ -339,7 +339,7 @@
     <ClInclude Include="private\Source\include\GameObject\Actor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Builder\EngineResourceFactory.h">
+    <ClInclude Include="public\Source\include\Builder\EngineResourceFactory.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h">
@@ -483,7 +483,13 @@
     <ClInclude Include="public\Source\include\Compute\IComputeShader.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="private\Source\include\Compute\ComputeManager.h">
+    <ClInclude Include="public\Source\include\Compute\ComputeDevice.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Builder\EngineResourceFactoryInternal.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="private\Source\include\Compute\ComputeDeviceInternal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -668,7 +674,7 @@
     <ClCompile Include="public\Source\src\Compute\IComputeShader.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="private\Source\src\Compute\ComputeManager.cpp">
+    <ClCompile Include="private\Source\src\Compute\ComputeDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -677,15 +683,6 @@
       <Filter>hlsl</Filter>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\2DVertexShader.hlsl">
-      <Filter>hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
-      <Filter>hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CyanoPixelShader.hlsl">
-      <Filter>hlsl</Filter>
-    </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CyanoVertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\FadePixelShader.hlsl">
@@ -697,17 +694,11 @@
     <FxCompile Include="private\Content\Shader\hlsl\PixelShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\ScatterCS.hlsl">
-      <Filter>hlsl</Filter>
-    </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\VertexShader.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="private\Content\Shader\hlsl\CyanoHeader.hlsli">
-      <Filter>hlsl</Filter>
-    </None>
     <None Include="private\Content\Shader\hlsl\FadeHeader.hlsli">
       <Filter>hlsl</Filter>
     </None>

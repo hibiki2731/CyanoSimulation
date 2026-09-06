@@ -20,18 +20,19 @@ Command::Command(ID3D12Device& device, UINT commandNum)
 	mCommandQueue = CommandQueueBuilder().build(device);
 }
 
-CommandManager::CommandManager(ID3D12Device& device, UINT frameCount)
+CommandManager::CommandManager(ID3D12Device& device, UINT& backBufIdx, UINT frameCount)
+	:mBackBufIdx(backBufIdx)
 {
 	//コマンドアロケータの作成
 	for (int i = 0; i < frameCount; i++) {
 		mGraphicsCommandAllocators.push_back(CommandAllocatorBuilder().build(device));
+		mComputeCommandAllocator.push_back(CommandAllocatorBuilder().build(device));
 	}
 
-	mComputeCommandAllocator = CommandAllocatorBuilder().build(device);
 
 	//コマンドリストの作成
 	mGraphicsCommandList = CommandListBuilder().setCommandAllocator(mGraphicsCommandAllocators[0]).build(device);
-	mComputeCommandList = CommandListBuilder().setCommandAllocator(mComputeCommandAllocator).build(device);
+	mComputeCommandList = CommandListBuilder().setCommandAllocator(mComputeCommandAllocator[0]).build(device);
 
 	//コマンドキューの作成
 	mCommandQueue = CommandQueueBuilder().build(device);

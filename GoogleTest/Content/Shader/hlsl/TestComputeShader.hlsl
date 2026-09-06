@@ -1,7 +1,7 @@
 ﻿
 cbuffer TestParam : register(b0)
 {
-    float a;
+    int a;
     float b;
     float c;
     float d;
@@ -15,6 +15,6 @@ void main( uint3 DTid : SV_DispatchThreadID )
     uint threadID = DTid.x;
 
     int input = InputDataA[threadID];
-    RWDataA[threadID] = input + 1;
+    RWDataA[threadID] = input + a;
 
 }

@@ -39,8 +39,6 @@ public:
 	GUIDebugger& getGUIDebugger();
 #endif
 
-	class EngineResourceFactory createFactory();
-
 private:
 	bool mUpdatingActors;
 

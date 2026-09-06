@@ -31,7 +31,7 @@ public:
 	class Scene& getCurrentScene();
 
 	//シーンの追加
-	void addScene(const std::string& sceneName, std::unique_ptr<class Scene>& scene);
+	void addScene(const std::string& sceneName, std::unique_ptr<class Scene> scene);
 
 	//シーン遷移
 	void setNextScene(const std::string& nextSceneType);

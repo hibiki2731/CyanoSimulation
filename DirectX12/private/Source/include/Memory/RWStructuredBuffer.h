@@ -21,6 +21,7 @@ private:
 
 	std::unique_ptr<class UploadBuffer> mUploadBuffer;
 	std::unique_ptr<class LinearDefaultBuffer> mDefaultBuffer;
+	std::unique_ptr<class ReadBackBuffer> mReadBackBuffer;
 	ID3D12Device* mDevice;
 	class CommandManager& mCommandManager;
 	UINT mNumElements;

@@ -28,6 +28,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)DirectX12\private\External\fbxsdk\lib\x64\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

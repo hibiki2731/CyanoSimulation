@@ -55,7 +55,9 @@ AssetManager::AssetManager(Graphic& graphic)
 {
 	createSpriteBuffers();
 
-	std::fstream file(EngineFileSystem::getEngineFilePath("Content/data/MeshData.json"));
+	std::fstream file("Content/data/MeshData.json");
+	if (file.fail()) return;
+
 	nlohmann::json json;
 	file >> json;
 
@@ -146,7 +148,7 @@ void AssetManager::createMeshData(const std::string& meshID, const MeshFileData&
 		{
 			//ファイル名を読み込む
 
-			std::string texturePath = EngineFileSystem::getEngineFilePath(partsJson["texturePath"].get<std::string>());
+			std::string texturePath = partsJson["texturePath"].get<std::string>();
 
 			auto iter = mTextureData.find(texturePath);
 			if (iter != mTextureData.end()) {
@@ -221,7 +223,7 @@ MeshData* AssetManager::getMeshData(const std::string& meshID)
 		return iter->second.get();
 	}
 	else {
-		std::fstream file(EngineFileSystem::getEngineFilePath("Content/data/MeshData.json"));
+		std::fstream file("Content/data/MeshData.json");
 		nlohmann::json json;
 		file >> json;
 
@@ -265,12 +267,12 @@ void AssetManager::createSpriteBuffers()
 void AssetManager::loadJson()
 {
 	//オブジェクトデータファイルの読み込み
-	std::ifstream objectDataFile(EngineFileSystem::getEngineFilePath("Content\\data\\objectData.json"));
+	std::ifstream objectDataFile("Content\\data\\objectData.json");
 	assert(!objectDataFile.fail());
 	objectDataFile >> mObjectJson;
 
 	//敵パラメータファイルの読み込み
-	std::ifstream sceneDataFile(EngineFileSystem::getEngineFilePath("Content\\data\\sceneData.json"));
+	std::ifstream sceneDataFile("Content\\data\\sceneData.json");
 	assert(!sceneDataFile.fail());
 
 	sceneDataFile >> mSceneJson;
@@ -281,7 +283,7 @@ void AssetManager::loadJson()
 void AssetManager::loadObjectJson()
 {
 	//オブジェクトデータファイルの読み込み
-	std::ifstream objectDataFile(EngineFileSystem::getEngineFilePath("Content\\data\\objectData.json"));
+	std::ifstream objectDataFile("Content\\data\\objectData.json");
 	assert(!objectDataFile.fail());
 	objectDataFile >> mObjectJson;
 }

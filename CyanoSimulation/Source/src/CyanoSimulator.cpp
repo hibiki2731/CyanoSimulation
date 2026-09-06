@@ -14,6 +14,7 @@
 #include "Memory/IndexBuffer.h"
 #include "CyanoCalculator.h"
 
+#include "Builder/EngineResourceFactory.h"
 const int CyanoSimulator::CELL_SIZE = 10;
 const float CyanoSimulator::PIXEL_AREA_WIDTH = Graphic::ClientWidth * 0.5f;
 const float CyanoSimulator::PIXEL_AREA_HEIGHT = Graphic::ClientWidth * 0.5f;
@@ -45,8 +46,8 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 	//パラメータの初期化
 	mInteractionIntensity = -4.0f;
 	mInteractionRange = 0.05f;
-	mPecletNumber = 5.0f;
-	mCyanoSpeed = 1.0f;
+	mPecletNumber = 1.5f;
+	mCyanoSpeed = 1.5f;
 	mCyanoLength = 1.0f;
 	mDeltaT = 0.001f;
 	mDeltaTSqrt = sqrtf(mDeltaT);
@@ -60,7 +61,7 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 
 	//バッファーの初期化
 	initBuffer(*scene.getGame().getGraphic().getDevice());
-	//mCalculator = std::make_unique<CyanoCalculator>(scene.getGame().getGraphic(), MaxPointNum);
+	mCalculator = std::make_unique<CyanoCalculator>(scene.getGame().getGraphic(), MaxPointNum);
 
 
 }
@@ -89,28 +90,24 @@ void CyanoSimulator::updateActor()
 {
 	if (!adjustUpdateRate()) return;
 
-	//mCalculator->startCalculation(mPoints_pos);
-	updateAngle();
-	createHead();
-	copyPointsToGPU();
+	mCalculator->startCalculation(mPoints_pos);
+	//updateAngle();
+	//createHead();
+	//copyPointsToGPU();
 }
 
 void CyanoSimulator::draw() {
-	return;
-
-	
-	//mGraphic.setRenderType(Graphic::RENDER_CYANO);
 
 	//頂点をセット
-	//mCommandList.IASetVertexBuffers(0, 1, &mVertexBuffer->getView());
+	mCommandList.IASetVertexBuffers(0, 1, &mVertexBuffer->getView());
 
 	//ディスクリプタヒープをディスクリプタテーブルにセット
-	//mCommandList.SetGraphicsRoot32BitConstants(0, 3, &mRenderDesc, 0);
-	//mCommandList.SetGraphicsRootDescriptorTable(1, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(0)));
-	//mCommandList.SetGraphicsRootDescriptorTable(2, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(1)));
+	mCommandList.SetGraphicsRoot32BitConstants(0, 3, &mRenderDesc, 0);
+	mCommandList.SetGraphicsRootDescriptorTable(1, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(0)));
+	mCommandList.SetGraphicsRootDescriptorTable(2, mDescriptorHeap.getGPUHandle(mDescRange->getIndex(1)));
 	//描画。インデックスを使用
-	//mCommandList.IASetIndexBuffer(&mIndexBuffer->getView());
-	//mCommandList.DrawIndexedInstanced(static_cast<UINT>(indices.size()), static_cast<UINT>(mPoints_pos.size()), 0, 0, 0);
+	mCommandList.IASetIndexBuffer(&mIndexBuffer->getView());
+	mCommandList.DrawIndexedInstanced(static_cast<UINT>(indices.size()), static_cast<UINT>(mPoints_pos.size()), 0, 0, 0);
 	
 	
 
@@ -241,8 +238,7 @@ void CyanoSimulator::createHead()
 
 void CyanoSimulator::copyPointsToGPU()
 {
-	auto upload = mUploadBuffer->getBufferOnCPU();
-	memcpy(upload, mPoints_pos.data(), mPoints_pos.size() * sizeof(XMFLOAT4));
+	mUploadBuffer->upload(mPoints_pos.data(), mPoints_pos.size() * sizeof(XMFLOAT4));
 }
 
 int CyanoSimulator::calcCellIdx(const XMFLOAT4& pos)
@@ -265,8 +261,14 @@ void CyanoSimulator::applyParamaterToPicselScale()
 
 void CyanoSimulator::addCyanos(const int num)
 {
-	for (int i = 0; i < num; i++)
-		addCyano(XMFLOAT4(PIXEL_AREA_WIDTH * 0.5f, PIXEL_AREA_HEIGHT * 0.5f , 0.0f, 1.0f), mCyanoLength, mCyanoSpeed);
+	const int maxX = sqrt(num);
+	const int maxY = maxX;
+	const float distance = PIXEL_AREA_WIDTH / static_cast<float>(maxX);
+	for (int i = 0; i < maxX; i++) {
+		for (int j = 0; j < maxY; j++) {
+			addCyano(XMFLOAT4(i * distance, j * distance, 0.0f, 1.0f), mCyanoLength, mCyanoSpeed);
+		}
+	}
 }
 
 bool CyanoSimulator::isNearWall(const int cellIdx)
@@ -315,15 +317,21 @@ void CyanoSimulator::updateAngle()
 		//角度の変位を計算
 		const float preTheta = mPoints_angle[preHeadIdx];
 		const float preOmega = mIndivisual_angularVelocity[indivisualIdx];
-		const float deltaTheta = mDeltaT * (preOmega - mInteractionIntensity * calcInteractionValue(indivisualIdx, mPoints_pos[preHeadIdx], preTheta));
 
 		//各速度の変位を計算
 		const float noise = noiseIntensity * Random::normalDist(0.0f, 1.0f);
+		//const float deltaOmega = -preOmega + noise;
+		//const float newOmega = preOmega + deltaOmega * mDeltaT;
+
+		//const float deltaTheta = newOmega - mInteractionIntensity * calcInteractionValue(indivisualIdx, mPoints_pos[preHeadIdx], preTheta);
+
+		const float deltaTheta = preOmega - mInteractionIntensity * calcInteractionValue(indivisualIdx, mPoints_pos[preHeadIdx], preTheta);
 		const float deltaOmega = -deltaTheta + noise;
+		const float newOmega = deltaOmega * mDeltaT;
 		
 		//角度、角速度を更新
-		mPoints_angle[newHeadIdx] = preTheta + deltaTheta;
-		mIndivisual_angularVelocity[indivisualIdx] = preOmega + deltaOmega;
+		mPoints_angle[newHeadIdx] = preTheta + deltaTheta * mDeltaT;
+		mIndivisual_angularVelocity[indivisualIdx] = newOmega;
 
 	}
 }
@@ -405,7 +413,8 @@ float CyanoSimulator::calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHead
 void CyanoSimulator::initBuffer(ID3D12Device& device)
 {
 	//GPUで更新する用のバッファ
-	mUploadBuffer = std::make_unique<RWStructuredBuffer>(device, static_cast<int>(sizeof(RenderData)), MaxPointNum);
+	auto& factory = GetEngineResourceFactory();
+	mUploadBuffer = factory.createRWStructuredBuffer(MaxPointNum, static_cast<int>(sizeof(RenderData)));
 
 	//スプライト用バッファ
 	VertexBufferDescription vertexDesc = { 4, 4 };

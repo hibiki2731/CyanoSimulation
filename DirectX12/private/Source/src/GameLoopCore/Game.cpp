@@ -13,7 +13,7 @@
 
 #include "Command/Command.h"
 #include "Memory/DescriptorHeap.h"
-#include "Builder/EngineResourceFactory.h"
+
 Game::Game(){
 	mUpdatingActors = false;
 }
@@ -154,11 +154,6 @@ void Game::draw()
 	mGraphic->moveToNextFrame();
 
 
-}
-
-EngineResourceFactory Game::createFactory()
-{
-	return EngineResourceFactory(*mGraphic->getDevice(), mGraphic->getDescriptorHeap(), *mGraphic->getCommandManager());
 }
 
 #ifdef _DEBUG

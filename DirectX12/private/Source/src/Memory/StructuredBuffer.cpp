@@ -9,9 +9,11 @@ StructuredBuffer::~StructuredBuffer() = default;
 
 void StructuredBuffer::upload(void* srcData, UINT sizeInBytes)
 {
-	if (mUploadBuffer) mUploadBuffer.reset();
+	if (sizeInBytes == 0) return;
 
-	mUploadBuffer = std::make_unique <UploadBuffer>(*mDevice, sizeInBytes);
+	if (!mUploadBuffer)
+		mUploadBuffer = std::make_unique <UploadBuffer>(*mDevice, mNumElements * mSizeOfElement);
+
 	mUploadBuffer->upload(srcData, 0, sizeInBytes);
 
 	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer.get());

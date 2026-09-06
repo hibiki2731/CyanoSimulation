@@ -48,4 +48,13 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Content\Shader\hlsl\CyanoHeader.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Content\Shader\hlsl\CyanoPixelShader.hlsl" />
+    <FxCompile Include="Content\Shader\hlsl\CyanoVertexShader.hlsl" />
+    <FxCompile Include="Content\Shader\hlsl\CellIdxHistogramCS.hlsl" />
+    <FxCompile Include="Content\Shader\hlsl\ScatterCS.hlsl" />
+  </ItemGroup>
 </Project>

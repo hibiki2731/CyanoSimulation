@@ -3,7 +3,7 @@ class IStructuredBuffer
 {
 public:
 	IStructuredBuffer() = default;
-	~IStructuredBuffer() = default;
+	virtual ~IStructuredBuffer();
 
 	virtual void upload(void* srcData, UINT sizeInBytes) = 0;
 

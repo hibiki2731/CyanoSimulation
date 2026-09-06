@@ -12,6 +12,8 @@ public:
 	void waitGPU(ID3D12CommandQueue& commandQueue);
 	void waitCompleteNextFrame(ID3D12CommandQueue& commandQueue, const int currentFrame, const int nextFrame);
 
+	HANDLE getFenceEvent() const { return mFenceEvent; }
+
 private:
 	void prepareFence(ID3D12Device& device, const int frameCount);
 	

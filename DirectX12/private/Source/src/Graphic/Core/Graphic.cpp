@@ -16,7 +16,10 @@
 #include "Builder/GraphicDeviceBuilder.h"
 #include "Command/Command.h"
 #include "Utility/FileSystem/EngineFileSystem.h"
-#include "Compute/ComputeManager.h"
+#include "Builder/EngineResourceFactoryInternal.h"
+#include "Compute/ComputeDeviceInternal.h"
+#include "Compute/ComputeDevice.h"
+#include "Graphic/Core/Fence.h"
 
 Graphic::Graphic(Game& game)
 	:mGame(game),
@@ -34,15 +37,26 @@ Graphic::Graphic(Game& game)
 
 Graphic::~Graphic()
 {
+	ShutDownEngineResourceFactory();
+	ShutDownComputeDevice();
 	waitGPU();
 }
 
 
+//#define UNIT_TEST
 void Graphic::init() {
 	EngineFileSystem::initialize("../../DirectX12/private/");
+#ifdef _DEBUG
+	EngineFileSystem::initialize("../DirectX12/private/");
+#endif
+	
+#ifdef UNIT_TEST
+	EngineFileSystem::initialize("../../DirectX12/private/");
+#endif
+
 	HRESULT hr;
 	//ウィンドウの作成
-	hr = createWindow();
+		hr = createWindow();
 	assert(SUCCEEDED(hr));
 	//コマンド作成
 	hr = createCommand();
@@ -76,19 +90,23 @@ void Graphic::init() {
 	hr = createD2D();
 	assert(SUCCEEDED(hr));
 
+	//ファクトリの初期化
+	InitializeEngineResourceFactory(*mDevice.Get(), *mDescriptorHeap, *mCommandManager);
+
 	//コンピュートマネージャーの初期化
-	initComputeManager();
+	InitializeComputeDevice(mDevice.Get(), mDescriptorHeap.get(), mShaderNonVisibleHeap.get(), mCommandManager.get());
 
 	ShowWindow(hWnd, SW_SHOW);
 }
 
 HRESULT Graphic::createCommand() {
-	mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), FrameCount);
+	mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), BackBufIdx, FrameCount);
 	return S_OK;
 }
 
 HRESULT Graphic::createFence() {
 	//GPUの処理完了をチェックするフェンスを作る
+	/*
 	HRESULT hr = mDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(mFence.GetAddressOf()));
 	if (FAILED(hr))
 	{
@@ -96,7 +114,11 @@ HRESULT Graphic::createFence() {
 	}
 	mFenceValue = 1;
 	mFenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
-	return hr;
+	*/
+
+	mFence = std::make_unique<Fence>(*mDevice.Get(), FrameCount);
+
+	return S_OK;
 }
 
 HRESULT Graphic::createWindow() {
@@ -349,57 +371,6 @@ HRESULT Graphic::createPipeline()
 		mPipelineStates[RENDER_2D] = pipelineState2D;
 	} {}
 
-	//シアノ用パイプラインステート
-	{
-		UINT b0 = 0, u0 = 0, t0 = 0;
-		auto rootSignatureCyano = RootSignatureBuilder()
-			.addRootConstants(b0, 3, D3D12_SHADER_VISIBILITY_VERTEX)
-			.addUAVTable(u0, 2, D3D12_SHADER_VISIBILITY_ALL)
-			.addSRVTable(t0, 1, D3D12_SHADER_VISIBILITY_PIXEL)
-			.addStaticSampler(0, D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_WRAP, D3D12_SHADER_VISIBILITY_PIXEL)
-			.setFlags(D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
-			.build(*mDevice.Get());
-
-		//各種記述
-		UINT slot0 = 0;
-		std::vector<D3D12_INPUT_ELEMENT_DESC> inputElementDescsCyano = {
-			{"POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 0,  D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, slot0, 8, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		};
-
-		D3D12_RASTERIZER_DESC rasterDesc = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		rasterDesc.FrontCounterClockwise = true; //反時計回り
-
-		D3D12_BLEND_DESC blendDesc = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		blendDesc.AlphaToCoverageEnable = false;
-		blendDesc.RenderTarget[0].LogicOpEnable = false;
-		blendDesc.RenderTarget[0].BlendEnable = true;
-		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
-		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha  = D3D12_BLEND_ONE;                  // 1.0
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE;       // 1 - ソースのアルファ値
-		blendDesc.RenderTarget[0].BlendOpAlpha   = D3D12_BLEND_OP_ADD;              // 加算
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-		D3D12_DEPTH_STENCIL_DESC depthStencilDesc = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-
-		auto pipelineStateCyano = PipelineStateBuilder()
-			.setRootSignature(rootSignatureCyano.Get())
-			.setInputLayout(inputElementDescsCyano)
-			.setVertexShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/CyanoVertexShader.cso"))
-			.setPixelShader(EngineFileSystem::getEngineFilePath("Content/Shader/cso/CyanoPixelShader.cso"))
-			.setRasterizerState(rasterDesc)
-			.setBlendState(blendDesc)
-			.setDepthStencilState(depthStencilDesc)
-			.setDepthStencilFormat(DXGI_FORMAT_D32_FLOAT)
-			.build(*mDevice.Get());
-
-		mRootSignatures[RENDER_CYANO] = rootSignatureCyano;
-		mPipelineStates[RENDER_CYANO] = pipelineStateCyano;
-	}
-
 	//出力領域を設定
 	Viewport.TopLeftX = 0.0f;
 	Viewport.TopLeftY = 0.0f;
@@ -527,14 +498,9 @@ HRESULT Graphic::createCbvAndHeap()
 {
 	mDescriptorHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100);
 	mConstantBuffer = std::make_unique<ConstantBuffer>(*this, 1024);
-	mShaderNonVisibleHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100);
+	mShaderNonVisibleHeap = std::make_unique<DescriptorHeap>(*mDevice.Get(), 100, D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 
 	return S_OK;
-}
-
-void Graphic::initComputeManager()
-{
-	ComputeManager::Initialize(mDevice.Get(), mDescriptorHeap.get(), mShaderNonVisibleHeap.get(), mCommandManager.get());
 }
 
 UINT Graphic::alignedSize(UINT size)
@@ -660,12 +626,16 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 	mCommandManager->getCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
 	//リソースがGPUに転送されるまで待機する
+	/*
 	UINT64 fenceValue = mFenceValue++;
 	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fenceValue);
 	if (mFence->GetCompletedValue() < fenceValue) {
 		mFence->SetEventOnCompletion(fenceValue, mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
+	*/
+
+	mFence->waitGPU(*mCommandManager->getCommandQueue().Get());
 
 	//テクスチャロード用の一次アロケータ
 	mCommandManager->getGraphicsCommandAllocator()->Reset();
@@ -679,6 +649,7 @@ HRESULT Graphic::createShaderResource(const std::string& filename, ComPtr<ID3D12
 
 XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPtr<ID3D12Resource>& shaderResource)
 {
+	std::filesystem::path absPath = std::filesystem::absolute(filename);
 	//ファイルを読み込み、生データを取り出す
 	unsigned char* pixels = nullptr;
 	int width = 0, height = 0, bytePerPixel = 4;
@@ -795,12 +766,15 @@ XMFLOAT2 Graphic::createShaderResourceGetSize(const std::string& filename, ComPt
 	ID3D12CommandList* commandLists[] = { list.Get() };
 	mCommandManager->getCommandQueue()->ExecuteCommandLists(_countof(commandLists), commandLists);
 
+	/*
 	UINT64 fenceValue = mFenceValue++;
 	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fenceValue);
 	if (mFence->GetCompletedValue() < fenceValue) {
 		mFence->SetEventOnCompletion(fenceValue, mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
+	*/
+	mFence->waitGPU(*mCommandManager->getCommandQueue().Get());
 
 	//テクスチャロード用の一次アロケータ
 	mCommandManager->getGraphicsCommandAllocator()->Reset();
@@ -834,6 +808,9 @@ void Graphic::clearColor(float r, float g, float b)
 
 void Graphic::beginRender()
 {
+	//コンピュート用コマンドを実行
+	ExecuteComputeDevice();
+
 	auto& list = mCommandManager->getGraphicsCommandList();
 	//バリアでバックバッファを描画ターゲットに切り替える
 	D3D12_RESOURCE_BARRIER barrier;
@@ -898,6 +875,11 @@ void Graphic::moveToNextFrame()
 	//バックバッファを表示
 	SwapChain->Present(0, 0);
 
+	UINT currentFrame = BackBufIdx;
+	UINT nextFrame = SwapChain->GetCurrentBackBufferIndex();
+	mFence->waitCompleteNextFrame(*mCommandManager->getCommandQueue().Get(), currentFrame, nextFrame);
+
+		/*
 	//現フレームのフェンス値を記録
 	mFenceValues[BackBufIdx] = mFenceValue;
 	mCommandManager->getCommandQueue()->Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
@@ -912,18 +894,23 @@ void Graphic::moveToNextFrame()
 		mFence->SetEventOnCompletion(mFenceValues[nextBufIdx], mFenceEvent);
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
+	*/
 
 	//遅延削除を行う
-	mTrashQueue[nextBufIdx].clear();
+	mTrashQueue[nextFrame].clear();
 
 	//コマンドアロケータをリセット
-	HRESULT hr = mCommandManager->getGraphicsCommandAllocator(nextBufIdx)->Reset();
+	HRESULT hr = mCommandManager->getGraphicsCommandAllocator()->Reset();
 	assert(SUCCEEDED(hr));
-	//コマンドリストをリセット
-	hr = mCommandManager->getGraphicsCommandList()->Reset(mCommandManager->getGraphicsCommandAllocator(nextBufIdx).Get(), nullptr);
+	hr = mCommandManager->getComputeCommandAllocator()->Reset();
 	assert(SUCCEEDED(hr));
 
-	BackBufIdx = nextBufIdx;
+	//コマンドリストをリセット
+	hr = mCommandManager->getGraphicsCommandList()->Reset(mCommandManager->getGraphicsCommandAllocator().Get(), nullptr);
+	assert(SUCCEEDED(hr));
+	hr = mCommandManager->getComputeCommandList()->Reset(mCommandManager->getComputeCommandAllocator().Get(), nullptr);
+
+	BackBufIdx = nextFrame;
 }
 
 bool Graphic::quit()
@@ -943,11 +930,13 @@ int Graphic::msg_wparam()
 
 void Graphic::closeEventHandle()
 {
-	CloseHandle(mFenceEvent);
+	CloseHandle(mFence->getFenceEvent());
 }
 
 void Graphic::waitGPU()
 {
+	mFence->waitGPU(*mCommandManager->getCommandQueue().Get());
+	/*
 	//現在のFence値がコマンド中菱後にFenceに書き込まれるようにス
 	UINT64 fvalue = mFenceValue;
 	mCommandManager->getCommandQueue()->Signal(mFence.Get(), fvalue);
@@ -960,6 +949,7 @@ void Graphic::waitGPU()
 		//イベントが発生するまで待つ
 		WaitForSingleObject(mFenceEvent, INFINITE);
 	}
+	*/
 }
 
 void Graphic::delayRelease(ComPtr<IUnknown>& resource)
@@ -995,7 +985,7 @@ ID3D12CommandQueue* Graphic::getGraphicsCommandQueue()
 
 ID3D12CommandAllocator* Graphic::getGraphicsCommandAllocator()
 {
-	return mCommandManager->getGraphicsCommandAllocator(BackBufIdx).Get();
+	return mCommandManager->getGraphicsCommandAllocator().Get();
 }
 
 CommandManager* Graphic::getCommandManager()
@@ -1044,7 +1034,7 @@ ID3D12RootSignature& Graphic::getRootSignature(STATE state)
 		assert("取得しようとしているルートシグネチャのインデックスが不正な値です\n");
 	}
 
-	return *mRootSignatures[state].Get();
+	return *mRootSignatures[static_cast<int>(state)].Get();
 }
 
 ID3D12PipelineState& Graphic::getPipelineState(STATE state)
@@ -1053,7 +1043,7 @@ ID3D12PipelineState& Graphic::getPipelineState(STATE state)
 		assert("取得しようとしているパイプラインステートのインデックスが不正な値です\n");
 	}
 
-	return *mPipelineStates[state].Get();
+	return *mPipelineStates[static_cast<int>(state)].Get();
 
 }
 

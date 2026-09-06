@@ -29,15 +29,14 @@ private:
 class CommandManager
 {
 public:
-	CommandManager(ID3D12Device& device, UINT frameCount);
+	CommandManager(ID3D12Device& device, UINT& backBufIdx, UINT frameCount);
 
 	ComPtr<ID3D12CommandAllocator>& getComputeCommandAllocator() {
-		return mComputeCommandAllocator;
+		return mComputeCommandAllocator[mBackBufIdx];
 	}
 
-	ComPtr<ID3D12CommandAllocator>& getGraphicsCommandAllocator(UINT frame = 0) {
-		assert(frame < static_cast<UINT>(mGraphicsCommandAllocators.size()));
-		return mGraphicsCommandAllocators[frame];
+	ComPtr<ID3D12CommandAllocator>& getGraphicsCommandAllocator() {
+		return mGraphicsCommandAllocators[mBackBufIdx];
 	}
 
 	ComPtr<ID3D12GraphicsCommandList>& getComputeCommandList() {
@@ -54,9 +53,10 @@ public:
 
 private:
 	std::vector<ComPtr<ID3D12CommandAllocator>> mGraphicsCommandAllocators;
-	ComPtr<ID3D12CommandAllocator> mComputeCommandAllocator;
+	std::vector<ComPtr<ID3D12CommandAllocator>> mComputeCommandAllocator;
 	ComPtr<ID3D12GraphicsCommandList> mGraphicsCommandList;
 	ComPtr<ID3D12GraphicsCommandList> mComputeCommandList;
 	ComPtr<ID3D12CommandQueue> mCommandQueue;
 
+	UINT& mBackBufIdx;
 };

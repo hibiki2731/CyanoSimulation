@@ -132,7 +132,6 @@ private:
 	HRESULT createPipeline();
 	HRESULT createD2D();
 	HRESULT createCbvAndHeap();
-	void initComputeManager();
 
 	//---ウィンドウ---
 	const int ClientPosX = (GetSystemMetrics(SM_CXSCREEN) - ClientWidth) / 2;
@@ -157,10 +156,11 @@ private:
 	std::unique_ptr<class CommandManager> mCommandManager;
 
 	//フェンス
-	ComPtr<ID3D12Fence> mFence;				//GPUの処理完了をチェックするフェンス
-	HANDLE mFenceEvent;						//フェンスのシグナルを待機するためのイベントハンドル
-	UINT64 mFenceValue;						//フェンスの値。毎フレーム+1していき、GPUの処理がどこまで進んでいるかを管理する。
-	UINT64 mFenceValues[FrameCount] = {};	//フレームごとのフェンスの値。非同期処理のため、前フレームのGPUの処理が終わっているかを確認するために使用する。
+	std::unique_ptr<class Fence> mFence;
+	//ComPtr<ID3D12Fence> mFence;				//GPUの処理完了をチェックするフェンス
+	//HANDLE mFenceEvent;						//フェンスのシグナルを待機するためのイベントハンドル
+	//UINT64 mFenceValue;						//フェンスの値。毎フレーム+1していき、GPUの処理がどこまで進んでいるかを管理する。
+	//UINT64 mFenceValues[FrameCount] = {};	//フレームごとのフェンスの値。非同期処理のため、前フレームのGPUの処理が終わっているかを確認するために使用する。
 
 	//リソース
 	//バックバッファ

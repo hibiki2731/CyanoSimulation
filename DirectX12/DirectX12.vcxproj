@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_Test|Win32">
+      <Configuration>Debug_Test</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_Test|x64">
+      <Configuration>Debug_Test</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -27,13 +35,13 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -51,6 +59,12 @@
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_Test|Win32'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -185,6 +199,11 @@
       <ShaderModel>6.8</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNIT_TEST</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxalloc.h" />
     <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxarch.h" />
@@ -288,8 +307,10 @@
     <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpathInternals.h" />
     <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpointer.h" />
     <ClInclude Include="private\Source\include\Audio\AudioManager.h" />
+    <ClInclude Include="private\Source\include\Builder\EngineResourceFactoryInternal.h" />
     <ClInclude Include="private\Source\include\Command\Command.h" />
-    <ClInclude Include="private\Source\include\Compute\ComputeManager.h" />
+    <ClInclude Include="private\Source\include\Compute\ComputeDeviceInternal.h" />
+    <ClInclude Include="public\Source\include\Compute\ComputeDevice.h" />
     <ClInclude Include="private\Source\include\Compute\ComputeShader.h" />
     <ClInclude Include="private\Source\include\Editer\GUIDebugger.h" />
     <ClInclude Include="private\Source\include\Editer\Object.h" />
@@ -304,7 +325,7 @@
     <ClInclude Include="private\Source\include\Command\CommandQueueBuilder.h" />
     <ClInclude Include="private\Source\include\Builder\ComputePipelineStateBuilder.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Definition.h" />
-    <ClInclude Include="private\Source\include\Builder\EngineResourceFactory.h" />
+    <ClInclude Include="public\Source\include\Builder\EngineResourceFactory.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Fence.h" />
     <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h" />
     <ClInclude Include="private\Source\include\Builder\GraphicDeviceBuilder.h" />
@@ -382,7 +403,7 @@
     </ClCompile>
     <ClCompile Include="private\Source\src\Audio\AudioManager.cpp" />
     <ClCompile Include="private\Source\src\Commands\Command.cpp" />
-    <ClCompile Include="private\Source\src\Compute\ComputeManager.cpp" />
+    <ClCompile Include="private\Source\src\Compute\ComputeDevice.cpp" />
     <ClCompile Include="private\Source\src\Compute\ComputeShader.cpp" />
     <ClCompile Include="private\Source\src\Editer\GUIDebugger.cpp" />
     <ClCompile Include="private\Source\src\Editer\Object.cpp" />
@@ -448,27 +469,6 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CellIdxHistogramCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CyanoPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\CyanoVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\FadePixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -490,13 +490,6 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
-    <FxCompile Include="private\Content\Shader\hlsl\ScatterCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
     <FxCompile Include="private\Content\Shader\hlsl\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -506,7 +499,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="private\Content\Shader\hlsl\CyanoHeader.hlsli" />
     <None Include="private\Content\Shader\hlsl\FadeHeader.hlsli" />
     <None Include="private\Content\Shader\hlsl\Header.hlsli" />
   </ItemGroup>

@@ -244,6 +244,7 @@ void GUIDebugger::updateCameraPos(XMFLOAT3& position)
 
 void GUIDebugger::hierarchyMenu(std::vector<class Object*>& objects)
 {
+	/*
 	//ウィンドウの大きさ
 	ImGui::SetNextWindowSize(ImVec2(400, 200), ImGuiCond_Appearing);
 	//オブジェクトリストウィンドウ
@@ -279,10 +280,12 @@ void GUIDebugger::hierarchyMenu(std::vector<class Object*>& objects)
 	//jsonへ保存
 	saveToSceneJsonButton(objects);
 	ImGui::End();
+	*/
 }
 
 void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objects)
 {
+	/*
 
 		//ウィンドウの大きさ
 		ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_Appearing);
@@ -346,11 +349,13 @@ void GUIDebugger::objectEditer(Object* object, std::vector<class Object*>& objec
 		//セーブ
 		saveToObjectJsonButton(object);
 		ImGui::End();
+		*/
 }
 
 //JSON上でオブジェクト名をキーとし、各パラメータを保存しているため、オブジェクト名の重複を避けなければならない
 void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 {
+	/*
 	static std::string newName;
 	ImGui::InputText("Name", &newName);
 	ImGui::SameLine();
@@ -415,10 +420,12 @@ void GUIDebugger::inputName(Object* obj, std::vector<Object*> objects)
 		}
 	}
 
+	*/
 }
 
 void GUIDebugger::labelEditer(Object* obj)
 {
+	/*
 	ImGui::Separator();
 	//ラベルを取得
 	auto& componentLabels = obj->mComponentLabels;
@@ -454,11 +461,13 @@ void GUIDebugger::labelEditer(Object* obj)
 		}
 
 	}
+	*/
 }
 
 void GUIDebugger::objectDeleteButton(Object* obj)
 {
-	if (ImGui::Button("Delete")) {
+	/*
+		if (ImGui::Button("Delete")) {
 		//シーンの取得
 		const std::string& sceneName = mGame.getSceneManager().getCurrentScene().getName();
 
@@ -493,10 +502,12 @@ void GUIDebugger::objectDeleteButton(Object* obj)
 		obj->mState = Actor::State::Dead;
 
 	}
+	*/
 }
 
 void GUIDebugger::objectHideButton(Object* obj, std::vector<Object*>& objects)
 {
+	/*
 	if (ImGui::Button("Hide")) {
 		//ゲーム上から削除　オブジェクトデータは書き換えない
 		obj->mState = Actor::State::Dead;
@@ -504,6 +515,7 @@ void GUIDebugger::objectHideButton(Object* obj, std::vector<Object*>& objects)
 			return obj->mName == o->mName;
 			});
 	}
+	*/
 }
 
 //---各ウィンドウの定義用関数---
@@ -515,7 +527,7 @@ void GUIDebugger::objectDuplicateButton(Object* refObj, std::vector<Object*>& ob
 
 void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>& objects)
 {
-
+/*
 	auto& scene = mGame.getSceneManager().getCurrentScene();
 	//現在、シーン中に同じ名前のオブジェクトが存在しているか判定
 	std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/objectData.json"));
@@ -569,12 +581,13 @@ void GUIDebugger::objectDuplicate(const std::string& refID, std::vector<Object*>
 
 	//名前が重複していなかった場合、ファイル操作をせずにシーンに追加
 	mGame.getSceneManager().getCurrentScene().addActor(std::move(newObj));
-
+*/
 }
 
 //シーンの初期オブジェクトIDの保存
 void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 {
+	/*
 	if (ImGui::Button("Save Scene")) {
 		//シーンファイルを開く
 		std::ifstream infile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
@@ -592,11 +605,13 @@ void GUIDebugger::saveToSceneJsonButton(std::vector<Object*>& objects)
 		std::ofstream outfile(EngineFileSystem::getEngineFilePath("Content/data/sceneData.json"));
 		outfile << j.dump(4); // 4はインデントスペースの数	
 	}
+	*/
 }
 
 //オブジェクトデータの保存
 void GUIDebugger::saveToObjectJsonButton(Object* object)
 {
+	/*
 	ImGui::Separator();
 	if (ImGui::Button("Save Object")) {
 		//オブジェクトファイルを開く
@@ -661,11 +676,12 @@ void GUIDebugger::saveToObjectJsonButton(Object* object)
 		//アセットマネージャにもう一度オブジェクトファイルを読み込ませる
 		mGame.getAssetManager().loadObjectJson();
 	} 
-
+	*/
 }
 
 void GUIDebugger::componentEditer(Object* object)
 {
+	/*
 	//コンポーネントの設定
 	for (int i = 0; i < object->mComponents.size(); i++) {
 		//ハッシュのコンフリクトを防ぐため、IDをプッシュする
@@ -691,6 +707,7 @@ void GUIDebugger::componentEditer(Object* object)
 		//IDのポップ
 		ImGui::PopID();
 	}
+	*/
 }
 
 void GUIDebugger::meshComponentEditer(Component* component)
@@ -732,6 +749,7 @@ void GUIDebugger::saveMeshComponent(Component* component, nlohmann::json& objJso
 
 void GUIDebugger::spriteComponentEditer(Component* component)
 {
+	/*
 	auto sprite = static_cast<SpriteComponent*>(component);
 
 	ImGui::DragFloat3("Position", &sprite->mPosition.x, 0.5f);
@@ -748,6 +766,7 @@ void GUIDebugger::spriteComponentEditer(Component* component)
 	if (ImGui::Button("Apply")) {
 		sprite->create(sprite->mTextureFilePath);
 	}
+	*/
 }
 
 void GUIDebugger::addSpriteComponent(Object* object)
@@ -758,6 +777,7 @@ void GUIDebugger::addSpriteComponent(Object* object)
 
 void GUIDebugger::saveSpriteComponent(Component* component, nlohmann::json& objJson)
 {
+	/*
 	auto sprite = static_cast<SpriteComponent*>(component);
 	objJson["name"] = "SpriteComponent";
 	objJson["position"] = sprite->mPosition;
@@ -767,10 +787,12 @@ void GUIDebugger::saveSpriteComponent(Component* component, nlohmann::json& objJ
 	objJson["rotation"] = sprite->mRotation;
 	objJson["filePath"] = sprite->mTextureFilePath;
 
+	*/
 }
 
 void GUIDebugger::textComponentEditer(Component* component)
 {
+	/*
 	auto text = static_cast<TextComponent*>(component);
 		if (ImGui::SliderFloat3("Position", &text->mPosition.x, 0.0f, Graphic::ClientWidth)) {
 			text->applyTextTexture();
@@ -800,6 +822,7 @@ void GUIDebugger::textComponentEditer(Component* component)
 			text->mText = Utility::stringToWString(text->mTextBuffer);
 			text->applyTextTexture();
 		}
+		*/
 }
 
 void GUIDebugger::addTextComponent(Object* object)
@@ -810,6 +833,7 @@ void GUIDebugger::addTextComponent(Object* object)
 
 void GUIDebugger::saveTextComponent(Component* component, nlohmann::json& objJson)
 {
+	/*
 	auto text = static_cast<TextComponent*>(component);
 	objJson["name"] = "TextComponent";
 	objJson["position"] = text->mPosition;
@@ -817,4 +841,5 @@ void GUIDebugger::saveTextComponent(Component* component, nlohmann::json& objJso
 	objJson["lineSpace"] = text->mLineSpace;
 	objJson["text"] = Utility::wstringToString(text->mText);
 	objJson["color"] = text->mTextColor;
+	*/
 }

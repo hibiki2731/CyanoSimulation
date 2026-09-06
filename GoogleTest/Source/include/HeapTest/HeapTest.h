@@ -1,4 +1,5 @@
 ﻿#pragma once
+#define _TEST
 #include <memory>
 #include "gtest/gtest.h"
 #include <d3dx12.h>
@@ -16,7 +17,7 @@ class GraphicCoreTest : public ::testing::Test {
 protected:
 	virtual void SetUp() {
 		mDevice = GraphicDeviceBuilder().build();
-		mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), 1);
+		mCommandManager = std::make_unique<CommandManager>(*mDevice.Get(), frame, 1);
 
 		uploadBuffer = std::make_unique<UploadBuffer>(*mDevice.Get(), sizeof(int) * 8);
 		defaultBuffer = std::make_unique<LinearDefaultBuffer>(*mDevice.Get(), *mCommandManager.get(), sizeof(int) * 8, D3D12_RESOURCE_STATE_COMMON);
@@ -25,6 +26,7 @@ protected:
 
 	ComPtr<ID3D12Device> mDevice;
 	std::unique_ptr<CommandManager> mCommandManager;
+	UINT frame = 0;
 
 	std::unique_ptr<UploadBuffer> uploadBuffer;
 	std::unique_ptr<LinearDefaultBuffer> defaultBuffer;
@@ -41,10 +43,10 @@ protected:
 		mGame = std::make_unique<Game>();
 		mGame->init();
 
-		mFactory = std::make_unique<EngineResourceFactory>(mGame->createFactory());
+		mFactory = &GetEngineResourceFactory();
 	}
 
 	std::unique_ptr<Game> mGame;
-	std::unique_ptr<EngineResourceFactory> mFactory;
+	IEngineResourceFactory* mFactory;
 
 };

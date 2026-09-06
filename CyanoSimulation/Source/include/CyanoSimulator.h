@@ -97,7 +97,7 @@ private:
 	};
 	RenderDesc mRenderDesc;
 	const UINT MaxPointNum = 1 << 24;
-	std::unique_ptr<class RWStructuredBuffer> mUploadBuffer;
+	std::unique_ptr<class IRWStructuredBuffer> mUploadBuffer;
 	std::unique_ptr<class VertexBuffer> mVertexBuffer;
 	std::unique_ptr<class IndexBuffer> mIndexBuffer;
 	class Graphic& mGraphic;

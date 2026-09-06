@@ -112,12 +112,13 @@ public:
 	void deleteRange(const DescriptorSlotRange& allocRange);
 
 	//ビューを追加する
-	void addUAV(const RWStructuredBuffer& uav, const SlotIndex& slotIndex);
+	void addUAV(class IRWStructuredBuffer& uav, const SlotIndex& slotIndex);
+	void addRawBuffer(class IRWStructuredBuffer& buffer, const SlotIndex& slotIndex);
 	void addTextureView(ID3D12Resource& shaderResource, const SlotIndex& slotIndex);
 	void addSRVFrameCounts(ID3D12Resource& shaderResource, const SlotIndex& slotIndex, const int numDescriptors);
 	void addCBV(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame);
 	void addCBVFrameCounts(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int numDescriptors);
-	void addSRV(const class StructuredBuffer& resource, const SlotIndex& slotIndex);
+	void addSRV(class IStructuredBuffer& resource, const SlotIndex& slotIndex);
 
 	//アドレスの取得
 	ID3D12DescriptorHeap* const* getAddress() const { return mDescHeap.GetAddressOf(); }

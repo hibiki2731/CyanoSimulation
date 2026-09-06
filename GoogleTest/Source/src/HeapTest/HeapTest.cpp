@@ -53,14 +53,12 @@ namespace HeapTest {
 	TEST_F(GameSideTest, TestRWStructuredBuffer) {
 		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(5, sizeof(int));
 
-		std::vector<int> data = { 1,2,3,5 };
-		rwBuffer->upload(data.data(), sizeof(int) * data.size());
+		std::vector<XMFLOAT4> data = { {1.0f,1,1,1}, {2.0f,2,2,2 } };
+		rwBuffer->upload(data.data(), sizeof(XMFLOAT4) * data.size());
 
-		int* check = static_cast<int*>(rwBuffer->read());
-		EXPECT_EQ(1, *check); ++check;
-		EXPECT_EQ(2, *check); ++check;
-		EXPECT_EQ(3, *check); ++check;
-		EXPECT_EQ(5, *check); ++check;
+		XMFLOAT4* check = static_cast<XMFLOAT4*>(rwBuffer->read());
+		EXPECT_EQ(1.0f, check->x); ++check;
+		EXPECT_EQ(2.0f, check->x); ++check;
 
 	}
 

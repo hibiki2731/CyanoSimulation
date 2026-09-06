@@ -2,7 +2,10 @@
 
 
 UploadBuffer::UploadBuffer(ID3D12Device& device, UINT sizeInBytes)
+	:mCPUResource(nullptr)
 {
+	if (sizeInBytes == 0) return;
+
 	auto prop = createHeapProperties();
 	auto desc = createResourceDesc(sizeInBytes);
 
@@ -21,8 +24,6 @@ void UploadBuffer::upload(void* sourceData, UINT offset, UINT sizeInBytes)
 	assert(sourceData != nullptr);
 
 	memcpy(static_cast<UINT*>(mCPUResource) + offset, sourceData, sizeInBytes);
-
-	int* check = static_cast<int*>(mCPUResource);
 }
 
 

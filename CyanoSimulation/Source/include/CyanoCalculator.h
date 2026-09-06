@@ -13,6 +13,9 @@
 #include <winuser.h>
 #include <array>
 #include <d3dx12.h>
+class IRWStructuredBuffer;
+class IStructuredBuffer;
+class IComputeShader;
 
 class CyanoCalculator
 {
@@ -22,15 +25,10 @@ public:
 
 	void startCalculation(std::vector<XMFLOAT4>& pointsPos);
 private:
-	void prepareCommand(ID3D12Device& device);
-	void prepareFence(ID3D12Device& device);
-	void prepareDescriptorHeap(ID3D12Device& device, const UINT maxPointNum);
-	void prepareScatterBuffers(ID3D12Device& device, const UINT maxPointNum);
+	void prepareShaders(const UINT maxPointNum);
 
-	void clearHistogram();
 	void dispatchCellIdxHistogram(const UINT numPoints);
-	std::vector<UINT> copyHistogramToCPU();
-	void computeCellStart(std::vector<UINT>& histogram);
+	void computeCellStart();
 	void dispatchScatter(const UINT numPoints);
 
 
@@ -48,43 +46,37 @@ private:
 	static const int GRID_HEIGHT;
 	static const int CELL_SIZE;
 
-	//GPUに命令を与えるコマンド
-	ComPtr<ID3D12GraphicsCommandList> mComputeCommandList;
-	ComPtr<ID3D12CommandQueue> mComputeCommandQueue;
-	ComPtr<ID3D12CommandAllocator> mComputeCommandAllocator;
-	//CPUとGPUの同期につかうフェンス
-	std::unique_ptr<class Fence> mFence;
+	//シアノの情報
+	int mNumCyanos = 0;
 
-	//ディスクリプタヒープ
-	class DescriptorHeap& mShaderVisibleHeap;
-	std::unique_ptr<class DescriptorHeap> mShaderNoneVisibleHeap;
-	std::unique_ptr<class DescriptorSlotRange> mShaderVisibleDescRange;
-	std::unique_ptr<class DescriptorSlotRange> mShaderNoneVisibleDescRange;
-
+	//コンピュートシェーダ
 	//点のセルインデックスとヒストグラムを計算するためのバッファ
-	std::unique_ptr<class StructuredBuffer> mPointsPosBuffer;
-	std::unique_ptr<class RWStructuredBuffer> mCellIdxBuffer;	//各点のセル番号を保存
-	std::unique_ptr<class RWStructuredBuffer> mHistogramBuffer;	//各セルに存在する点の数を保存
+	std::unique_ptr<IComputeShader> mHistogramShader;
+	std::unique_ptr<IStructuredBuffer> mPointsPosBuffer;
+	std::unique_ptr<IRWStructuredBuffer> mCellIdxBuffer;	//各点のセル番号を保存
+	std::unique_ptr<IRWStructuredBuffer> mHistogramBuffer;	//各セルに存在する点の数を保存
 
 	//スキャッター用バッファ
-	std::unique_ptr<class StructuredBuffer> mCellStartBuffer;
-	std::unique_ptr<class RWStructuredBuffer> mCellCursorBuffer;
-	std::unique_ptr<class RWStructuredBuffer> mSortedIndexBuffer;
-	std::unique_ptr<class DescriptorSlotRange> mScatterDescRange;
+	std::unique_ptr<IComputeShader> mScaterShader;
+	std::unique_ptr<IStructuredBuffer> mCellStartBuffer;
+	std::unique_ptr<IRWStructuredBuffer> mCellCursorBuffer;
+	std::unique_ptr<IRWStructuredBuffer> mSortedIndexBuffer;
 
-	
-	//コンピュートシェーダー用ルートシグネチャ、PSO
-	enum ComputeType{
-		HISTOGRAM,
-		SCATTER
-	};
-	std::array<ComPtr<ID3D12RootSignature>, 3> mComputeRootSignatures;
-	std::array<ComPtr<ID3D12PipelineState>, 3> mComputePipelineStates;
+	//位置更新用シェーダ
+	struct SimlationParams {
+		UINT numIndividuals;
+	} mSimParams;
+	std::unique_ptr<IComputeShader> mAngleAndMoveShader;
+	std::unique_ptr<IStructuredBuffer> mPointsAngleInBuffer;	//参照用角度、出力された角度からコピー
+	//個体追加時に編集
+	std::unique_ptr<IStructuredBuffer> mIndividualBeginBuffer;	//個体の先頭インデッククス
+	std::unique_ptr<IStructuredBuffer> mIndividualSizeBuffer;	//個体の配列のサイズ
+	std::unique_ptr<IStructuredBuffer> mIndividualSpeed;		//個体の速さ
 
-	
+	std::unique_ptr<IRWStructuredBuffer> mPointsPosOutBuffer;	//最終的に出力する点の位置のバッファ
+	std::unique_ptr<IRWStructuredBuffer> mPointsAngleOutBuffer;	//点毎の更新後の角度
+	std::unique_ptr<IRWStructuredBuffer> mIndividualheadIdxBuffer;//個体の頭のインデックス
+	std::unique_ptr<IRWStructuredBuffer> mIndividualAngularVelocityBuffer;	//個体の角速度
 
-	//コマンドリスト
-	//ディスクリプタヒープ,レンジ
-	//ルートシグネチャ、パイプラインステート
 };
 
