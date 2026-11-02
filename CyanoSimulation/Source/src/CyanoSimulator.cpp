@@ -48,11 +48,11 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 	mInteractionIntensity = 4.0f;
 	mPecletNumber = 1.0f;
 	mCyanoSpeed = 1.0f;
-	mCyanoLength = 1.0f;
+	mCyanoLength = 5.0f;
 	//mDeltaT = 0.001f;
-	mDeltaT = 0.1f;
+	mDeltaT = 0.01f;
 	mDeltaTSqrt = sqrtf(mDeltaT);
-	mAreaWidth = 10.0f;
+	mAreaWidth = 20.0f;
 	mAreaHeight = 1.0f;
 	mPixelParamRatio = PIXEL_AREA_WIDTH / mAreaWidth;
 	mInteractionRange = mCyanoSpeed * mDeltaT * 2.0f;

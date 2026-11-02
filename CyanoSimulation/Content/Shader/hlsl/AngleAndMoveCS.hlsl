@@ -131,7 +131,7 @@ void main( uint3 dispatchId : SV_DispatchThreadID )
     float interactionValue = interactNum == 0 ? 0.0f : interactSum / (float) interactNum;
     IndividualInteraction[newHeadIdx] = 0.0f;
     
-    const float noise = ROOT2 / pecletNumber * (-0.0f + randNormal(frameSeed + indivIdx));
+    const float noise = ROOT2 / pecletNumber * randNormal(frameSeed + indivIdx);
 
     const float preOmega = IndividualAngularVelocity[indivIdx];
     
