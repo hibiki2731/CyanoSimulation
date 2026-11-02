@@ -6,6 +6,7 @@
 #include "Memory/DescriptorHeap.h"
 #include "Command/Command.h"
 #include "Graphic/Core/Fence.h"
+#include <unordered_map>
 
 class ComputeDevice : public IComputeDevice
 {
@@ -18,7 +19,10 @@ public:
 
 	std::unique_ptr<IComputeShader> createComputeShader(const std::string& filePath, ComputeShaderFormat format) override 
 	{
-		return std::unique_ptr<ComputeShader>(new ComputeShader(*mDevice, *mRootSignature.Get(), *mShaderVisibleHeap, *mShaderNonVisibleHeap, *mCommandManager, filePath, format));
+		auto rootSignatureIter = mRootSignatures.find(format);
+		assert(rootSignatureIter != mRootSignatures.end());
+
+		return std::unique_ptr<ComputeShader>(new ComputeShader(*mDevice, *(rootSignatureIter->second.Get()), *mShaderVisibleHeap, *mShaderNonVisibleHeap, *mCommandManager, filePath, format));
 	}
 
 	void executeAndWaitGPU() override 
@@ -43,7 +47,6 @@ public:
 	void execute() {
 		auto& list = mCommandManager->getComputeCommandList();
 		auto& queue = mCommandManager->getCommandQueue();
-		auto& allocator = mCommandManager->getComputeCommandAllocator();
 
 		list->Close();
 		ID3D12CommandList* lists[] = { list.Get() };
@@ -58,15 +61,21 @@ private:
 	DescriptorHeap* mShaderVisibleHeap;
 	DescriptorHeap* mShaderNonVisibleHeap;
 	CommandManager* mCommandManager;
-	ComPtr<ID3D12RootSignature> mRootSignature;
+	std::unordered_map<ComputeShaderFormat, ComPtr<ID3D12RootSignature>> mRootSignatures;
 	std::unique_ptr<class Fence> mFence;
 
 	void createRootSignature()
 	{
-		mRootSignature = RootSignatureBuilder()
+		mRootSignatures[ComputeShaderFormat::C4S4RW4] = RootSignatureBuilder()
 			.addRootConstants(0, 4, D3D12_SHADER_VISIBILITY_ALL)
 			.addSRVTable(0, 4, D3D12_SHADER_VISIBILITY_ALL)
 			.addUAVTable(0, 4, D3D12_SHADER_VISIBILITY_ALL)
+			.build(*mDevice);
+
+		mRootSignatures[ComputeShaderFormat::C14S8RW8] = RootSignatureBuilder()
+			.addRootConstants(0, 14, D3D12_SHADER_VISIBILITY_ALL)
+			.addSRVTable(0, 8, D3D12_SHADER_VISIBILITY_ALL)
+			.addUAVTable(0, 8, D3D12_SHADER_VISIBILITY_ALL)
 			.build(*mDevice);
 	}
 };

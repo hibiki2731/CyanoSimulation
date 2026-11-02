@@ -8,10 +8,14 @@ class RWStructuredBuffer : public IRWStructuredBuffer
 public:
 	~RWStructuredBuffer();
 
-	void upload(void* srcData, UINT sizeInBytes) override;
+	void copyFrom(IRWStructuredBuffer& copySrc) override;
+	void copyFrom(class IStructuredBuffer& copySrc) override;
+	void uploadToGPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
+	void uploadToCPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
 	void* read() override;
 
-	ID3D12Resource* getGPUResource() const;
+	class LinearDefaultBuffer& getDefaultBuffer() const;
+	class UploadBuffer& getUploadBuffer() const;
 	const UINT getNumElements() const { return mNumElements; }
 	const UINT getSizeOfElement() const { return mSizeOfElement; }
 
@@ -24,8 +28,8 @@ private:
 	std::unique_ptr<class ReadBackBuffer> mReadBackBuffer;
 	ID3D12Device* mDevice;
 	class CommandManager& mCommandManager;
-	UINT mNumElements;
-	UINT mSizeOfElement;
+	const UINT mNumElements;
+	const UINT mSizeOfElement;
 
 };
 

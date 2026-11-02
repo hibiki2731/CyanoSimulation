@@ -1,4 +1,4 @@
-#include "CyanoHeader.hlsli"
+﻿#include "CyanoHeader.hlsli"
 
 Texture2D<float4> Texture : register(t0);
 SamplerState Sampler : register(s0);
@@ -6,5 +6,5 @@ SamplerState Sampler : register(s0);
 float4 main(PS_INPUT input) : SV_TARGET
 {
     //float4 output = Texture.Sample(Sampler, input.uv);
-    return float4(1.0f, 1.0f, 1.0f, 0.2f);
+    return float4(input.color);
 }

@@ -24,7 +24,7 @@ namespace ShaderTest {
 		std::shared_ptr<IStructuredBuffer> buffer = mFactory->createStructuredBuffer(4, sizeof(int));
 		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(4, sizeof(int));
 		std::vector<int> data = { 1,2,3,4 };
-		buffer->upload(data.data(), sizeof(int) * data.size());
+		buffer->uploadToGPU(data.data(), 0, 0, sizeof(int) * data.size());
 
 		ComputeShader->setStructuredBuffer(*buffer.get(), 0);
 		ComputeShader->setRWStructuredBuffer(*rwBuffer.get(), 0);
@@ -58,7 +58,7 @@ namespace ShaderTest {
 		std::shared_ptr<IStructuredBuffer> buffer = mFactory->createStructuredBuffer(4, sizeof(int));
 		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(4, sizeof(int));
 		std::vector<int> data = { 1,2,3,4 };
-		buffer->upload(data.data(), sizeof(int) * data.size());
+		buffer->uploadToGPU(data.data(), 0, 0, sizeof(int) * data.size());
 
 		ComputeShader->setStructuredBuffer(*buffer.get(), 0);
 		ComputeShader->setRWStructuredBuffer(*rwBuffer.get(), 0);
@@ -90,7 +90,7 @@ namespace ShaderTest {
 		std::shared_ptr<IStructuredBuffer> buffer = mFactory->createStructuredBuffer(4, sizeof(int));
 		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(4, sizeof(int));
 		std::vector<int> data = { 1,2,3,4 };
-		buffer->upload(data.data(), sizeof(int) * data.size());
+		buffer->uploadToGPU(data.data(), 0, 0, sizeof(int) * data.size());
 
 		int uploadA = 3	;
 

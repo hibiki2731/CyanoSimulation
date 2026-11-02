@@ -56,5 +56,6 @@
     <FxCompile Include="Content\Shader\hlsl\CyanoVertexShader.hlsl" />
     <FxCompile Include="Content\Shader\hlsl\CellIdxHistogramCS.hlsl" />
     <FxCompile Include="Content\Shader\hlsl\ScatterCS.hlsl" />
+    <FxCompile Include="Content\Shader\hlsl\AngleAndMoveCS.hlsl" />
   </ItemGroup>
 </Project>

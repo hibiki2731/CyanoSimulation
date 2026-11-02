@@ -6,6 +6,22 @@ struct RenderData {
 	XMFLOAT4 position;
 };
 
+struct ComputeParam {
+	UINT numIndividuals;
+	float interactionIntensity;
+	float interactionRange;
+	float pecletNumber;
+	float deltaT;
+	float deltaTSqrt;
+	float pixelParamRatio;
+	float areaWidth;
+	float areaHeight;
+	UINT gridWidth;
+	UINT gridHeight;
+	UINT cellSize;
+	UINT frameSeed;
+};
+
 class CyanoSimulator : public Actor
 {
 public:
@@ -28,7 +44,6 @@ private:
 	void copyPointsToGPU();
 	int calcCellIdx(const XMFLOAT4& pos);
 	int wrapCellIdx(const int cellX, const int cellY);
-	void applyParamaterToPicselScale();
 
 	//シアノの追加関数
 	void addCyanos(const int num);
@@ -46,10 +61,6 @@ private:
 	float mPixelParamRatio;
 
 
-	//壁との衝突判定
-	bool isNearWall(const int cellIdx);
-	XMVECTOR calcWallHit(const XMFLOAT4& preHeadPos, FXMVECTOR newHeadVec, const float speed);
-
 	//角度の更新
 	struct InteractParamater {
 		int interactNum = 0;
@@ -59,14 +70,13 @@ private:
 	void updateAngle();
 	float calcInteractionValue(const int indivisualIdx, const XMFLOAT4& basePos, const float baseoAngle);
 	InteractParamater calcInteractInCell(const int selfBeginIdx, const int selfSize, const int cellIdx, const InteractParamater& refParam, const XMFLOAT4& basePos, const float baseAngle);
-	float calcDeltaHeadAngle(FXMVECTOR preHeadVec, FXMVECTOR newHeadVec, float preAngle);
 
 	//空間分割法に用いるパラメータ
 	static const float PIXEL_AREA_WIDTH;
 	static const float PIXEL_AREA_HEIGHT;
-	static const int GRID_WIDTH;
-	static const int GRID_HEIGHT;
-	static const int CELL_SIZE;
+	static const UINT GRID_WIDTH;
+	static const UINT GRID_HEIGHT;
+	static const UINT CELL_SIZE;
 
 	//更新頻度調整用のタイマー
 	float mUpdateInterval = 0.01f;
@@ -81,15 +91,13 @@ private:
 	std::vector<int> mCellHeads;	//グリッド内の先頭点のインデックス
 
 	//個体ごとのデータ
-	std::vector<int> mIndivisual_headPointIdx;	//頭のインデックス
+	std::vector<UINT> mIndivisual_headPointIdx;	//頭のインデックス
 	std::vector<float> mPoints_angle;		//個体の頭の角度
 	std::vector<float> mIndivisual_angularVelocity;		//個体の頭の角速度
 	std::vector<float> mIndivisual_speed;
 	//シアノバクテリアの各個体のpositionsの占有領域
-	std::vector<int> mIndivisual_beginPointIdx;	//占有領域の先頭インデックス
-	std::vector<int> mIndivisual_size;				//占有領域のサイズ
-
-	std::vector<class SpriteComponent*> mPoints_sprites;
+	std::vector<UINT> mIndivisual_beginPointIdx;	//占有領域の先頭インデックス
+	std::vector<UINT> mIndivisual_size;				//占有領域のサイズ
 
 	struct RenderDesc {
 		float cyanoSize;
@@ -97,7 +105,9 @@ private:
 	};
 	RenderDesc mRenderDesc;
 	const UINT MaxPointNum = 1 << 24;
-	std::unique_ptr<class IRWStructuredBuffer> mUploadBuffer;
+	std::unique_ptr<class IStructuredBuffer> mUploadBuffer;
+	std::unique_ptr<class IRWStructuredBuffer> mComputeBuffer;
+	std::unique_ptr<class IRWStructuredBuffer> mPointsIsInteractionBuffer;
 	std::unique_ptr<class VertexBuffer> mVertexBuffer;
 	std::unique_ptr<class IndexBuffer> mIndexBuffer;
 	class Graphic& mGraphic;
@@ -106,6 +116,8 @@ private:
 	ID3D12Resource* mTexture;
 	class DescriptorHeap& mDescriptorHeap;
 	std::unique_ptr<class DescriptorSlotRange> mDescRange;
+	ComputeParam mComputeParam;
+
 
 	void initBuffer(ID3D12Device& device);
 

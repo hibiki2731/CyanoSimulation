@@ -19,11 +19,11 @@ UploadBuffer::~UploadBuffer()
 
 }
 
-void UploadBuffer::upload(void* sourceData, UINT offset, UINT sizeInBytes)
+void UploadBuffer::upload(void* sourceData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
 {
 	assert(sourceData != nullptr);
 
-	memcpy(static_cast<UINT*>(mCPUResource) + offset, sourceData, sizeInBytes);
+	memcpy(static_cast<char*>(mCPUResource) + dstOffset, static_cast<char*>(sourceData) + srcOffset, sizeInBytes);
 }
 
 

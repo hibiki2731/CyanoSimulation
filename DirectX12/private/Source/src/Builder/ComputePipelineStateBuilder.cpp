@@ -29,5 +29,6 @@ ComPtr<ID3D12PipelineState> ComputePipelineStateBuilder::build(ID3D12Device& dev
 	ComPtr<ID3D12PipelineState> pso;
 	HRESULT hr = device.CreateComputePipelineState(&mDesc, IID_PPV_ARGS(pso.GetAddressOf()));
 	assert(SUCCEEDED(hr));
+
 	return pso;
 }

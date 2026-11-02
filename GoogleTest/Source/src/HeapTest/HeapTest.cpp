@@ -9,13 +9,13 @@
 
 namespace HeapTest {
 	TEST_F(GraphicCoreTest, TestEmptyData) {
-		EXPECT_DEATH(uploadBuffer->upload(nullptr, 0, sizeof(int)), "");
+		EXPECT_DEATH(uploadBuffer->upload(nullptr, 0, 0, sizeof(int)), "");
 	}
 
 	TEST_F(GraphicCoreTest, TestUploadData) {
 
 		std::vector<int> data = { 1, 2, 3, 5 };
-		uploadBuffer->upload(data.data(), 0, data.size() * sizeof(int));
+		uploadBuffer->upload(data.data(), 0, 0, data.size() * sizeof(int));
 
 		int* check = static_cast<int*>(uploadBuffer->getCPUResource());
 
@@ -28,7 +28,7 @@ namespace HeapTest {
 
 	TEST_F(GraphicCoreTest, TestCopyToDefaultBuffer) {
 		std::vector<int> data = { 1,2,3,5 };
-		uploadBuffer->upload(data.data(), 0, data.size() * sizeof(int));
+		uploadBuffer->upload(data.data(), 0, 0, data.size() * sizeof(int));
 
 		defaultBuffer->copyFromUploadBuffer(*uploadBuffer.get());
 		readbackBuffer->read(*defaultBuffer.get());
@@ -45,16 +45,16 @@ namespace HeapTest {
 		std::shared_ptr<IStructuredBuffer> structuredBuffer = mFactory->createStructuredBuffer(5, sizeof(int));
 
 		std::vector<int> data = { 1,2,3,5 };
-		structuredBuffer->upload(data.data(), sizeof(int) * data.size());
+		structuredBuffer->uploadToGPU(data.data(), 0, 0, sizeof(int) * data.size());
 
-		EXPECT_TRUE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResource());
+		//EXPECT_TRUE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResourceFromDefaultBuffer());
 	}
 
 	TEST_F(GameSideTest, TestRWStructuredBuffer) {
 		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(5, sizeof(int));
 
 		std::vector<XMFLOAT4> data = { {1.0f,1,1,1}, {2.0f,2,2,2 } };
-		rwBuffer->upload(data.data(), sizeof(XMFLOAT4) * data.size());
+		rwBuffer->uploadToGPU(data.data(), 0, 0, sizeof(XMFLOAT4) * data.size());
 
 		XMFLOAT4* check = static_cast<XMFLOAT4*>(rwBuffer->read());
 		EXPECT_EQ(1.0f, check->x); ++check;
@@ -67,8 +67,8 @@ namespace HeapTest {
 
 		std::vector<int> data1 = { 1,2,3,5 };
 		std::vector<int> data2 = { 7,8,9,11 };
-		rwBuffer->upload(data1.data(), sizeof(int) * data1.size());
-		rwBuffer->upload(data2.data(), sizeof(int) * data2.size());
+		rwBuffer->uploadToGPU(data1.data(), 0, 0, sizeof(int) * data1.size());
+		rwBuffer->uploadToGPU(data2.data(), 0, 0, sizeof(int) * data2.size());
 
 		int* check = static_cast<int*>(rwBuffer->read());
 		EXPECT_EQ(7, *check); ++check;

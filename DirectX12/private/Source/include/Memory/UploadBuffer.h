@@ -8,7 +8,7 @@ public:
 	UploadBuffer(ID3D12Device& device, UINT sizeInBytes);
 	~UploadBuffer();
 
-	void upload(void* sourceData, UINT offset, UINT SizeInBytes);
+	void upload(void* sourceData, UINT srcOffset, UINT dstOffset, UINT SizeInBytes);
 	ID3D12Resource* getGPUResource() { return mGPUResource.Get(); }
 	void* getCPUResource() { return mCPUResource; }
 

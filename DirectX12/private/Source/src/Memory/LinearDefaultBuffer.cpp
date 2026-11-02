@@ -6,25 +6,175 @@
 void LinearDefaultBuffer::copyFromUploadBuffer(UploadBuffer& copySrc)
 {
 	//コピー先のバッファのステートをCOPY_DESTに変更
-	D3D12_RESOURCE_BARRIER barrierToCopyDesc = CD3DX12_RESOURCE_BARRIER::Transition(
-		mGPUResource.Get(),
-		mState,
-		D3D12_RESOURCE_STATE_COPY_DEST
-	);
+	D3D12_RESOURCE_BARRIER barrierToCopyDesc[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			mState,
+			D3D12_RESOURCE_STATE_COPY_DEST
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			D3D12_RESOURCE_STATE_COPY_SOURCE
+		)
+	};
+
 	auto& list = mCommandManager.getComputeCommandList();
 
-	list->ResourceBarrier(1, &barrierToCopyDesc);
+	list->ResourceBarrier(2, barrierToCopyDesc);
 
 	//リソースのコピー
 	list->CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
 
 	//本来のステートに戻す
-	D3D12_RESOURCE_BARRIER barrierToUsage = CD3DX12_RESOURCE_BARRIER::Transition(
+	D3D12_RESOURCE_BARRIER barrierToUsage[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			mState
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			D3D12_RESOURCE_STATE_GENERIC_READ
+		)
+	};
+	list->ResourceBarrier(2, barrierToUsage);
+}
+
+void LinearDefaultBuffer::copyFromDefaultBuffer(LinearDefaultBuffer& copySrc)
+{
+	//コピー先のバッファのステートをCOPY_DESTに変更
+	D3D12_RESOURCE_BARRIER barrierToCopyDesc[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			mState,
+			D3D12_RESOURCE_STATE_COPY_DEST
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			copySrc.getResourceState(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE
+		)
+	};
+	auto& list = mCommandManager.getComputeCommandList();
+
+	list->ResourceBarrier(2, barrierToCopyDesc);
+
+	//リソースのコピー
+	list->CopyResource(mGPUResource.Get(), copySrc.getGPUResource());
+
+	//本来のステートに戻す
+	D3D12_RESOURCE_BARRIER barrierToUsage[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			mState
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			copySrc.getResourceState()
+		)
+	};
+	list->ResourceBarrier(2, barrierToUsage);
+}
+
+void LinearDefaultBuffer::copyRegionFromUploadBuffer(UploadBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
+{
+	//コピー先のバッファのステートをCOPY_DESTに変更
+	D3D12_RESOURCE_BARRIER barrierToCopyDesc[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			mState,
+			D3D12_RESOURCE_STATE_COPY_DEST
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			D3D12_RESOURCE_STATE_COPY_SOURCE
+		)
+	};
+
+	auto& list = mCommandManager.getComputeCommandList();
+
+	list->ResourceBarrier(2, barrierToCopyDesc);
+
+	//リソースのコピー
+	list->CopyBufferRegion(
 		mGPUResource.Get(),
-		D3D12_RESOURCE_STATE_COPY_DEST,
-		mState
+		dstOffset,
+		copySrc.getGPUResource(),
+		srcOffset,
+		sizeInBytes
 	);
-	list->ResourceBarrier(1, &barrierToUsage);
+
+	//本来のステートに戻す
+	D3D12_RESOURCE_BARRIER barrierToUsage[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			mState
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			D3D12_RESOURCE_STATE_GENERIC_READ
+		)
+	};
+	list->ResourceBarrier(2, barrierToUsage);
+}
+
+void LinearDefaultBuffer::copyRegionFromDefaultBuffer(LinearDefaultBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
+{
+	//コピー先のバッファのステートをCOPY_DESTに変更
+	D3D12_RESOURCE_BARRIER barrierToCopyDesc[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			mState,
+			D3D12_RESOURCE_STATE_COPY_DEST
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			copySrc.getResourceState(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE
+		)
+	};
+	auto& list = mCommandManager.getComputeCommandList();
+
+	list->ResourceBarrier(2, barrierToCopyDesc);
+
+	//リソースのコピー
+	list->CopyBufferRegion(
+		mGPUResource.Get(),
+		dstOffset,
+		copySrc.getGPUResource(),
+		srcOffset,
+		sizeInBytes
+	);
+
+	//本来のステートに戻す
+	D3D12_RESOURCE_BARRIER barrierToUsage[2] = 
+	{ 
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			mGPUResource.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			mState
+		),
+		CD3DX12_RESOURCE_BARRIER::Transition(
+			copySrc.getGPUResource(),
+			D3D12_RESOURCE_STATE_COPY_SOURCE,
+			copySrc.getResourceState()
+		)
+	};
+	list->ResourceBarrier(2, barrierToUsage);
 }
 
 LinearDefaultBuffer::LinearDefaultBuffer(ID3D12Device& device, CommandManager& commandManager, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag)

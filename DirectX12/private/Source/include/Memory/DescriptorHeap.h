@@ -119,6 +119,7 @@ public:
 	void addCBV(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int frame);
 	void addCBVFrameCounts(const class IConstantBufferSuballocation& cbv, const SlotIndex& slotIndex, const int numDescriptors);
 	void addSRV(class IStructuredBuffer& resource, const SlotIndex& slotIndex);
+	void addUploadSRV(class IStructuredBuffer& resource, const SlotIndex& slotIndex);
 
 	//アドレスの取得
 	ID3D12DescriptorHeap* const* getAddress() const { return mDescHeap.GetAddressOf(); }

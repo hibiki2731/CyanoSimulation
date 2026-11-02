@@ -4,19 +4,38 @@
 #include "Memory/LinearDefaultBuffer.h"
 #include "Memory/UploadBuffer.h"
 #include "Command/Command.h"
+#include "Memory/RWStructuredBuffer.h"
 
 StructuredBuffer::~StructuredBuffer() = default;
 
-void StructuredBuffer::upload(void* srcData, UINT sizeInBytes)
+void StructuredBuffer::copyFrom(IStructuredBuffer& copySrc)
+{
+	StructuredBuffer& buffer = static_cast<StructuredBuffer&>(copySrc);
+	mDefaultBuffer->copyFromDefaultBuffer(buffer.getDefaultBuffer());
+}
+
+void StructuredBuffer::copyFrom(IRWStructuredBuffer& copySrc)
+{
+	RWStructuredBuffer& buffer = static_cast<RWStructuredBuffer&>(copySrc);
+	mDefaultBuffer->copyFromDefaultBuffer(buffer.getDefaultBuffer());
+}
+
+
+void StructuredBuffer::uploadToGPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
 {
 	if (sizeInBytes == 0) return;
 
-	if (!mUploadBuffer)
-		mUploadBuffer = std::make_unique <UploadBuffer>(*mDevice, mNumElements * mSizeOfElement);
+	mUploadBuffer->upload(srcData, srcOffset, dstOffset, sizeInBytes);
 
-	mUploadBuffer->upload(srcData, 0, sizeInBytes);
+	mDefaultBuffer->copyRegionFromUploadBuffer(*mUploadBuffer.get(), srcOffset, dstOffset, sizeInBytes);
 
-	mDefaultBuffer->copyFromUploadBuffer(*mUploadBuffer.get());
+}
+
+void StructuredBuffer::uploadToCPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
+{
+	if (sizeInBytes == 0) return;
+
+	mUploadBuffer->upload(srcData, srcOffset, dstOffset, sizeInBytes);
 
 }
 
@@ -29,8 +48,15 @@ StructuredBuffer::StructuredBuffer(ID3D12Device& device, CommandManager& command
 	mSizeOfElement(sizeOfElement)
 {
 	mDefaultBuffer = std::make_unique<LinearDefaultBuffer>(device, mCommandManager, mSizeOfElement * mNumElements, D3D12_RESOURCE_STATE_COMMON);
+	mUploadBuffer = std::make_unique <UploadBuffer>(*mDevice, mNumElements * mSizeOfElement);
 }
 
-ID3D12Resource* StructuredBuffer::getGPUResource() const{
-	return mDefaultBuffer->getGPUResource();
+UploadBuffer& StructuredBuffer::getUploadBuffer() const
+{
+	return *mUploadBuffer;
+}
+
+LinearDefaultBuffer& StructuredBuffer::getDefaultBuffer() const
+{
+	return *mDefaultBuffer;
 }

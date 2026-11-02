@@ -809,7 +809,9 @@ void Graphic::clearColor(float r, float g, float b)
 void Graphic::beginRender()
 {
 	//コンピュート用コマンドを実行
-	ExecuteComputeDevice();
+	//ExecuteComputeDevice();
+	auto& device = GetComputeDevice();
+	device.executeAndWaitGPU();
 
 	auto& list = mCommandManager->getGraphicsCommandList();
 	//バリアでバックバッファを描画ターゲットに切り替える
@@ -879,36 +881,19 @@ void Graphic::moveToNextFrame()
 	UINT nextFrame = SwapChain->GetCurrentBackBufferIndex();
 	mFence->waitCompleteNextFrame(*mCommandManager->getCommandQueue().Get(), currentFrame, nextFrame);
 
-		/*
-	//現フレームのフェンス値を記録
-	mFenceValues[BackBufIdx] = mFenceValue;
-	mCommandManager->getCommandQueue()->Signal(mFence.Get(), mFenceValue); //GPUの描画が終わったらmFenceValueを出力
-	mFenceValue++;
-
-	//次フレームのバックバッファインデックスを取得
-	UINT nextBufIdx = SwapChain->GetCurrentBackBufferIndex();
-
-	//次フレームのバッファをGPUがまだ使っていれば待機
-	if (mFence->GetCompletedValue() < mFenceValues[nextBufIdx]) {
-		//前のフレームのフェンス値になるまで待つ
-		mFence->SetEventOnCompletion(mFenceValues[nextBufIdx], mFenceEvent);
-		WaitForSingleObject(mFenceEvent, INFINITE);
-	}
-	*/
-
 	//遅延削除を行う
 	mTrashQueue[nextFrame].clear();
 
 	//コマンドアロケータをリセット
 	HRESULT hr = mCommandManager->getGraphicsCommandAllocator()->Reset();
 	assert(SUCCEEDED(hr));
-	hr = mCommandManager->getComputeCommandAllocator()->Reset();
-	assert(SUCCEEDED(hr));
+	//hr = mCommandManager->getComputeCommandAllocator()->Reset();
+	//assert(SUCCEEDED(hr));
 
 	//コマンドリストをリセット
 	hr = mCommandManager->getGraphicsCommandList()->Reset(mCommandManager->getGraphicsCommandAllocator().Get(), nullptr);
 	assert(SUCCEEDED(hr));
-	hr = mCommandManager->getComputeCommandList()->Reset(mCommandManager->getComputeCommandAllocator().Get(), nullptr);
+	//hr = mCommandManager->getComputeCommandList()->Reset(mCommandManager->getComputeCommandAllocator().Get(), nullptr);
 
 	BackBufIdx = nextFrame;
 }

@@ -8,9 +8,15 @@ class StructuredBuffer : public IStructuredBuffer
 {
 public:
 	~StructuredBuffer();
-	void upload(void* srcData, UINT sizeInBytes) override;
 
-	ID3D12Resource* getGPUResource() const;
+	void copyFrom(IStructuredBuffer& copySrc) override;
+	void copyFrom(class IRWStructuredBuffer& copySrc) override;
+
+	void uploadToGPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
+	void uploadToCPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
+
+	class UploadBuffer& getUploadBuffer() const;
+	class LinearDefaultBuffer& getDefaultBuffer() const;
 	const UINT getNumElements() const { return mNumElements; }
 	const UINT getSizeOfElement() const { return mSizeOfElement; }
 

@@ -5,6 +5,9 @@
 #include "Builder/ComputePipelineStateBuilder.h"
 #include "Memory/StructuredBuffer.h"
 #include "Memory/RWStructuredBuffer.h"
+#include "Memory/LinearDefaultBuffer.h"
+
+ComputeShader::~ComputeShader() = default;
 
 void ComputeShader::dispatch(UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ)
 {
@@ -18,11 +21,11 @@ void ComputeShader::dispatch(UINT threadGroupCountX, UINT threadGroupCountY, UIN
 	list->SetPipelineState(mPSO.Get());
 
 	//ルートコンスタントを設定
-	list->SetComputeRoot32BitConstants(0, 4, mUploadPointer, 0);
+	list->SetComputeRoot32BitConstants(0, mNum32BitConstants, mUploadPointer, 0);
 
 	//ディスクリプタテーブルの設定
 	list->SetComputeRootDescriptorTable(1, mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(0)));
-	list->SetComputeRootDescriptorTable(2, mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(4)));
+	list->SetComputeRootDescriptorTable(2, mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(mNumSBuffers)));
 
 
 	list->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
@@ -56,7 +59,7 @@ void ComputeShader::waitWriteBuffer(UINT position)
 	//書き込みが終わるまで、リソースの使用を待機させる
 	std::array<D3D12_RESOURCE_BARRIER, 1> barrier = {};
 	barrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_UAV;
-	barrier[0].UAV.pResource = mRegisteredRWBuffers[position]->getGPUResource();
+	barrier[0].UAV.pResource = mRegisteredRWBuffers[position]->getDefaultBuffer().getGPUResource();
 	mCommandManager->getComputeCommandList()->ResourceBarrier(1, barrier.data());
 }
 
@@ -70,9 +73,9 @@ void ComputeShader::clearRWStructuredBuffer(UINT position)
 	assert(position < mNumRWBuffers);
     static UINT clearValue[4] = { 0, 0, 0, 0 };
     mCommandManager->getComputeCommandList()->ClearUnorderedAccessViewUint(
-        mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(mNumSBuffers * mNumRWBuffers + position)),                  // シェーダー可視ヒープ上のGPUハンドル
+        mShaderVisibleHeap->getGPUHandle(mShaderVisibleHeapRange->getIndex(mNumSBuffers + mNumRWBuffers + position)),                  // シェーダー可視ヒープ上のGPUハンドル
         mShaderNonVisibleHeap->getCPUHandle(mShaderNonVisibleHeapRange->getIndex(position)),  // 同じビューを指す、非シェーダー可視ヒープ上のCPUハンドル
-        mRegisteredRWBuffers[position]->getGPUResource(),
+        mRegisteredRWBuffers[position]->getDefaultBuffer().getGPUResource(),
         clearValue, 0, nullptr
     );
 }
@@ -94,16 +97,19 @@ ComputeShader::ComputeShader(ID3D12Device& device, ID3D12RootSignature& rootSign
 
 	//フォーマットの確認
 	switch (format) {
-	case ComputeShaderFormat::S4_RW4:
+	case ComputeShaderFormat::C4S4RW4:
+		mNum32BitConstants = 4;
 		mNumSBuffers = 4;
 		mNumRWBuffers = 4;
 		break;
 
-	case ComputeShaderFormat::RW_12:
-		mNumSBuffers = 0;
-		mNumRWBuffers = 12;
+	case ComputeShaderFormat::C14S8RW8:
+		mNum32BitConstants = 14;
+		mNumSBuffers = 8;
+		mNumRWBuffers = 8;
 		break;
 	default:
+		mNum32BitConstants = 0;
 		mNumRWBuffers = 0;
 		mNumSBuffers = 0;
 	}

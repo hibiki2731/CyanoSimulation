@@ -9,6 +9,10 @@ public:
 	LinearDefaultBuffer(ID3D12Device& device, class CommandManager& commandManager, UINT sizeInBytes, D3D12_RESOURCE_STATES state, D3D12_RESOURCE_FLAGS flag = D3D12_RESOURCE_FLAG_NONE);
 
 	void copyFromUploadBuffer(class UploadBuffer& copySrc);
+	void copyFromDefaultBuffer(LinearDefaultBuffer& copySrc);
+
+	void copyRegionFromUploadBuffer(class UploadBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes);
+	void copyRegionFromDefaultBuffer(LinearDefaultBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes);
 
 	ID3D12Resource* getGPUResource() { return mGPUResource.Get(); }
 	D3D12_RESOURCE_STATES getResourceState() { return mState; }

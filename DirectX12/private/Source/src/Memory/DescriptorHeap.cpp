@@ -4,6 +4,8 @@
 #include "Memory/ConstantBuffer.h"
 #include "Memory/RWStructuredBuffer.h"
 #include "Memory/StructuredBuffer.h"
+#include "Memory/UploadBuffer.h"
+#include "Memory/LinearDefaultBuffer.h"
 
 const NumSlots ZeroSlot(0);
 
@@ -121,7 +123,7 @@ void DescriptorHeap::addUAV(IRWStructuredBuffer& uav, const SlotIndex& slotIndex
 
 	//UAVを作成
 	mDevice.CreateUnorderedAccessView(
-		buffer.getGPUResource(),
+		buffer.getDefaultBuffer().getGPUResource(),
 		nullptr,
 		&desc,
 		cpuHandle
@@ -145,7 +147,7 @@ void DescriptorHeap::addRawBuffer(IRWStructuredBuffer& buffer, const SlotIndex& 
 
 	//UAVを作成
 	mDevice.CreateUnorderedAccessView(
-		rwBuffer.getGPUResource(),
+		rwBuffer.getDefaultBuffer().getGPUResource(),
 		nullptr,
 		&desc,
 		cpuHandle
@@ -202,7 +204,7 @@ void DescriptorHeap::addSRV(IStructuredBuffer& resource, const SlotIndex& slotIn
 	StructuredBuffer& buffer = dynamic_cast<StructuredBuffer&>(resource);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
-	desc.Format = buffer.getGPUResource()->GetDesc().Format;
+	desc.Format = buffer.getDefaultBuffer().getGPUResource()->GetDesc().Format;
 	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
 	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
@@ -215,8 +217,30 @@ void DescriptorHeap::addSRV(IStructuredBuffer& resource, const SlotIndex& slotIn
 	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
 
-	mDevice.CreateShaderResourceView(buffer.getGPUResource(), &desc, hCbvTbvHeap);
+	mDevice.CreateShaderResourceView(buffer.getDefaultBuffer().getGPUResource(), &desc, hCbvTbvHeap);
 	
+}
+
+void DescriptorHeap::addUploadSRV(IStructuredBuffer& resource, const SlotIndex& slotIndex)
+{
+	StructuredBuffer& buffer = dynamic_cast<StructuredBuffer&>(resource);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC desc = {};
+	desc.Format = buffer.getUploadBuffer().getGPUResource()->GetDesc().Format;
+	desc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	desc.ViewDimension = D3D12_SRV_DIMENSION_BUFFER;
+	desc.Texture2D.MipLevels = 1;//ミップマップは使用しないので1
+	desc.Buffer.FirstElement = 0;
+	desc.Buffer.NumElements = buffer.getNumElements();
+	desc.Buffer.StructureByteStride = buffer.getSizeOfElement();
+	desc.Buffer.Flags = D3D12_BUFFER_SRV_FLAG_NONE;
+
+	auto hCbvTbvHeap = mDescHeap->GetCPUDescriptorHandleForHeapStart();
+	auto cbvTbvIncSize = mDevice.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	hCbvTbvHeap.ptr += cbvTbvIncSize * slotIndex.getIndex();
+
+	mDevice.CreateShaderResourceView(buffer.getUploadBuffer().getGPUResource(), &desc, hCbvTbvHeap);
+
 }
 
 D3D12_GPU_DESCRIPTOR_HANDLE DescriptorHeap::getGPUHandle(const SlotIndex& slotIndex)

@@ -13,6 +13,8 @@ PS_INPUT main(VS_INPUT input)
     float z = output.position.z / MAX_Z_DEPTH;
     output.position.z = clamp(z, 0.0f, 1.0f);
     output.uv = input.uv;
+
+    output.color = float4(IsInteraction[input.instatnceID], 1.0f, 1.0f, 0.2f);
     
     return output;
 }
