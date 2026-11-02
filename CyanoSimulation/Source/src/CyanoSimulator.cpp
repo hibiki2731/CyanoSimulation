@@ -48,7 +48,7 @@ CyanoSimulator::CyanoSimulator(Scene& scene):
 	mInteractionIntensity = 4.0f;
 	mPecletNumber = 1.0f;
 	mCyanoSpeed = 1.0f;
-	mCyanoLength = 5.0f;
+	mCyanoLength = 1.0f;
 	//mDeltaT = 0.001f;
 	mDeltaT = 0.01f;
 	mDeltaTSqrt = sqrtf(mDeltaT);
