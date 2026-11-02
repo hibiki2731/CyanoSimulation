@@ -36,7 +36,7 @@ private:
 	void dispatchCellIdxHistogram(const UINT numPoints);
 	void computeCellStart();
 	void dispatchScatter(const UINT numPoints);
-	void dispatchAngleAndMove(const UINT numIndividuals);
+	void dispatchAngleAndMove(const UINT numPoints, const UINT numIndividuals);
 
 
 	//空間分割法に用いるパラメータ
@@ -60,10 +60,22 @@ private:
 	std::unique_ptr<IRWStructuredBuffer> mCellIdxBuffer;	//各点のセル番号を保存
 	std::unique_ptr<IRWStructuredBuffer> mHistogramBuffer;	//各セルに存在する点の数を保存
 
+	//排他的累積和(Blelloch法)用シェーダ。仕様は docs/ScanCS_spec.md
+	struct ScanParams {
+		UINT mode;			//0:ブロックスキャン 1:ブロック合計のスキャン 2:オフセット加算
+		UINT numElements;
+		UINT numBlocks;
+		UINT pad;
+	};
+	static constexpr UINT ScanBlockSize = 1024;
+	ScanParams mScanParams;
+	std::unique_ptr<IComputeShader> mScanShader;
+	std::unique_ptr<IRWStructuredBuffer> mBlockSumsBuffer;
+
 	//スキャッター用バッファ
 	std::unique_ptr<IComputeShader> mScaterShader;
-	std::unique_ptr<IStructuredBuffer> mCellStartBuffer;
-	std::unique_ptr<IRWStructuredBuffer> mCellCursorBuffer;
+	std::unique_ptr<IStructuredBuffer> mCellStartBuffer;	//AngleAndMoveが参照する各セルの先頭位置(スキャン結果のコピー)
+	std::unique_ptr<IRWStructuredBuffer> mCellCursorBuffer;	//スキャン結果。Scatterが加算して消費する
 	std::unique_ptr<IRWStructuredBuffer> mSortedIndexBuffer;
 
 	//位置更新用シェーダ

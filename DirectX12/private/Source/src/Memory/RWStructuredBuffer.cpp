@@ -21,6 +21,20 @@ void RWStructuredBuffer::copyFrom(IStructuredBuffer& copySrc)
 	mDefaultBuffer->copyFromDefaultBuffer(buffer.getDefaultBuffer());
 }
 
+void RWStructuredBuffer::copyRegionFrom(IRWStructuredBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
+{
+	if (sizeInBytes == 0) return;
+	RWStructuredBuffer& buffer = static_cast<RWStructuredBuffer&>(copySrc);
+	mDefaultBuffer->copyRegionFromDefaultBuffer(buffer.getDefaultBuffer(), srcOffset, dstOffset, sizeInBytes);
+}
+
+void RWStructuredBuffer::copyRegionFrom(IStructuredBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
+{
+	if (sizeInBytes == 0) return;
+	StructuredBuffer& buffer = static_cast<StructuredBuffer&>(copySrc);
+	mDefaultBuffer->copyRegionFromDefaultBuffer(buffer.getDefaultBuffer(), srcOffset, dstOffset, sizeInBytes);
+}
+
 void RWStructuredBuffer::uploadToGPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes)
 {
 	if (sizeInBytes == 0) return;

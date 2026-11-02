@@ -35,8 +35,9 @@ CyanoCalculator::~CyanoCalculator() = default;
 void CyanoCalculator::startCalculation(UINT numPoints, UINT numIndividuals)
 {
 	if (numPoints == 0) return;
-	//点の位置データをGPUバッファにコピー
-	mPointsPosInBuffer->copyFrom(*mPointsPosOutBuffer);
+
+	//点の位置データをGPUバッファにコピー(使用中の点の範囲のみ)
+	mPointsPosInBuffer->copyRegionFrom(*mPointsPosOutBuffer, 0, 0, numPoints * sizeof(RenderData));
 
 	//GPUで点のセル座標とセルのヒストグラムを計算
 	dispatchCellIdxHistogram(numPoints);
@@ -47,7 +48,7 @@ void CyanoCalculator::startCalculation(UINT numPoints, UINT numIndividuals)
 	//GPUで点をセルインデックスでソートした配列を作成
 	dispatchScatter(numPoints);
 
-	dispatchAngleAndMove(numIndividuals);
+	dispatchAngleAndMove(numPoints, numIndividuals);
 
 }
 
@@ -112,6 +113,18 @@ void CyanoCalculator::prepareShaders(const UINT maxPointNum)
 	mCellCursorBuffer = factory.createRWStructuredBuffer(gridWidth * gridHeight, sizeof(UINT));
 	mSortedIndexBuffer = factory.createRWStructuredBuffer(maxPointNum, sizeof(UINT));
 	
+	//スキャン用シェーダ。ブロック合計のスキャンは1グループで行うため、numBlocksは1024以下
+	const UINT numBlocks = (gridWidth * gridHeight + ScanBlockSize - 1) / ScanBlockSize;
+	assert(numBlocks <= ScanBlockSize);
+	mBlockSumsBuffer = factory.createRWStructuredBuffer(numBlocks, sizeof(UINT));
+	mScanParams = { 0, gridWidth * gridHeight, numBlocks, 0 };
+
+	mScanShader = computeDevice.createComputeShader("Content/Shader/cso/ScanCS.cso");
+	mScanShader->setRootConstants(&mScanParams);
+	mScanShader->setRWStructuredBuffer(*mHistogramBuffer, 0);
+	mScanShader->setRWStructuredBuffer(*mCellCursorBuffer, 1);
+	mScanShader->setRWStructuredBuffer(*mBlockSumsBuffer, 2);
+
 	mScaterShader = computeDevice.createComputeShader("Content/Shader/cso/ScatterCS.cso");
 	mScaterShader->setRootConstants(&mUploadParams);
 	mScaterShader->setRWStructuredBuffer(*mCellIdxBuffer, 0);
@@ -162,23 +175,29 @@ void CyanoCalculator::dispatchCellIdxHistogram(const UINT numPoints)
 
 void CyanoCalculator::computeCellStart()
 {
-	UINT size = mComputeParam.gridWidth * mComputeParam.gridHeight;
-	std::vector<UINT> histogram(size);
-	void* copySrc = mHistogramBuffer->read();
-	memcpy(histogram.data(), copySrc, size * sizeof(UINT));
+	const UINT numElements = mScanParams.numElements;
+	const UINT numBlocks = mScanParams.numBlocks;
 
-	std::vector<UINT> cellStart(histogram.size());
+	//パス1 : 各ブロックをスキャンし、ブロック合計を書き出す
+	mScanParams.mode = 0;
+	mScanShader->dispatch(numBlocks, 1, 1);
+	mScanShader->waitWriteBuffer(1);
+	mScanShader->waitWriteBuffer(2);
 
-	//排他的累積和を計算
-	UINT sum = 0;
-	for (int i = 0; i < histogram.size(); i++) {
-		cellStart[i] = sum;
-		sum += histogram[i];
-	}
+	//パス2 : ブロック合計をスキャンして、各ブロックのオフセットにする
+	mScanParams.mode = 1;
+	mScanParams.numElements = numBlocks;
+	mScanShader->dispatch(1, 1, 1);
+	mScanShader->waitWriteBuffer(2);
 
-	//GPUメモリへコピー
-	mCellStartBuffer->uploadToGPU(cellStart.data(), 0, 0, cellStart.size() * sizeof(UINT));
-	mCellCursorBuffer->uploadToGPU(cellStart.data(), 0, 0, cellStart.size() * sizeof(UINT));
+	//パス3 : ブロックのオフセットを加算
+	mScanParams.mode = 2;
+	mScanParams.numElements = numElements;
+	mScanShader->dispatch(numBlocks, 1, 1);
+	mScanShader->waitWriteBuffer(1);
+
+	//AngleAndMoveが参照するセルの先頭位置は、Scatterが加算する前のスキャン結果をコピーして作る
+	mCellStartBuffer->copyFrom(*mCellCursorBuffer);
 }
 
 void CyanoCalculator::dispatchScatter(const UINT numPoints)
@@ -196,9 +215,10 @@ void CyanoCalculator::dispatchScatter(const UINT numPoints)
 
 }
 
-void CyanoCalculator::dispatchAngleAndMove(const UINT numIndividuals)
+void CyanoCalculator::dispatchAngleAndMove(const UINT numPoints, const UINT numIndividuals)
 {
-	mPointsAngleInBuffer->copyFrom(*mPointsAngleOutBuffer);
+	//参照用の角度を更新(使用中の点の範囲のみ)
+	mPointsAngleInBuffer->copyRegionFrom(*mPointsAngleOutBuffer, 0, 0, numPoints * sizeof(float));
 
 	mComputeParam.numIndividuals = numIndividuals;
 	static std::random_device seed_gen;

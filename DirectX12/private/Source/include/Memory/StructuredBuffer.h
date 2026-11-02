@@ -11,6 +11,8 @@ public:
 
 	void copyFrom(IStructuredBuffer& copySrc) override;
 	void copyFrom(class IRWStructuredBuffer& copySrc) override;
+	void copyRegionFrom(IStructuredBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
+	void copyRegionFrom(class IRWStructuredBuffer& copySrc, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
 
 	void uploadToGPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
 	void uploadToCPU(void* srcData, UINT srcOffset, UINT dstOffset, UINT sizeInBytes) override;
