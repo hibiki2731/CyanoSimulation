@@ -1,6 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_Test|Win32">
+      <Configuration>Debug_Test</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug_Test|x64">
+      <Configuration>Debug_Test</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -27,30 +35,36 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_Test|Win32'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -59,23 +73,34 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="CommonRutimeSettings.props" />
+    <Import Project="..\CommonPropertySheet.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)</OutDir>
+    <ExternalIncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)</OutDir>
+    <ExternalIncludePath>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -83,6 +108,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,6 +124,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -111,17 +140,23 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(ProjectDir)private\;$(ProjectDir)public\Source\include\;$(ProjectDir)private\Source\include\;$(ProjectDir)private\Source\pch;$(ProjectDir)\External\DirectX\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <FxCompile />
     <FxCompile>
@@ -136,235 +171,336 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\DirectX12\scripts;$(SolutionDir)\DirectX12\scripts\directx;C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)private\;$(ProjectDir)public\Source\include\;$(ProjectDir)private\Source\include\;$(ProjectDir)private\Source\pch;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <LanguageStandard>stdcpp23</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
+      <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
+      <ExternalTemplatesDiagnostics>false</ExternalTemplatesDiagnostics>
+      <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files\Autodesk\FBX\FBX SDK\2020.3.7\lib\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
       <AdditionalDependencies>libfbxsdk-mt.lib;libxml2-mt.lib;zlib-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <FxCompile />
     <FxCompile>
       <ShaderModel>6.8</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <FxCompile Include="scripts\2DPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\2DVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\CellIdxHistogramCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\CyanoVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\CyanoPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\FadePixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\FadeVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\PixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\ScatterCS.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.8</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.8</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="scripts\VertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">assets/%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">assets/%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="scripts\Actor.cpp" />
-    <ClCompile Include="scripts\AssetManager.cpp" />
-    <ClCompile Include="scripts\AudioManager.cpp" />
-    <ClCompile Include="scripts\ComputePipelineStateBuilder.cpp" />
-    <ClCompile Include="scripts\ComputeShader.cpp" />
-    <ClCompile Include="scripts\ConstantBuffer.cpp" />
-    <ClCompile Include="scripts\CyanoCalculator.cpp" />
-    <ClCompile Include="scripts\CyanoSimulator.cpp" />
-    <ClCompile Include="scripts\DescriptorHeap.cpp" />
-    <ClCompile Include="scripts\FadeGenerator.cpp" />
-    <ClCompile Include="scripts\Fence.cpp" />
-    <ClCompile Include="scripts\GUIDebugger.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Test|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNIT_TEST</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="scripts\Imgui\imgui.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_demo.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_draw.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_stdlib.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_tables.cpp" />
-    <ClCompile Include="scripts\Imgui\imgui_widgets.cpp" />
-    <ClCompile Include="scripts\IndexBuffer.cpp" />
-    <ClCompile Include="scripts\MeshBaseCBSuballocation.cpp" />
-    <ClCompile Include="scripts\MeshMaterialCBSuballocation.cpp" />
-    <ClCompile Include="scripts\MeshWorldCBSuballocation.cpp" />
-    <ClCompile Include="scripts\myJson.cpp" />
-    <ClCompile Include="scripts\MyUtility.cpp" />
-    <ClCompile Include="scripts\Component.cpp" />
-    <ClCompile Include="scripts\FBXConverter.cpp" />
-    <ClCompile Include="scripts\BIN_FILE12.cpp" />
-    <ClCompile Include="scripts\Game.cpp" />
-    <ClCompile Include="scripts\Graphic.cpp" />
-    <ClCompile Include="scripts\input.cpp" />
-    <ClCompile Include="scripts\Math.cpp" />
-    <ClCompile Include="scripts\MeshComponent.cpp" />
-    <ClCompile Include="scripts\Object.cpp" />
-    <ClCompile Include="scripts\pch.cpp" />
-    <ClCompile Include="scripts\PipelineStateBuilder.cpp" />
-    <ClCompile Include="scripts\Random.cpp" />
-    <ClCompile Include="scripts\ReadBackBuffer.cpp" />
-    <ClCompile Include="scripts\RootSignatureBuilder.cpp" />
-    <ClCompile Include="scripts\Scene.cpp" />
-    <ClCompile Include="scripts\SceneManager.cpp" />
-    <ClCompile Include="scripts\SimulationScene.cpp" />
-    <ClCompile Include="scripts\SpriteCBSuballocation.cpp" />
-    <ClCompile Include="scripts\SpriteComponent.cpp" />
-    <ClCompile Include="scripts\StructuredBuffer.cpp" />
-    <ClCompile Include="scripts\TextCBSuballocation.cpp" />
-    <ClCompile Include="scripts\TextComponent.cpp" />
-    <ClCompile Include="scripts\timer.cpp" />
-    <ClCompile Include="scripts\RWStructuredBuffer.cpp" />
-    <ClCompile Include="scripts\VertexBuffer.cpp" />
-    <ClCompile Include="scripts\WinMain.cpp" />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxalloc.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\arch\fbxarch.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxarray.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxbitset.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxcharptrset.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\base\fbxcontainerallocators.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\fbxclassid.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\fbxconnectionpoint.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\math\fbxaffinematrix.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\sync\fbxatomic.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\core\sync\fbxclock.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaanimationelement.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaelement.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladaiostream.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladanamespace.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladatokens.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\collada\fbxcolladautils.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\fbxbase64coder.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\fileio\fbxcallbacks.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurve.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvebase.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvefilters.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimcurvenode.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevalclassic.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevalstate.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimevaluator.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimlayer.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimstack.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\animation\fbxanimutilities.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacter.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacternodename.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcharacterpose.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraint.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintaim.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintcustom.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintparent.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintposition.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintrotation.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintscale.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintsinglechainik.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxconstraintutils.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\constraint\fbxcontrolset.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaudio.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaudiolayer.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxaxissystem.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcollection.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcollectionexclusive.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcontainer.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\fbxcontainertemplate.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxblendshape.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxblendshapechannel.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcache.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcachedeffect.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcamera.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcamerastereo.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcameraswitcher.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\geometry\fbxcluster.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingoperator.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingsentryview.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtable.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtablebase.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxbindingtableentry.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\scene\shading\fbxconstantentryview.h" />
+    <ClInclude Include="private\External\fbxsdk\include\fbxsdk\utils\fbxclonemanager.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\encoding.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\entities.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\list.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\nanoftp.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\nanohttp.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\parser.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\parserInternals.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\pattern.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\relaxng.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\SAX.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\SAX2.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\schemasInternals.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\schematron.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\threads.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\tree.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\uri.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\valid.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xinclude.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xlink.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlautomata.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlerror.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlexports.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlIO.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlmemory.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlmodule.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlreader.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlregexp.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlsave.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlschemas.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlschemastypes.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlstring.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlunicode.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlversion.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xmlwriter.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpath.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpathInternals.h" />
+    <ClInclude Include="private\External\fbxsdk\include\libxml2\libxml\xpointer.h" />
+    <ClInclude Include="private\Source\include\Audio\AudioManager.h" />
+    <ClInclude Include="private\Source\include\Builder\EngineResourceFactoryInternal.h" />
+    <ClInclude Include="private\Source\include\Command\Command.h" />
+    <ClInclude Include="private\Source\include\Compute\ComputeDeviceInternal.h" />
+    <ClInclude Include="public\Source\include\Compute\ComputeDevice.h" />
+    <ClInclude Include="private\Source\include\Compute\ComputeShader.h" />
+    <ClInclude Include="private\Source\include\Editer\GUIDebugger.h" />
+    <ClInclude Include="private\Source\include\Editer\Object.h" />
+    <ClInclude Include="private\Source\include\GameLoopCore\Game.h" />
+    <ClInclude Include="private\Source\include\GameObject\Actor.h" />
+    <ClInclude Include="private\Source\include\GameObject\Component\Component.h" />
+    <ClInclude Include="private\Source\include\GameObject\Component\MeshComponent.h" />
+    <ClInclude Include="private\Source\include\GameObject\Component\SpriteComponent.h" />
+    <ClInclude Include="private\Source\include\GameObject\Component\TextComponent.h" />
+    <ClInclude Include="private\Source\include\Command\CommandAllocatorBuilder.h" />
+    <ClInclude Include="private\Source\include\Command\CommandListBuilder.h" />
+    <ClInclude Include="private\Source\include\Command\CommandQueueBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\ComputePipelineStateBuilder.h" />
+    <ClInclude Include="private\Source\include\Graphic\Core\Definition.h" />
+    <ClInclude Include="public\Source\include\Builder\EngineResourceFactory.h" />
+    <ClInclude Include="private\Source\include\Graphic\Core\Fence.h" />
+    <ClInclude Include="private\Source\include\Graphic\Core\Graphic.h" />
+    <ClInclude Include="private\Source\include\Builder\GraphicDeviceBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\PipelineStateBuilder.h" />
+    <ClInclude Include="private\Source\include\Builder\RootSignatureBuilder.h" />
+    <ClInclude Include="private\Source\include\Graphic\Effect\FadeGenerator.h" />
+    <ClInclude Include="private\Source\include\Memory\AssetManager.h" />
+    <ClInclude Include="private\Source\include\Memory\ConstantBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\LinearDefaultBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\DescriptorHeap.h" />
+    <ClInclude Include="private\Source\include\Memory\IndexBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\MeshBaseCBSuballocation.h" />
+    <ClInclude Include="private\Source\include\Memory\MeshMaterialCBSuballocation.h" />
+    <ClInclude Include="private\Source\include\Memory\MeshWorldCBSuballocation.h" />
+    <ClInclude Include="private\Source\include\Memory\ReadBackBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\RWStructuredBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\SpriteCBSuballocation.h" />
+    <ClInclude Include="private\Source\include\Memory\StructuredBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\TextCBSuballocation.h" />
+    <ClInclude Include="private\Source\include\Memory\UploadBuffer.h" />
+    <ClInclude Include="private\Source\include\Memory\VertexBuffer.h" />
+    <ClInclude Include="private\Source\include\Scene\Scene.h" />
+    <ClInclude Include="private\Source\include\Scene\SceneManager.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\BIN_FILE12.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\EngineFileSystem.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\FBXConverter.h" />
+    <ClInclude Include="private\Source\include\Utility\FileSystem\myJson.h" />
+    <ClInclude Include="private\Source\include\Utility\Input\input.h" />
+    <ClInclude Include="private\Source\include\Utility\Math\Math.h" />
+    <ClInclude Include="private\Source\include\Utility\Math\PerlinNoise1D.h" />
+    <ClInclude Include="private\Source\include\Utility\Math\Random.h" />
+    <ClInclude Include="private\Source\include\Utility\MyUtility.h" />
+    <ClInclude Include="private\Source\include\Utility\Time\timer.h" />
+    <ClInclude Include="private\Source\pch\pch.h" />
+    <ClInclude Include="public\Source\include\Compute\IComputeShader.h" />
+    <ClInclude Include="public\Source\include\Memory\IRWStructuredBuffer.h" />
+    <ClInclude Include="public\Source\include\Memory\IStructuredBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scripts\Actor.h" />
-    <ClInclude Include="scripts\AssetManager.h" />
-    <ClInclude Include="scripts\AudioManager.h" />
-    <ClInclude Include="scripts\ComputePipelineStateBuilder.h" />
-    <ClInclude Include="scripts\ComputeShader.h" />
-    <ClInclude Include="scripts\ConstantBuffer.h" />
-    <ClInclude Include="scripts\CyanoCalculator.h" />
-    <ClInclude Include="scripts\CyanoSimulator.h" />
-    <ClInclude Include="scripts\Definition.h" />
-    <ClInclude Include="scripts\DescriptorHeap.h" />
-    <ClInclude Include="scripts\FadeGenerator.h" />
-    <ClInclude Include="scripts\Fence.h" />
-    <ClInclude Include="scripts\GUIDebugger.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="scripts\Imgui\imconfig.h" />
-    <ClInclude Include="scripts\Imgui\imgui.h" />
-    <ClInclude Include="scripts\Imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="scripts\Imgui\imgui_impl_win32.h" />
-    <ClInclude Include="scripts\Imgui\imgui_internal.h" />
-    <ClInclude Include="scripts\Imgui\imgui_stdlib.h" />
-    <ClInclude Include="scripts\Imgui\imstb_rectpack.h" />
-    <ClInclude Include="scripts\Imgui\imstb_textedit.h" />
-    <ClInclude Include="scripts\Imgui\imstb_truetype.h" />
-    <ClInclude Include="scripts\IndexBuffer.h" />
-    <ClInclude Include="scripts\json_fwd.hpp" />
-    <ClInclude Include="scripts\MeshBaseCBSuballocation.h" />
-    <ClInclude Include="scripts\MeshMaterialCBSuballocation.h" />
-    <ClInclude Include="scripts\MeshWorldCBSuballocation.h" />
-    <ClInclude Include="scripts\myJson.h" />
-    <ClInclude Include="scripts\Object.h" />
-    <ClInclude Include="scripts\pch.h" />
-    <ClInclude Include="scripts\PerlinNoise1D.h" />
-    <ClInclude Include="scripts\json.hpp" />
-    <ClInclude Include="scripts\MyUtility.h" />
-    <ClInclude Include="scripts\Component.h" />
-    <ClInclude Include="scripts\FBXConverter.h" />
-    <ClInclude Include="scripts\BIN_FILE12.h" />
-    <ClInclude Include="scripts\Game.h" />
-    <ClInclude Include="scripts\Graphic.h" />
-    <ClInclude Include="scripts\input.h" />
-    <ClInclude Include="scripts\Math.h" />
-    <ClInclude Include="scripts\MeshComponent.h" />
-    <ClInclude Include="scripts\PipelineStateBuilder.h" />
-    <ClInclude Include="scripts\Random.h" />
-    <ClInclude Include="scripts\ReadBackBuffer.h" />
-    <ClInclude Include="scripts\RootSignatureBuilder.h" />
-    <ClInclude Include="scripts\Scene.h" />
-    <ClInclude Include="scripts\SceneManager.h" />
-    <ClInclude Include="scripts\SimulationScene.h" />
-    <ClInclude Include="scripts\SpriteCBSuballocation.h" />
-    <ClInclude Include="scripts\SpriteComponent.h" />
-    <ClInclude Include="scripts\stb_image.h" />
-    <ClInclude Include="scripts\StructuredBuffer.h" />
-    <ClInclude Include="scripts\TextCBSuballocation.h" />
-    <ClInclude Include="scripts\TextComponent.h" />
-    <ClInclude Include="scripts\timer.h" />
-    <ClInclude Include="scripts\RWStructuredBuffer.h" />
-    <ClInclude Include="scripts\VertexBuffer.h" />
-    <ClInclude Include="scripts\WinMain.h" />
+    <ClCompile Include="private\External\Imgui\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_impl_dx12.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_impl_win32.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\External\Imgui\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Source\pch\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="private\Source\src\Audio\AudioManager.cpp" />
+    <ClCompile Include="private\Source\src\Commands\Command.cpp" />
+    <ClCompile Include="private\Source\src\Compute\ComputeDevice.cpp" />
+    <ClCompile Include="private\Source\src\Compute\ComputeShader.cpp" />
+    <ClCompile Include="private\Source\src\Editer\GUIDebugger.cpp" />
+    <ClCompile Include="private\Source\src\Editer\Object.cpp" />
+    <ClCompile Include="private\Source\src\GameLoopCore\Game.cpp" />
+    <ClCompile Include="private\Source\src\GameObject\Actor.cpp" />
+    <ClCompile Include="private\Source\src\GameObject\Component\Component.cpp" />
+    <ClCompile Include="private\Source\src\GameObject\Component\MeshComponent.cpp" />
+    <ClCompile Include="private\Source\src\GameObject\Component\SpriteComponent.cpp" />
+    <ClCompile Include="private\Source\src\GameObject\Component\TextComponent.cpp" />
+    <ClCompile Include="private\Source\src\Commands\CommandAllocatorBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Commands\CommandListBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Commands\CommandQueueBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\ComputePipelineStateBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\EngineResourceFactory.cpp" />
+    <ClCompile Include="private\Source\src\Graphic\Core\Fence.cpp" />
+    <ClCompile Include="private\Source\src\Graphic\Core\Graphic.cpp" />
+    <ClCompile Include="private\Source\src\Builder\GraphicDeviceBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\PipelineStateBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Builder\RootSignatureBuilder.cpp" />
+    <ClCompile Include="private\Source\src\Graphic\Effect\FadeGenerator.cpp" />
+    <ClCompile Include="private\Source\src\Memory\AssetManager.cpp" />
+    <ClCompile Include="private\Source\src\Memory\ConstantBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\LinearDefaultBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\DescriptorHeap.cpp" />
+    <ClCompile Include="private\Source\src\Memory\IndexBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\MeshBaseCBSuballocation.cpp" />
+    <ClCompile Include="private\Source\src\Memory\MeshMaterialCBSuballocation.cpp" />
+    <ClCompile Include="private\Source\src\Memory\MeshWorldCBSuballocation.cpp" />
+    <ClCompile Include="private\Source\src\Memory\ReadBackBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\RWStructuredBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\SpriteCBSuballocation.cpp" />
+    <ClCompile Include="private\Source\src\Memory\StructuredBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\TextCBSuballocation.cpp" />
+    <ClCompile Include="private\Source\src\Memory\UploadBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Memory\VertexBuffer.cpp" />
+    <ClCompile Include="private\Source\src\Scene\Scene.cpp" />
+    <ClCompile Include="private\Source\src\Scene\SceneManager.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\BIN_FILE12.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\EngineFileSystem.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\FBXConverter.cpp" />
+    <ClCompile Include="private\Source\src\Utility\FileSystem\myJson.cpp" />
+    <ClCompile Include="private\Source\src\Utility\Input\input.cpp" />
+    <ClCompile Include="private\Source\src\Utility\Math\Math.cpp" />
+    <ClCompile Include="private\Source\src\Utility\Math\Random.cpp" />
+    <ClCompile Include="private\Source\src\Utility\MyUtility.cpp" />
+    <ClCompile Include="private\Source\src\Utility\Time\timer.cpp" />
+    <ClCompile Include="public\Source\src\Compute\IComputeShader.cpp" />
+    <ClCompile Include="public\Source\src\Memory\IRWStructuredBuffer.cpp" />
+    <ClCompile Include="public\Source\src\Memory\IStructuredBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="scripts\CyanoHeader.hlsli" />
-    <None Include="scripts\FadeHeader.hlsli" />
-    <None Include="scripts\Header.hlsli" />
+    <FxCompile Include="private\Content\Shader\hlsl\2DPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="private\Content\Shader\hlsl\2DVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="private\Content\Shader\hlsl\FadePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="private\Content\Shader\hlsl\FadeVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="private\Content\Shader\hlsl\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="private\Content\Shader\hlsl\VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-Qembed_debug %(AdditionalOptions)</AdditionalOptions>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)private\Content\Shader\cso\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="private\Content\Shader\hlsl\FadeHeader.hlsli" />
+    <None Include="private\Content\Shader\hlsl\Header.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

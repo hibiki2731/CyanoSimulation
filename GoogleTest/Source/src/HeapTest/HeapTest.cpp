@@ -1,0 +1,82 @@
+﻿#pragma warning(disable: 26495)
+#include "pch.h"
+#include <Memory/UploadBuffer.h>
+#include <vector>
+#include "HeapTest/HeapTest.h"
+#include "Builder/EngineResourceFactory.h"
+#include "Memory/StructuredBuffer.h"
+#include "Memory/RWStructuredBuffer.h"
+
+namespace HeapTest {
+	TEST_F(GraphicCoreTest, TestEmptyData) {
+		EXPECT_DEATH(uploadBuffer->upload(nullptr, 0, 0, sizeof(int)), "");
+	}
+
+	TEST_F(GraphicCoreTest, TestUploadData) {
+
+		std::vector<int> data = { 1, 2, 3, 5 };
+		uploadBuffer->upload(data.data(), 0, 0, data.size() * sizeof(int));
+
+		int* check = static_cast<int*>(uploadBuffer->getCPUResource());
+
+		EXPECT_EQ(1, *check); ++check;
+		EXPECT_EQ(2, *check); ++check;
+		EXPECT_EQ(3, *check); ++check;
+		EXPECT_EQ(5, *check); ++check;
+
+	}
+
+	TEST_F(GraphicCoreTest, TestCopyToDefaultBuffer) {
+		std::vector<int> data = { 1,2,3,5 };
+		uploadBuffer->upload(data.data(), 0, 0, data.size() * sizeof(int));
+
+		defaultBuffer->copyFromUploadBuffer(*uploadBuffer.get());
+		readbackBuffer->read(*defaultBuffer.get());
+
+		int* check = static_cast<int*>(readbackBuffer->getCPUResource());
+
+		EXPECT_EQ(1, *check); ++check;
+		EXPECT_EQ(2, *check); ++check;
+		EXPECT_EQ(3, *check); ++check;
+		EXPECT_EQ(5, *check); ++check;
+	}
+
+	TEST_F(GameSideTest, TestStructuredBuffer) {
+		std::shared_ptr<IStructuredBuffer> structuredBuffer = mFactory->createStructuredBuffer(5, sizeof(int));
+
+		std::vector<int> data = { 1,2,3,5 };
+		structuredBuffer->uploadToGPU(data.data(), 0, 0, sizeof(int) * data.size());
+
+		//EXPECT_TRUE(std::dynamic_pointer_cast<StructuredBuffer>(structuredBuffer)->getGPUResourceFromDefaultBuffer());
+	}
+
+	TEST_F(GameSideTest, TestRWStructuredBuffer) {
+		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(5, sizeof(int));
+
+		std::vector<XMFLOAT4> data = { {1.0f,1,1,1}, {2.0f,2,2,2 } };
+		rwBuffer->uploadToGPU(data.data(), 0, 0, sizeof(XMFLOAT4) * data.size());
+
+		XMFLOAT4* check = static_cast<XMFLOAT4*>(rwBuffer->read());
+		EXPECT_EQ(1.0f, check->x); ++check;
+		EXPECT_EQ(2.0f, check->x); ++check;
+
+	}
+
+	TEST_F(GameSideTest, TestRWStructuredBufferUploadAfterUpload) {
+		std::shared_ptr<IRWStructuredBuffer> rwBuffer = mFactory->createRWStructuredBuffer(5, sizeof(int));
+
+		std::vector<int> data1 = { 1,2,3,5 };
+		std::vector<int> data2 = { 7,8,9,11 };
+		rwBuffer->uploadToGPU(data1.data(), 0, 0, sizeof(int) * data1.size());
+		rwBuffer->uploadToGPU(data2.data(), 0, 0, sizeof(int) * data2.size());
+
+		int* check = static_cast<int*>(rwBuffer->read());
+		EXPECT_EQ(7, *check); ++check;
+		EXPECT_EQ(8, *check); ++check;
+		EXPECT_EQ(9, *check); ++check;
+		EXPECT_EQ(11, *check); ++check;
+
+	}
+
+
+}

@@ -1,0 +1,11 @@
+﻿{
+    "ROCK_WALL" : {
+        "fbxPath" : "Content/3DModels/rockObj/rockWall.fbx",
+        "jsonPath" : "Content/3DModels/rockObj/rockWall.json"
+    },
+
+    "ROCK_FLOOR" : {
+        "fbxPath" : "Content/3DModels/rockObj/rockFloor.fbx",
+        "jsonPath" : "Content/3DModels/rockObj/rockFloor.json"
+    }
+}

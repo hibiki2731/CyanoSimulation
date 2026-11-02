@@ -1,0 +1,101 @@
+﻿#pragma once
+#include <string>
+#include <memory>
+#include <vector>
+#include "GameObject/Actor.h"
+
+class SceneManager;
+class MeshComponent;
+class SpriteComponent;
+class TextComponent;
+class PointLightComponent;
+class SpotLightComponent;
+
+class Scene
+{
+public:
+	Scene(class Game& game);
+	virtual ~Scene() {};
+
+	//更新処理
+	void fastUpdate();
+	void update();
+	void lateUpdate();
+	//シーン中のアクターの更新
+	void fastUpdateActors();
+	void updateActors();
+	void lateUpdateActors();
+	//シーン独自の更新処理
+	virtual void fastUpdateScene() {};
+	virtual void updateScene() {};
+	virtual void lateUpdateScene() {};
+
+	//描画処理
+	void draw3D();
+	void draw2D();
+	virtual	void drawScene() {};
+
+	//入力処理
+	void input();
+	//アクターの入力処理
+	void inputActors();
+	//シーン独自の入力処理
+	virtual void inputScene() {};
+
+	virtual void onEnter() = 0;
+	virtual void onExit() = 0;
+
+	//シーン名の取得
+	virtual const std::string getName() const = 0;
+
+	//Gameの取得
+	Game& getGame() { return mGame; }
+
+	//アクターの追加/削除
+	void addActor(std::unique_ptr<Actor> actor);
+	void joinActors();
+	void removeActors();
+	void createObjects();
+
+	//メッシュの追加/削除
+	void addMesh(MeshComponent* mesh);
+	void removeMesh(MeshComponent* mesh);
+	//スプライトの追加/削除
+	void addSprite(SpriteComponent* sprite);
+	void removeSprite(SpriteComponent* sprite);
+	//テキストの追加/削除
+	void addText(TextComponent* text);
+	void removeText(TextComponent* text);
+
+	//アクターの全消去
+	void refreshActors();
+
+#ifdef _DEBUG
+	void drawDebugGUI();
+	void addDebugObject(class Object* object);
+	void removeDebugObject(class Object* object);
+	void clearDebugObject();
+#endif
+
+protected:
+	Game& mGame;
+#ifdef _DEBUG
+	std::vector<class Object*> mDebugObjects;
+	bool mDebugFlag = false;
+#endif
+
+private:
+	std::vector<std::unique_ptr<Actor>> mActors;
+	std::vector<std::unique_ptr<Actor>> mPendingActors;
+	std::vector<MeshComponent*> mMeshes;
+	std::vector<SpriteComponent*> mSprites;
+	std::vector<TextComponent*> mTexts;
+	std::vector<PointLightComponent*> mPointLights;
+	std::vector<SpotLightComponent*> mSpotLights;
+
+#ifdef _DEBUG
+	friend class GUIDebugger;
+#endif
+
+};
+
